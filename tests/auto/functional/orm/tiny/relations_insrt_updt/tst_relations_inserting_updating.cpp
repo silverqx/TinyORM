@@ -418,7 +418,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> fileAttribtues {
+    QList<AttributeItem> fileAttribtues {
         {"file_index", 3},
         {"filepath",   "test5_file4-create.mkv"},
         {SIZE_,        322322},
@@ -494,7 +494,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> fileAttribtues {
+    QList<AttributeItem> fileAttribtues {
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
@@ -544,14 +544,14 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> file1Attributes({
+    QList<AttributeItem> file1Attributes({
         {"file_index", 3},
         {"filepath",   "test5_file4-createMany.mkv"},
         {SIZE_,        322322},
         {Progress,     777},
         {NOTE,         "relation's createMany file1"},
     });
-    QVector<AttributeItem> file2Attributes({
+    QList<AttributeItem> file2Attributes({
         {"file_index", 4},
         {"filepath",   "test5_file5-createMany.mkv"},
         {SIZE_,        333322},
@@ -559,7 +559,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
         {NOTE,         "relation's createMany file2"},
     });
 
-    QVector<QVector<AttributeItem>> fileAttributesToSave {
+    QList<QList<AttributeItem>> fileAttributesToSave {
         std::move(file1Attributes),
         std::move(file2Attributes),
     };
@@ -674,7 +674,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> file1Attributes({
+    QList<AttributeItem> file1Attributes({
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
@@ -684,7 +684,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
     // Make a copy is enough
     auto file2Attributes = file1Attributes;
 
-    QVector<QVector<AttributeItem>> fileAttributesToSave {
+    QList<QList<AttributeItem>> fileAttributesToSave {
         std::move(file1Attributes),
         std::move(file2Attributes),
     };
@@ -1023,7 +1023,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<AttributeItem> tagAttributes {{NAME, "tag create"}};
+    QList<AttributeItem> tagAttributes {{NAME, "tag create"}};
 
     auto tag = torrent->tags()->create(tagAttributes, {{"active", false}});
     QVERIFY(tag.exists);
@@ -1110,7 +1110,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
     auto size = torrent->tags()->get({ID}).size();
     QCOMPARE(size, 0);
 
-    QVector<AttributeItem> tagAttributes {{NAME, "tag1"}};
+    QList<AttributeItem> tagAttributes {{NAME, "tag1"}};
     Tag tag;
 
     TVERIFY_THROWS_EXCEPTION(QueryError,
@@ -1163,8 +1163,8 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttributes {{{NAME, "tag create 1"}},
-                                                   {{NAME, "tag create 2"}}};
+    QList<QList<AttributeItem>> tagAttributes {{{NAME, "tag create 1"}},
+                                               {{NAME, "tag create 2"}}};
 
     auto tags = torrent->tags()->createMany(tagAttributes, {{}, {{"active", false}}});
     QCOMPARE(tags.size(), 2);
@@ -1283,8 +1283,8 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttributes {{{NAME, "tag1"}},
-                                                   {{NAME, "tag1"}}};
+    QList<QList<AttributeItem>> tagAttributes {{{NAME, "tag1"}},
+                                               {{NAME, "tag1"}}};
 
     ModelsCollection<Tag> tags;
 
@@ -1586,7 +1586,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
+    QList<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1636,7 +1636,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
+    QList<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1682,7 +1682,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
+    QList<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1728,7 +1728,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
+    QList<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1885,7 +1885,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithId() const
     QCOMPARE(taggeds.size(), 1);
 
     // Expected torrent ID
-    QVector<QVariant> torrentIds {torrent100[ID]};
+    QList<QVariant> torrentIds {torrent100[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -1944,7 +1944,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
+    QList<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2005,7 +2005,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
+    QList<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2065,7 +2065,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
+    QList<QVariant> torrentIds {torrent100[ID], torrent101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2119,7 +2119,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithId() const
     QCOMPARE(taggeds.size(), 1);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID]};
+    QList<QVariant> tagIds {tag100[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2174,7 +2174,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
+    QList<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2230,7 +2230,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
+    QList<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2286,7 +2286,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag100[ID], tag101[ID]};
+    QList<QVariant> tagIds {tag100[ID], tag101[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2545,7 +2545,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
+    QList<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2573,8 +2573,8 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     QCOMPARE(detachedVector.size(), 1);
     QVERIFY(changed.at(Updated_).isEmpty());
 
-    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
-    const QVector<QVariant> expectedDetached {torrent102[ID]};
+    const QList<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QList<QVariant> expectedDetached {torrent102[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2664,7 +2664,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
+    QList<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2694,9 +2694,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
-    const QVector<QVariant> expectedDetached {torrent102[ID]};
-    const QVector<QVariant> expectedUpdated {torrent101[ID]};
+    const QList<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QList<QVariant> expectedDetached {torrent102[ID]};
+    const QList<QVariant> expectedUpdated {torrent101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2776,7 +2776,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
+    QList<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2803,8 +2803,8 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
     QCOMPARE(detachedVector.size(), 1);
     QVERIFY(changed.at(Updated_).isEmpty());
 
-    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
-    const QVector<QVariant> expectedDetached {tag102[ID]};
+    const QList<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QList<QVariant> expectedDetached {tag102[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -2881,7 +2881,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
+    QList<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -2911,9 +2911,9 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
-    const QVector<QVariant> expectedDetached {tag102[ID]};
-    const QVector<QVariant> expectedUpdated {tag101[ID]};
+    const QList<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QList<QVariant> expectedDetached {tag102[ID]};
+    const QList<QVariant> expectedUpdated {tag101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -3004,7 +3004,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
+    QList<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3031,7 +3031,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     QVERIFY(changed.at(Detached).isEmpty());
     QVERIFY(changed.at(Updated_).isEmpty());
 
-    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QList<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -3121,7 +3121,7 @@ void tst_Relations_Inserting_Updating::
     QCOMPARE(taggeds.size(), 2);
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
+    QList<QVariant> torrentIds {torrent101[ID], torrent102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3150,8 +3150,8 @@ void tst_Relations_Inserting_Updating::
     const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
-    const QVector<QVariant> expectedUpdated {torrent101[ID]};
+    const QList<QVariant> expectedAttached {torrent100[ID], torrent103[ID]};
+    const QList<QVariant> expectedUpdated {torrent101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));
@@ -3230,7 +3230,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
+    QList<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3257,7 +3257,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
     QVERIFY(changed.at(Detached).isEmpty());
     QVERIFY(changed.at(Updated_).isEmpty());
 
-    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QList<QVariant> expectedAttached {tag100[ID], tag103[ID]};
 
     for (const auto &attached : changed.at(Attached))
         QVERIFY(expectedAttached.contains(attached));
@@ -3334,7 +3334,7 @@ void tst_Relations_Inserting_Updating::
     QCOMPARE(taggeds.size(), 2);
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {tag101[ID], tag102[ID]};
+    QList<QVariant> tagIds {tag101[ID], tag102[ID]};
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
@@ -3363,8 +3363,8 @@ void tst_Relations_Inserting_Updating::
     const auto &updatedVector = changed.at(Updated_);
     QCOMPARE(updatedVector.size(), 1);
 
-    const QVector<QVariant> expectedAttached {tag100[ID], tag103[ID]};
-    const QVector<QVariant> expectedUpdated {tag101[ID]};
+    const QList<QVariant> expectedAttached {tag100[ID], tag103[ID]};
+    const QList<QVariant> expectedUpdated {tag101[ID]};
 
     for (const auto &attached : attachedVector)
         QVERIFY(expectedAttached.contains(attached));

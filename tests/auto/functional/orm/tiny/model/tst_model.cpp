@@ -599,7 +599,7 @@ void tst_Model::where() const
 
         QCOMPARE(torrents.size(), 5);
 
-        const QVector<QVariant> expectedIds {3, 4, 5, 6, 7};
+        const QList<QVariant> expectedIds {3, 4, 5, 6, 7};
         for (const auto &torrent : torrents)
             QVERIFY(expectedIds.contains(torrent.getKey()));
     }
@@ -675,7 +675,7 @@ void tst_Model::where_WithVector_Condition() const
         auto torrents = Torrent::where({{SIZE_, 13}, {SIZE_, 14, "=", "or"}})->get();
         QCOMPARE(torrents.size(), 2);
 
-        const QVector<QVariant> expectedIds {3, 4};
+        const QList<QVariant> expectedIds {3, 4};
         for (const auto &torrent : torrents)
             QVERIFY(expectedIds.contains(torrent[ID]));
     }
@@ -705,7 +705,7 @@ void tst_Model::whereExists() const
             .orderBy(ID)
             .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
+        QList<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -720,7 +720,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
+        QList<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -738,7 +738,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
+        QList<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -1605,7 +1605,7 @@ void tst_Model::upsert() const
         auto tagPropertiesSize = tagProperties.size();
         QCOMPARE(tagPropertiesSize, 2);
 
-        QVector<QVector<QVariant>> result;
+        QList<QList<QVariant>> result;
         result.reserve(tagPropertiesSize);
 
         for (const auto &tagProperty : tagProperties)
@@ -1613,7 +1613,7 @@ void tst_Model::upsert() const
                            tagProperty.getAttribute("position"),
                            tagProperty.getAttribute("tag_id")});
 
-        QVector<QVector<QVariant>> expextedResult {
+        QList<QList<QVariant>> expextedResult {
             {"pink",   0, 1},
             {"purple", 4, 1},
         };

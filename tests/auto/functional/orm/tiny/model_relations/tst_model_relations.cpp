@@ -222,9 +222,9 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFileEager *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<QVariant> filePropertyIds {1, 2};
+    QList<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -280,7 +280,7 @@ void tst_Model_Relations::
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 4, 7};
+    QList<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -380,7 +380,7 @@ void tst_Model_Relations::
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 4, 7};
+    QList<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -464,9 +464,9 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<QVariant> filePropertyIds {1, 2};
+    QList<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -522,7 +522,7 @@ void tst_Model_Relations::
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 4, 7};
+    QList<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -622,7 +622,7 @@ void tst_Model_Relations::
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 4, 7};
+    QList<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -714,7 +714,7 @@ void tst_Model_Relations::with_HasMany() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -757,7 +757,7 @@ void tst_Model_Relations::with_BelongsToMany() const
     QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {2, 4};
+    QList<QVariant> tagIds {2, 4};
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
@@ -810,7 +810,7 @@ void tst_Model_Relations::with_BelongsToMany_Twice() const
     // Expected tag IDs
     std::unordered_set<Tag::KeyType> tagIds {2};
     // Expected role attribute names and positions hash
-    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    std::unordered_map<QString, QList<AttributeItem>::size_type>
     expectedRoleAttributes {
         {ID,         0},
         {NAME,       1},
@@ -924,7 +924,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -965,7 +965,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1000,7 +1000,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1034,7 +1034,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
     QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {2, 4};
+    QList<QVariant> tagIds {2, 4};
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
@@ -1097,7 +1097,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1134,7 +1134,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
     QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
-    QVector<QVariant> tagIds {2, 4};
+    QList<QVariant> tagIds {2, 4};
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
@@ -1195,9 +1195,9 @@ void tst_Model_Relations::with_NestedRelations() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     // Expected file property IDs
-    QVector<QVariant> filePropertyIds {1, 2};
+    QList<QVariant> filePropertyIds {1, 2};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1239,7 +1239,7 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasOne() con
     // Expected file property IDs
     std::unordered_set<TorrentPreviewableFileProperty::KeyType> filePropertyIds {1, 2};
     // Expected file property attributes
-    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    std::unordered_map<QString, QList<AttributeItem>::size_type>
     filePropertyAttributes {
         {ID,                    0},
         {"previewable_file_id", 1},
@@ -1293,7 +1293,7 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasMany() co
     // Expected torrent previewable file IDs
     std::unordered_set<TorrentPreviewableFile::KeyType> fileIds {2, 3};
     // Expected torrent previewable file attributes
-    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    std::unordered_map<QString, QList<AttributeItem>::size_type>
     fileAttributes {
         {ID,           0},
         {"torrent_id", 1},
@@ -1330,7 +1330,7 @@ void tst_Model_Relations::
     // Expected tag property IDs
     std::unordered_set<TorrentPreviewableFileProperty::KeyType> tagPropertyIds {2, 4};
     // Expected tag property attributes
-    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    std::unordered_map<QString, QList<AttributeItem>::size_type>
     tagPropertyAttributes {
         {ID,       0},
         {"tag_id", 1},
@@ -1372,7 +1372,7 @@ void tst_Model_Relations::
     // Expected tag IDs
     std::unordered_set<Tag::KeyType> tagIds {2};
     // Expected role attribute names and positions hash
-    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    std::unordered_map<QString, QList<AttributeItem>::size_type>
     expectedRoleAttributes {
         {ID,         0},
         {NAME,       1},
@@ -1556,7 +1556,7 @@ void tst_Model_Relations::load_QVector_WithItem() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1582,7 +1582,7 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    const QVector<QString> relations {"torrentFiles", "torrentPeer"};
+    const QList<QString> relations {"torrentFiles", "torrentPeer"};
     torrent->load(relations);
 
     QVERIFY(torrent->relationLoaded("torrentFiles"));
@@ -1603,7 +1603,7 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1649,7 +1649,7 @@ void tst_Model_Relations::load_QVector_QString_rvalue() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1712,7 +1712,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1758,7 +1758,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1821,7 +1821,7 @@ void tst_Model_Relations::fresh() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -1864,7 +1864,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
@@ -2222,7 +2222,7 @@ void tst_Model_Relations::where_WithCallback() const
     QCOMPARE(files.size(), 2);
 
     // Expected file IDs
-    QVector<QVariant> fileIds {6, 8};
+    QList<QVariant> fileIds {6, 8};
     for (auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
@@ -2247,7 +2247,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
     QCOMPARE(files.size(), 2);
 
     // Expected file IDs
-    QVector<QVariant> fileIds {6, 8};
+    QList<QVariant> fileIds {6, 8};
     for (auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
@@ -2269,7 +2269,7 @@ void tst_Model_Relations::belongsToMany_allRelatedIds() const
 
     QCOMPARE(relatedIds.size(), 2);
 
-    const QVector<QVariant> expectedIds {2, 4};
+    const QList<QVariant> expectedIds {2, 4};
 
     for (const auto &relatedId : relatedIds)
         QVERIFY(expectedIds.contains(relatedId));
@@ -2764,7 +2764,7 @@ void tst_Model_Relations::upsert() const
         auto tagPropertiesSize = tagProperties.size();
         QCOMPARE(tagPropertiesSize, 2);
 
-        QVector<QVector<QVariant>> result;
+        QList<QList<QVariant>> result;
         result.reserve(tagPropertiesSize);
 
         for (const auto &tagProperty : tagProperties)
@@ -2772,7 +2772,7 @@ void tst_Model_Relations::upsert() const
                            tagProperty.getAttribute("position"),
                            tagProperty.getAttribute("tag_id")});
 
-        QVector<QVector<QVariant>> expextedResult {
+        QList<QList<QVariant>> expextedResult {
             {"pink",   0, 1},
             {"purple", 4, 1},
         };

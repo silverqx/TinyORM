@@ -115,7 +115,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with { // NOLINT(readability-redundant-member-init)
+    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
 //        "torrent",
 //        "torrent.torrentPeer",
 //        "fileProperty",

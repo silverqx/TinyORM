@@ -551,7 +551,7 @@ void tst_MySql_TinyBuilder::whereHas_Basic_QueryBuilder_OnHasMany() const
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::whereHas_Basic_TinyBuilder_OnHasMany() const
@@ -572,7 +572,7 @@ void tst_MySql_TinyBuilder::whereHas_Basic_TinyBuilder_OnHasMany() const
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::whereHas_Count_QueryBuilder_OnHasMany() const
@@ -592,7 +592,7 @@ void tst_MySql_TinyBuilder::whereHas_Count_QueryBuilder_OnHasMany() const
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?) > 5");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::orWhereHas_Count_QueryBuilder_OnHasMany() const
@@ -616,7 +616,7 @@ void tst_MySql_TinyBuilder::orWhereHas_Count_QueryBuilder_OnHasMany() const
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?) > 5");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::orWhereHas_Count_TinyBuilder_OnHasMany() const
@@ -641,7 +641,7 @@ void tst_MySql_TinyBuilder::orWhereHas_Count_TinyBuilder_OnHasMany() const
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?) > 5");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::orWhereDoesntHave_Count_QueryBuilder_OnHasMany() const
@@ -665,7 +665,7 @@ void tst_MySql_TinyBuilder::orWhereDoesntHave_Count_QueryBuilder_OnHasMany() con
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::orWhereDoesntHave_Count_TinyBuilder_OnHasMany() const
@@ -690,7 +690,7 @@ void tst_MySql_TinyBuilder::orWhereDoesntHave_Count_TinyBuilder_OnHasMany() cons
                "where `torrents`.`id` = `torrent_previewable_files`.`torrent_id` "
                  "and `filepath` like ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("%_file2.mkv")}));
+             QList<QVariant>({QVariant("%_file2.mkv")}));
 }
 
 void tst_MySql_TinyBuilder::hasNested_Basic_OnHasMany() const
@@ -805,7 +805,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnHasMany() const
                          "`torrent_previewable_file_properties`.`previewable_file_id` "
                          "and `value` >= ?) > 2)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(6)}));
+                 QList<QVariant>({QVariant(6)}));
     }
 
     // Double nesting
@@ -836,7 +836,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnHasMany() const
                              "`file_property_properties`.`file_property_id` "
                              "and `value` >= ?) >= 5))");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(6)}));
+                 QList<QVariant>({QVariant(6)}));
     }
 }
 
@@ -873,9 +873,9 @@ void tst_MySql_TinyBuilder::
 
     QCOMPARE(builder1->toSql(), builder2->toSql());
     QCOMPARE(builder1->getBindings(),
-             QVector<QVariant>({QVariant(1)}));
+             QList<QVariant>({QVariant(1)}));
     QCOMPARE(builder2->getBindings(),
-             QVector<QVariant>({QVariant(1)}));
+             QList<QVariant>({QVariant(1)}));
 }
 
 void tst_MySql_TinyBuilder::whereHas_hasNested_Basic_HasInCallback_OnHasMany() const
@@ -1004,7 +1004,7 @@ void tst_MySql_TinyBuilder::doesntHave_Callback_OnHasMany() const
                    "where `torrents`.`id` = `torrent_peers`.`torrent_id` "
                      "and `total_seeds` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5)}));
+             QList<QVariant>({QVariant(5)}));
 }
 
 void tst_MySql_TinyBuilder::orDoesntHave_OnHasMany() const
@@ -1043,7 +1043,7 @@ void tst_MySql_TinyBuilder::has_QueryBuilder_OnBelongsTo() const
                "where `torrent_previewable_files`.`torrent_id` = `torrents`.`id` "
                  "and `size` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5)}));
+             QList<QVariant>({QVariant(5)}));
 }
 
 void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsTo_NestedAsLast() const
@@ -1077,7 +1077,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsTo_NestedAsLast
                    "where `torrent_previewable_files`.`torrent_id` = `torrents`.`id` "
                      "and `size` > ?) >= 2)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(6)}));
+             QList<QVariant>({QVariant(6)}));
 }
 
 /* Querying Relationship Existence/Absence on BelongsToMany */
@@ -1101,7 +1101,7 @@ void tst_MySql_TinyBuilder::has_Basic_TinyBuilder_OnBelongsToMany() const
                "where `torrents`.`id` = `tag_torrent`.`torrent_id` "
                  "and `name` like ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("tag%")}));
+             QList<QVariant>({QVariant("tag%")}));
 }
 
 void tst_MySql_TinyBuilder::has_Count_QueryBuilder_OnBelongsToMany() const
@@ -1123,7 +1123,7 @@ void tst_MySql_TinyBuilder::has_Count_QueryBuilder_OnBelongsToMany() const
                "where `torrents`.`id` = `tag_torrent`.`torrent_id` "
                  "and `name` like ?) >= 2");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("tag%")}));
+             QList<QVariant>({QVariant("tag%")}));
 }
 
 void tst_MySql_TinyBuilder::has_Count_TinyBuilder_OnBelongsToMany() const
@@ -1145,7 +1145,7 @@ void tst_MySql_TinyBuilder::has_Count_TinyBuilder_OnBelongsToMany() const
                "where `torrents`.`id` = `tag_torrent`.`torrent_id` "
                  "and `name` like ?) >= 2");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant("tag%")}));
+             QList<QVariant>({QVariant("tag%")}));
 }
 
 void
@@ -1172,7 +1172,7 @@ tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsToMany_NestedAsLast(
                    "where `torrents`.`id` = `tag_torrent`.`torrent_id` "
                      "and `value` >= ?) >= 2)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(6)}));
+             QList<QVariant>({QVariant(6)}));
 }
 
 void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsToMany_NestedInMiddle() const
@@ -1201,7 +1201,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsToMany_NestedIn
                        "where `torrent_tags`.`id` = `tag_properties`.`tag_id` "
                          "and `position` >= ?) >= 2))");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1)}));
+             QList<QVariant>({QVariant(1)}));
 }
 
 /* SoftDeletes */

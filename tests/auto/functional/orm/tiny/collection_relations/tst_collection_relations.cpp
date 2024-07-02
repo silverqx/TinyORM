@@ -779,7 +779,7 @@ void tst_Collection_Relations::toBase() const
     const auto result = images.toBase();
 
     // Verify
-    QCOMPARE(typeid (result), typeid (QVector<AlbumImage *>));
+    QCOMPARE(typeid (result), typeid (QList<AlbumImage *>));
     QCOMPARE(result.size(), 5);
     QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
 }
@@ -801,7 +801,7 @@ void tst_Collection_Relations::all() const
     const auto result = images.all();
 
     // Verify
-    QCOMPARE(typeid (result), typeid (QVector<AlbumImage *>));
+    QCOMPARE(typeid (result), typeid (QList<AlbumImage *>));
     QCOMPARE(result.size(), 5);
     QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
 }
@@ -933,7 +933,7 @@ void tst_Collection_Relations::map_CustomReturnType() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const QVector<QString> result = images.map<QString>([](AlbumImage &&imageCopy) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    const QList<QString> result = images.map<QString>([](AlbumImage &&imageCopy) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         const auto nameRef = imageCopy[NAME];
 
@@ -947,7 +947,7 @@ void tst_Collection_Relations::map_CustomReturnType() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVector<QString> expected {"album2_image1", "album2_image2_id_3", "album2_image3",
+    QList<QString> expected {"album2_image1", "album2_image2_id_3", "album2_image3",
                                "album2_image4", "album2_image5_id_6"};
     QCOMPARE(result, expected);
 }
@@ -966,8 +966,8 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const QVector<QString> result = images.map<QString>(
-                                        [](AlbumImage &&imageCopy, const auto index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    const QList<QString> result = images.map<QString>(
+                                      [](AlbumImage &&imageCopy, const auto index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         const auto nameRef = imageCopy[NAME];
 
@@ -985,8 +985,8 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVector<QString> expected {"album2_image1_id_2", "album2_image2", "album2_image3",
-                               "album2_image4_index_3", "album2_image5"};
+    QList<QString> expected {"album2_image1_id_2", "album2_image2", "album2_image3",
+                             "album2_image4_index_3", "album2_image5"};
     QCOMPARE(result, expected);
 }
 
@@ -1277,7 +1277,7 @@ void tst_Collection_Relations::pluck() const
     // Verify
     QCOMPARE(result.size(), 5);
 
-    QVector<QVariant> expected {
+    QList<QVariant> expected {
         QString("album2_image1"),
         QString("album2_image2"),
         QString("album2_image3"),
@@ -1305,9 +1305,9 @@ void tst_Collection_Relations::pluck_CustomType() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QCOMPARE(typeid (result), typeid (QVector<QString>));
+    QCOMPARE(typeid (result), typeid (QList<QString>));
 
-    QVector<QString> expected {
+    QList<QString> expected {
         QString("album2_image1"),
         QString("album2_image2"),
         QString("album2_image3"),
@@ -2673,7 +2673,7 @@ void tst_Collection_Relations::fresh_QVector_WithItem() const
     QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
 
     // Verify
-    QVector<QString> actualNames;
+    QList<QString> actualNames;
     actualNames.reserve(imagesFresh.size());
 
     ModelsCollection<AlbumImage>::size_type index = 0;
@@ -2701,7 +2701,7 @@ void tst_Collection_Relations::fresh_QVector_WithItem() const
         ++index;
     }
 
-    QVector<QString> expectedNames {
+    QList<QString> expectedNames {
         "album1_image1", "album2_image1", "album2_image2",
     };
     QCOMPARE(actualNames, expectedNames);
@@ -2734,7 +2734,7 @@ void tst_Collection_Relations::fresh_WithSelectConstraint() const
     QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
 
     // Verify
-    QVector<QString> actualNames;
+    QList<QString> actualNames;
     actualNames.reserve(imagesFresh.size());
 
     ModelsCollection<AlbumImage>::size_type index = 0;
@@ -2762,7 +2762,7 @@ void tst_Collection_Relations::fresh_WithSelectConstraint() const
         ++index;
     }
 
-    QVector<QString> expectedNames {
+    QList<QString> expectedNames {
         "album1_image1", "album2_image1", "album2_image2",
     };
     QCOMPARE(actualNames, expectedNames);
@@ -2795,7 +2795,7 @@ void tst_Collection_Relations::fresh_QString() const
     QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
 
     // Verify
-    QVector<QString> actualNames;
+    QList<QString> actualNames;
     actualNames.reserve(imagesFresh.size());
 
     ModelsCollection<AlbumImage *>::size_type index = 0;
@@ -2812,7 +2812,7 @@ void tst_Collection_Relations::fresh_QString() const
         ++index;
     }
 
-    QVector<QString> expectedNames {
+    QList<QString> expectedNames {
         "album1_image1", "album2_image1", "album2_image2",
     };
     QCOMPARE(actualNames, expectedNames);
@@ -2853,7 +2853,7 @@ void tst_Collection_Relations::fresh_EmptyRelations() const
     QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
 
     // Verify
-    QVector<QString> actualNames;
+    QList<QString> actualNames;
     actualNames.reserve(imagesFresh.size());
 
     ModelsCollection<AlbumImage *>::size_type index = 0;
@@ -2869,7 +2869,7 @@ void tst_Collection_Relations::fresh_EmptyRelations() const
         ++index;
     }
 
-    QVector<QString> expectedNames {
+    QList<QString> expectedNames {
         "album1_image1", "album2_image1", "album2_image2",
     };
     QCOMPARE(actualNames, expectedNames);
@@ -3398,12 +3398,12 @@ void tst_Collection_Relations::toVector() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<QVector<AttributeItem>> result = imagesInit.toVector();
+    QList<QList<AttributeItem>> result = imagesInit.toVector();
 
     // Verify
     QCOMPARE(result.size(), 4);
 
-    QVector<QVector<AttributeItem>> expectedVector {
+    QList<QList<AttributeItem>> expectedVector {
         {
             {ID,                 1},
             {Common::album_id_s, 1},
@@ -3456,12 +3456,12 @@ void tst_Collection_Relations::toMap() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<QVariantMap> result = imagesInit.toMap();
+    QList<QVariantMap> result = imagesInit.toMap();
 
     // Verify
     QCOMPARE(result.size(), 4);
 
-    QVector<QVariantMap> expectedMap {
+    QList<QVariantMap> expectedMap {
         {
             {Common::album_id_s, 1},
             {CREATED_AT,         "2023-03-01T15:24:37.000Z"},
@@ -4128,7 +4128,7 @@ void tst_Collection_Relations::each_lvalue() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    QVector<quint64> expectedIds;
+    QList<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage *> &result = images.each([&expectedIds]
@@ -4143,7 +4143,7 @@ void tst_Collection_Relations::each_lvalue() const
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(QVector<quint64>({2, 3, 4, 5, 6}), expectedIds);
+    QCOMPARE(QList<quint64>({2, 3, 4, 5, 6}), expectedIds);
 }
 
 /*! ExpectedItem used in the each() related tests. */
@@ -4174,7 +4174,7 @@ void tst_Collection_Relations::each_lvalue_index() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    QVector<ExpectedItem> expectedIds;
+    QList<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage *> &result =
@@ -4194,7 +4194,7 @@ void tst_Collection_Relations::each_lvalue_index() const
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
+    QCOMPARE(QList<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
              expectedIds);
 }
 
@@ -4212,7 +4212,7 @@ void tst_Collection_Relations::each_lvalue_bool() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    QVector<quint64> expectedIds;
+    QList<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage *> &result =
@@ -4234,7 +4234,7 @@ void tst_Collection_Relations::each_lvalue_bool() const
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(QVector<quint64>({2, 3, 4}), expectedIds);
+    QCOMPARE(QList<quint64>({2, 3, 4}), expectedIds);
 }
 
 void tst_Collection_Relations::each_lvalue_bool_index() const
@@ -4251,7 +4251,7 @@ void tst_Collection_Relations::each_lvalue_bool_index() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    QVector<ExpectedItem> expectedIds;
+    QList<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage *> &result =
@@ -4278,7 +4278,7 @@ void tst_Collection_Relations::each_lvalue_bool_index() const
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
+    QCOMPARE(QList<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
              expectedIds);
 }
 
@@ -4293,7 +4293,7 @@ void tst_Collection_Relations::each_rvalue() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<quint64> expectedIds;
+    QList<quint64> expectedIds;
     expectedIds.reserve(imagesInit.size());
 
     ModelsCollection<AlbumImage *> result =
@@ -4306,7 +4306,7 @@ void tst_Collection_Relations::each_rvalue() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(QVector<quint64>({2, 3, 4, 5, 6}), expectedIds);
+    QCOMPARE(QList<quint64>({2, 3, 4, 5, 6}), expectedIds);
 }
 
 void tst_Collection_Relations::each_rvalue_index() const
@@ -4320,7 +4320,7 @@ void tst_Collection_Relations::each_rvalue_index() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<ExpectedItem> expectedIds;
+    QList<ExpectedItem> expectedIds;
     expectedIds.reserve(imagesInit.size());
 
     ModelsCollection<AlbumImage *> result =
@@ -4337,7 +4337,7 @@ void tst_Collection_Relations::each_rvalue_index() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
+    QCOMPARE(QList<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
              expectedIds);
 }
 
@@ -4352,7 +4352,7 @@ void tst_Collection_Relations::each_rvalue_bool() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<quint64> expectedIds;
+    QList<quint64> expectedIds;
     expectedIds.reserve(imagesInit.size());
 
     ModelsCollection<AlbumImage *> result =
@@ -4371,7 +4371,7 @@ void tst_Collection_Relations::each_rvalue_bool() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(QVector<quint64>({2, 3, 4}), expectedIds);
+    QCOMPARE(QList<quint64>({2, 3, 4}), expectedIds);
 }
 
 void tst_Collection_Relations::each_rvalue_bool_index() const
@@ -4385,7 +4385,7 @@ void tst_Collection_Relations::each_rvalue_bool_index() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
-    QVector<ExpectedItem> expectedIds;
+    QList<ExpectedItem> expectedIds;
     expectedIds.reserve(imagesInit.size());
 
     ModelsCollection<AlbumImage *> result =
@@ -4409,7 +4409,7 @@ void tst_Collection_Relations::each_rvalue_bool_index() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
+    QCOMPARE(QList<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
              expectedIds);
 }
 

@@ -50,13 +50,13 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with {
+    QList<QString> u_with {
         "torrentFiles.fileProperty",
         "torrentPeer",
     };
 
     /*! The model's default values for attributes. */
-    inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QList<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE_,      0},
         {Progress,   0},
         {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Orm::TTimeZone::UTC)},

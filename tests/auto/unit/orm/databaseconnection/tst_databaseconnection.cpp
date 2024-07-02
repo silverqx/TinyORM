@@ -368,7 +368,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const QVector<QString> nameValues {
+    const QList<QString> nameValues {
         QLatin1String("james"),
         QLatin1String("robert"),
         QLatin1String("david"),
@@ -376,7 +376,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
     const auto noteValue = sl("transation savepoints commit all success");
 
     // Result ids
-    QVector<quint64> idsSuccess;
+    QList<quint64> idsSuccess;
     idsSuccess.reserve(nameValues.size());
 
     DB::beginTransaction(connection);
@@ -451,19 +451,19 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const QVector<QString> nameValuesSuccess {
+    const QList<QString> nameValuesSuccess {
         QLatin1String("james"),
         QLatin1String("david"),
     };
-    const QVector<QString> nameValuesFailed {
+    const QList<QString> nameValuesFailed {
         QLatin1String("robert"),
     };
     const auto noteValue = sl("transation savepoints commit one failed");
 
     // Result ids
-    QVector<quint64> idsSuccess;
+    QList<quint64> idsSuccess;
     idsSuccess.reserve(2);
-    QVector<quint64> idsFailed;
+    QList<quint64> idsFailed;
     idsSuccess.reserve(1);
 
     DB::beginTransaction(connection);
@@ -545,7 +545,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const QVector<QString> nameValues {
+    const QList<QString> nameValues {
         QLatin1String("james"),
         QLatin1String("robert"),
         QLatin1String("david"),
@@ -553,7 +553,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
     const auto noteValue = sl("transation savepoints commit all failed");
 
     // Result ids
-    QVector<quint64> idsFailed;
+    QList<quint64> idsFailed;
     idsFailed.reserve(nameValues.size());
 
     DB::beginTransaction(connection);
@@ -640,7 +640,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         auto builder = createQuery(connection);
 
         // Prepare data
-        const QVector<QString> nameValues {
+        const QList<QString> nameValues {
             QLatin1String("james"),
             QLatin1String("robert"),
             QLatin1String("david"),
@@ -648,7 +648,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         const auto noteValue = sl("transation savepoints commit all failed double");
 
         // Result ids
-        QVector<quint64> idsFailed;
+        QList<quint64> idsFailed;
         idsFailed.reserve(nameValues.size());
 
         DB::beginTransaction(connection);
@@ -727,7 +727,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         auto builder = createQuery(connection);
 
         // Prepare data
-        const QVector<QString> nameValues {
+        const QList<QString> nameValues {
             QLatin1String("james"),
             QLatin1String("robert"),
             QLatin1String("david"),
@@ -735,7 +735,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         const auto noteValue = sl("transation savepoints commit all failed double");
 
         // Result ids
-        QVector<quint64> idsFailed;
+        QList<quint64> idsFailed;
         idsFailed.reserve(nameValues.size());
 
         DB::beginTransaction(connection);

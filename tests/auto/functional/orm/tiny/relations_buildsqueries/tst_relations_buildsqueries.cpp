@@ -218,7 +218,7 @@ void tst_Relations_BuildsQueries::chunkMap_Relation() const
         return std::move(model);
     });
 
-    QVector<IdAndName> expectedResult {
+    QList<IdAndName> expectedResult {
         {6, "test5_file1_property1_mapped"},
         {7, "test5_file1_property2_mapped"},
         {8, "test5_file1_property3_mapped"},
@@ -232,7 +232,7 @@ void tst_Relations_BuildsQueries::chunkMap_Relation() const
         return {model.getKeyCasted(),
                 model.getAttribute<QString>(NAME)};
     })
-            | ranges::to<QVector<IdAndName>>();
+            | ranges::to<QList<IdAndName>>();
 
     QVERIFY(expectedResult.size() == result.size());
     QCOMPARE(resultTransformed, expectedResult);
@@ -251,7 +251,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"test5_file1_property1_mapped"},
         {"test5_file1_property2_mapped"},
         {"test5_file1_property3_mapped"},
@@ -758,7 +758,7 @@ void tst_Relations_BuildsQueries::chunkMap() const
         return std::move(model);
     });
 
-    QVector<IdAndName> expectedResult {
+    QList<IdAndName> expectedResult {
         {1, "tag1_mapped"},
         {2, "tag2_mapped"},
         {3, "tag3_mapped"},
@@ -772,7 +772,7 @@ void tst_Relations_BuildsQueries::chunkMap() const
         return {model.getKeyCasted(),
                 model.getAttribute<QString>(NAME)};
     })
-            | ranges::to<QVector<IdAndName>>();
+            | ranges::to<QList<IdAndName>>();
 
     QVERIFY(expectedResult.size() == result.size());
     QCOMPARE(resultTransformed, expectedResult);
@@ -799,7 +799,7 @@ void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
         return std::move(model);
     });
 
-    QVector<IdAndName> expectedResult {
+    QList<IdAndName> expectedResult {
         {1, "tag1_mapped"},
         {2, "tag2_mapped"},
         {3, "tag3_mapped"},
@@ -813,7 +813,7 @@ void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
         return {model.getKeyCasted(),
                 model.getAttribute<QString>(NAME)};
     })
-            | ranges::to<QVector<IdAndName>>();
+            | ranges::to<QList<IdAndName>>();
 
     QVERIFY(expectedResult.size() == result.size());
     QCOMPARE(resultTransformed, expectedResult);
@@ -860,7 +860,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"tag1_mapped"},
         {"tag2_mapped"},
         {"tag3_mapped"},
@@ -889,7 +889,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() 
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"tag1_mapped"},
         {"tag2_mapped"},
         {"tag3_mapped"},
@@ -922,7 +922,7 @@ tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() cons
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"tag1_mapped"},
         {"tag2_mapped"},
         {"tag3_mapped"},
@@ -955,7 +955,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() co
     });
 
     QVERIFY(!callbackInvoked);
-    QVERIFY((std::is_same_v<decltype (result), QVector<QString>>));
+    QVERIFY((std::is_same_v<decltype (result), QList<QString>>));
     QVERIFY(result.isEmpty());
 }
 

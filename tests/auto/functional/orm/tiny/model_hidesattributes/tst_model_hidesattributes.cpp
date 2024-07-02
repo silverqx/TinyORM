@@ -136,11 +136,11 @@ void tst_Model_HidesAttributes::toVector_WithVisible() const
     // Prepare
     torrent->setVisible({ID, "user_id", "added_on"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         4},
         {"user_id",  1},
         {"added_on", "2020-08-04T20:11:10.000Z"},
@@ -187,11 +187,11 @@ void tst_Model_HidesAttributes::toVector_WithHidden() const
     // Prepare
     torrent->setHidden({HASH_, NOTE, SIZE_});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 7);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         4},
         {"user_id",  1},
         {NAME,       "test4"},
@@ -240,11 +240,11 @@ void tst_Model_HidesAttributes::toVector_WithVisibleAndHidden() const
     torrent->setVisible({ID, "user_id", "added_on"});
     torrent->setHidden({"added_on"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,        4},
         {"user_id", 1},
     };
@@ -330,7 +330,7 @@ void tst_Model_HidesAttributes::
     // Prepare
     torrent->setVisible({ID, "user_id", "torrentPeer", "torrentFiles"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -348,9 +348,9 @@ void tst_Model_HidesAttributes::
             QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                    .value.value<QVector<AttributeItem>>();
+                                    .value.value<QList<AttributeItem>>();
 
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,               5},
             {"torrent_id",     7},
             {"seeds",          NullVariant::Int()},
@@ -372,7 +372,7 @@ void tst_Model_HidesAttributes::
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
                                     .value.value<QVariantList>();
 
-        QVariantList expectedAttributes {QVariant::fromValue(QVector<AttributeItem> {
+        QVariantList expectedAttributes {QVariant::fromValue(QList<AttributeItem> {
             {ID,            10},
             {"torrent_id",  7},
             {"file_index",  0},
@@ -382,7 +382,7 @@ void tst_Model_HidesAttributes::
             {NOTE,          "for serialization"},
             {CREATED_AT,    "2021-01-10T14:51:23.000Z"},
             {UPDATED_AT,    "2021-01-10T17:46:31.000Z"},
-        }), QVariant::fromValue(QVector<AttributeItem> {
+        }), QVariant::fromValue(QList<AttributeItem> {
             {ID,            11},
             {"torrent_id",  7},
             {"file_index",  1},
@@ -392,7 +392,7 @@ void tst_Model_HidesAttributes::
             {NOTE,          "for serialization"},
             {CREATED_AT,    "2021-01-11T14:51:23.000Z"},
             {UPDATED_AT,    "2021-01-11T17:46:31.000Z"},
-        }), QVariant::fromValue(QVector<AttributeItem> {
+        }), QVariant::fromValue(QList<AttributeItem> {
             {ID,            12},
             {"torrent_id",  7},
             {"file_index",  2},
@@ -408,7 +408,7 @@ void tst_Model_HidesAttributes::
     }
     // Compare the rest of attributes - torrent itself
     {
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,        7},
             {"user_id", 2},
         };
@@ -487,7 +487,7 @@ void tst_Model_HidesAttributes::
     torrent->setVisible({ID, "user_id", NOTE, "torrentPeer", "torrentFiles"});
     torrent->setHidden({NOTE, "torrentFiles"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -505,9 +505,9 @@ void tst_Model_HidesAttributes::
             QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                    .value.value<QVector<AttributeItem>>();
+                                    .value.value<QList<AttributeItem>>();
 
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,               5},
             {"torrent_id",     7},
             {"seeds",          NullVariant::Int()},
@@ -522,7 +522,7 @@ void tst_Model_HidesAttributes::
     }
     // Compare the rest of attributes - torrent itself
     {
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,        7},
             {"user_id", 2},
         };
@@ -596,34 +596,34 @@ void tst_Model_HidesAttributes::
     // Prepare
     user->setVisible({ID, NAME, "roles"});
 
-    QVector<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toVector();
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,      1},
         {NAME,    "andrej"},
-        {"roles", QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"roles", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                       {ID,             1},
                       {NAME,           "role one"},
                       {"added_on",     "2022-08-01T13:36:56.000Z"},
-                      {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                      {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 1},
                                            {"active",  true},
                                        })},
-                  }), QVariant::fromValue(QVector<AttributeItem> {
+                  }), QVariant::fromValue(QList<AttributeItem> {
                       {ID,             2},
                       {NAME,           "role two"},
                       {"added_on",     "2022-08-02T13:36:56.000Z"},
-                      {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                      {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 2},
                                            {"active",  false},
                                        })},
-                  }), QVariant::fromValue(QVector<AttributeItem> {
+                  }), QVariant::fromValue(QList<AttributeItem> {
                       {ID,             3},
                       {NAME,           "role three"},
                       {"added_on",     NullVariant::QDateTime()},
-                      {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                      {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 3},
                                            {"active",  true},
@@ -674,9 +674,9 @@ const
     // Prepare
     user->setHidden({NAME, NOTE, "roles"});
 
-    QVector<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toVector();
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,          1},
         {"is_banned", false},
         {CREATED_AT,  "2022-01-01T14:51:23.000Z"},

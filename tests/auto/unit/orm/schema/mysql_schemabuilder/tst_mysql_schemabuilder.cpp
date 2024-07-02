@@ -914,8 +914,8 @@ void tst_MySql_SchemaBuilder::getColumnListing() const
              "from `information_schema`.`columns` "
              "where `table_schema` = ? and `table_name` = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(Firewalls)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              QVariant(Firewalls)}));
 }
 
 void tst_MySql_SchemaBuilder::hasTable() const
@@ -937,8 +937,8 @@ void tst_MySql_SchemaBuilder::hasTable() const
              "where `table_schema` = ? and `table_name` = ? and "
              "`table_type` = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(Firewalls)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              QVariant(Firewalls)}));
 }
 
 void tst_MySql_SchemaBuilder::defaultStringLength_Set() const

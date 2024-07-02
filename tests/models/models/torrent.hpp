@@ -64,7 +64,7 @@ public:
     /*! Type used for the primary key ID. */
     using KeyType = quint64;
 
-//    explicit Torrent(const QVector<AttributeItem> &attributes = {});
+//    explicit Torrent(const QList<AttributeItem> &attributes = {});
 
     /*! Get previewable files associated with the torrent. */
     std::unique_ptr<HasMany<Torrent, TorrentPreviewableFile>>
@@ -196,7 +196,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with { // NOLINT(readability-redundant-member-init)
+    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
 //        "torrentFiles",
 //        "torrentPeer",
 //        "torrentFiles.fileProperty",
@@ -216,7 +216,7 @@ private:
 //    QString u_connection {"sqlite"};
 
     /*! The model's default values for attributes. */
-//    inline static const QVector<AttributeItem> u_attributes {
+//    inline static const QList<AttributeItem> u_attributes {
 //        {SIZE_,      0},
 //        {Progress, 0},
 //        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, QtTimeZoneConfig::utc())},

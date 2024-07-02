@@ -868,9 +868,9 @@ void tst_PostgreSQL_SchemaBuilder::getColumnListing() const
              "from information_schema.columns "
              "where table_catalog = ? and table_schema = ? and table_name = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({connection.getDatabaseName(),
-                                connection.getConfig(search_path),
-                                QVariant(Firewalls)}));
+             QList<QVariant>({connection.getDatabaseName(),
+                              connection.getConfig(search_path),
+                              QVariant(Firewalls)}));
 }
 
 void tst_PostgreSQL_SchemaBuilder::hasTable() const
@@ -892,9 +892,9 @@ void tst_PostgreSQL_SchemaBuilder::hasTable() const
              "where table_catalog = ? and table_schema = ? and table_name = ? and "
                "table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({connection.getDatabaseName(),
-                                connection.getConfig(search_path),
-                                QVariant(Firewalls)}));
+             QList<QVariant>({connection.getDatabaseName(),
+                              connection.getConfig(search_path),
+                              QVariant(Firewalls)}));
 }
 
 void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() const
@@ -938,9 +938,9 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
              "where table_catalog = ? and table_schema = ? and "
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(databaseName),
-                                QVariant(schemaName),
-                                QVariant(tableName)}));
+             QList<QVariant>({QVariant(databaseName),
+                              QVariant(schemaName),
+                              QVariant(tableName)}));
 }
 
 void tst_PostgreSQL_SchemaBuilder::
@@ -980,9 +980,9 @@ void tst_PostgreSQL_SchemaBuilder::
              "where table_catalog = ? and table_schema = ? and "
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(sl("schema_example")),
-                                QVariant(tableName)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              QVariant(sl("schema_example")),
+                              QVariant(tableName)}));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -1025,9 +1025,9 @@ void tst_PostgreSQL_SchemaBuilder::
              "where table_catalog = ? and table_schema = ? and "
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(sl("schema_example")),
-                                QVariant(tableName)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              QVariant(sl("schema_example")),
+                              QVariant(tableName)}));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -1094,9 +1094,9 @@ void tst_PostgreSQL_SchemaBuilder::
              "where table_catalog = ? and table_schema = ? and "
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                connection.getConfig(username_),
-                                QVariant(tableName)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              connection.getConfig(username_),
+                              QVariant(tableName)}));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -1138,10 +1138,10 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
              "where table_catalog = ? and table_schema = ? and "
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                // Should use hardcoded PUBLIC default in pretending
-                                QVariant(PUBLIC),
-                                QVariant(tableName)}));
+             QList<QVariant>({QVariant(connection.getDatabaseName()),
+                              // Should use hardcoded PUBLIC default in pretending
+                              QVariant(PUBLIC),
+                              QVariant(tableName)}));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));

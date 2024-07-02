@@ -24,7 +24,7 @@ class TorrentEager_Without_QDateTime final : public Model<TorrentEager_Without_Q
     QString u_table {"torrents"};
 
     /*! The model's default values for attributes. */
-    inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QList<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE_,    0},
         {Progress, 0},
     };

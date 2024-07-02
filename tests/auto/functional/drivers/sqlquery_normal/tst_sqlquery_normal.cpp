@@ -133,10 +133,10 @@ void tst_SqlQuery_Normal::select_All() const
     QVERIFY(users.boundValues().isEmpty());
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -250,10 +250,10 @@ void tst_SqlQuery_Normal::select_WithWhere() const
     QVERIFY(users.boundValues().isEmpty());
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -294,10 +294,10 @@ void tst_SqlQuery_Normal::select_IsNull() const
     QCOMPARE(users.executedQuery(), query);
 
     // Verify the result
-    QVector<IdAndCustomType<bool>> expected {
+    QList<IdAndCustomType<bool>> expected {
         {1, true}, {2, true}, {3, false}, {4, false}, {5, false},
     };
-    QVector<IdAndCustomType<bool>> actual;
+    QList<IdAndCustomType<bool>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -368,18 +368,18 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
     QCOMPARE(users.lastInsertId(), QVariant());
 
     // Verify the result
-    QVector<QVector<QVariant>> expected {
+    QList<QList<QVariant>> expected {
         {1, u"andrej"_s, 0, NullVariant::QString()},
         {2, u"silver"_s, 0, NullVariant::QString()},
         {3, u"peter"_s, 1, u"no torrents no roles"_s},
         {4, u"jack"_s, 0, u"test SoftDeletes"_s},
         {5, u"obiwan"_s, 1, u"test SoftDeletes"_s},
     };
-    QVector<QVector<QVariant>> actual;
+    QList<QList<QVariant>> actual;
     actual.reserve(querySize);
 
-    QVector<bool> expectedNull {true, true, false, false, false};
-    QVector<bool> actualNull;
+    QList<bool> expectedNull {true, true, false, false, false};
+    QList<bool> actualNull;
     actualNull.reserve(querySize);
 
     while (users.next()) {
@@ -391,10 +391,10 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
 
-        actual << QVector<QVariant>({users.value(ID).value<quint64>(),
-                                     users.value(NAME).value<QString>(),
-                                     users.value("is_banned").value<QString>(),
-                                     users.value(NOTE).value<QString>()});
+        actual << QList<QVariant>({users.value(ID).value<quint64>(),
+                                   users.value(NAME).value<QString>(),
+                                   users.value("is_banned").value<QString>(),
+                                   users.value(NOTE).value<QString>()});
     }
     QCOMPARE(actual, expected);
     QCOMPARE(actualNull, expectedNull);
@@ -418,8 +418,8 @@ void tst_SqlQuery_Normal::seeking() const
     QCOMPARE(querySize, 5);
 
     // Verify the result
-    QVector<quint64> expected {1, 2, 3, 4, 5};
-    QVector<quint64> actual;
+    QList<quint64> expected {1, 2, 3, 4, 5};
+    QList<quint64> actual;
     actual.reserve(querySize);
 
     // First verify if we have the correct result set
@@ -605,10 +605,10 @@ void tst_SqlQuery_Normal::finish_And_detachFromResultSet() const
     QVERIFY(users.boundValues().isEmpty());
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -656,7 +656,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
 
     const auto query = u"select id, name from users order by id"_s;
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
     };
 
@@ -680,7 +680,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
         QVERIFY(users.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -722,7 +722,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
         QVERIFY(users.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -772,10 +772,10 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
         QVERIFY(query.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -818,10 +818,10 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
         QVERIFY(query.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "role one"}, {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -853,7 +853,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
 
     const auto query = u"select id, name from users order by id"_s;
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
     };
 
@@ -877,7 +877,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
         QVERIFY(users.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -941,7 +941,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
         QVERIFY(users.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -991,10 +991,10 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
         QVERIFY(query.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1059,10 +1059,10 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
         QVERIFY(query.boundValues().isEmpty());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "role one"}, {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {

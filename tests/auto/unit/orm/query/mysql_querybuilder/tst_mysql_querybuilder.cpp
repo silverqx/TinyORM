@@ -413,7 +413,7 @@ void tst_MySql_QueryBuilder::find() const
     QCOMPARE(firstLog.query,
              "select `id`, `name` from `torrents` where `id` = ? limit 1");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(3)}));
+             QList<QVariant>({QVariant(3)}));
 }
 
 void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
@@ -431,7 +431,7 @@ void tst_MySql_QueryBuilder::find_ColumnAndValueExpression() const
         QCOMPARE(firstLog.query,
                  "select `id`, name from `torrents` where `id` = ? limit 1");
         QCOMPARE(firstLog.boundValues,
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 
     {
@@ -738,7 +738,7 @@ void tst_MySql_QueryBuilder::exists() const
     QCOMPARE(firstLog.query,
              "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(7)}));
+             QList<QVariant>({QVariant(7)}));
 }
 
 void tst_MySql_QueryBuilder::doesntExist() const
@@ -755,7 +755,7 @@ void tst_MySql_QueryBuilder::doesntExist() const
     QCOMPARE(firstLog.query,
              "select exists(select * from `torrent_peers` where `id` < ?) as `exists`");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(7)}));
+             QList<QVariant>({QVariant(7)}));
 }
 
 void tst_MySql_QueryBuilder::select() const
@@ -924,7 +924,7 @@ void tst_MySql_QueryBuilder::selectRaw_WithBindings_WithWhere() const
              "from `torrents` "
              "where `last_seen_at` > ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(10), QVariant(1520652582)}));
+             QList<QVariant>({QVariant(10), QVariant(1520652582)}));
 }
 
 void tst_MySql_QueryBuilder::selectSub_QStringOverload() const
@@ -970,7 +970,7 @@ void tst_MySql_QueryBuilder::selectSub_QueryBuilderOverload_WithWhere() const
              "from `torrents` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::selectSub_CallbackOverload() const
@@ -997,7 +997,7 @@ void tst_MySql_QueryBuilder::selectSub_CallbackOverload() const
              "from `torrents` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::distinct() const
@@ -1209,7 +1209,7 @@ void tst_MySql_QueryBuilder::fromRaw_WithWhere() const
              "select * from (select max(last_seen_at) as last_seen_at "
              "from `sessions`) as `last_seen_at` where `last_seen_at` > ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1520652582)}));
+             QList<QVariant>({QVariant(1520652582)}));
 }
 
 void tst_MySql_QueryBuilder::fromRaw_WithBindings_WithWhere() const
@@ -1231,7 +1231,7 @@ void tst_MySql_QueryBuilder::fromRaw_WithBindings_WithWhere() const
              "from `sessions` where id < ?) as `last_seen_at` "
              "where `last_seen_at` > ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(10), QVariant(1520652582)}));
+             QList<QVariant>({QVariant(10), QVariant(1520652582)}));
 }
 
 void tst_MySql_QueryBuilder::fromSub_QStringOverload() const
@@ -1266,7 +1266,7 @@ void tst_MySql_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
              "from `user_sessions` where `id` < ?) as `sessions` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::fromSub_CallbackOverload() const
@@ -1286,7 +1286,7 @@ void tst_MySql_QueryBuilder::fromSub_CallbackOverload() const
              "from `user_sessions` where `id` < ?) as `sessions` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::joinSub_QStringOverload() const
@@ -1325,7 +1325,7 @@ void tst_MySql_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
              "on `users`.`id` = `sessions`.`user_id` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::joinSub_CallbackOverload() const
@@ -1349,7 +1349,7 @@ void tst_MySql_QueryBuilder::joinSub_CallbackOverload() const
              "on `users`.`id` = `sessions`.`user_id` "
              "where `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::where() const
@@ -1361,7 +1361,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1371,7 +1371,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1382,7 +1382,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? and `name` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+                 QList<QVariant>({QVariant(3), QVariant("test3")}));
     }
 
     {
@@ -1392,7 +1392,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` != ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1402,7 +1402,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` <> ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1412,7 +1412,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1423,7 +1423,7 @@ void tst_MySql_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? and `name` like ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+                 QList<QVariant>({QVariant(3), QVariant("test%")}));
     }
 }
 
@@ -1436,7 +1436,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1446,7 +1446,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ? and `size` > ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10)}));
+                 QList<QVariant>({QVariant(3), QVariant(10)}));
     }
 
     {
@@ -1458,7 +1458,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
                  "select * from `torrents` where (`id` = ? and `size` > ?) "
                  "and (`progress` >= ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+                 QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
     }
 }
 
@@ -1473,7 +1473,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue_DefaultCondition() const
              "select * from `torrents` where (`progress` >= ?) and "
              "(`id` = ? or `size` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::where_WithVectorValue_Condition_Override() const
@@ -1487,8 +1487,8 @@ void tst_MySql_QueryBuilder::where_WithVectorValue_Condition_Override() const
              "select * from `torrents` where (`progress` >= ?) and "
              "(`id` = ? or `size` > ? and `name` = ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10),
-                                QVariant("xyz")}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10),
+                              QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::where_QueryableValue() const
@@ -1535,7 +1535,7 @@ void tst_MySql_QueryBuilder::where_QueryableColumn() const
                  "select * from `torrents` "
                  "where (select avg(t.size) from `torrents` as `t`) > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(13)}));
+                 QList<QVariant>({QVariant(13)}));
     }
     // With QueryBuilder
     {
@@ -1549,7 +1549,7 @@ void tst_MySql_QueryBuilder::where_QueryableColumn() const
                  "select * from `torrents` "
                  "where (select avg(t.size) from `torrents` as `t`) > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(13)}));
+                 QList<QVariant>({QVariant(13)}));
     }
 }
 
@@ -1561,7 +1561,7 @@ void tst_MySql_QueryBuilder::where_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where id = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant> {QVariant(3)});
+             QList<QVariant> {QVariant(3)});
 }
 
 void tst_MySql_QueryBuilder::where_ValueExpression() const
@@ -1584,7 +1584,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1594,7 +1594,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1605,7 +1605,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` = ? and `name` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+                 QList<QVariant>({QVariant(3), QVariant("test3")}));
     }
 
     {
@@ -1615,7 +1615,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` != ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1625,7 +1625,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` <> ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1635,7 +1635,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1646,7 +1646,7 @@ void tst_MySql_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` > ? and not `name` like ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+                 QList<QVariant>({QVariant(3), QVariant("test%")}));
     }
 }
 
@@ -1659,7 +1659,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not (`id` = ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1669,7 +1669,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not (`id` = ? and `size` > ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10)}));
+                 QList<QVariant>({QVariant(3), QVariant(10)}));
     }
 
     {
@@ -1681,7 +1681,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
                  "select * from `torrents` where not (`id` = ? and `size` > ?) "
                  "and not (`progress` >= ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+                 QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
     }
 }
 
@@ -1696,7 +1696,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() const
              "select * from `torrents` where not (`progress` >= ?) and "
              "not (`id` = ? or `size` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::whereNot_QueryableValue() const
@@ -1743,7 +1743,7 @@ void tst_MySql_QueryBuilder::whereNot_QueryableColumn() const
                  "select * from `torrents` "
                  "where not (select avg(t.size) from `torrents` as `t`) > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(13)}));
+                 QList<QVariant>({QVariant(13)}));
     }
     // With QueryBuilder
     {
@@ -1757,7 +1757,7 @@ void tst_MySql_QueryBuilder::whereNot_QueryableColumn() const
                  "select * from `torrents` "
                  "where not (select avg(t.size) from `torrents` as `t`) > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(13)}));
+                 QList<QVariant>({QVariant(13)}));
     }
 }
 
@@ -1771,7 +1771,7 @@ void tst_MySql_QueryBuilder::orWhere() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `progress` >= ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+                 QList<QVariant>({QVariant(4), QVariant(300)}));
     }
 
     {
@@ -1782,7 +1782,7 @@ void tst_MySql_QueryBuilder::orWhere() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `name` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+                 QList<QVariant>({QVariant(4), QVariant("test3")}));
     }
 }
 
@@ -1795,7 +1795,7 @@ void tst_MySql_QueryBuilder::orWhere_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where id > ? or `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(4), QVariant("test3")}));
+             QList<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
 void tst_MySql_QueryBuilder::orWhere_WithVectorValue() const
@@ -1808,7 +1808,7 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue() const
              "select * from `torrents` where (`id` = ? and `size` > ?) or "
              "(`progress` >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_MySql_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
@@ -1821,7 +1821,7 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
              "select * from `torrents` where (`progress` >= ?) or "
              "(`id` = ? and `size` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
@@ -1835,7 +1835,7 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
              "select * from `torrents` where (id = ? and `size` > ?) or "
              "(progress >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
@@ -1854,7 +1854,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
                  "select * from `torrents` "
                  "where `id` = ? or `id` = (select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     // With QueryBuilder
     {
@@ -1869,7 +1869,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableValue() const
                  "select * from `torrents` "
                  "where `id` = ? or `id` = (select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -1889,7 +1889,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumn() const
                  "select * from `torrents` "
                  "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+                 QList<QVariant>({QVariant(2), QVariant(13)}));
     }
     // With QueryBuilder
     {
@@ -1903,7 +1903,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumn() const
                  "select * from `torrents` "
                  "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+                 QList<QVariant>({QVariant(2), QVariant(13)}));
     }
 }
 
@@ -1925,7 +1925,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
                  "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = "
                  "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     {
         auto builder = createQuery();
@@ -1942,7 +1942,7 @@ void tst_MySql_QueryBuilder::orWhereEq_QueryableColumnAndValue() const
                  "where `id` = ? or (select avg(t.size) from `torrents` as `t`) = "
                  "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -1956,7 +1956,7 @@ void tst_MySql_QueryBuilder::orWhereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` > ? or not `progress` >= ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+                 QList<QVariant>({QVariant(4), QVariant(300)}));
     }
 
     {
@@ -1967,7 +1967,7 @@ void tst_MySql_QueryBuilder::orWhereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not `id` > ? or not `name` = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+                 QList<QVariant>({QVariant(4), QVariant("test3")}));
     }
 }
 
@@ -1980,7 +1980,7 @@ void tst_MySql_QueryBuilder::orWhereNot_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where not id > ? or not `name` = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(4), QVariant("test3")}));
+             QList<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
 void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue() const
@@ -1993,7 +1993,7 @@ void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue() const
              "select * from `torrents` where not (`id` = ? and `size` > ?) or "
              "not (`progress` >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
@@ -2006,7 +2006,7 @@ void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
              "select * from `torrents` where not (`progress` >= ?) or "
              "not (`id` = ? and `size` > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_ColumnExpression() const
@@ -2020,7 +2020,7 @@ void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_ColumnExpression() const
              "select * from `torrents` where not (id = ? and `size` > ?) or "
              "not (progress >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_MySql_QueryBuilder::orWhereNotEq_QueryableValue() const
@@ -2040,7 +2040,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableValue() const
                  "where not `id` = ? or "
                  "not `id` = (select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     // With QueryBuilder
     {
@@ -2056,7 +2056,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableValue() const
                  "where not `id` = ? or "
                  "not `id` = (select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2077,7 +2077,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumn() const
                  "where not `id` = ? or "
                  "not (select avg(t.size) from `torrents` as `t`) = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+                 QList<QVariant>({QVariant(2), QVariant(13)}));
     }
     // With QueryBuilder
     {
@@ -2092,7 +2092,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumn() const
                  "where not `id` = ? or "
                  "not (select avg(t.size) from `torrents` as `t`) = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(13)}));
+                 QList<QVariant>({QVariant(2), QVariant(13)}));
     }
 }
 
@@ -2115,7 +2115,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumnAndValue() const
                  "not (select avg(t.size) from `torrents` as `t`) = "
                  "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     {
         auto builder = createQuery();
@@ -2133,7 +2133,7 @@ void tst_MySql_QueryBuilder::orWhereNotEq_QueryableColumnAndValue() const
                  "not (select avg(t.size) from `torrents` as `t`) = "
                  "(select avg(t.size) from `torrents` as `t`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2148,7 +2148,7 @@ void tst_MySql_QueryBuilder::whereColumn() const
              "select * from `torrent_previewable_files` where `filepath` = `note` "
              "and `size` >= `progress`");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>());
+             QList<QVariant>());
 }
 
 void tst_MySql_QueryBuilder::orWhereColumn() const
@@ -2163,7 +2163,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
                  "or `size` = `progress`");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2176,7 +2176,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
                  "or `size` > `progress`");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -2191,7 +2191,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_ColumnExpression() const
              "select * from `torrent_previewable_files` where filepath = `note` "
              "or size > progress");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>());
+             QList<QVariant>());
 }
 
 void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
@@ -2206,7 +2206,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
                  "and `size` > `progress`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2219,7 +2219,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
                  "or `size` > `progress`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -2235,7 +2235,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` or `size` > `progress`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -2248,7 +2248,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` and `size` > `progress`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -2261,7 +2261,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` or `size` > `progress`)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2276,7 +2276,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() co
              "select * from `torrent_previewable_files` "
              "where `id` = ? or (filepath = `note` or `size` > progress)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(2)}));
+             QList<QVariant>({QVariant(2)}));
 }
 
 void tst_MySql_QueryBuilder::whereIn() const
@@ -2288,7 +2288,7 @@ void tst_MySql_QueryBuilder::whereIn() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
 
     {
@@ -2299,8 +2299,8 @@ void tst_MySql_QueryBuilder::whereIn() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1), QVariant(2),
-                                    QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(1), QVariant(2),
+                                  QVariant(3), QVariant(4)}));
     }
 }
 
@@ -2313,7 +2313,7 @@ void tst_MySql_QueryBuilder::whereNotIn() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
 
     {
@@ -2324,8 +2324,8 @@ void tst_MySql_QueryBuilder::whereNotIn() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1), QVariant(2),
-                                    QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(1), QVariant(2),
+                                  QVariant(3), QVariant(4)}));
     }
 }
 
@@ -2338,7 +2338,7 @@ void tst_MySql_QueryBuilder::whereNotIn_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where `id` = ? or id not in (?, ?, ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
+             QList<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
 }
 
 void tst_MySql_QueryBuilder::whereIn_Empty() const
@@ -2350,7 +2350,7 @@ void tst_MySql_QueryBuilder::whereIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where 0 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2361,7 +2361,7 @@ void tst_MySql_QueryBuilder::whereIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or 0 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1)}));
+                 QList<QVariant>({QVariant(1)}));
     }
 }
 
@@ -2374,7 +2374,7 @@ void tst_MySql_QueryBuilder::whereNotIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where 1 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2385,7 +2385,7 @@ void tst_MySql_QueryBuilder::whereNotIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or 1 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1)}));
+                 QList<QVariant>({QVariant(1)}));
     }
 }
 
@@ -2398,7 +2398,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` in (3)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2409,7 +2409,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or `id` in (3)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -2419,7 +2419,7 @@ void tst_MySql_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `name` in ('xyz')");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -2432,7 +2432,7 @@ void tst_MySql_QueryBuilder::whereNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2443,7 +2443,7 @@ void tst_MySql_QueryBuilder::whereNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -2454,7 +2454,7 @@ void tst_MySql_QueryBuilder::whereNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -2467,7 +2467,7 @@ void tst_MySql_QueryBuilder::whereNotNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2478,7 +2478,7 @@ void tst_MySql_QueryBuilder::whereNotNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? and `seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -2489,7 +2489,7 @@ void tst_MySql_QueryBuilder::whereNotNull() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? or `seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -2502,7 +2502,7 @@ void tst_MySql_QueryBuilder::whereNotNull_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrent_peers` where `id` = ? or seeds is not null");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3)}));
+             QList<QVariant>({QVariant(3)}));
 }
 
 void tst_MySql_QueryBuilder::whereNull_WithVectorValue() const
@@ -2515,7 +2515,7 @@ void tst_MySql_QueryBuilder::whereNull_WithVectorValue() const
                  "select * from `torrent_peers` where `seeds` is null "
                  "and `total_seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2527,7 +2527,7 @@ void tst_MySql_QueryBuilder::whereNull_WithVectorValue() const
                  "select * from `torrent_peers` where `id` = ? and `seeds` is null "
                  "and `total_seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -2539,7 +2539,7 @@ void tst_MySql_QueryBuilder::whereNull_WithVectorValue() const
                  "select * from `torrent_peers` where `id` = ? or `seeds` is null "
                  "or `total_seeds` is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -2554,7 +2554,7 @@ void tst_MySql_QueryBuilder::whereNotNull_WithVectorValue() const
                  "select * from `torrent_peers` where `seeds` is not null "
                  "and `total_seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -2566,7 +2566,7 @@ void tst_MySql_QueryBuilder::whereNotNull_WithVectorValue() const
                  "select * from `torrent_peers` where `id` = ? and `seeds` is not null "
                  "and `total_seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -2578,7 +2578,7 @@ void tst_MySql_QueryBuilder::whereNotNull_WithVectorValue() const
                  "select * from `torrent_peers` where `id` = ? or `seeds` is not null "
                  "or `total_seeds` is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -2591,7 +2591,7 @@ void tst_MySql_QueryBuilder::whereBetween() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `size` between ? and ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(12), QVariant(14)}));
+                 QList<QVariant>({QVariant(12), QVariant(14)}));
     }
 
     {
@@ -2602,7 +2602,7 @@ void tst_MySql_QueryBuilder::whereBetween() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `size` between ? and ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
+                 QList<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
     }
 }
 
@@ -2615,7 +2615,7 @@ void tst_MySql_QueryBuilder::whereNotBetween() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `size` not between ? and ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(12), QVariant(14)}));
+                 QList<QVariant>({QVariant(12), QVariant(14)}));
     }
 
     {
@@ -2626,7 +2626,7 @@ void tst_MySql_QueryBuilder::whereNotBetween() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `size` not between ? and ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
+                 QList<QVariant>({QVariant(2), QVariant(12), QVariant(14)}));
     }
 }
 
@@ -2641,7 +2641,7 @@ void tst_MySql_QueryBuilder::whereBetween_ColumnExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `size` between 12 and ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(14)}));
+                 QList<QVariant>({QVariant(2), QVariant(14)}));
     }
     // max. value as expression
     {
@@ -2652,7 +2652,7 @@ void tst_MySql_QueryBuilder::whereBetween_ColumnExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `size` between ? and 14");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(12)}));
+                 QList<QVariant>({QVariant(2), QVariant(12)}));
     }
     // Both min. and max. values as expressions
     {
@@ -2663,7 +2663,7 @@ void tst_MySql_QueryBuilder::whereBetween_ColumnExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` > ? or `size` between 12 and 14");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2688,7 +2688,7 @@ void tst_MySql_QueryBuilder::whereBetweenColumns() const
                  "select * from `torrents` where `id` > ? or "
                  "`size` between `min` and `max`");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2713,7 +2713,7 @@ void tst_MySql_QueryBuilder::whereNotBetweenColumns() const
                  "select * from `torrents` where `id` > ? or "
                  "`size` not between `min` and `max`");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2729,7 +2729,7 @@ void tst_MySql_QueryBuilder::whereBetweenColumns_ColumnExpression() const
                  "select * from `torrents` where `id` > ? or "
                  "`size` between min and `max`");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     // max. column name as expression
     {
@@ -2741,7 +2741,7 @@ void tst_MySql_QueryBuilder::whereBetweenColumns_ColumnExpression() const
                  "select * from `torrents` where `id` > ? or "
                  "`size` between `min` and max");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
     // Both min. and max. column names as expressions
     {
@@ -2753,7 +2753,7 @@ void tst_MySql_QueryBuilder::whereBetweenColumns_ColumnExpression() const
                  "select * from `torrents` where `id` > ? or "
                  "`size` between min and max");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -2773,7 +2773,7 @@ void tst_MySql_QueryBuilder::whereExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With QueryBuilder &
     {
@@ -2787,7 +2787,7 @@ void tst_MySql_QueryBuilder::whereExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With std::shared_ptr<QueryBuilder>
     {
@@ -2804,7 +2804,7 @@ void tst_MySql_QueryBuilder::whereExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
 }
 
@@ -2824,7 +2824,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With QueryBuilder &
     {
@@ -2838,7 +2838,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With std::shared_ptr<QueryBuilder>
     {
@@ -2855,7 +2855,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
                  "select * from `torrent_peers` where `id` < ? and "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
 }
 
@@ -2875,7 +2875,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With QueryBuilder &
     {
@@ -2889,7 +2889,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With std::shared_ptr<QueryBuilder>
     {
@@ -2906,7 +2906,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
 }
 
@@ -2926,7 +2926,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With QueryBuilder &
     {
@@ -2940,7 +2940,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
     // With std::shared_ptr<QueryBuilder>
     {
@@ -2957,7 +2957,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
                  "select * from `torrent_peers` where `id` < ? or "
                  "not exists (select * from `torrents` where `size` < ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+                 QList<QVariant>({QVariant(7), QVariant(15)}));
     }
 }
 
@@ -2971,7 +2971,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(QString("test3")), QVariant(3)}));
+                 QList<QVariant>({QVariant(QString("test3")), QVariant(3)}));
     }
 
     {
@@ -2982,7 +2982,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(QString("test3")), QVariant(3)}));
+                 QList<QVariant>({QVariant(QString("test3")), QVariant(3)}));
     }
 
     {
@@ -2993,7 +2993,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`size`, `progress`) > (?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(50)}));
+                 QList<QVariant>({QVariant(3), QVariant(50)}));
     }
 
     {
@@ -3004,8 +3004,8 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1), QVariant(QString("test3")),
-                                    QVariant(3)}));
+                 QList<QVariant>({QVariant(1), QVariant(QString("test3")),
+                                  QVariant(3)}));
     }
 }
 
@@ -3036,8 +3036,8 @@ void tst_MySql_QueryBuilder::whereRowValues_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where `id` = ? or (name, `size`) = (?, ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1), QVariant(QString("test3")),
-                                QVariant(3)}));
+             QList<QVariant>({QVariant(1), QVariant(QString("test3")),
+                              QVariant(3)}));
 }
 
 void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
@@ -3050,7 +3050,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, 3)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(QString("test3"))}));
+                 QList<QVariant>({QVariant(QString("test3"))}));
     }
 
     {
@@ -3061,7 +3061,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = ('test3', ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 
     {
@@ -3089,7 +3089,7 @@ void tst_MySql_QueryBuilder::whereDate()
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where date(`created_at`) = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(date.toString(Qt::ISODate))}));
+             QList<QVariant>({QVariant(date.toString(Qt::ISODate))}));
 }
 
 void tst_MySql_QueryBuilder::whereTime()
@@ -3104,7 +3104,7 @@ void tst_MySql_QueryBuilder::whereTime()
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where time(`created_at`) >= ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(time.toString(Qt::ISODate))}));
+             QList<QVariant>({QVariant(time.toString(Qt::ISODate))}));
 }
 
 void tst_MySql_QueryBuilder::whereDay()
@@ -3117,7 +3117,7 @@ void tst_MySql_QueryBuilder::whereDay()
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where day(`created_at`) = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5)}));
+             QList<QVariant>({QVariant(5)}));
 }
 
 void tst_MySql_QueryBuilder::whereMonth()
@@ -3130,7 +3130,7 @@ void tst_MySql_QueryBuilder::whereMonth()
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where month(`created_at`) >= ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(11)}));
+             QList<QVariant>({QVariant(11)}));
 }
 
 void tst_MySql_QueryBuilder::whereYear()
@@ -3143,7 +3143,7 @@ void tst_MySql_QueryBuilder::whereYear()
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where year(`created_at`) >= ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(2015)}));
+             QList<QVariant>({QVariant(2015)}));
 }
 
 void tst_MySql_QueryBuilder::orderBy() const
@@ -3271,7 +3271,7 @@ void tst_MySql_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? for update");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -3280,7 +3280,7 @@ void tst_MySql_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? for update");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     // shared lock
     {
@@ -3290,7 +3290,7 @@ void tst_MySql_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -3299,7 +3299,7 @@ void tst_MySql_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -3309,7 +3309,7 @@ void tst_MySql_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` = ? lock in share mode");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 }
 
@@ -3327,7 +3327,7 @@ void tst_MySql_QueryBuilder::insert() const
     QCOMPARE(firstLog.query,
              "insert into `torrents` (`name`, `size`) values (?, ?)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant("xyz"), QVariant(6)}));
+             QList<QVariant>({QVariant("xyz"), QVariant(6)}));
 }
 
 void tst_MySql_QueryBuilder::insert_WithExpression() const
@@ -3346,7 +3346,7 @@ void tst_MySql_QueryBuilder::insert_WithExpression() const
     QCOMPARE(firstLog.query,
              "insert into `torrents` (`name`, `progress`, `size`) values ('xyz', 2, ?)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(6)}));
+             QList<QVariant>({QVariant(6)}));
 }
 
 void tst_MySql_QueryBuilder::update() const
@@ -3370,7 +3370,7 @@ void tst_MySql_QueryBuilder::update() const
     QCOMPARE(firstLog.query,
              "update `torrents` set `name` = ?, `size` = ? where `id` = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant("xyz"), QVariant(6), QVariant(10)}));
+             QList<QVariant>({QVariant("xyz"), QVariant(6), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::update_WithExpression() const
@@ -3391,7 +3391,7 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
              "update `torrents` set `name` = 'xyz', `size` = ?, `progress` = 2 "
              "where `id` = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(6), QVariant(10)}));
+             QList<QVariant>({QVariant(6), QVariant(10)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
@@ -3428,8 +3428,8 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
              "on duplicate key update "
              "`color` = `tinyorm_upsert_alias`.`color`");
     QCOMPARE(log0.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
@@ -3465,8 +3465,8 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
              "values (?, ?, ?), (?, ?, ?) "
              "on duplicate key update `color` = values(`color`)");
     QCOMPARE(log0.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
@@ -3500,8 +3500,8 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
              "values (?, ?, ?), (?, ?, ?) "
              "on duplicate key update `color` = values(`color`)");
     QCOMPARE(log0.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
@@ -3537,8 +3537,8 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
              "values (?, ?, ?), (?, ?, ?) "
              "on duplicate key update `color` = values(`color`)");
     QCOMPARE(log0.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const
@@ -3577,8 +3577,8 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
              "`position` = `tinyorm_upsert_alias`.`position`, "
              "`tag_id` = `tinyorm_upsert_alias`.`tag_id`");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::
@@ -3617,8 +3617,8 @@ void tst_MySql_QueryBuilder::
              "`position` = values(`position`), "
              "`tag_id` = values(`tag_id`)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria() const
@@ -3656,8 +3656,8 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria
              "`position` = values(`position`), "
              "`tag_id` = values(`tag_id`)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_MySql_QueryBuilder::remove() const
@@ -3674,7 +3674,7 @@ void tst_MySql_QueryBuilder::remove() const
     QCOMPARE(firstLog.query,
              "delete from `torrents` where `torrents`.`id` = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(2222)}));
+             QList<QVariant>({QVariant(2222)}));
 }
 
 void tst_MySql_QueryBuilder::remove_WithExpression() const
@@ -3727,7 +3727,7 @@ void tst_MySql_QueryBuilder::sole() const
     QCOMPARE(firstLog.query,
              "select * from `torrents` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
+             QList<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 
 void tst_MySql_QueryBuilder::soleValue() const
@@ -3746,7 +3746,7 @@ void tst_MySql_QueryBuilder::soleValue() const
     QCOMPARE(firstLog.query,
              "select `name` from `torrents` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
+             QList<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

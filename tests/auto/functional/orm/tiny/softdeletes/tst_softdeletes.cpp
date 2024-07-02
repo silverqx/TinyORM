@@ -131,14 +131,14 @@ void tst_SoftDeletes::trashed_Not() const
 
 void tst_SoftDeletes::withoutTrashed_Default() const
 {
-    QVector<quint64> expectedIds {1, 2, 3};
+    QList<quint64> expectedIds {1, 2, 3};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     auto users = User::orderBy(ID)->get({ID});
 
-    QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(3));
+    QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
     for (const auto &user : users)
         actualIds << user.getKeyCasted();
@@ -148,14 +148,14 @@ void tst_SoftDeletes::withoutTrashed_Default() const
 
 void tst_SoftDeletes::withoutTrashed_Explicit() const
 {
-    QVector<quint64> expectedIds {1, 2, 3};
+    QList<quint64> expectedIds {1, 2, 3};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     auto users = User::withoutTrashed()->orderBy(ID).get({ID});
 
-    QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(3));
+    QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
     for (const auto &user : users)
         actualIds << user.getKeyCasted();
@@ -165,14 +165,14 @@ void tst_SoftDeletes::withoutTrashed_Explicit() const
 
 void tst_SoftDeletes::withTrashed() const
 {
-    QVector<quint64> expectedIds {1, 2, 3, 4, 5};
+    QList<quint64> expectedIds {1, 2, 3, 4, 5};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     auto users = User::withTrashed()->orderBy(ID).get({ID});
 
-    QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(5));
+    QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(5));
 
     for (const auto &user : users)
         actualIds << user.getKeyCasted();
@@ -182,14 +182,14 @@ void tst_SoftDeletes::withTrashed() const
 
 void tst_SoftDeletes::withTrashed_False() const
 {
-    QVector<quint64> expectedIds {1, 2, 3};
+    QList<quint64> expectedIds {1, 2, 3};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     auto users = User::withTrashed(false)->orderBy(ID).get({ID});
 
-    QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(3));
+    QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
     for (const auto &user : users)
         actualIds << user.getKeyCasted();
@@ -199,14 +199,14 @@ void tst_SoftDeletes::withTrashed_False() const
 
 void tst_SoftDeletes::onlyTrashed() const
 {
-    QVector<quint64> expectedIds {4, 5};
+    QList<quint64> expectedIds {4, 5};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     auto users = User::onlyTrashed()->orderBy(ID).get({ID});
 
-    QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+    QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
     for (const auto &user : users)
         actualIds << user.getKeyCasted();
@@ -331,14 +331,14 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -371,10 +371,10 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -409,10 +409,10 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -450,14 +450,14 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -544,14 +544,14 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -584,10 +584,10 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -625,14 +625,14 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -747,10 +747,10 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
             auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                          .orderBy(ID).get();
 
-            QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+            QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-            QVector<quint64> expectedIds {4, 5};
-            QVector<quint64> actualIds;
+            QList<quint64> expectedIds {4, 5};
+            QList<quint64> actualIds;
             actualIds.reserve(expectedIds.size());
 
             for (const auto &user : users) {
@@ -786,10 +786,10 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -827,14 +827,14 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -924,14 +924,14 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -964,10 +964,10 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -1005,14 +1005,14 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)
@@ -1122,10 +1122,10 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
             auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                          .orderBy(ID).get();
 
-            QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+            QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-            QVector<quint64> expectedIds {4, 5};
-            QVector<quint64> actualIds;
+            QList<quint64> expectedIds {4, 5};
+            QList<quint64> actualIds;
             actualIds.reserve(expectedIds.size());
 
             for (const auto &user : users) {
@@ -1161,10 +1161,10 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<quint64> expectedIds {4, 5};
-        QVector<quint64> actualIds;
+        QList<quint64> expectedIds {4, 5};
+        QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
         for (const auto &user : users) {
@@ -1202,14 +1202,14 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         auto users = User::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
-        QCOMPARE(users.size(), static_cast<QVector<quint64>::size_type>(2));
+        QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-        QVector<UserType> expectedValues {
+        QList<UserType> expectedValues {
             {true, 4, UpdatedAt4Original, DeletedAt4Original, true},
             {true, 5, UpdatedAt5Original, DeletedAt5Original, true},
         };
 
-        QVector<UserType> actualValues;
+        QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
         for (const auto &user : users)

@@ -123,7 +123,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
 
     for (auto *const file : files) {
         QVERIFY(file);
@@ -288,7 +288,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
-    QVector<QVariant> fileIds {2, 3};
+    QList<QVariant> fileIds {2, 3};
 
     for (auto *const file : files) {
         QVERIFY(file);

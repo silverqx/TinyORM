@@ -199,11 +199,11 @@ void tst_Model_Serialization::toVector() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 10);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         4},
         {"user_id",  1},
         {NAME,       "test4"},
@@ -257,11 +257,11 @@ void tst_Model_Serialization::toVector_WithCasts() const
                          {"date",      CastType::QDate},
                          {"timestamp", CastType::Timestamp}});
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime",  "2023-05-13T10:11:12.000Z"},
         {"date",      "2023-05-14"},
         {"timestamp", static_cast<qint64>(1662712888)},
@@ -298,11 +298,11 @@ tst_Model_Serialization::toVector_UDatesOnly_QDateTime_For_date_column() const
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "2023-05-13T10:11:12.000Z"},
         {"date",     "2023-05-14T10:11:12.000Z"},
     };
@@ -331,11 +331,11 @@ void tst_Model_Serialization::toVector_UDatesOnly_QDate_For_date_column() const
         {"date", QDate(2023, 05, 14)},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"date", "2023-05-14T00:00:00.000Z"},
     };
     QCOMPARE(serialized, expectedAttributes);
@@ -343,7 +343,7 @@ void tst_Model_Serialization::toVector_UDatesOnly_QDate_For_date_column() const
 
 void tst_Model_Serialization::toMap_UDatesOnly_Timestamp() const
 {
-    auto datetime = Datetime::instance(QVector<AttributeItem> {
+    auto datetime = Datetime::instance(QList<AttributeItem> {
         {"timestamp", static_cast<qint64>(1662712888)},
     });
 
@@ -358,15 +358,15 @@ void tst_Model_Serialization::toMap_UDatesOnly_Timestamp() const
 
 void tst_Model_Serialization::toVector_UDatesOnly_Timestamp() const
 {
-    auto datetime = Datetime::instance(QVector<AttributeItem> {
+    auto datetime = Datetime::instance(QList<AttributeItem> {
         {"timestamp", static_cast<qint64>(1662712888)},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"timestamp", "2022-09-09T08:41:28.000Z"},
     };
     QCOMPARE(serialized, expectedAttributes);
@@ -425,11 +425,11 @@ void tst_Model_Serialization::toVector_WithDateModfiers() const
         {"time_ms",  {CastType::CustomQTime,     "HH:mm:ss.zzz"}},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023"},
         {"time",     "14:11:15"},
@@ -474,11 +474,11 @@ void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
         {"datetime", {CastType::CustomQDateTime, "U"}},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", static_cast<qint64>(1683972672)},
     };
     QCOMPARE(serialized, expectedAttributes);
@@ -520,11 +520,11 @@ tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
 
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023 10:11:12.0 UTC"},
     };
@@ -587,11 +587,11 @@ tst_Model_Serialization::toVector_CastsOnly_OverrideSerializeDateTime() const
         {"time_ms",  CastType::QTime},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023"},
         {"time",     "14-11-15.0"},
@@ -649,11 +649,11 @@ void tst_Model_Serialization::
         {"date",     CastType::QDate},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023"},
     };
@@ -727,11 +727,11 @@ void tst_Model_Serialization::
         {"time_ms",  {CastType::CustomQTime,     "HH_mm_ss.zzz"}},
     });
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime", "05.13.2023 10:11:12.0 UTC"},
         {"date",     "05.14.2023"},
         {"time",     "14_11_15.000"},
@@ -773,7 +773,7 @@ void tst_Model_Serialization::toVector_UDatesOnly_DateNullVariants() const
     QVERIFY(type);
     QVERIFY(type->exists);
 
-    QVector<AttributeItem> serialized = type->toVector();
+    QList<AttributeItem> serialized = type->toVector();
     QCOMPARE(serialized.size(), 4);
 
     const auto &serialized0 = serialized.at(0);
@@ -851,7 +851,7 @@ void tst_Model_Serialization::toVector_WithCasts_DateNullVariants() const
         {"time",      CastType::QTime},
     });
 
-    QVector<AttributeItem> serialized = type->toVector();
+    QList<AttributeItem> serialized = type->toVector();
     QCOMPARE(serialized.size(), 5);
 
     const auto &serialized0 = serialized.at(0);
@@ -964,7 +964,7 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -982,9 +982,9 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
             QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                    .value.value<QVector<AttributeItem>>();
+                                    .value.value<QList<AttributeItem>>();
 
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,               5},
             {"torrent_id",     7},
             {"seeds",          NullVariant::Int()},
@@ -1004,9 +1004,9 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
             QFAIL("The \"user\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                    .value.value<QVector<AttributeItem>>();
+                                    .value.value<QList<AttributeItem>>();
 
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,          2},
             {NAME,        "silver"},
             {"is_banned", false},
@@ -1027,7 +1027,7 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
                                     .value.value<QVariantList>();
 
-        QVariantList expectedAttributes {QVariant::fromValue(QVector<AttributeItem> {
+        QVariantList expectedAttributes {QVariant::fromValue(QList<AttributeItem> {
             {ID,            10},
             {"torrent_id",  7},
             {"file_index",  0},
@@ -1037,7 +1037,7 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
             {NOTE,          "for serialization"},
             {CREATED_AT,    "2021-01-10T14:51:23.000Z"},
             {UPDATED_AT,    "2021-01-10T17:46:31.000Z"},
-        }), QVariant::fromValue(QVector<AttributeItem> {
+        }), QVariant::fromValue(QList<AttributeItem> {
             {ID,            11},
             {"torrent_id",  7},
             {"file_index",  1},
@@ -1047,7 +1047,7 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
             {NOTE,          "for serialization"},
             {CREATED_AT,    "2021-01-11T14:51:23.000Z"},
             {UPDATED_AT,    "2021-01-11T17:46:31.000Z"},
-        }), QVariant::fromValue(QVector<AttributeItem> {
+        }), QVariant::fromValue(QList<AttributeItem> {
             {ID,            12},
             {"torrent_id",  7},
             {"file_index",  2},
@@ -1063,7 +1063,7 @@ tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
     }
     // Compare the rest of attributes - torrent itself
     {
-        QVector<AttributeItem> expectedAttributes {
+        QList<AttributeItem> expectedAttributes {
             {ID,              7},
             {"user_id",       2},
             {NAME,            "test7"},
@@ -1176,7 +1176,7 @@ tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -1199,21 +1199,21 @@ tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
            it helps to avoid a lot of a junky code. */
         auto &tags = *reinterpret_cast<QVariantList *>(itTags->value.data()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
-        QVector<QVector<AttributeItem>> actualTagProperties;
+        QList<QList<AttributeItem>> actualTagProperties;
         actualTagProperties.reserve(tags.size());
 
         for (auto &tagVariant : tags) {
-            auto &tag = *reinterpret_cast<QVector<AttributeItem> *>(tagVariant.data());
+            auto &tag = *reinterpret_cast<QList<AttributeItem> *>(tagVariant.data());
 
             const auto it = ranges::find(tag, "tag_property", keyProj);
             if (it == tag.end())
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
             actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
-                                       .value.value<QVector<AttributeItem>>();
+                                       .value.value<QList<AttributeItem>>();
         }
 
-        QVector<QVector<AttributeItem>> expectedTagProperties {{
+        QList<QList<AttributeItem>> expectedTagProperties {{
             {ID,         1},
             {"tag_id",   1},
             {"color",    "white"},
@@ -1240,7 +1240,7 @@ tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
     }
 
     // Compare the rest of attributes - they will already be in the right order
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         7},
         {"user_id",  2},
         {NAME,       "test7"},
@@ -1251,39 +1251,39 @@ tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
-        {"tags",     QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"tags",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                          {"id",           1},
                          {NAME,           "tag1"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     1},
                                               {"active",     true},
                                               {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
                                               {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
                                           })},
-                     }), QVariant::fromValue(QVector<AttributeItem> {
+                     }), QVariant::fromValue(QList<AttributeItem> {
                          {"id",           2},
                          {NAME,           "tag2"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     2},
                                               {"active",     true},
                                               {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
                                               {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
                                           })},
-                     }), QVariant::fromValue(QVector<AttributeItem> {
+                     }), QVariant::fromValue(QList<AttributeItem> {
                          {"id",           3},
                          {NAME,           "tag3"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     3},
                                               {"active",     false},
@@ -1413,7 +1413,7 @@ void tst_Model_Serialization::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -1437,21 +1437,21 @@ void tst_Model_Serialization::
            it helps to avoid a lot of a junky code. */
         auto &tags = *reinterpret_cast<QVariantList *>(itTags->value.data());
 
-        QVector<QVector<AttributeItem>> actualTagProperties;
+        QList<QList<AttributeItem>> actualTagProperties;
         actualTagProperties.reserve(tags.size());
 
         for (auto &tagVariant : tags) {
-            auto &tag = *reinterpret_cast<QVector<AttributeItem> *>(tagVariant.data());
+            auto &tag = *reinterpret_cast<QList<AttributeItem> *>(tagVariant.data());
 
             const auto it = ranges::find(tag, "tag_property", keyProj);
             if (it == tag.end())
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
             actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
-                                       .value.value<QVector<AttributeItem>>();
+                                       .value.value<QList<AttributeItem>>();
         }
 
-        QVector<QVector<AttributeItem>> expectedTagProperties {{
+        QList<QList<AttributeItem>> expectedTagProperties {{
             {ID,         1},
             {"tag_id",   1},
             {"color",    "white"},
@@ -1485,18 +1485,18 @@ void tst_Model_Serialization::
         auto actualStates = serialized.takeAt(std::distance(serialized.begin(), it))
                                 .value.value<QVariantList>();
 
-        QVariantList expectedStates {QVariant::fromValue(QVector<AttributeItem> {
+        QVariantList expectedStates {QVariant::fromValue(QList<AttributeItem> {
             {ID,     1},
             {NAME,   "Active"},
-            {pivot_, QVariant::fromValue(QVector<AttributeItem> {
+            {pivot_, QVariant::fromValue(QList<AttributeItem> {
                          {"torrent_id", 7},
                          {"state_id",   1},
                          {"active",     1},
                      })},
-        }), QVariant::fromValue(QVector<AttributeItem> {
+        }), QVariant::fromValue(QList<AttributeItem> {
             {ID,     4},
             {NAME,   "Downloading"},
-            {pivot_, QVariant::fromValue(QVector<AttributeItem> {
+            {pivot_, QVariant::fromValue(QList<AttributeItem> {
                          {"torrent_id", 7},
                          {"state_id",   4},
                          {"active",     0},
@@ -1506,7 +1506,7 @@ void tst_Model_Serialization::
         QCOMPARE(actualStates, expectedStates);
     }
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         7},
         {"user_id",  2},
         {NAME,       "test7"},
@@ -1517,39 +1517,39 @@ void tst_Model_Serialization::
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
-        {"tags",     QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"tags",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                          {"id",           1},
                          {NAME,           "tag1"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     1},
                                               {"active",     true},
                                               {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
                                               {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
                                           })},
-                     }), QVariant::fromValue(QVector<AttributeItem> {
+                     }), QVariant::fromValue(QList<AttributeItem> {
                          {"id",           2},
                          {NAME,           "tag2"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     2},
                                               {"active",     true},
                                               {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
                                               {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
                                           })},
-                     }), QVariant::fromValue(QVector<AttributeItem> {
+                     }), QVariant::fromValue(QList<AttributeItem> {
                          {"id",           3},
                          {NAME,           "tag3"},
                          {NOTE,           NullVariant::QString()},
                          {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
                          {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
-                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                         {"tagged",       QVariant::fromValue(QList<AttributeItem> {
                                               {"torrent_id", 7},
                                               {"tag_id",     3},
                                               {"active",     false},
@@ -1619,9 +1619,9 @@ void tst_Model_Serialization::
     QVERIFY(user);
     QVERIFY(user->exists);
 
-    QVector<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toVector();
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,          1},
         {NAME,        "andrej"},
         {"is_banned", false},
@@ -1629,29 +1629,29 @@ void tst_Model_Serialization::
         {CREATED_AT,  "2022-01-01T14:51:23.000Z"},
         {UPDATED_AT,  "2022-01-01T17:46:31.000Z"},
         {DELETED_AT,  NullVariant::QDateTime()},
-        {"roles",     QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"roles",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                           {ID,             1},
                           {NAME,           "role one"},
                           {"added_on",     "2022-08-01T13:36:56.000Z"},
-                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                          {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 1},
                                                {"active",  true},
                                            })},
-                      }), QVariant::fromValue(QVector<AttributeItem> {
+                      }), QVariant::fromValue(QList<AttributeItem> {
                           {ID,             2},
                           {NAME,           "role two"},
                           {"added_on",     "2022-08-02T13:36:56.000Z"},
-                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                          {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 2},
                                                {"active",  false},
                                            })},
-                      }), QVariant::fromValue(QVector<AttributeItem> {
+                      }), QVariant::fromValue(QList<AttributeItem> {
                           {ID,             3},
                           {NAME,           "role three"},
                           {"added_on",     NullVariant::QDateTime()},
-                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                          {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 3},
                                                {"active",  true},
@@ -1696,15 +1696,15 @@ void tst_Model_Serialization::toVector_u_snakeAttributes_false() const
     QVERIFY(album);
     QVERIFY(album->exists);
 
-    QVector<AttributeItem> serialized = album->toVector();
+    QList<AttributeItem> serialized = album->toVector();
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,            1},
         {NAME,          "album1"},
         {NOTE,          NullVariant::QString()},
         {CREATED_AT,    "2023-01-01T12:21:14.000Z"},
         {UPDATED_AT,    "2023-02-01T16:54:28.000Z"},
-        {"albumImages", QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"albumImages", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                             {ID,         1},
                             {"album_id", 1},
                             {NAME,       "album1_image1"},
@@ -1724,9 +1724,9 @@ void tst_Model_Serialization::toMap_HasMany_EmptyRelation() const
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
 
-    QVector<QVariantMap> serialized = albums.toMap();
+    QList<QVariantMap> serialized = albums.toMap();
 
-    QVector<QVariantMap> expectedAttributes {{
+    QList<QVariantMap> expectedAttributes {{
         {"albumImages", QVariantList {QVariantMap {
                             {"album_id", 3},
                             {CREATED_AT, "2023-03-07T15:24:37.000Z"},
@@ -1759,15 +1759,15 @@ void tst_Model_Serialization::toVector_HasMany_EmptyRelation() const
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
 
-    QVector<QVector<AttributeItem>> serialized = albums.toVector();
+    QList<QList<AttributeItem>> serialized = albums.toVector();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {{
+    QList<QList<AttributeItem>> expectedAttributes {{
         {ID,            3},
         {NAME,          "album3"},
         {NOTE,          "album3 note"},
         {CREATED_AT,    "2023-01-03T12:21:14.000Z"},
         {UPDATED_AT,    "2023-02-03T16:54:28.000Z"},
-        {"albumImages", QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"albumImages", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                             {ID,         7},
                             {"album_id", 3},
                             {NAME,       "album3_image1"},
@@ -1794,9 +1794,9 @@ void tst_Model_Serialization::toMap_HasOne_EmptyRelation() const
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
 
-    QVector<QVariantMap> serialized = torrents.toMap();
+    QList<QVariantMap> serialized = torrents.toMap();
 
-    QVector<QVariantMap> expectedAttributes {{
+    QList<QVariantMap> expectedAttributes {{
         {"added_on",     "2020-08-06T20:11:10.000Z"},
         {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
         {HASH_,          "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
@@ -1840,9 +1840,9 @@ void tst_Model_Serialization::toVector_HasOne_EmptyRelation() const
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
 
-    QVector<QVector<AttributeItem>> serialized = torrents.toVector();
+    QList<QList<AttributeItem>> serialized = torrents.toVector();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {{
+    QList<QList<AttributeItem>> expectedAttributes {{
         {ID,             6},
         {"user_id",      2},
         {NAME,           "test6"},
@@ -1865,7 +1865,7 @@ void tst_Model_Serialization::toVector_HasOne_EmptyRelation() const
         {NOTE,           "for serialization"},
         {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT,     "2021-01-07T18:46:31.000Z"},
-        {"torrent_peer", QVariant::fromValue(QVector<AttributeItem> {
+        {"torrent_peer", QVariant::fromValue(QList<AttributeItem> {
                              {ID,               5},
                              {"torrent_id",     7},
                              {"seeds",          NullVariant::Int()},
@@ -1886,9 +1886,9 @@ void tst_Model_Serialization::toMap_BelongsTo_EmptyRelation() const
     QCOMPARE(torrentPeers.size(), 2);
     QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
 
-    QVector<QVariantMap> serialized = torrentPeers.toMap();
+    QList<QVariantMap> serialized = torrentPeers.toMap();
 
-    QVector<QVariantMap> expectedAttributes {{
+    QList<QVariantMap> expectedAttributes {{
         {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
         {ID,               5},
         {"leechers",       7},
@@ -1930,9 +1930,9 @@ void tst_Model_Serialization::toVector_BelongsTo_EmptyRelation() const
     QCOMPARE(torrentPeers.size(), 2);
     QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
 
-    QVector<QVector<AttributeItem>> serialized = torrentPeers.toVector();
+    QList<QList<AttributeItem>> serialized = torrentPeers.toVector();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {{
+    QList<QList<AttributeItem>> expectedAttributes {{
         {ID,               5},
         {"torrent_id",     7},
         {"seeds",          NullVariant::Int()},
@@ -1941,7 +1941,7 @@ void tst_Model_Serialization::toVector_BelongsTo_EmptyRelation() const
         {"total_leechers", 7},
         {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
         {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
-        {"torrent",        QVariant::fromValue(QVector<AttributeItem> {
+        {"torrent",        QVariant::fromValue(QList<AttributeItem> {
                                {ID,         7},
                                {"user_id",  2},
                                {NAME,       "test7"},
@@ -1974,9 +1974,9 @@ void tst_Model_Serialization::toMap_BelongsToMany_EmptyRelation() const
     QCOMPARE(users.size(), 2);
     QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
 
-    QVector<QVariantMap> serialized = users.toMap();
+    QList<QVariantMap> serialized = users.toMap();
 
-    QVector<QVariantMap> expectedAttributes {{
+    QList<QVariantMap> expectedAttributes {{
         {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
         {DELETED_AT,  NullVariant::QDateTime()},
         {ID,          2},
@@ -2014,9 +2014,9 @@ void tst_Model_Serialization::toVector_BelongsToMany_EmptyRelation() const
     QCOMPARE(users.size(), 2);
     QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
 
-    QVector<QVector<AttributeItem>> serialized = users.toVector();
+    QList<QList<AttributeItem>> serialized = users.toVector();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {{
+    QList<QList<AttributeItem>> expectedAttributes {{
         {ID,          2},
         {NAME,        "silver"},
         {"is_banned", false},
@@ -2024,11 +2024,11 @@ void tst_Model_Serialization::toVector_BelongsToMany_EmptyRelation() const
         {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
         {UPDATED_AT,  "2022-01-02T17:46:31.000Z"},
         {DELETED_AT,  NullVariant::QDateTime()},
-        {"roles",     QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"roles",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                           {ID,             2},
                           {NAME,           "role two"},
                           {"added_on",     "2022-08-02T13:36:56.000Z"},
-                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                          {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 2},
                                                {"role_id", 2},
                                                {"active",  true}
@@ -2058,9 +2058,9 @@ void tst_Model_Serialization::toMap_RelationOnly_HasMany() const
     torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(torrentFiles.size(), 3);
 
-    QVector<QVariantMap> serialized = torrentFiles.toMap();
+    QList<QVariantMap> serialized = torrentFiles.toMap();
 
-    QVector<QVariantMap> expectedAttributes {QVariantMap {
+    QList<QVariantMap> expectedAttributes {QVariantMap {
         {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
         {"file_index", 0},
         {"filepath",   "test7_file1.mkv"},
@@ -2105,9 +2105,9 @@ void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
     torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(torrentFiles.size(), 3);
 
-    QVector<QVector<AttributeItem>> serialized = torrentFiles.toVector();
+    QList<QList<AttributeItem>> serialized = torrentFiles.toVector();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {QVector<AttributeItem> {
+    QList<QList<AttributeItem>> expectedAttributes {QList<AttributeItem> {
         {ID,           10},
         {"torrent_id", 7},
         {"file_index", 0},
@@ -2117,7 +2117,7 @@ void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
         {NOTE,         "for serialization"},
         {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
         {UPDATED_AT,   "2021-01-10T17:46:31.000Z"},
-    }, QVector<AttributeItem> {
+    }, QList<AttributeItem> {
         {ID,           11},
         {"torrent_id", 7},
         {"file_index", 1},
@@ -2127,7 +2127,7 @@ void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
         {NOTE,         "for serialization"},
         {CREATED_AT,   "2021-01-11T14:51:23.000Z"},
         {UPDATED_AT,   "2021-01-11T17:46:31.000Z"},
-    }, QVector<AttributeItem> {
+    }, QList<AttributeItem> {
         {ID,           12},
         {"torrent_id", 7},
         {"file_index", 2},
@@ -2151,9 +2151,9 @@ void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
     ModelsCollection<Role *> roles = user->template getRelationValue<Role>("roles");
     QCOMPARE(roles.size(), 3);
 
-    QVector<QVariantMap> serialized = roles.toMap<RoleUser>();
+    QList<QVariantMap> serialized = roles.toMap<RoleUser>();
 
-    QVector<QVariantMap> expectedAttributes {QVariantMap {
+    QList<QVariantMap> expectedAttributes {QVariantMap {
         {"added_on",     "2022-08-01T13:36:56.000Z"},
         {ID,             1},
         {NAME,           "role one"},
@@ -2194,31 +2194,31 @@ void tst_Model_Serialization::toVector_RelationOnly_BelongsToMany() const
     ModelsCollection<Role *> roles = user->template getRelationValue<Role>("roles");
     QCOMPARE(roles.size(), 3);
 
-    QVector<QVector<AttributeItem>> serialized = roles.toVector<RoleUser>();
+    QList<QList<AttributeItem>> serialized = roles.toVector<RoleUser>();
 
-    QVector<QVector<AttributeItem>> expectedAttributes {QVector<AttributeItem> {
+    QList<QList<AttributeItem>> expectedAttributes {QList<AttributeItem> {
         {ID,             1},
         {NAME,           "role one"},
         {"added_on",     "2022-08-01T13:36:56.000Z"},
-        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+        {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 1},
                              {"active",  true},
                          })},
-    }, QVector<AttributeItem> {
+    }, QList<AttributeItem> {
         {ID,             2},
         {NAME,           "role two"},
         {"added_on",     "2022-08-02T13:36:56.000Z"},
-        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+        {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 2},
                              {"active",  false},
                          })},
-    }, QVector<AttributeItem> {
+    }, QList<AttributeItem> {
         {ID,             3},
         {NAME,           "role three"},
         {"added_on",     NullVariant::QDateTime()},
-        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+        {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 3},
                              {"active",  true},

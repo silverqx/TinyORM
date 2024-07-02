@@ -179,11 +179,11 @@ void tst_Model_Appends::toVector_WithAppends() const
     // Prepare
     torrent->append("name_progress");
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 11);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,              4},
         {"user_id",       1},
         {NAME,            "test4"},
@@ -238,11 +238,11 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible() const
     torrent->setVisible({ID, "user_id", "added_on", "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,              4},
         {"user_id",       1},
         {"added_on",      "2020-08-04T20:11:10.000Z"},
@@ -295,11 +295,11 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden() const
     torrent->setHidden({HASH_, NOTE, SIZE_, "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 8);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,          4},
         {"user_id",   1},
         {NAME,        "test4"},
@@ -354,11 +354,11 @@ void tst_Model_Appends::toVector_WithAppends_WithVisibleAndHidden() const
     torrent->setHidden({"added_on", "name_size"});
     torrent->append({"name_progress", "name_size"});
 
-    QVector<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toVector();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,              4},
         {"user_id",       1},
         {"name_progress", "test4 (400)"},
@@ -406,10 +406,10 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
     // Prepare
     torrentFile->append("filepath");
 
-    QVector<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toVector();
     QCOMPARE(serialized.size(), 9);
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,           10},
         {"torrent_id", 7},
         {"file_index", 0},
@@ -436,10 +436,10 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
     torrentFile->setVisible({ID, "torrent_id", "filepath", SIZE_});
     torrentFile->append("filepath");
 
-    QVector<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toVector();
     QCOMPARE(serialized.size(), 4);
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,           10},
         {"torrent_id", 7},
         {SIZE_,        4562},
@@ -462,10 +462,10 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() c
     torrentFile->setHidden({"filepath"});
     torrentFile->append("filepath");
 
-    QVector<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toVector();
     QCOMPARE(serialized.size(), 8);
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,           10},
         {"torrent_id", 7},
         {"file_index", 0},
@@ -524,13 +524,13 @@ tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
     // Prepare
     datetime.append({"datetime_test", "date_test", "time_test"});
 
-    QVector<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 6);
 
     /* No casts and u_date are defined for the date and datetime attributes so
        they will be serialized as the QString instances (in the storage format). */
     // The order must be the same as returned from the MySQL database
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {"datetime",      "2023-05-13 10:11:12"},
         {"date",          "2023-05-14 10:11:12"},
         {"time",          "14:11:15"},
@@ -606,36 +606,36 @@ void tst_Model_Appends::toVector_WithAppends_OnCustomPivot() const
     // Prepare
     user->setVisible({ID, NAME, "roles_appends"});
 
-    QVector<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toVector();
 
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,              1},
         {NAME,            "andrej"},
-        {"roles_appends", QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+        {"roles_appends", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                               {ID,             1},
                               {NAME,           "role one"},
                               {"added_on",     "2022-08-01T13:36:56.000Z"},
-                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                              {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   1},
                                                    {"active",    true},
                                                    {"is_active", true},
                                                })},
-                          }), QVariant::fromValue(QVector<AttributeItem> {
+                          }), QVariant::fromValue(QList<AttributeItem> {
                               {ID,             2},
                               {NAME,           "role two"},
                               {"added_on",     "2022-08-02T13:36:56.000Z"},
-                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                              {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   2},
                                                    {"active",    false},
                                                    {"is_active", false},
                                                })},
-                          }), QVariant::fromValue(QVector<AttributeItem> {
+                          }), QVariant::fromValue(QList<AttributeItem> {
                               {ID,             3},
                               {NAME,           "role three"},
                               {"added_on",     NullVariant::QDateTime()},
-                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                              {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   3},
                                                    {"active",    true},

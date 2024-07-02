@@ -158,7 +158,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
     // Index
     {
         Blueprint blueprint("torrents");
-        blueprint.dropIndex(QVector<QString> {SIZE_});
+        blueprint.dropIndex(QList<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -176,7 +176,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
     // FullText
     {
         Blueprint blueprint("torrents");
-        blueprint.dropFullText(QVector<QString> {NOTE});
+        blueprint.dropFullText(QList<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -197,7 +197,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
     // Index
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.dropIndex(QVector<QString> {SIZE_});
+        blueprint.dropIndex(QList<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -215,7 +215,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
     // FullText
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.dropFullText(QVector<QString> {NOTE});
+        blueprint.dropFullText(QList<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -270,8 +270,8 @@ void tst_Blueprint::unsignedDecimal_WithTotalAndPlaces() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `cars` "
-                               "add column `money` decimal(10, 2) unsigned not null"});
+             QList<QString> {"alter table `cars` "
+                             "add column `money` decimal(10, 2) unsigned not null"});
 }
 
 void tst_Blueprint::removeColumn() const
@@ -284,8 +284,8 @@ void tst_Blueprint::removeColumn() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `torrents` "
-                               "add column `name` varchar(255) not null"});
+             QList<QString> {"alter table `torrents` "
+                             "add column `name` varchar(255) not null"});
 }
 
 void tst_Blueprint::softDeletes() const
@@ -296,8 +296,8 @@ void tst_Blueprint::softDeletes() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `torrents` "
-                               "add column `deleted_at` timestamp null"});
+             QList<QString> {"alter table `torrents` "
+                             "add column `deleted_at` timestamp null"});
 }
 
 void tst_Blueprint::softDeletes_Custom_ColumnName() const
@@ -308,8 +308,8 @@ void tst_Blueprint::softDeletes_Custom_ColumnName() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `torrents` "
-                               "add column `deleted_on` timestamp null"});
+             QList<QString> {"alter table `torrents` "
+                             "add column `deleted_on` timestamp null"});
 }
 
 void tst_Blueprint::dropSoftDeletes() const
@@ -320,7 +320,7 @@ void tst_Blueprint::dropSoftDeletes() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `torrents` drop `deleted_at`"});
+             QList<QString> {"alter table `torrents` drop `deleted_at`"});
 }
 
 void tst_Blueprint::dropSoftDeletes_Custom_ColumnName() const
@@ -331,7 +331,7 @@ void tst_Blueprint::dropSoftDeletes_Custom_ColumnName() const
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
-             QVector<QString> {"alter table `torrents` drop `deleted_on`"});
+             QList<QString> {"alter table `torrents` drop `deleted_on`"});
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

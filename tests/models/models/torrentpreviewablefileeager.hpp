@@ -40,7 +40,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with {
+    QList<QString> u_with {
         "fileProperty",
     };
 

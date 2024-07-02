@@ -1081,7 +1081,7 @@ void tst_Model_Connection_Independent::pluck() const
     {
         auto result = Torrent::orderBy(NAME)->pluck(NAME);
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -1123,7 +1123,7 @@ void tst_Model_Connection_Independent::pluck_EmptyResult() const
     {
         auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck(NAME);
 
-        QCOMPARE(result, QVector<QVariant>());
+        QCOMPARE(result, QList<QVariant>());
     }
     {
         auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)
@@ -1140,7 +1140,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
     {
         auto result = Torrent::orderBy(NAME)->pluck("torrents.name");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -1159,7 +1159,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
     {
         auto result = Torrent::orderBy("name_alt")->pluck("name as name_alt");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -1192,7 +1192,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
     {
         auto result = Torrent::pluck("added_on");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
@@ -1240,7 +1240,7 @@ void tst_Model_Connection_Independent::pluck_EmptyResult_With_u_dates() const
     {
         auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck("added_on");
 
-        QCOMPARE(result, QVector<QVariant>());
+        QCOMPARE(result, QList<QVariant>());
     }
     {
         auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)
@@ -1257,7 +1257,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
     {
         auto result = Torrent::pluck("torrents.added_on");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
@@ -1287,7 +1287,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
     {
         auto result = Torrent::orderBy(ID)->pluck("added_on as added_on_alt");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
             QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
@@ -1350,7 +1350,7 @@ void tst_Model_Connection_Independent::only() const
 
     /* The order must be the same as the requested order during only() method call and
        as it internally calls getAttribute() all the casts will be applied. */
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,         1},
         {NAME,       QString("test1")},
         {SIZE_,      11},
@@ -1370,7 +1370,7 @@ void tst_Model_Connection_Independent::only_NonExistentAttribute() const
 
     /* The order must be the same as the requested order during only() method call and
        as it internally calls getAttribute() all the casts will be applied. */
-    QVector<AttributeItem> expectedAttributes {
+    QList<AttributeItem> expectedAttributes {
         {ID,   1},
         {NAME, QString("test1")},
         // Must return invalid QVariant for non-existent attribute
@@ -1669,7 +1669,7 @@ void tst_Model_Connection_Independent::chunkMap() const
         return std::move(model);
     });
 
-    QVector<IdAndName> expectedResult {
+    QList<IdAndName> expectedResult {
         {1, "test2_file1_property1_mapped"},
         {2, "test2_file2_property1_mapped"},
         {3, "test3_file1_property1_mapped"},
@@ -1688,7 +1688,7 @@ void tst_Model_Connection_Independent::chunkMap() const
         return {model.getKeyCasted(),
                 model.getAttribute<QString>(NAME)};
     })
-            | ranges::to<QVector<IdAndName>>();
+            | ranges::to<QList<IdAndName>>();
 
     QVERIFY(expectedResult.size() == result.size());
     QCOMPARE(resultTransformed, expectedResult);
@@ -1709,7 +1709,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
         return std::move(model);
     });
 
-    QVector<IdAndName> expectedResult {
+    QList<IdAndName> expectedResult {
         {1, "test2_file1_property1_mapped"},
         {2, "test2_file2_property1_mapped"},
         {3, "test3_file1_property1_mapped"},
@@ -1728,7 +1728,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
         return {model.getKeyCasted(),
                 model.getAttribute<QString>(NAME)};
     })
-            | ranges::to<QVector<IdAndName>>();
+            | ranges::to<QList<IdAndName>>();
 
     QVERIFY(expectedResult.size() == result.size());
     QCOMPARE(resultTransformed, expectedResult);
@@ -1761,7 +1761,7 @@ void tst_Model_Connection_Independent::chunkMap_TemplatedReturnValue() const
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"test2_file1_property1_mapped"},
         {"test2_file2_property1_mapped"},
         {"test3_file1_property1_mapped"},
@@ -1789,7 +1789,7 @@ tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue()
         return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
-    QVector<QString> expectedResult {
+    QList<QString> expectedResult {
         {"test2_file1_property1_mapped"},
         {"test2_file2_property1_mapped"},
         {"test3_file1_property1_mapped"},
@@ -1819,7 +1819,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue
     });
 
     QVERIFY(!callbackInvoked);
-    QVERIFY((std::is_same_v<decltype (result), QVector<QString>>));
+    QVERIFY((std::is_same_v<decltype (result), QList<QString>>));
     QVERIFY(result.isEmpty());
 }
 
@@ -2244,7 +2244,7 @@ void tst_Model_Connection_Independent::sole_Pretending() const
     QCOMPARE(firstLog.query,
              "select * from `file_property_properties` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
+             QList<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 
 void tst_Model_Connection_Independent::soleValue() const
@@ -2284,7 +2284,7 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
     QCOMPARE(firstLog.query,
              "select `name` from `file_property_properties` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
+             QList<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

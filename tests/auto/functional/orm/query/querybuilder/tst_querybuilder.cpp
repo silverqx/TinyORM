@@ -300,7 +300,7 @@ void tst_QueryBuilder::pluck() const
 
         auto result = builder->from("torrents").orderBy(NAME).pluck(NAME);
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -353,7 +353,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto result = builder->from("torrents")
                       .whereEq(NAME, dummy_NONEXISTENT).pluck(NAME);
 
-        QCOMPARE(result, QVector<QVariant>());
+        QCOMPARE(result, QList<QVariant>());
     }
     {
         auto builder = createQuery(connection);
@@ -376,7 +376,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 
         auto result = builder->from("torrents").orderBy(NAME).pluck("torrents.name");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -401,7 +401,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
         auto result = builder->from("torrents")
                       .orderBy("name_alt").pluck("name as name_alt");
 
-        QVector<QVariant> expected {
+        QList<QVariant> expected {
             "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
@@ -517,9 +517,9 @@ void tst_QueryBuilder::whereBetween() const
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<quint64> expectedIds {2, 3, 4};
+    QList<quint64> expectedIds {2, 3, 4};
 
-    QVector<quint64> actualIds;
+    QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
     while (result.next())
@@ -542,13 +542,13 @@ void tst_QueryBuilder::whereDate_QDate()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -571,13 +571,13 @@ void tst_QueryBuilder::whereDate_QDateTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -598,13 +598,13 @@ void tst_QueryBuilder::whereDate_QString()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -625,13 +625,13 @@ void tst_QueryBuilder::whereTime_QTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -654,13 +654,13 @@ void tst_QueryBuilder::whereTime_QDateTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -681,13 +681,13 @@ void tst_QueryBuilder::whereTime_QString()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -708,13 +708,13 @@ void tst_QueryBuilder::whereDay_QDate()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -735,13 +735,13 @@ void tst_QueryBuilder::whereDay_QDateTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -762,13 +762,13 @@ void tst_QueryBuilder::whereDay_QString()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -789,13 +789,13 @@ void tst_QueryBuilder::whereDay_int()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -816,13 +816,13 @@ void tst_QueryBuilder::whereMonth_QDate()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -843,13 +843,13 @@ void tst_QueryBuilder::whereMonth_QDateTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -870,13 +870,13 @@ void tst_QueryBuilder::whereMonth_QString()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -897,13 +897,13 @@ void tst_QueryBuilder::whereMonth_int()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -924,13 +924,13 @@ void tst_QueryBuilder::whereYear_QDate()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -951,13 +951,13 @@ void tst_QueryBuilder::whereYear_QDateTime()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -978,13 +978,13 @@ void tst_QueryBuilder::whereYear_QString()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -1005,13 +1005,13 @@ void tst_QueryBuilder::whereYear_int()
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
-    QVector<QDateTime> expectedCreatedAts {
+    QList<QDateTime> expectedCreatedAts {
         QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
         QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
         QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
-    QVector<QDateTime> actualCreatedAts;
+    QList<QDateTime> actualCreatedAts;
     actualCreatedAts.reserve(expectedCreatedAts.size());
 
     while (result.next())
@@ -1155,7 +1155,7 @@ void tst_QueryBuilder::upsert() const
         auto validateQuerySize = QueryUtils::queryResultSize(validateQuery);
         QCOMPARE(validateQuerySize, 2);
 
-        QVector<QVector<QVariant>> result;
+        QList<QList<QVariant>> result;
         result.reserve(validateQuerySize);
 
         while (validateQuery.next()) {
@@ -1165,7 +1165,7 @@ void tst_QueryBuilder::upsert() const
                            validateQuery.value("tag_id")});
         }
 
-        QVector<QVector<QVariant>> expextedResult {
+        QList<QList<QVariant>> expextedResult {
             {"pink",   0, 1},
             {"purple", 4, 1},
         };
@@ -1266,7 +1266,7 @@ void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
         auto validateQuerySize = QueryUtils::queryResultSize(validateQuery);
         QCOMPARE(validateQuerySize, 2);
 
-        QVector<QVector<QVariant>> result;
+        QList<QList<QVariant>> result;
         result.reserve(validateQuerySize);
 
         while (validateQuery.next()) {
@@ -1276,7 +1276,7 @@ void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
                            validateQuery.value("tag_id")});
         }
 
-        QVector<QVector<QVariant>> expextedResult {
+        QList<QList<QVariant>> expextedResult {
             {"pink",   0, 2},
             {"purple", 4, 1},
         };

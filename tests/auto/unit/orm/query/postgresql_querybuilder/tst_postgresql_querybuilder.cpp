@@ -233,7 +233,7 @@ void tst_PostgreSQL_QueryBuilder::find() const
     QCOMPARE(firstLog.query,
              "select \"id\", \"name\" from \"torrents\" where \"id\" = ? limit 1");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(3)}));
+             QList<QVariant>({QVariant(3)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::find_ColumnAndValueExpression() const
@@ -251,7 +251,7 @@ void tst_PostgreSQL_QueryBuilder::find_ColumnAndValueExpression() const
         QCOMPARE(firstLog.query,
                  "select \"id\", name from \"torrents\" where \"id\" = ? limit 1");
         QCOMPARE(firstLog.boundValues,
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 
     {
@@ -709,7 +709,7 @@ void tst_PostgreSQL_QueryBuilder::fromRaw_WithWhere() const
              "select * from (select max(last_seen_at) as last_seen_at "
              "from \"sessions\") as \"last_seen_at\" where \"last_seen_at\" > ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1520652582)}));
+             QList<QVariant>({QVariant(1520652582)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::fromRaw_WithBindings_WithWhere() const
@@ -730,7 +730,7 @@ void tst_PostgreSQL_QueryBuilder::fromRaw_WithBindings_WithWhere() const
              "from \"sessions\" where id < ?) as \"last_seen_at\" "
              "where \"last_seen_at\" > ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(10), QVariant(1520652582)}));
+             QList<QVariant>({QVariant(10), QVariant(1520652582)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::fromSub_QStringOverload() const
@@ -765,7 +765,7 @@ void tst_PostgreSQL_QueryBuilder::fromSub_QueryBuilderOverload_WithWhere() const
              "from \"user_sessions\" where \"id\" < ?) as \"sessions\" "
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::fromSub_CallbackOverload() const
@@ -785,7 +785,7 @@ void tst_PostgreSQL_QueryBuilder::fromSub_CallbackOverload() const
              "from \"user_sessions\" where \"id\" < ?) as \"sessions\" "
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::joinSub_QStringOverload() const
@@ -825,7 +825,7 @@ void tst_PostgreSQL_QueryBuilder::joinSub_QueryBuilderOverload_WithWhere() const
              "on \"users\".\"id\" = \"sessions\".\"user_id\" "
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::joinSub_CallbackOverload() const
@@ -849,7 +849,7 @@ void tst_PostgreSQL_QueryBuilder::joinSub_CallbackOverload() const
              "on \"users\".\"id\" = \"sessions\".\"user_id\" "
              "where \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5), QVariant("xyz")}));
+             QList<QVariant>({QVariant(5), QVariant("xyz")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::where() const
@@ -861,7 +861,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -871,7 +871,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -882,7 +882,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? and \"name\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+                 QList<QVariant>({QVariant(3), QVariant("test3")}));
     }
 
     {
@@ -892,7 +892,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" != ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -902,7 +902,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" <> ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -912,7 +912,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -924,7 +924,7 @@ void tst_PostgreSQL_QueryBuilder::where() const
                  "select * from \"torrents\" "
                  "where \"id\" > ? and \"name\"::text like ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+                 QList<QVariant>({QVariant(3), QVariant("test%")}));
     }
 }
 
@@ -937,7 +937,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -947,7 +947,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10)}));
+                 QList<QVariant>({QVariant(3), QVariant(10)}));
     }
 
     {
@@ -959,7 +959,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue() const
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) "
                  "and (\"progress\" >= ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+                 QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
     }
 }
 
@@ -973,7 +973,7 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue_DefaultCondition() const
              "select * from \"torrents\" where (\"progress\" >= ?) and "
              "(\"id\" = ? or \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::where_WithVectorValue_Condition_Override() const
@@ -987,8 +987,8 @@ void tst_PostgreSQL_QueryBuilder::where_WithVectorValue_Condition_Override() con
              R"(select * from "torrents" where ("progress" >= ?) and )"
              R"(("id" = ? or "size" > ? and "name" = ?))");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10),
-                                QVariant("xyz")}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10),
+                              QVariant("xyz")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::where_ColumnExpression() const
@@ -999,7 +999,7 @@ void tst_PostgreSQL_QueryBuilder::where_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where id = ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant> {QVariant(3)});
+             QList<QVariant> {QVariant(3)});
 }
 
 void tst_PostgreSQL_QueryBuilder::where_ValueExpression() const
@@ -1022,7 +1022,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1032,7 +1032,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1043,7 +1043,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" = ? and not \"name\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test3")}));
+                 QList<QVariant>({QVariant(3), QVariant("test3")}));
     }
 
     {
@@ -1053,7 +1053,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" != ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1063,7 +1063,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" <> ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1073,7 +1073,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" > ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant> {QVariant(3)});
+                 QList<QVariant> {QVariant(3)});
     }
 
     {
@@ -1085,7 +1085,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot() const
                  "select * from \"torrents\" "
                  "where not \"id\" > ? and not \"name\"::text like ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3), QVariant("test%")}));
+                 QList<QVariant>({QVariant(3), QVariant("test%")}));
     }
 }
 
@@ -1099,7 +1099,7 @@ void tst_PostgreSQL_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() co
              "select * from \"torrents\" where not (\"progress\" >= ?) and "
              "not (\"id\" = ? or \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhere() const
@@ -1112,7 +1112,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ? or \"progress\" >= ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+                 QList<QVariant>({QVariant(4), QVariant(300)}));
     }
 
     {
@@ -1123,7 +1123,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" > ? or \"name\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+                 QList<QVariant>({QVariant(4), QVariant("test3")}));
     }
 }
 
@@ -1136,7 +1136,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where id > ? or \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(4), QVariant("test3")}));
+             QList<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue() const
@@ -1149,7 +1149,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue() const
              "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) or "
              "(\"progress\" >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
@@ -1162,7 +1162,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() con
              "select * from \"torrents\" where (\"progress\" >= ?) or "
              "(\"id\" = ? and \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() const
@@ -1176,7 +1176,7 @@ void tst_PostgreSQL_QueryBuilder::orWhere_WithVectorValue_ColumnExpression() con
              "select * from \"torrents\" where (id = ? and \"size\" > ?) or "
              "(progress >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhereNot() const
@@ -1190,7 +1190,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereNot() const
                  "select * from \"torrents\" where not \"id\" > ? or "
                  "not \"progress\" >= ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant(300)}));
+                 QList<QVariant>({QVariant(4), QVariant(300)}));
     }
 
     {
@@ -1201,7 +1201,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereNot() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where not \"id\" > ? or not \"name\" = ?");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4), QVariant("test3")}));
+                 QList<QVariant>({QVariant(4), QVariant("test3")}));
     }
 }
 
@@ -1215,7 +1215,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereNot_WithVectorValue() const
              "select * from \"torrents\" where not (\"id\" = ? and \"size\" > ?) or "
              "not (\"progress\" >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
+             QList<QVariant>({QVariant(3), QVariant(10), QVariant(100)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
@@ -1228,7 +1228,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() 
              "select * from \"torrents\" where not (\"progress\" >= ?) or "
              "not (\"id\" = ? and \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+             QList<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhereNot_ColumnExpression() const
@@ -1240,7 +1240,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereNot_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where not id > ? or not \"name\" = ?");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(4), QVariant("test3")}));
+             QList<QVariant>({QVariant(4), QVariant("test3")}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereColumn() const
@@ -1255,7 +1255,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn() const
              "where \"filepath\" = \"note\" "
                "and \"size\" >= \"progress\"");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>());
+             QList<QVariant>());
 }
 
 void tst_PostgreSQL_QueryBuilder::orWhereColumn() const
@@ -1271,7 +1271,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn() const
                  "where \"filepath\" = \"note\" "
                    "or \"size\" = \"progress\"");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1285,7 +1285,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn() const
                  "where \"filepath\" = \"note\" "
                    "or \"size\" > \"progress\"");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -1300,7 +1300,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_ColumnExpression() const
              "select * from \"torrent_previewable_files\" where filepath = \"note\" "
              "or size > progress");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>());
+             QList<QVariant>());
 }
 
 void tst_PostgreSQL_QueryBuilder::whereColumn_WithVectorValue() const
@@ -1316,7 +1316,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn_WithVectorValue() const
                  "where (\"filepath\" = \"note\" "
                    "and \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1330,7 +1330,7 @@ void tst_PostgreSQL_QueryBuilder::whereColumn_WithVectorValue() const
                  "where (\"filepath\" = \"note\" "
                    "or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -1347,7 +1347,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
                    "or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -1361,7 +1361,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
                    "and \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -1375,7 +1375,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue() const
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
                    "or \"size\" > \"progress\")");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 }
 
@@ -1390,7 +1390,7 @@ void tst_PostgreSQL_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression
              "select * from \"torrent_previewable_files\" "
              "where \"id\" = ? or (filepath = \"note\" or \"size\" > progress)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(2)}));
+             QList<QVariant>({QVariant(2)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereIn() const
@@ -1402,7 +1402,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
 
     {
@@ -1413,8 +1413,8 @@ void tst_PostgreSQL_QueryBuilder::whereIn() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? or \"id\" in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1), QVariant(2),
-                                    QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(1), QVariant(2),
+                                  QVariant(3), QVariant(4)}));
     }
 }
 
@@ -1427,7 +1427,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotIn() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(2), QVariant(3), QVariant(4)}));
     }
 
     {
@@ -1439,8 +1439,8 @@ void tst_PostgreSQL_QueryBuilder::whereNotIn() const
                  "select * from \"torrents\" where \"id\" = ? "
                    "or \"id\" not in (?, ?, ?)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1), QVariant(2),
-                                    QVariant(3), QVariant(4)}));
+                 QList<QVariant>({QVariant(1), QVariant(2),
+                                  QVariant(3), QVariant(4)}));
     }
 }
 
@@ -1453,7 +1453,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotIn_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where \"id\" = ? or id not in (?, ?, ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
+             QList<QVariant>({QVariant(1), QVariant(2), QVariant(3), QVariant(4)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereIn_Empty() const
@@ -1465,7 +1465,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where 0 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1476,7 +1476,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? or 0 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1)}));
+                 QList<QVariant>({QVariant(1)}));
     }
 }
 
@@ -1489,7 +1489,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where 1 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1500,7 +1500,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotIn_Empty() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? or 1 = 1");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(1)}));
+                 QList<QVariant>({QVariant(1)}));
     }
 }
 
@@ -1513,7 +1513,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" in (3)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1524,7 +1524,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"id\" = ? or \"id\" in (3)");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(2)}));
+                 QList<QVariant>({QVariant(2)}));
     }
 
     {
@@ -1534,7 +1534,7 @@ void tst_PostgreSQL_QueryBuilder::whereIn_ValueExpression() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where \"name\" in ('xyz')");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 }
 
@@ -1547,7 +1547,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1559,7 +1559,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull() const
                  "select * from \"torrent_peers\" "
                  "where \"id\" = ? and \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -1571,7 +1571,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull() const
                  "select * from \"torrent_peers\" "
                  "where \"id\" = ? or \"seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -1584,7 +1584,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1596,7 +1596,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull() const
                  "select * from \"torrent_peers\" "
                  "where \"id\" = ? and \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -1608,7 +1608,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull() const
                  "select * from \"torrent_peers\" "
                  "where \"id\" = ? or \"seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -1621,7 +1621,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_peers\" where \"id\" = ? or seeds is not null");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(3)}));
+             QList<QVariant>({QVariant(3)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereNull_WithVectorValue() const
@@ -1634,7 +1634,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull_WithVectorValue() const
                  "select * from \"torrent_peers\" where \"seeds\" is null "
                  "and \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1647,7 +1647,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull_WithVectorValue() const
                  "where \"id\" = ? and \"seeds\" is null "
                    "and \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -1660,7 +1660,7 @@ void tst_PostgreSQL_QueryBuilder::whereNull_WithVectorValue() const
                  "where \"id\" = ? or \"seeds\" is null "
                    "or \"total_seeds\" is null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -1675,7 +1675,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull_WithVectorValue() const
                  "select * from \"torrent_peers\" where \"seeds\" is not null "
                  "and \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>());
+                 QList<QVariant>());
     }
 
     {
@@ -1688,7 +1688,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull_WithVectorValue() const
                  "where \"id\" = ? and \"seeds\" is not null "
                    "and \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 
     {
@@ -1701,7 +1701,7 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull_WithVectorValue() const
                  "where \"id\" = ? or \"seeds\" is not null "
                    "or \"total_seeds\" is not null");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(3)}));
+                 QList<QVariant>({QVariant(3)}));
     }
 }
 
@@ -1719,7 +1719,7 @@ void tst_PostgreSQL_QueryBuilder::whereDate()
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where "created_at"::date = ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(date.toString(Qt::ISODate))}));
+             QList<QVariant>({QVariant(date.toString(Qt::ISODate))}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereTime()
@@ -1734,7 +1734,7 @@ void tst_PostgreSQL_QueryBuilder::whereTime()
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where "created_at"::time >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(time.toString(Qt::ISODate))}));
+             QList<QVariant>({QVariant(time.toString(Qt::ISODate))}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereDay()
@@ -1747,7 +1747,7 @@ void tst_PostgreSQL_QueryBuilder::whereDay()
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where extract(day from "created_at") = ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(5)}));
+             QList<QVariant>({QVariant(5)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereMonth()
@@ -1760,7 +1760,7 @@ void tst_PostgreSQL_QueryBuilder::whereMonth()
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where extract(month from "created_at") >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(11)}));
+             QList<QVariant>({QVariant(11)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::whereYear()
@@ -1773,7 +1773,7 @@ void tst_PostgreSQL_QueryBuilder::whereYear()
     QCOMPARE(builder->toSql(),
              R"(select * from "torrents" where extract(year from "created_at") >= ?)");
     QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(2015)}));
+             QList<QVariant>({QVariant(2015)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orderBy() const
@@ -1892,7 +1892,7 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"id\" = ? for update");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -1901,7 +1901,7 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"id\" = ? for update");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     // shared lock
     {
@@ -1911,7 +1911,7 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"id\" = ? for share");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -1920,7 +1920,7 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"id\" = ? for share");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
     {
         auto builder = createQuery();
@@ -1930,7 +1930,7 @@ void tst_PostgreSQL_QueryBuilder::lock() const
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_peers\" where \"id\" = ? for share");
         QCOMPARE(builder->getBindings(),
-                 QVector<QVariant>({QVariant(4)}));
+                 QList<QVariant>({QVariant(4)}));
     }
 }
 
@@ -1948,7 +1948,7 @@ void tst_PostgreSQL_QueryBuilder::insert() const
     QCOMPARE(firstLog.query,
              "insert into \"torrents\" (\"name\", \"size\") values (?, ?)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant("xyz"), QVariant(6)}));
+             QList<QVariant>({QVariant("xyz"), QVariant(6)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::insert_WithExpression() const
@@ -1968,7 +1968,7 @@ void tst_PostgreSQL_QueryBuilder::insert_WithExpression() const
              "insert into \"torrents\" (\"name\", \"progress\", \"size\") "
              "values ('xyz', 2, ?)");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(6)}));
+             QList<QVariant>({QVariant(6)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::update() const
@@ -1992,7 +1992,7 @@ void tst_PostgreSQL_QueryBuilder::update() const
     QCOMPARE(firstLog.query,
              "update \"torrents\" set \"name\" = ?, \"size\" = ? where \"id\" = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant("xyz"), QVariant(6), QVariant(10)}));
+             QList<QVariant>({QVariant("xyz"), QVariant(6), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::update_WithExpression() const
@@ -2013,7 +2013,7 @@ void tst_PostgreSQL_QueryBuilder::update_WithExpression() const
              "update \"torrents\" set \"name\" = 'xyz', \"size\" = ?, \"progress\" = 2 "
              "where \"id\" = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(6), QVariant(10)}));
+             QList<QVariant>({QVariant(6), QVariant(10)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::upsert() const
@@ -2037,8 +2037,8 @@ void tst_PostgreSQL_QueryBuilder::upsert() const
              "on conflict (\"position\") "
              "do update set \"color\" = \"excluded\".\"color\"");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
@@ -2063,8 +2063,8 @@ void tst_PostgreSQL_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
                            "\"position\" = \"excluded\".\"position\", "
                            "\"tag_id\" = \"excluded\".\"tag_id\"");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
-                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+             QList<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                              QVariant(QString("purple")), QVariant(4), QVariant(1)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::remove() const
@@ -2081,7 +2081,7 @@ void tst_PostgreSQL_QueryBuilder::remove() const
     QCOMPARE(firstLog.query,
              "delete from \"torrents\" where \"torrents\".\"id\" = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(2222)}));
+             QList<QVariant>({QVariant(2222)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::remove_WithExpression() const

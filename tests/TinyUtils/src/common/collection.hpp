@@ -50,16 +50,16 @@ namespace TestUtils::Common
         /*! Verify primary key IDs in the given vector. */
         template<typename M>
         static bool
-        verifyIds(const QVector<M> &actual,
+        verifyIds(const QList<M> &actual,
                   const std::unordered_set<quint64> &expected);
         /*! Verify primary key IDs in the given vector. */
         inline static bool
-        verifyIds(const QVector<quint64> &actual,
+        verifyIds(const QList<quint64> &actual,
                   const std::unordered_set<quint64> &expected);
         /*! Verify primary key IDs in the given vector. */
         template<typename T>
         static bool
-        verifyIdsQVariant(const QVector<QVariant> &actual,
+        verifyIdsQVariant(const QList<QVariant> &actual,
                           const std::unordered_set<T> &expected);
 
         /*! Verify attribute values in the given vector. */
@@ -100,7 +100,7 @@ namespace TestUtils::Common
     }
 
     template<typename M>
-    bool Collection::verifyIds(const QVector<M> &actual,
+    bool Collection::verifyIds(const QList<M> &actual,
                                const std::unordered_set<quint64> &expected)
     {
         return std::ranges::all_of(actual, [&expected](const M &model)
@@ -109,7 +109,7 @@ namespace TestUtils::Common
         });
     }
 
-    bool Collection::verifyIds(const QVector<quint64> &actual,
+    bool Collection::verifyIds(const QList<quint64> &actual,
                                const std::unordered_set<quint64> &expected)
     {
         return std::ranges::all_of(actual, [&expected](const quint64 id)
@@ -119,7 +119,7 @@ namespace TestUtils::Common
     }
 
     template<typename T>
-    bool Collection::verifyIdsQVariant(const QVector<QVariant> &actual,
+    bool Collection::verifyIdsQVariant(const QList<QVariant> &actual,
                                        const std::unordered_set<T> &expected)
     {
         return std::ranges::all_of(actual, [&expected](const QVariant &id)

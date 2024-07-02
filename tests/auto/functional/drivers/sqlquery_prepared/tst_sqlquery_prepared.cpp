@@ -147,11 +147,11 @@ void tst_SqlQuery_Prepared::select_All() const
     QCOMPARE(users.lastInsertId(), QVariant());
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
         {5, u"obiwan"_s},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -249,10 +249,10 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
     QCOMPARE(users.executedQuery(), query);
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -299,10 +299,10 @@ void tst_SqlQuery_Prepared::select_IsNull() const
     QCOMPARE(users.executedQuery(), query);
 
     // Verify the result
-    QVector<IdAndCustomType<bool>> expected {
+    QList<IdAndCustomType<bool>> expected {
         {1, true}, {2, true}, {3, false}, {4, false}, {5, false},
     };
-    QVector<IdAndCustomType<bool>> actual;
+    QList<IdAndCustomType<bool>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -389,18 +389,18 @@ void tst_SqlQuery_Prepared::select_Testing_recordCached() const
     QCOMPARE(users.lastInsertId(), QVariant());
 
     // Verify the result
-    QVector<QVector<QVariant>> expected {
+    QList<QList<QVariant>> expected {
         {1, "andrej", 0, NullVariant::QString()},
         {2, "silver", 0, NullVariant::QString()},
         {3, "peter", 1, u"no torrents no roles"_s},
         {4, "jack", 0, u"test SoftDeletes"_s},
         {5, "obiwan", 1, u"test SoftDeletes"_s},
     };
-    QVector<QVector<QVariant>> actual;
+    QList<QList<QVariant>> actual;
     actual.reserve(querySize);
 
-    QVector<bool> expectedNull {true, true, false, false, false};
-    QVector<bool> actualNull;
+    QList<bool> expectedNull {true, true, false, false, false};
+    QList<bool> actualNull;
     actualNull.reserve(querySize);
 
     while (users.next()) {
@@ -412,10 +412,10 @@ void tst_SqlQuery_Prepared::select_Testing_recordCached() const
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
 
-        actual << QVector<QVariant>({users.value(ID).value<quint64>(),
-                                     users.value(NAME).value<QString>(),
-                                     users.value("is_banned").value<QString>(),
-                                     users.value(NOTE).value<QString>()});
+        actual << QList<QVariant>({users.value(ID).value<quint64>(),
+                                   users.value(NAME).value<QString>(),
+                                   users.value("is_banned").value<QString>(),
+                                   users.value(NOTE).value<QString>()});
     }
     QCOMPARE(actual, expected);
     QCOMPARE(actualNull, expectedNull);
@@ -508,10 +508,10 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     QCOMPARE(g_loggedMessages->first(), expectedWarning);
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -558,8 +558,8 @@ void tst_SqlQuery_Prepared::seeking() const
     QCOMPARE(querySize, 5);
 
     // Verify the result
-    QVector<quint64> expected {1, 2, 3, 4, 5};
-    QVector<quint64> actual;
+    QList<quint64> expected {1, 2, 3, 4, 5};
+    QList<quint64> actual;
     actual.reserve(querySize);
 
     // First verify if we have the correct result set
@@ -755,10 +755,10 @@ void tst_SqlQuery_Prepared::finish_And_detachFromResultSet() const
     QCOMPARE(users.lastInsertId(), QVariant());
 
     // Verify the result
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, "andrej"}, {2, "silver"}, {3, "peter"},
     };
-    QVector<IdAndCustomType<QString>> actual;
+    QList<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
 
     while (users.next()) {
@@ -818,7 +818,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery() const
     // Test bound values
     QVERIFY(users.boundValues().isEmpty());
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
         {5, u"obiwan"_s},
     };
@@ -841,7 +841,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery() const
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -881,7 +881,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery() const
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -935,11 +935,11 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance() const
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
             {5, u"obiwan"_s},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -986,10 +986,10 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance() const
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "role one"}, {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1026,7 +1026,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_AfterFinish() const
     // Test bound values
     QVERIFY(users.boundValues().isEmpty());
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
         {5, u"obiwan"_s},
     };
@@ -1049,7 +1049,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_AfterFinish() const
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1114,7 +1114,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_AfterFinish() const
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1168,11 +1168,11 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance_AfterFinis
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
             {5, u"obiwan"_s},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1244,10 +1244,10 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance_AfterFinis
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {1, "role one"}, {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1285,7 +1285,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_WithPreparedBindings() co
     users.addBindValue(1);
     users.addBindValue(u"%le%"_s);
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
     };
 
@@ -1312,7 +1312,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_WithPreparedBindings() co
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1357,7 +1357,7 @@ void tst_SqlQuery_Prepared::select_reExecute_SameQuery_WithPreparedBindings() co
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1418,10 +1418,10 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1474,10 +1474,10 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1516,7 +1516,7 @@ void tst_SqlQuery_Prepared::
     users.addBindValue(1);
     users.addBindValue(u"%le%"_s);
 
-    QVector<IdAndCustomType<QString>> expected {
+    QList<IdAndCustomType<QString>> expected {
         {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
     };
 
@@ -1543,7 +1543,7 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1610,7 +1610,7 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(users.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (users.next()) {
@@ -1671,10 +1671,10 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {
@@ -1754,10 +1754,10 @@ void tst_SqlQuery_Prepared::
         QCOMPARE(query.lastInsertId(), QVariant());
 
         // Verify the result
-        QVector<IdAndCustomType<QString>> expected {
+        QList<IdAndCustomType<QString>> expected {
             {2, "role two"}, {3, "role three"},
         };
-        QVector<IdAndCustomType<QString>> actual;
+        QList<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
 
         while (query.next()) {

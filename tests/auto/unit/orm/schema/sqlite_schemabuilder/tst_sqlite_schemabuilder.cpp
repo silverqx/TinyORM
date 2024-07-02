@@ -880,7 +880,7 @@ void tst_SQLite_SchemaBuilder::hasTable() const
     QCOMPARE(firstLog.query,
              "select * from sqlite_master where type = 'table' and name = ?");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(Firewalls)}));
+             QList<QVariant>({QVariant(Firewalls)}));
 }
 
 void tst_SQLite_SchemaBuilder::defaultStringLength_Set() const
