@@ -236,7 +236,7 @@ QVariant SqlQuery::boundValue(const size_type index) const
     return m_sqlResult->boundValue(index);
 }
 
-QVariantList SqlQuery::boundValues() const
+QList<QVariant> SqlQuery::boundValues() const
 {
     return m_sqlResult->boundValues();
 }

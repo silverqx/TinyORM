@@ -112,7 +112,7 @@ namespace Orm::Drivers
         /*! Get the placeholder value at the given index position. */
         QVariant boundValue(size_type index) const;
         /*! Get a QVariant vector of all bound values. */
-        QVariantList boundValues() const;
+        QList<QVariant> boundValues() const;
 
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */

@@ -178,13 +178,13 @@ SqlResult::size_type SqlResult::boundValuesCount() const noexcept
     return static_cast<size_type>(d->boundValues.size());
 }
 
-QVariantList SqlResult::boundValues() const noexcept
+QList<QVariant> SqlResult::boundValues() const noexcept
 {
     Q_D(const SqlResult);
     return d->boundValues;
 }
 
-QVariantList &SqlResult::boundValues() noexcept
+QList<QVariant> &SqlResult::boundValues() noexcept
 {
     Q_D(SqlResult);
     return d->boundValues;

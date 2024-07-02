@@ -121,9 +121,9 @@ namespace Orm::Drivers
         size_type boundValuesCount() const noexcept;
 
         /*! Get a QVariant vector of all bound values. */
-        QVariantList boundValues() const noexcept;
+        QList<QVariant> boundValues() const noexcept;
         /*! Get a reference to the QVariant vector of all bound values. */
-        QVariantList &boundValues() noexcept;
+        QList<QVariant> &boundValues() noexcept;
 
         /*! Clear all bound values. */
         void clearBoundValues();
