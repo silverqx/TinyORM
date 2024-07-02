@@ -321,6 +321,10 @@ void Configuration::throwIfDeprecatedTimeSpec(const int typeId, const QString &c
     if (typeId != QMetaType::fromType<Qt::TimeSpec>().id())
         return;
 
+    /* Technically it will be deprecated since Qt v6.9, but I'm disabling all deprecated
+       API-s up to v6.9 (including) so I'm deprecating it early to be compatible with
+       future Qt versions. I'm deprecating it from Qt v6.5 because this change was merged
+       to all Qt versions >=6.5. */
     throw Exceptions::InvalidArgumentError(
                 QStringLiteral(
                     "Setting the 'Qt::TimeSpec' value as 'Qt::UTC' or "
