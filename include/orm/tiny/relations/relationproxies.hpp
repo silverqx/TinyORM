@@ -194,7 +194,7 @@ namespace Tiny::Relations
 
         /*! Get the SQL representation of the query. */
         QString toSql() const;
-        /*! Get the current query value bindings as flattened QVector. */
+        /*! Get the current query value bindings as flattened QList. */
         QList<QVariant> getBindings() const;
 
         /* Insert, Update, Delete */

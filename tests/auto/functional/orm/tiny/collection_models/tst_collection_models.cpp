@@ -177,7 +177,7 @@ private Q_SLOTS:
     void toQuery() const;
 
     /* Collection - Relations related */
-    void fresh_QVector_WithItem() const;
+    void fresh_QList_WithItem() const;
     void fresh_WithSelectConstraint() const;
     void fresh_QString() const;
     void fresh_EmptyCollection() const;
@@ -2227,7 +2227,7 @@ void tst_Collection_Models::toQuery() const
     QCOMPARE(result.constFirst().getAttributes().size(), 7);
 }
 
-void tst_Collection_Models::fresh_QVector_WithItem() const
+void tst_Collection_Models::fresh_QList_WithItem() const
 {
     auto images = AlbumImage::whereIn(ID, {1, 2, 3})->get();
     QCOMPARE(images.size(), 3);

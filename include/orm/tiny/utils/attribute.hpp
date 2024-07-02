@@ -41,21 +41,21 @@ namespace Orm::Tiny::Utils
         static std::set<typename RelationsContainer<AllRelations...>::key_type>
         keys(const RelationsContainer<AllRelations...> &relations);
 
-        /*! Convert a AttributeItem QVector to the QVariantMap. */
+        /*! Convert a AttributeItem QList to the QVariantMap. */
         static QVariantMap
         convertVectorToMap(const QList<AttributeItem> &attributes);
-        /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
+        /*! Convert a vector of AttributeItem QLists to the vector of QVariantMaps. */
         static QList<QVariantMap>
         convertVectorsToMaps(const QList<QList<AttributeItem>> &attributesVector);
 
-        /*! Convert a AttributeItem QVector to the std::unordered_map. */
+        /*! Convert a AttributeItem QList to the std::unordered_map. */
         static ModelAttributes
         convertVectorToModelAttributes(const QList<AttributeItem> &attributes);
 
-        /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
+        /*! Convert a AttributeItem QList to the UpdateItem QList. */
         static QList<UpdateItem>
         convertVectorToUpdateItem(const QList<AttributeItem> &attributes);
-        /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
+        /*! Convert a AttributeItem QList to the UpdateItem QList. */
         static QList<UpdateItem>
         convertVectorToUpdateItem(QList<AttributeItem> &&attributes);
 

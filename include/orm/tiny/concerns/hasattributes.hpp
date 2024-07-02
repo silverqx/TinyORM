@@ -547,7 +547,7 @@ namespace Orm::Tiny::Concerns
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         inline static void serializeDateOrDateTimeForAccessors(QVariant &value);
 
-        /*! Convert a AttributeItem QVector to the std::unordered_map with caching. */
+        /*! Convert a AttributeItem QList to the std::unordered_map with caching. */
         const ModelAttributes &
         convertVectorToModelAttributes(const QList<AttributeItem> &attributes) const;
 

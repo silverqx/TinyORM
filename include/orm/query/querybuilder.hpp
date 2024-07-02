@@ -734,7 +734,7 @@ namespace Orm::Query
         /*! Get the query grammar instance as a std::shared_ptr. */
         inline std::shared_ptr<QueryGrammar> getGrammarShared() const noexcept;
 
-        /*! Get the current query value bindings as flattened QVector. */
+        /*! Get the current query value bindings as flattened QList. */
         QList<QVariant> getBindings() const;
         /*! Get the raw map of bindings. */
         inline const BindingsMap &getRawBindings() const noexcept;

@@ -68,7 +68,7 @@ namespace Types
         }
     };
 
-    /*! Models collection (QVector) with additional handy methods. */
+    /*! Models collection (QList) with additional handy methods. */
     template<DerivedCollectionModel Model>
     class ModelsCollection : public QList<Model> // NOLINT(misc-no-recursion)
     {

@@ -149,7 +149,7 @@ Blueprint::fullText(const QList<QString> &columns, const QString &indexName,
     return indexCommand(Fulltext, columns, indexName, algorithm, language);
 }
 
-// TODO schema, it looks like spatial index can not be created on multiple columns on mysql, if its true remove QVector overloads, error 1070 Too many key parts specified; max 1 parts allowed silverqx
+// TODO schema, it looks like spatial index can not be created on multiple columns on mysql, if its true remove QList overloads, error 1070 Too many key parts specified; max 1 parts allowed silverqx
 IndexDefinitionReference
 Blueprint::spatialIndex(const QList<QString> &columns, const QString &indexName)
 {

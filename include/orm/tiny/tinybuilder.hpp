@@ -68,7 +68,7 @@ namespace Orm::Tiny
 
         /*! Get the SQL representation of the query. */
         inline QString toSql();
-        /*! Get the current query value bindings as flattened QVector. */
+        /*! Get the current query value bindings as flattened QList. */
         inline QList<QVariant> getBindings() const;
 
         /* Retrieving results */

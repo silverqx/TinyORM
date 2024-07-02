@@ -117,9 +117,9 @@ private Q_SLOTS:
 
     void withOnly() const;
 
-    void load_QVector_WithItem() const;
-    void load_QVector_QString_lvalue() const;
-    void load_QVector_QString_rvalue() const;
+    void load_QList_WithItem() const;
+    void load_QList_QString_lvalue() const;
+    void load_QList_QString_rvalue() const;
     void load_QString() const;
 
     void load_WithSelectConstraint() const;
@@ -420,7 +420,7 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
     TVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<TorrentPreviewableFile>("torrentFiles")));
-    // One relation, obtained as QVector, also possible
+    // One relation, obtained as QList, also possible
     TVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<TorrentPeer>("torrentFiles")));
@@ -662,7 +662,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
     // One relation
     QCOMPARE((Torrent().getRelationValue<TorrentPeer, One>("notExists")),
              nullptr);
-    // One relation, obtained as QVector, also possible
+    // One relation, obtained as QList, also possible
     QCOMPARE((Torrent().getRelationValue<TorrentPeer>("notExists")),
              ModelsCollection<TorrentPeer *>());
     // Just to be sure try BelongsToMany relation
@@ -1523,7 +1523,7 @@ void tst_Model_Relations::withOnly() const
     QCOMPARE(relations.size(), static_cast<std::size_t>(1));
 }
 
-void tst_Model_Relations::load_QVector_WithItem() const
+void tst_Model_Relations::load_QList_WithItem() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
@@ -1569,7 +1569,7 @@ void tst_Model_Relations::load_QVector_WithItem() const
     }
 }
 
-void tst_Model_Relations::load_QVector_QString_lvalue() const
+void tst_Model_Relations::load_QList_QString_lvalue() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
@@ -1616,7 +1616,7 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
     }
 }
 
-void tst_Model_Relations::load_QVector_QString_rvalue() const
+void tst_Model_Relations::load_QList_QString_rvalue() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 

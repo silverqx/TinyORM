@@ -176,7 +176,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
 
     /* Pointers to a where member methods by whereType, yes yes c++. 😂
        An order has to be the same as in enum struct WhereType.
-       QVector is ideal for this as we lookup using the index. */
+       QList is ideal for this as we lookup using the index. */
     static const QList<WhereMemFn> cached {
         bind(&PostgresGrammar::whereBasic),
         bind(&PostgresGrammar::whereNested),
