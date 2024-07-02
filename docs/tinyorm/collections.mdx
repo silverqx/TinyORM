@@ -146,8 +146,8 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 [toMap](#method-tomap)
 [toMapVariantList](#method-tomapvariantlist)
 [toQuery](#method-toquery)
-[toVector](#method-tovector)
-[toVectorVariantList](#method-tovectorvariantlist)
+[toList](#method-tolist)
+[toListVariantList](#method-tolistvariantlist)
 [unique](#method-unique)
 [uniqueBy](#method-uniqueby)
 [uniqueRelaxed](#method-uniquerelaxed)
@@ -970,20 +970,20 @@ users.toQuery()->update({
 });
 ```
 
-#### `toVector()` {#method-tovector}
+#### `toList()` {#method-tolist}
 
-The `toVector` method converts the collection of models with all nested relations into an attributes vector `QVector<QVector<AttributeItem>>`.
+The `toList` method converts the collection of models with all nested relations into an attributes vector `QVector<QVector<AttributeItem>>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 
-#### `toVectorVariantList()` {#method-tovectorvariantlist}
+#### `toListVariantList()` {#method-tolistvariantlist}
 
-The `toVectorVariantList` method converts the collection of models with all nested relations into an attributes vector, but it returns the <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVector<AttributeItem>>`.
+The `toListVariantList` method converts the collection of models with all nested relations into an attributes vector, but it returns the <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVector<AttributeItem>>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 
 :::note
-The `toVectorVariantList` method is internally needed by the `toJson` related methods.
+The `toListVariantList` method is internally needed by the `toJson` related methods.
 :::
 
 #### `unique()` {#method-unique}

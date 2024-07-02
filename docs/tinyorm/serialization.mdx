@@ -2,7 +2,7 @@
 sidebar_position: 4
 sidebar_label: Serialization
 description: TinyORM models serialization allows you to serialize models and collection of models including all nested relations to JSON. It also supports converting to vectors or maps and allows controlling a custom date format during serialization.
-keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serializing relations, serializing collections, converting, toVector, toMap]
+keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serializing relations, serializing collections, converting, toList, toMap]
 ---
 
 # TinyORM: Serialization
@@ -23,41 +23,41 @@ When building APIs using TinyORM, you will often need to convert your models and
 
 ### Serializing To Vectors & Maps {#serializing-to-vectors-and-maps}
 
-To convert a model and its loaded [relationships](tinyorm/relationships.mdx) to a vector, you should use the `toVector` or `toMap` methods. This methods are recursive, so all attributes and all relations (including the relations of relations) will be converted to vectors:
+To convert a model and its loaded [relationships](tinyorm/relationships.mdx) to a vector, you should use the `toList` or `toMap` methods. This methods are recursive, so all attributes and all relations (including the relations of relations) will be converted to vectors:
 
 ```cpp
 using Models::User;
 
 auto user = User::with("roles")->first();
 
-return user->toVector();
+return user->toList();
 
 return user->toMap();
 ```
 
-The `attributesToVector` or `attributesToMap` methods may be used to convert a model's attributes to a vector or map but not its relationships:
+The `attributesToList` or `attributesToMap` methods may be used to convert a model's attributes to a vector or map but not its relationships:
 
 ```cpp
 auto user = User::first();
 
-return user->attributesToVector();
+return user->attributesToList();
 
 return user->attributesToMap();
 ```
 
-You may also convert entire [collections](tinyorm/collections.mdx) of models to vectors or maps by calling the [`toVector`](tinyorm/collections.mdx#method-tovector) or [`toMap`](tinyorm/collections.mdx#method-tomap) methods on the collection instance:
+You may also convert entire [collections](tinyorm/collections.mdx) of models to vectors or maps by calling the [`toList`](tinyorm/collections.mdx#method-tolist) or [`toMap`](tinyorm/collections.mdx#method-tomap) methods on the collection instance:
 
 ```cpp
 ModelsCollection<User> users = User::with("roles")->all();
 
-return users.toVector();
+return users.toList();
 
 return users.toMap();
 ```
 
 ### Serializing To JSON
 
-To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt/qjsondocument.html#toJson):
+To convert a model to JSON, you should use the `toJson` method. Like `toList` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt/qjsondocument.html#toJson):
 
 ```cpp
 using Models::User;
@@ -156,9 +156,9 @@ return user.makeVisible({"id", "name"}).toMap();
 Likewise, if you would like to hide some attributes that are typically visible, you may use the `makeHidden` method.
 
 ```cpp
-return user.makeHidden("attribute").toVector();
+return user.makeHidden("attribute").toList();
 
-return user.makeHidden({"id", "name"}).toVector();
+return user.makeHidden({"id", "name"}).toList();
 ```
 
 If you wish to temporarily override all of the visible or hidden attributes, you may use the `setVisible` and `setHidden` methods respectively:
@@ -238,7 +238,7 @@ Special note should be given to the `u_mutators` static data member map, which m
 At runtime, you may instruct a model instance to append additional attributes using the `append` method. Or, you may use the `setAppends` method to override the entire set of appended attributes for a given model instance:
 
 ```cpp
-return user.append("is_admin").toVector();
+return user.append("is_admin").toList();
 
 return user.append({"is_admin", "is_banned"}).toMap();
 
