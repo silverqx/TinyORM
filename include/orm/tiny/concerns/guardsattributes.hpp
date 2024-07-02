@@ -69,11 +69,11 @@ namespace Orm::Tiny::Concerns
         static std::unordered_set<QString>
         moveToSetForGuardableHash(QStringList &&columns); // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         /*! Get the fillable attributes of a given vector. */
-        QVector<AttributeItem>
-        fillableFromArray(const QVector<AttributeItem> &attributes) const;
+        QList<AttributeItem>
+        fillableFromArray(const QList<AttributeItem> &attributes) const;
         /*! Get the fillable attributes of a given vector. */
-        QVector<AttributeItem>
-        fillableFromArray(QVector<AttributeItem> &&attributes) const;
+        QList<AttributeItem>
+        fillableFromArray(QList<AttributeItem> &&attributes) const;
 
         /*! The attributes that are mass assignable. */
         T_THREAD_LOCAL
@@ -298,16 +298,16 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     {
         const auto &fillable = basemodel().getUserFillable();
 
         if (fillable.isEmpty() || isUnguarded())
             return attributes;
 
-        QVector<AttributeItem> result;
+        QList<AttributeItem> result;
         result.reserve(attributes.size());
 
         for (const auto &attribute : attributes)
@@ -318,16 +318,16 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     GuardsAttributes<Derived, AllRelations...>::fillableFromArray(
-            QVector<AttributeItem> &&attributes) const
+            QList<AttributeItem> &&attributes) const
     {
         const auto &fillable = basemodel().getUserFillable();
 
         if (fillable.isEmpty() || isUnguarded())
             return std::move(attributes);
 
-        QVector<AttributeItem> result;
+        QList<AttributeItem> result;
         result.reserve(attributes.size());
 
         for (auto &attribute : attributes)

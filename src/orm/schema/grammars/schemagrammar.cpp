@@ -32,22 +32,22 @@ QString SchemaGrammar::compileDropDatabaseIfExists(const QString &/*unused*/) co
                 "This database driver does not support dropping databases.");
 }
 
-QString SchemaGrammar::compileDropAllTables(const QVector<QString> &/*unused*/) const
+QString SchemaGrammar::compileDropAllTables(const QList<QString> &/*unused*/) const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SchemaGrammar::compileDropAllViews(const QVector<QString> &/*unused*/) const
+QString SchemaGrammar::compileDropAllViews(const QList<QString> &/*unused*/) const
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+QString SchemaGrammar::compileGetAllTables(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+QString SchemaGrammar::compileGetAllViews(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
@@ -57,8 +57,9 @@ QString SchemaGrammar::compileTableExists() const
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QVector<QString> SchemaGrammar::compileChange(const Blueprint &/*unused*/, // NOLINT(readability-convert-member-functions-to-static)
-                                              const BasicCommand &/*unused*/) const
+QList<QString>
+SchemaGrammar::compileChange(const Blueprint &/*unused*/, // NOLINT(readability-convert-member-functions-to-static)
+                             const BasicCommand &/*unused*/) const
 {
     throw Exceptions::LogicError(
                 "This database driver does not support changing columns.");
@@ -66,21 +67,21 @@ QVector<QString> SchemaGrammar::compileChange(const Blueprint &/*unused*/, // NO
 
 /* Compile methods for commands */
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileDrop(const Blueprint &blueprint,
                            const BasicCommand &/*unused*/) const
 {
     return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
 }
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
                                    const BasicCommand &/*unused*/) const
 {
     return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
 }
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
                                const IndexCommand &/*unused*/) const
 {
@@ -89,7 +90,7 @@ SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileForeign(const Blueprint &blueprint,
                               const ForeignKeyCommand &command) const
 {
@@ -119,7 +120,7 @@ SchemaGrammar::compileForeign(const Blueprint &blueprint,
     return {sql};
 }
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
                                    const IndexCommand &/*unused*/) const
 {
@@ -127,7 +128,7 @@ SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QVector<QString>
+QList<QString>
 SchemaGrammar::compileTableComment(const Blueprint &/*unused*/,
                                    const TableCommentCommand &/*unused*/) const
 {

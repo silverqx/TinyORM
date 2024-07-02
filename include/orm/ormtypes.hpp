@@ -55,13 +55,13 @@ namespace Query
     };
 
     /*! Type for the query value bindings. */
-    using BindingsMap = QMap<BindingType, QVector<QVariant>>;
+    using BindingsMap = QMap<BindingType, QList<QVariant>>;
 
     /*! Aggregate item. */
     struct AggregateItem
     {
-        QString         function;
-        QVector<Column> columns;
+        QString       function;
+        QList<Column> columns;
     };
 
     /*! Supported where clause types. */
@@ -163,8 +163,8 @@ namespace Query
         QString                       condition      {Orm::Constants::AND};
         WhereType                     type           {WhereType::UNDEFINED};
         std::shared_ptr<QueryBuilder> nestedQuery    {nullptr};
-        QVector<Column>               columns        {}; // NOLINT(readability-redundant-member-init)
-        QVector<QVariant>             values         {}; // NOLINT(readability-redundant-member-init)
+        QList<Column>                 columns        {}; // NOLINT(readability-redundant-member-init)
+        QList<QVariant>               values         {}; // NOLINT(readability-redundant-member-init)
         Column                        columnTwo      {}; // NOLINT(readability-redundant-member-init)
         QString                       sql            {}; // for the raw version; NOLINT(readability-redundant-member-init)
         bool                          nope           {false};

@@ -33,7 +33,7 @@ namespace Orm::Tiny::Utils
         ~Attribute() = delete;
 
         /*! Get all keys from attributes vector. */
-        static std::set<QString> keys(const QVector<AttributeItem> &attributes);
+        static std::set<QString> keys(const QList<AttributeItem> &attributes);
         /*! Get all keys from attributes map. */
         inline static QList<QVariantMap::key_type> keys(const QVariantMap &attributes);
         /*! Get all keys from relations map. */
@@ -43,39 +43,39 @@ namespace Orm::Tiny::Utils
 
         /*! Convert a AttributeItem QVector to the QVariantMap. */
         static QVariantMap
-        convertVectorToMap(const QVector<AttributeItem> &attributes);
+        convertVectorToMap(const QList<AttributeItem> &attributes);
         /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
-        static QVector<QVariantMap>
-        convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector);
+        static QList<QVariantMap>
+        convertVectorsToMaps(const QList<QList<AttributeItem>> &attributesVector);
 
         /*! Convert a AttributeItem QVector to the std::unordered_map. */
         static ModelAttributes
-        convertVectorToModelAttributes(const QVector<AttributeItem> &attributes);
+        convertVectorToModelAttributes(const QList<AttributeItem> &attributes);
 
         /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
-        static QVector<UpdateItem>
-        convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
+        static QList<UpdateItem>
+        convertVectorToUpdateItem(const QList<AttributeItem> &attributes);
         /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
-        static QVector<UpdateItem>
-        convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
+        static QList<UpdateItem>
+        convertVectorToUpdateItem(QList<AttributeItem> &&attributes);
 
         /*! Remove attributes which have duplicate keys and leave only the last one. */
-        static QVector<AttributeItem>
-        removeDuplicateKeys(const QVector<AttributeItem> &attributes);
+        static QList<AttributeItem>
+        removeDuplicateKeys(const QList<AttributeItem> &attributes);
         /*! Remove attributes which have duplicate keys and leave only the last one. */
-        static QVector<AttributeItem>
-        removeDuplicateKeys(QVector<AttributeItem> &&attributes);
+        static QList<AttributeItem>
+        removeDuplicateKeys(QList<AttributeItem> &&attributes);
 
         /*! Join attributes and values for firstOrXx methods. */
-        static QVector<AttributeItem>
-        joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                                 const QVector<AttributeItem> &values,
+        static QList<AttributeItem>
+        joinAttributesForFirstOr(const QList<WhereItem> &attributes,
+                                 const QList<AttributeItem> &values,
                                  const QString &keyName);
 
         /*! Remove a given attributes from the model attributes vector and return
             a copy. */
         template<typename Model>
-        static QVector<AttributeItem>
+        static QList<AttributeItem>
         exceptAttributesForReplicate(const Model &model,
                                      const std::unordered_set<QString> &except = {});
 
@@ -133,7 +133,7 @@ namespace Orm::Tiny::Utils
     }
 
     template<typename Model>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     Attribute::exceptAttributesForReplicate(const Model &model,
                                             const std::unordered_set<QString> &except)
     {
@@ -163,7 +163,7 @@ namespace Orm::Tiny::Utils
         {
             return !exceptMerged.contains(attribute.key);
         })
-                | ranges::to<QVector<AttributeItem>>();
+                | ranges::to<QList<AttributeItem>>();
     }
 
     template<typename T, typename U>

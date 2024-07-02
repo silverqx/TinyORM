@@ -502,7 +502,7 @@ namespace
     }
 } // namespace
 
-QVector<SubSectionItem> Application::createVersionsSubsection()
+QList<SubSectionItem> Application::createVersionsSubsection()
 {
     static const auto Debug_   = QStringLiteral("Debug");
     static const auto Release_ = QStringLiteral("Release");

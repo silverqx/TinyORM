@@ -10,7 +10,7 @@ namespace Orm::Concerns
 bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
 {
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
-    static const QVector<QString> lostMessagesCache {
+    static const QList<QString> lostMessagesCache {
         QLatin1String("server has gone away"),
         QLatin1String("no connection to the server"),
         QLatin1String("Lost connection"),

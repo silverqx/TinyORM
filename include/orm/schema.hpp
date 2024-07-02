@@ -56,7 +56,7 @@ namespace Orm
                            const QString &connection = "");
 
         /*! Drop columns from a table schema. */
-        static void dropColumns(const QString &table, const QVector<QString> &columns,
+        static void dropColumns(const QString &table, const QList<QString> &columns,
                                 const QString &connection = "");
         /*! Drop columns from a table schema. */
         template<QStringConcept ...Args>
@@ -99,7 +99,7 @@ namespace Orm
         static bool hasColumn(const QString &table, const QString &column,
                               const QString &connection = "");
         /*! Determine if the given table has given columns. */
-        static bool hasColumns(const QString &table, const QVector<QString> &columns,
+        static bool hasColumns(const QString &table, const QList<QString> &columns,
                                const QString &connection = "");
 
         /* Schema */

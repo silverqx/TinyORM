@@ -552,7 +552,7 @@ namespace Private
             return std::invoke(&Relation<Related>::getRelationExistenceQuery,
                                relation,
                                relation.getRelated().newQueryWithoutRelationships(),
-                               query(), QVector<Column> {ASTERISK});
+                               query(), QList<Column> {ASTERISK});
 
         return std::invoke(&Relation<Related>::getRelationExistenceCountQuery,
                            relation,

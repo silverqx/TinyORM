@@ -52,11 +52,11 @@ namespace Commands
         using AboutValue = Orm::Types::AboutValue;
 
         /*! Display the application information. */
-        void display(const QVector<SectionItem> &sections);
+        void display(const QList<SectionItem> &sections);
         /*! Display the application information as a detailed view. */
-        void displayDetail(const QVector<SectionItem> &sections) const;
+        void displayDetail(const QList<SectionItem> &sections) const;
         /*! Display the application information as JSON. */
-        void displayJson(const QVector<SectionItem> &sections);
+        void displayJson(const QList<SectionItem> &sections);
 
         /*! Determine whether the only values list contains the given section name. */
         bool shouldSkipSection(const QString &sectionName) const;
@@ -89,15 +89,15 @@ namespace Commands
 
         /* Gathering */
         /*! Gather all information about the application. */
-        QVector<SectionItem> gatherAllAboutInformation() const;
+        QList<SectionItem> gatherAllAboutInformation() const;
         /*! Gather environment-related information. */
-        QVector<SubSectionItem> gatherEnvironmentInformation() const;
+        QList<SubSectionItem> gatherEnvironmentInformation() const;
         /*! Gather C preprocessor macros-related information. */
-        static QVector<SubSectionItem> gatherMacrosInformation();
+        static QList<SubSectionItem> gatherMacrosInformation();
         /*! Gather version-related information. */
-        static QVector<SubSectionItem> gatherVersionsInformation();
+        static QList<SubSectionItem> gatherVersionsInformation();
         /*! Gather database connections information. */
-        static QVector<SubSectionItem> gatherConnectionsInformation();
+        static QList<SubSectionItem> gatherConnectionsInformation();
 
     private:
         /*! Print about item as a detailed view (common code). */

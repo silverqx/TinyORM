@@ -13,21 +13,21 @@ namespace Orm::Tiny::Exceptions
 /* public */
 
 ModelNotFoundError::ModelNotFoundError(const char *model,
-                                       const QVector<QVariant> &ids)
+                                       const QList<QVariant> &ids)
     : RuntimeError(formatMessage(model, ids))
     , m_model(model)
     , m_ids(ids)
 {}
 
 ModelNotFoundError::ModelNotFoundError(const QString &model,
-                                       const QVector<QVariant> &ids)
+                                       const QList<QVariant> &ids)
     : ModelNotFoundError(model.toUtf8().constData(), ids)
 {}
 
 /* private */
 
 QString ModelNotFoundError::formatMessage(const char *model,
-                                          const QVector<QVariant> &ids)
+                                          const QList<QVariant> &ids)
 {
     QString result = QStringLiteral("No query results for model '%1'")
                      .arg(model);

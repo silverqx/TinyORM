@@ -10,14 +10,14 @@ namespace Orm::Query::Grammars
 /* public */
 
 QString SQLiteGrammar::compileInsertOrIgnore(const QueryBuilder &query,
-                                             const QVector<QVariantMap> &values) const
+                                             const QList<QVariantMap> &values) const
 {
     return compileInsert(query, values)
             .replace(0, 6, QStringLiteral("insert or ignore"));
 }
 
 QString SQLiteGrammar::compileUpdate(QueryBuilder &query,
-                                     const QVector<UpdateItem> &values) const
+                                     const QList<UpdateItem> &values) const
 {
     if (!query.getJoins().isEmpty() || query.getLimit() > -1)
         return compileUpdateWithJoinsOrLimit(query, values);
@@ -26,7 +26,7 @@ QString SQLiteGrammar::compileUpdate(QueryBuilder &query,
 }
 
 QString SQLiteGrammar::compileUpsert(
-            QueryBuilder &query, const QVector<QVariantMap> &values,
+            QueryBuilder &query, const QList<QVariantMap> &values,
             const QStringList &uniqueBy, const QStringList &update) const
 {
     auto sql = compileInsert(query, values);
@@ -53,7 +53,7 @@ QString SQLiteGrammar::compileDelete(QueryBuilder &query) const
     return Grammar::compileDelete(query);
 }
 
-std::unordered_map<QString, QVector<QVariant>>
+std::unordered_map<QString, QList<QVariant>>
 SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
 {
     const auto table = wrapTable(query.getFrom());
@@ -82,7 +82,7 @@ const std::unordered_set<QString> &SQLiteGrammar::getOperators() const
 
 /* protected */
 
-const QVector<Grammar::SelectComponentValue> &
+const QList<Grammar::SelectComponentValue> &
 SQLiteGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -103,7 +103,7 @@ SQLiteGrammar::getCompileMap() const
     };
 
     // Pointers to compile methods, yes yes c++ 😂
-    static const QVector<SelectComponentValue> cached {
+    static const QList<SelectComponentValue> cached {
         {bind(&SQLiteGrammar::compileAggregate),
          [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
         {bind(&SQLiteGrammar::compileColumns),
@@ -154,7 +154,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
     /* Pointers to a where member methods by whereType, yes yes c++. 😂
        An order has to be the same as in enum struct WhereType.
        QVector is ideal for this as we lookup using the index. */
-    static const QVector<WhereMemFn> cached {
+    static const QList<WhereMemFn> cached {
         bind(&SQLiteGrammar::whereBasic),
         bind(&SQLiteGrammar::whereNested),
         bind(&SQLiteGrammar::whereColumn),
@@ -243,7 +243,7 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
     }
 }
 
-QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+QString SQLiteGrammar::compileUpdateColumns(const QList<UpdateItem> &values) const
 {
     QStringList compiledAssignments;
     compiledAssignments.reserve(values.size());
@@ -260,7 +260,7 @@ QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) c
 
 QString
 SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
-                                             const QVector<UpdateItem> &values) const
+                                             const QList<UpdateItem> &values) const
 {
     const auto table = std::get<QString>(query.getFrom());
 

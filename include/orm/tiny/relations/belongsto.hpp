@@ -116,7 +116,7 @@ namespace Orm::Tiny::Relations
         /* Relation related operations */
         /*! Gather the keys from a vector of related models. */
         template<SameDerivedCollectionModel<Model> CollectionModel>
-        QVector<QVariant>
+        QList<QVariant>
         getEagerModelKeys(const ModelsCollection<CollectionModel> &models) const;
 
         /*! Build model dictionary keyed by the parent's primary key. */
@@ -137,7 +137,7 @@ namespace Orm::Tiny::Relations
         getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
-                const QVector<Column> &columns = {ASTERISK}) const override;
+                const QList<Column> &columns = {ASTERISK}) const override;
 
         /*! The child model instance of the relation. */
         NotNull<Model *> m_child;
@@ -402,11 +402,11 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     template<SameDerivedCollectionModel<Model> CollectionModel>
-    QVector<QVariant>
+    QList<QVariant>
     BelongsTo<Model, Related>::getEagerModelKeys(
             const ModelsCollection<CollectionModel> &models) const
     {
-        QVector<QVariant> keys;
+        QList<QVariant> keys;
         keys.reserve(models.size());
 
         /*! Const Model type used in the for-ranged loops. */
@@ -455,7 +455,7 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &/*parentQuery*/,
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         // CUR1 finish self query silverqx
 //        if (query->getQuery()->from == parentQuery.getQuery()->from)

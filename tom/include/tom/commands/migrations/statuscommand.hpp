@@ -66,7 +66,7 @@ namespace Commands::Migrations
     protected:
         /*! Get the status for the given ran migrations. */
         std::vector<TableRow>
-        getStatusFor(const QVector<QVariant> &ran,
+        getStatusFor(const QList<QVariant> &ran,
                      const std::map<QString, QVariant> &batches) const;
 #ifdef TINYTOM_TESTS_CODE
         /*! Transform migrations status for comparing in auto tests. */

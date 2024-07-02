@@ -56,7 +56,7 @@ void Schema::rename(const QString &from, const QString &to, const QString &conne
     schemaBuilder(connection).rename(from, to);
 }
 
-void Schema::dropColumns(const QString &table, const QVector<QString> &columns,
+void Schema::dropColumns(const QString &table, const QList<QString> &columns,
                          const QString &connection)
 {
     schemaBuilder(connection).dropColumns(table, columns);
@@ -131,7 +131,7 @@ bool Schema::hasColumn(const QString &table, const QString &column,
     return schemaBuilder(connection).hasColumn(table, column);
 }
 
-bool Schema::hasColumns(const QString &table, const QVector<QString> &columns,
+bool Schema::hasColumns(const QString &table, const QList<QString> &columns,
                         const QString &connection)
 {
     return schemaBuilder(connection).hasColumns(table, columns);

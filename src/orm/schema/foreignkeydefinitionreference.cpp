@@ -17,7 +17,7 @@ ForeignKeyDefinitionReference::ForeignKeyDefinitionReference(
 {}
 
 ForeignKeyDefinitionReference &
-ForeignKeyDefinitionReference::references(const QVector<QString> &columns)
+ForeignKeyDefinitionReference::references(const QList<QString> &columns)
 {
     m_foreignKeyCommandDefinition.get().references = columns;
 

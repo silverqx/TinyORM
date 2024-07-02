@@ -25,18 +25,18 @@ namespace Orm::Query::Grammars
 
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
-                                      const QVector<QVariantMap> &values) const override;
+                                      const QList<QVariantMap> &values) const override;
         /*! Compile an insert and get ID statement into SQL. */
         QString compileInsertGetId(const QueryBuilder &query,
-                                   const QVector<QVariantMap> &values,
+                                   const QList<QVariantMap> &values,
                                    const QString &sequence) const override;
 
         /*! Compile an update statement into SQL. */
         QString compileUpdate(QueryBuilder &query,
-                              const QVector<UpdateItem> &values) const override;
+                              const QList<UpdateItem> &values) const override;
         /*! Compile an "upsert" statement into SQL. */
         QString compileUpsert(
-                    QueryBuilder &query, const QVector<QVariantMap> &values,
+                    QueryBuilder &query, const QList<QVariantMap> &values,
                     const QStringList &uniqueBy,
                     const QStringList &update) const override;
 
@@ -45,7 +45,7 @@ namespace Orm::Query::Grammars
 
         /*! Compile a truncate table statement into SQL. Returns a map of
             the query string and bindings. */
-        std::unordered_map<QString, QVector<QVariant>>
+        std::unordered_map<QString, QList<QVariant>>
         compileTruncate(const QueryBuilder &query) const override;
 
         /*! Compile the lock into SQL. */
@@ -59,7 +59,7 @@ namespace Orm::Query::Grammars
 
     protected:
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        const QVector<SelectComponentValue> &getCompileMap() const override;
+        const QList<SelectComponentValue> &getCompileMap() const override;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         const WhereMemFn &getWhereMethod(WhereType whereType) const override;
 
@@ -75,12 +75,12 @@ namespace Orm::Query::Grammars
                                WhereConditionItem &where) const override;
 
         /*! Compile the columns for an update statement. */
-        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
+        QString compileUpdateColumns(const QList<UpdateItem> &values) const override;
 
     private:
         /*! Compile an update statement with joins or limit into SQL. */
         QString compileUpdateWithJoinsOrLimit(QueryBuilder &query,
-                                              const QVector<UpdateItem> &values) const;
+                                              const QList<UpdateItem> &values) const;
 
         /*! Compile a delete statement with joins or limit into SQL. */
         QString compileDeleteWithJoinsOrLimit(QueryBuilder &query) const;

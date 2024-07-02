@@ -23,10 +23,10 @@ bool operator==(const AttributeItem &left, const AttributeItem &right)
 
 /* public */
 
-QVector<WithItem>
-WithItem::fromStringVector(const QVector<QString> &relations)
+QList<WithItem>
+WithItem::fromStringVector(const QList<QString> &relations)
 {
-    QVector<WithItem> relationsConverted;
+    QList<WithItem> relationsConverted;
     relationsConverted.reserve(relations.size());
 
     for (const auto &relation : relations)
@@ -35,10 +35,10 @@ WithItem::fromStringVector(const QVector<QString> &relations)
     return relationsConverted;
 }
 
-QVector<WithItem>
-WithItem::fromStringVector(QVector<QString> &&relations) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+QList<WithItem>
+WithItem::fromStringVector(QList<QString> &&relations) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
-    QVector<WithItem> relationsConverted;
+    QList<WithItem> relationsConverted;
     relationsConverted.reserve(relations.size());
 
     for (auto &&relation : relations)

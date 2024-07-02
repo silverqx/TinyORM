@@ -25,14 +25,14 @@ namespace Orm::Query::Grammars
 
         /*! Compile an insert statement into SQL. */
         QString compileInsert(const QueryBuilder &query,
-                              const QVector<QVariantMap> &values) const override;
+                              const QList<QVariantMap> &values) const override;
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
-                                      const QVector<QVariantMap> &values) const override;
+                                      const QList<QVariantMap> &values) const override;
 
         /*! Compile an "upsert" statement into SQL. */
         QString compileUpsert(
-                    QueryBuilder &query, const QVector<QVariantMap> &values,
+                    QueryBuilder &query, const QList<QVariantMap> &values,
                     const QStringList &uniqueBy,
                     const QStringList &update) const override;
 
@@ -50,7 +50,7 @@ namespace Orm::Query::Grammars
         QString wrapValue(QString value) const override;
 
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        const QVector<SelectComponentValue> &getCompileMap() const override;
+        const QList<SelectComponentValue> &getCompileMap() const override;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         const WhereMemFn &getWhereMethod(WhereType whereType) const override;
 

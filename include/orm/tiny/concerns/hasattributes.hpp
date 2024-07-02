@@ -54,7 +54,7 @@ namespace Orm::Tiny::Concerns
         /*! Alias for the attribute. */
         using Attribute = Orm::Tiny::Casts::Attribute;
         /*! Alias for the attributes vector size type. */
-        using AttributesSizeType = typename QVector<AttributeItem>::size_type;
+        using AttributesSizeType = typename QList<AttributeItem>::size_type;
 
         /*! Equality comparison operator for the HasAttributes concern. */
         bool operator==(const HasAttributes &) const = default;
@@ -62,16 +62,16 @@ namespace Orm::Tiny::Concerns
         /*! Set a given attribute on the model. */
         Derived &setAttribute(const QString &key, QVariant value);
         /*! Set a vector of model attributes. No checking is done. */
-        Derived &setRawAttributes(const QVector<AttributeItem> &attributes,
+        Derived &setRawAttributes(const QList<AttributeItem> &attributes,
                                   bool sync = false);
         /*! Set a vector of model attributes. No checking is done. */
-        Derived &setRawAttributes(QVector<AttributeItem> &&attributes,
+        Derived &setRawAttributes(QList<AttributeItem> &&attributes,
                                   bool sync = false);
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
 
         /*! Get all of the current attributes on the model (insertion order). */
-        inline const QVector<AttributeItem> &getAttributes() const noexcept;
+        inline const QList<AttributeItem> &getAttributes() const noexcept;
         /*! Get all of the current attributes on the model (for fast lookup). */
         inline const std::unordered_map<QString, AttributesSizeType> &
         getAttributesHash() const;
@@ -89,7 +89,7 @@ namespace Orm::Tiny::Concerns
         QVariant getOriginal(const QString &key,
                              const QVariant &defaultValue = {}) const;
         /*! Get the model's original attribute values (transformed and insert order). */
-        QVector<AttributeItem> getOriginals() const;
+        QList<AttributeItem> getOriginals() const;
         /*! Get the model's original attributes hash (for fast lookup). */
         inline const std::unordered_map<QString, AttributesSizeType> &
         getOriginalsHash() const;
@@ -97,7 +97,7 @@ namespace Orm::Tiny::Concerns
         QVariant getRawOriginal(const QString &key,
                                 const QVariant &defaultValue = {}) const;
         /*! Get the model's raw original attribute values (insertion order). */
-        inline const QVector<AttributeItem> &getRawOriginals() const;
+        inline const QList<AttributeItem> &getRawOriginals() const;
 
         /*! Unset an attribute on the model, returns the number of attributes removed. */
         Derived &unsetAttribute(const AttributeItem &value);
@@ -105,13 +105,13 @@ namespace Orm::Tiny::Concerns
         Derived &unsetAttribute(const QString &key);
 
         /*! Get a subset of the model's attributes. */
-        QVector<AttributeItem> only(const QStringList &attributes) const;
+        QList<AttributeItem> only(const QStringList &attributes) const;
         /*! Get a subset of the model's attributes. */
-        QVector<AttributeItem> only(QStringList &&attributes) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        QList<AttributeItem> only(QStringList &&attributes) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /*! Get the attributes that have been changed since last sync
             (insertion order). */
-        QVector<AttributeItem> getDirty() const;
+        QList<AttributeItem> getDirty() const;
         /*! Get the attributes that have been changed since last sync
             (for fast lookup). */
         std::unordered_map<QString, AttributesSizeType> getDirtyHash() const;
@@ -129,7 +129,7 @@ namespace Orm::Tiny::Concerns
         inline bool isClean(const QString &attribute) const;
 
         /*! Get the attributes that were changed (insertion order). */
-        inline const QVector<AttributeItem> &getChanges() const;
+        inline const QList<AttributeItem> &getChanges() const;
         /*! Get the attributes that were changed (for fast lookup). */
         inline const std::unordered_map<QString, AttributesSizeType> &
         getChangesHash() const;
@@ -246,7 +246,7 @@ namespace Orm::Tiny::Concerns
         /*! Convert the model's attributes to the map. */
         QVariantMap attributesToMap() const;
         /*! Convert the model's attributes to the vector. */
-        QVector<AttributeItem> attributesToVector() const;
+        QList<AttributeItem> attributesToVector() const;
 
         /* Serialization - Appends */
         /*! Append accessor attribute to the u_appends set. */
@@ -284,7 +284,7 @@ namespace Orm::Tiny::Concerns
                 const QString &key, const QVariant &defaultValue = {}) const;
 
         /*! Get all of the current attributes on the model. */
-        inline const QVector<AttributeItem> &getRawAttributes() const;
+        inline const QList<AttributeItem> &getRawAttributes() const;
 
         /*! Determine if any of the given attributes were changed. */
         bool hasChanges(const std::unordered_map<QString, AttributesSizeType> &changes,
@@ -303,12 +303,12 @@ namespace Orm::Tiny::Concerns
 
         /*! Rehash attribute positions from the given index. */
         static void rehashAttributePositions(
-                const QVector<AttributeItem> &attributes,
+                const QList<AttributeItem> &attributes,
                 std::unordered_map<QString, AttributesSizeType> &attributesHash,
                 AttributesSizeType from = 0);
         /*! Rehash attribute positions from the given index. */
         static std::unordered_map<QString, AttributesSizeType>
-        rehashAttributePositions(const QVector<AttributeItem> &attributes,
+        rehashAttributePositions(const QList<AttributeItem> &attributes,
                                  AttributesSizeType from = 0);
 
         /* Datetime-related */
@@ -370,7 +370,7 @@ namespace Orm::Tiny::Concerns
         struct VectorableAttributes
         {
             /*! The model's vectorable attributes (insertion order). */
-            QVector<AttributeItem> attributes;
+            QList<AttributeItem> attributes;
             /*! The model's vectorable attributes hash (for fast lookup). */
             std::unordered_map<QString, AttributesSizeType> attributesHash;
         };
@@ -383,7 +383,7 @@ namespace Orm::Tiny::Concerns
         /*! Get an attributes map/vector of serializable attributes (visible/hidden). */
         template<SerializedAttributes C>
         static C getSerializableAttributes(
-                const QVector<AttributeItem> &attributes,
+                const QList<AttributeItem> &attributes,
                 const std::set<QString> &visible, const std::set<QString> &hidden,
                 const std::set<QString> &appends);
 
@@ -391,7 +391,7 @@ namespace Orm::Tiny::Concerns
         void addDateAttributesToMap(QVariantMap &attributes) const;
         /*! Add the date attributes to the attributes vector. */
         void addDateAttributesToVector(
-                QVector<AttributeItem> &attributes,
+                QList<AttributeItem> &attributes,
                 const std::unordered_map<QString,
                                          AttributesSizeType> &attributesHash) const;
 
@@ -399,7 +399,7 @@ namespace Orm::Tiny::Concerns
         void addCastAttributesToMap(QVariantMap &attributes) const;
         /*! Add the casted attributes to the attributes vector. */
         void addCastAttributesToVector(
-                QVector<AttributeItem> &attributes,
+                QList<AttributeItem> &attributes,
                 const std::unordered_map<QString,
                                          AttributesSizeType> &attributesHash) const;
 
@@ -421,15 +421,15 @@ namespace Orm::Tiny::Concerns
         /* Data members */
         /*! The model's default values for attributes. */
         T_THREAD_LOCAL
-        inline static QVector<AttributeItem> u_attributes;
+        inline static QList<AttributeItem> u_attributes;
         /*! The model's attributes (insertion order). */
-        QVector<AttributeItem> m_attributes;
+        QList<AttributeItem> m_attributes;
         /*! The model attribute's original state (insertion order).
             On the model from many-to-many relation also contains all pivot values,
             that is normal (insertion order). */
-        QVector<AttributeItem> m_original;
+        QList<AttributeItem> m_original;
         /*! The changed model attributes (insertion order). */
-        QVector<AttributeItem> m_changes;
+        QList<AttributeItem> m_changes;
 
         /* Don't want to use std::reference_wrapper to attributes, because if a copy
            of the model is made, all references would be invalidated. */
@@ -501,7 +501,7 @@ namespace Orm::Tiny::Concerns
         /* Serialization */
         /*! Remove the u_appends keys from vectorable attributes. */
         static void removeAppendsFromVectorableAttributes(
-                QVector<AttributeItem> &attributes, bool isVisibleEmpty,
+                QList<AttributeItem> &attributes, bool isVisibleEmpty,
                 const std::set<QString> &hidden, const std::set<QString> &appends);
 
         /*! Cast the given attribute (used in serialization). */
@@ -512,7 +512,7 @@ namespace Orm::Tiny::Concerns
         /*! Get an attributes map/vector of visible serializable attributes. */
         template<SerializedAttributes C>
         static C
-        getSerializableVisibleAttributes(const QVector<AttributeItem> &attributes,
+        getSerializableVisibleAttributes(const QList<AttributeItem> &attributes,
                                          const std::set<QString> &visible,
                                          const std::set<QString> &appends);
 
@@ -521,8 +521,8 @@ namespace Orm::Tiny::Concerns
         removeSerializableHiddenAttributes(QVariantMap &&attributes,
                                            const std::set<QString> &hidden);
         /*! Get an attributes vector without hidden attributes. */
-        static QVector<AttributeItem>
-        removeSerializableHiddenAttributes(QVector<AttributeItem> &&attributes,
+        static QList<AttributeItem>
+        removeSerializableHiddenAttributes(QList<AttributeItem> &&attributes,
                                            const std::set<QString> &hidden);
 
         /* Serialization - Appends */
@@ -549,7 +549,7 @@ namespace Orm::Tiny::Concerns
 
         /*! Convert a AttributeItem QVector to the std::unordered_map with caching. */
         const ModelAttributes &
-        convertVectorToModelAttributes(const QVector<AttributeItem> &attributes) const;
+        convertVectorToModelAttributes(const QList<AttributeItem> &attributes) const;
 
         /* Others */
         /* Static cast this to a child's instance type (CRTP) */
@@ -603,7 +603,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasAttributes<Derived, AllRelations...>::setRawAttributes(
-            const QVector<AttributeItem> &attributes,
+            const QList<AttributeItem> &attributes,
             const bool sync)
     {
         m_attributes = AttributeUtils::removeDuplicateKeys(attributes);
@@ -627,7 +627,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasAttributes<Derived, AllRelations...>::setRawAttributes(
-            QVector<AttributeItem> &&attributes,
+            QList<AttributeItem> &&attributes,
             const bool sync)
     {
         m_attributes.reserve(attributes.size());
@@ -660,7 +660,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    const QList<AttributeItem> &
     HasAttributes<Derived, AllRelations...>::getAttributes() const noexcept
     {
         // FEATURE castable silverqx
@@ -739,10 +739,10 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::getOriginals() const
     {
-        QVector<AttributeItem> originals;
+        QList<AttributeItem> originals;
         originals.reserve(m_original.size());
 
         for (const auto &original : m_original) {
@@ -777,7 +777,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    const QList<AttributeItem> &
     HasAttributes<Derived, AllRelations...>::getRawOriginals() const
     {
         return m_original;
@@ -837,10 +837,10 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::only(const QStringList &attributes) const
     {
-        QVector<AttributeItem> result;
+        QList<AttributeItem> result;
         result.reserve(attributes.size());
 
         for (const auto &attribute : attributes)
@@ -850,10 +850,10 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::only(QStringList &&attributes) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
-        QVector<AttributeItem> result;
+        QList<AttributeItem> result;
         result.reserve(attributes.size());
 
         for (auto &&attribute : attributes) {
@@ -865,12 +865,12 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::getDirty() const
     {
         const auto &attributes = getAttributes();
 
-        QVector<AttributeItem> dirty;
+        QList<AttributeItem> dirty;
         dirty.reserve(attributes.size());
 
         for (const auto &attribute : attributes)
@@ -931,7 +931,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    const QList<AttributeItem> &
     HasAttributes<Derived, AllRelations...>::getChanges() const
     {
         return m_changes;
@@ -1352,7 +1352,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::attributesToVector() const
     {
         auto [attributes, attributesHash] = getVectorableAttributes();
@@ -1508,7 +1508,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QVector<AttributeItem> &
+    const QList<AttributeItem> &
     HasAttributes<Derived, AllRelations...>::getRawAttributes() const
     {
         return m_attributes;
@@ -1638,7 +1638,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
-            const QVector<AttributeItem> &attributes,
+            const QList<AttributeItem> &attributes,
             std::unordered_map<QString, AttributesSizeType> &attributesHash,
             const AttributesSizeType from)
     {
@@ -1654,7 +1654,7 @@ namespace Orm::Tiny::Concerns
     std::unordered_map<QString, typename HasAttributes<Derived, AllRelations...>::
                                          AttributesSizeType>
     HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
-            const QVector<AttributeItem> &attributes, const AttributesSizeType from)
+            const QList<AttributeItem> &attributes, const AttributesSizeType from)
     {
         std::unordered_map<QString, AttributesSizeType> attributesHash;
         attributesHash.reserve(static_cast<decltype (attributesHash)::size_type>(
@@ -2164,7 +2164,7 @@ namespace Orm::Tiny::Concerns
         const auto &hidden  = basemodel.getUserHidden();
         const auto &appends = basemodel.getUserAppends();
 
-        auto attributes = getSerializableAttributes<QVector<AttributeItem>>(
+        auto attributes = getSerializableAttributes<QList<AttributeItem>>(
                               getAttributes(), visible, hidden, appends);
 
         /* We need to remove attributes that have the same names as u_appends, to avoid
@@ -2184,7 +2184,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     C HasAttributes<Derived, AllRelations...>::getSerializableAttributes(
-            const QVector<AttributeItem> &attributes, const std::set<QString> &visible,
+            const QList<AttributeItem> &attributes, const std::set<QString> &visible,
             const std::set<QString> &hidden, const std::set<QString> &appends)
     {
         // Nothing to do, the visible and hidden attributes are not defined
@@ -2192,7 +2192,7 @@ namespace Orm::Tiny::Concerns
             if constexpr (std::is_same_v<C, QVariantMap>)
                 return AttributeUtils::convertVectorToMap(attributes);
 
-            // QVector<AttributeItem>
+            // QList<AttributeItem>
             else
                 return attributes;
         }
@@ -2227,7 +2227,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::addDateAttributesToVector(
-            QVector<AttributeItem> &attributes,
+            QList<AttributeItem> &attributes,
             const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
         for (auto &&key : getDates()) {
@@ -2269,7 +2269,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::addCastAttributesToVector(
-            QVector<AttributeItem> &attributes,
+            QList<AttributeItem> &attributes,
             const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
         for (auto &&[key, castItem] : getCasts()) {
@@ -2507,7 +2507,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::removeAppendsFromVectorableAttributes(
-            QVector<AttributeItem> &attributes, const bool isVisibleEmpty,
+            QList<AttributeItem> &attributes, const bool isVisibleEmpty,
             const std::set<QString> &hidden, const std::set<QString> &appends)
     {
         /* Ok, this method is a little sketchy so I have to comment on this logic,
@@ -2594,7 +2594,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     C HasAttributes<Derived, AllRelations...>::getSerializableVisibleAttributes(
-            const QVector<AttributeItem> &attributes, const std::set<QString> &visible,
+            const QList<AttributeItem> &attributes, const std::set<QString> &visible,
             const std::set<QString> &appends)
     {
         // Nothing to do
@@ -2602,7 +2602,7 @@ namespace Orm::Tiny::Concerns
             if constexpr (std::is_same_v<C, QVariantMap>)
                 return AttributeUtils::convertVectorToMap(attributes);
 
-            // QVector<AttributeItem>
+            // QList<AttributeItem>
             else
                 return attributes;
         }
@@ -2624,7 +2624,7 @@ namespace Orm::Tiny::Concerns
                 if constexpr (std::is_same_v<C, QVariantMap>)
                     serializableAttributes.insert(key, value);
 
-                // QVector<AttributeItem>
+                // QList<AttributeItem>
                 else
                     serializableAttributes.emplaceBack(key, value);
             }
@@ -2663,9 +2663,9 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::removeSerializableHiddenAttributes(
-            QVector<AttributeItem> &&attributes, const std::set<QString> &hidden)
+            QList<AttributeItem> &&attributes, const std::set<QString> &hidden)
     {
         // Nothing to do
         if (hidden.empty())
@@ -2679,7 +2679,7 @@ namespace Orm::Tiny::Concerns
         ranges::set_intersection(AttributeUtils::keys(attributes), hidden,
                                  ranges::inserter(hiddenKeys, hiddenKeys.cend()));
 
-        QVector<AttributeItem> serializableAttributes;
+        QList<AttributeItem> serializableAttributes;
         serializableAttributes.reserve(attributes.size());
 
         for (auto &&[key, value] : attributes)
@@ -2777,7 +2777,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const ModelAttributes &
     HasAttributes<Derived, AllRelations...>::convertVectorToModelAttributes(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     {
         if (m_modelAttributesCacheForMutators)
             return *m_modelAttributesCacheForMutators;

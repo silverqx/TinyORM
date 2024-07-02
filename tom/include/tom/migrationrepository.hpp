@@ -48,7 +48,7 @@ namespace Tom
         ~MigrationRepository() = default;
 
         /*! Get the completed migrations (only migration names using pluck). */
-        QVector<QVariant> getRanSimple() const;
+        QList<QVariant> getRanSimple() const;
         /*! Get the completed migrations. */
         std::vector<MigrationItem> getRan(const QString &order) const;
         /*! Get list of migrations. */

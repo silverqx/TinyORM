@@ -36,16 +36,16 @@ namespace Orm::Utils
         /*! Get pretended query with replaced placeholders ( ideal for logging ). */
         inline static QString
         parseExecutedQueryForPretend(QString queryString,
-                                     const QVector<QVariant> &bindings);
+                                     const QList<QVariant> &bindings);
 
         /*! Log the last executed query to the debug output. */
         [[maybe_unused]]
         static void logExecutedQuery(const TSqlQuery &query);
 
         /*! Prepare the passed containers for the multi-insert. */
-        static QVector<QVariantMap>
-        zipForInsert(const QVector<QString> &columns,
-                     const QVector<QVector<QVariant>> &values);
+        static QList<QVariantMap>
+        zipForInsert(const QList<QString> &columns,
+                     const QList<QList<QVariant>> &values);
 
         /*! Returns the size of the result (number of rows returned). */
         static int queryResultSize(TSqlQuery &query);
@@ -54,7 +54,7 @@ namespace Orm::Utils
     /* public */
 
     QString Query::parseExecutedQueryForPretend(QString queryString,
-                                                const QVector<QVariant> &bindings)
+                                                const QList<QVariant> &bindings)
     {
         return replaceBindingsInSql(std::move(queryString), bindings).first;
     }

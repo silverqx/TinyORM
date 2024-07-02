@@ -84,7 +84,7 @@ void SchemaBuilder::rename(const QString &from, const QString &to) const
 }
 
 void SchemaBuilder::dropColumns(const QString &table,
-                                const QVector<QString> &columns) const
+                                const QList<QString> &columns) const
 {
     auto blueprint = createBlueprint(table);
 
@@ -202,7 +202,7 @@ bool SchemaBuilder::hasColumn(const QString &table, const QString &column) const
 }
 
 bool SchemaBuilder::hasColumns(const QString &table,
-                               const QVector<QString> &columns) const
+                               const QList<QString> &columns) const
 {
     auto columnsFromListing = getColumnListing(table);
 

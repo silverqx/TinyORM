@@ -70,20 +70,20 @@ namespace Types
 
     /*! Models collection (QVector) with additional handy methods. */
     template<DerivedCollectionModel Model>
-    class ModelsCollection : public QVector<Model> // NOLINT(misc-no-recursion)
+    class ModelsCollection : public QList<Model> // NOLINT(misc-no-recursion)
     {
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
     public:
         /*! Inherit constructors. */
-        using QVector<Model>::QVector;
+        using QList<Model>::QList;
 
         /* Container related */
         /*! Determine whether the current collection contains pointers to models. */
         constexpr static auto IsPointersCollection = std::is_pointer_v<Model>;
         /*! The base class type (used as the storage container). */
-        using StorageType     = QVector<Model>;
+        using StorageType     = QList<Model>;
 
         using value_type      = typename StorageType::value_type;
         using pointer         = typename StorageType::pointer;
@@ -116,19 +116,19 @@ namespace Types
         using KeyType = typename std::remove_pointer_t<value_type>::KeyType;
 
         /* Constructors */
-        /* From QVector<Model> */
-        /*! Converting constructor from the QVector<Model>. */
-        ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
+        /* From QList<Model> */
+        /*! Converting constructor from the QList<Model>. */
+        ModelsCollection(const QList<Model> &models) // NOLINT(google-explicit-constructor)
         requires (!std::is_pointer_v<Model>);
-        /*! Converting constructor from the QVector<Model>. */
-        ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(google-explicit-constructor)
+        /*! Converting constructor from the QList<Model>. */
+        ModelsCollection(QList<Model> &&models) noexcept // NOLINT(google-explicit-constructor)
         requires (!std::is_pointer_v<Model>);
 
-        /*! Converting copy assignment operator from the QVector<Model>. */
-        ModelsCollection<Model> &operator=(const QVector<Model> &models)
+        /*! Converting copy assignment operator from the QList<Model>. */
+        ModelsCollection<Model> &operator=(const QList<Model> &models)
         requires (!std::is_pointer_v<Model>);
-        /*! Converting move assignment operator from the QVector<Model>. */
-        ModelsCollection<Model> &operator=(QVector<Model> &&models) noexcept
+        /*! Converting move assignment operator from the QList<Model>. */
+        ModelsCollection<Model> &operator=(QList<Model> &&models) noexcept
         requires (!std::is_pointer_v<Model>);
 
         /* To ModelsCollection<Model> */
@@ -209,15 +209,15 @@ namespace Types
 
         /* Collection */
         /*! Get a base vector instance from this collection.*/
-        inline QVector<Model> toBase() const;
+        inline QList<Model> toBase() const;
         /*! Get all of the models in the collection. */
-        QVector<Model> all() const;
+        QList<Model> all() const;
 
         /*! Get a vector of primary keys. */
-        QVector<QVariant> modelKeys() const;
+        QList<QVariant> modelKeys() const;
         /*! Get a vector of primary keys. */
         template<typename T>
-        QVector<T> modelKeys() const;
+        QList<T> modelKeys() const;
 
         /*! Run a map over each of the models. */
         ModelsCollection<ModelRawType>
@@ -229,11 +229,11 @@ namespace Types
 
         /*! Run a map over each of the models. */
         template<typename T>
-        QVector<T> map(const std::function<T(ModelRawType &&modelCopy,
-                                             size_type)> &callback) const;
+        QList<T> map(const std::function<T(ModelRawType &&modelCopy,
+                                           size_type)> &callback) const;
         /*! Run a map over each of the models. */
         template<typename T>
-        QVector<T> map(const std::function<T(ModelRawType &&modelCopy)> &callback) const;
+        QList<T> map(const std::function<T(ModelRawType &&modelCopy)> &callback) const;
 
         /*! Run an associative map over each of the models (keyed by primary key). */
         std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
@@ -249,10 +249,10 @@ namespace Types
         ModelsCollection<ModelRawType *> except(const std::unordered_set<KeyType> &ids);
 
         /*! Get a vector with the values in the given column. */
-        QVector<QVariant> pluck(const QString &column) const;
+        QList<QVariant> pluck(const QString &column) const;
         /*! Get a vector with the values in the given column. */
         template<typename T>
-        QVector<T> pluck(const QString &column) const;
+        QList<T> pluck(const QString &column) const;
         /*! Get a map with values in the given column and keyed by values in the key
             column (attribute). */
         template<typename T>
@@ -309,9 +309,9 @@ namespace Types
 
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
-        sortBy(const QVector<std::function<
-                             std::strong_ordering(ModelRawType *,
-                                                  ModelRawType *)>> &callbacks);
+        sortBy(const QList<std::function<
+                           std::strong_ordering(ModelRawType *,
+                                                ModelRawType *)>> &callbacks);
 
         /*! Sort the collection using the given projection. */
         template<typename P>
@@ -343,9 +343,9 @@ namespace Types
 
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
-        stableSortBy(const QVector<std::function<
-                                   std::strong_ordering(ModelRawType *,
-                                                        ModelRawType *)>> &callbacks);
+        stableSortBy(const QList<std::function<
+                                 std::strong_ordering(ModelRawType *,
+                                                      ModelRawType *)>> &callbacks);
 
         /*! Stable sort the collection using the given projection. */
         template<typename P>
@@ -376,44 +376,44 @@ namespace Types
         /* Collection - Relations related */
         /*! Reload a fresh model instance from the database for all the entities. */
         template<typename = void>
-        ModelsCollection<ModelRawType> fresh(const QVector<WithItem> &relations = {});
+        ModelsCollection<ModelRawType> fresh(const QList<WithItem> &relations = {});
         /*! Reload a fresh model instance from the database for all the entities. */
         template<typename = void>
         ModelsCollection<ModelRawType> fresh(QString relation);
         /*! Reload a fresh model instance from the database for all the entities. */
-        ModelsCollection<ModelRawType> fresh(const QVector<QString> &relations);
+        ModelsCollection<ModelRawType> fresh(const QList<QString> &relations);
         /*! Reload a fresh model instance from the database for all the entities. */
-        ModelsCollection<ModelRawType> fresh(QVector<QString> &&relations);
+        ModelsCollection<ModelRawType> fresh(QList<QString> &&relations);
 
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
-        ModelsCollection &load(const QVector<WithItem> &relations) &;
+        ModelsCollection &load(const QList<WithItem> &relations) &;
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
         ModelsCollection &load(QString relation) &;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &load(const QVector<QString> &relations) &;
+        inline ModelsCollection &load(const QList<QString> &relations) &;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &load(QVector<QString> &&relations) &;
+        inline ModelsCollection &load(QList<QString> &&relations) &;
 
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
-        ModelsCollection &&load(const QVector<WithItem> &relations) &&;
+        ModelsCollection &&load(const QList<WithItem> &relations) &&;
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
         ModelsCollection &&load(QString relation) &&;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &load(const QVector<QString> &relations) &&;
+        inline ModelsCollection &load(const QList<QString> &relations) &&;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &load(QVector<QString> &&relations) &&;
+        inline ModelsCollection &load(QList<QString> &&relations) &&;
 
         /* EnumeratesValues */
         /*! Get the vector of models as a attributes vector with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVector<QVector<AttributeItem>> toVector() const;
+        QList<QList<AttributeItem>> toVector() const;
         /*! Get the vector of models as a variant map with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVector<QVariantMap> toMap() const;
+        QList<QVariantMap> toMap() const;
 
         /*! Get the vector of models as the variant (variant map inside) with serialized
             models (used by toJson()). */
@@ -577,10 +577,10 @@ namespace Types
 
     /* Constructors */
 
-    /* From QVector<Model> */
+    /* From QList<Model> */
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::ModelsCollection(const QVector<Model> &models)
+    ModelsCollection<Model>::ModelsCollection(const QList<Model> &models)
     requires (!std::is_pointer_v<Model>)
     {
         for (const auto &model : models)
@@ -588,7 +588,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    ModelsCollection<Model>::ModelsCollection(QList<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
@@ -597,7 +597,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::operator=(const QVector<Model> &models)
+    ModelsCollection<Model>::operator=(const QList<Model> &models)
     requires (!std::is_pointer_v<Model>)
     {
         for (const auto &model : models)
@@ -608,7 +608,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    ModelsCollection<Model>::operator=(QList<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
@@ -945,21 +945,21 @@ namespace Types
     /* Collection */
 
     template<DerivedCollectionModel Model>
-    QVector<Model>
+    QList<Model>
     ModelsCollection<Model>::toBase() const
     {
         return all();
     }
 
     template<DerivedCollectionModel Model>
-    QVector<Model>
+    QList<Model>
     ModelsCollection<Model>::all() const
     {
         return *this;
     }
 
     template<DerivedCollectionModel Model>
-    QVector<QVariant>
+    QList<QVariant>
     ModelsCollection<Model>::modelKeys() const
     {
         return *this
@@ -967,12 +967,12 @@ namespace Types
         {
             return getKey(model);
         })
-                | ranges::to<QVector<QVariant>>();
+                | ranges::to<QList<QVariant>>();
     }
 
     template<DerivedCollectionModel Model>
     template<typename T>
-    QVector<T>
+    QList<T>
     ModelsCollection<Model>::modelKeys() const
     {
         return *this
@@ -980,7 +980,7 @@ namespace Types
         {
             return getKey(model).template value<T>();
         })
-                | ranges::to<QVector<T>>();
+                | ranges::to<QList<T>>();
     }
 
     template<DerivedCollectionModel Model>
@@ -1019,13 +1019,13 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename T>
-    QVector<T>
+    QList<T>
     ModelsCollection<Model>::map(
             const std::function<T(ModelRawType &&modelCopy, size_type)> &callback) const
     {
         const auto size = this->size();
 
-        QVector<T> result;
+        QList<T> result;
         result.reserve(size);
 
         for (size_type index = 0; index < size; ++index)
@@ -1038,13 +1038,13 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename T>
-    QVector<T>
+    QList<T>
     ModelsCollection<Model>::map(
             const std::function<T(ModelRawType &&modelCopy)> &callback) const
     {
         const auto size = this->size();
 
-        QVector<T> result;
+        QList<T> result;
         result.reserve(size);
 
         for (auto &&model : *this)
@@ -1127,10 +1127,10 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    QVector<QVariant>
+    QList<QVariant>
     ModelsCollection<Model>::pluck(const QString &column) const
     {
-        QVector<QVariant> result;
+        QList<QVariant> result;
         result.reserve(this->size());
 
         for (ConstModelLoopType model : *this) {
@@ -1150,10 +1150,10 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename T>
-    QVector<T>
+    QList<T>
     ModelsCollection<Model>::pluck(const QString &column) const
     {
-        QVector<T> result;
+        QList<T> result;
         result.reserve(this->size());
 
         for (ConstModelLoopType model : *this) {
@@ -1370,9 +1370,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sortBy(
-            const QVector<std::function<
-                          std::strong_ordering(ModelRawType *,
-                                               ModelRawType *)>> &callbacks)
+            const QList<std::function<
+                        std::strong_ordering(ModelRawType *,
+                                             ModelRawType *)>> &callbacks)
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1486,7 +1486,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::stableSortBy(
-            const QVector<std::function<
+            const QList<std::function<
                           std::strong_ordering(ModelRawType *,
                                                ModelRawType *)>> &callbacks)
     {
@@ -1638,7 +1638,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
-    ModelsCollection<Model>::fresh(const QVector<WithItem> &relations)
+    ModelsCollection<Model>::fresh(const QList<WithItem> &relations)
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1668,19 +1668,19 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::fresh(QString relation)
     {
-        return fresh(QVector<WithItem> {{std::move(relation)}});
+        return fresh(QList<WithItem> {{std::move(relation)}});
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
-    ModelsCollection<Model>::fresh(const QVector<QString> &relations)
+    ModelsCollection<Model>::fresh(const QList<QString> &relations)
     {
         return fresh(WithItem::fromStringVector(relations));
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
-    ModelsCollection<Model>::fresh(QVector<QString> &&relations)
+    ModelsCollection<Model>::fresh(QList<QString> &&relations)
     {
         return fresh(WithItem::fromStringVector(std::move(relations)));
     }
@@ -1688,7 +1688,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(const QVector<WithItem> &relations) &
+    ModelsCollection<Model>::load(const QList<WithItem> &relations) &
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1708,19 +1708,19 @@ namespace Types
     ModelsCollection<Model> &
     ModelsCollection<Model>::load(QString relation) &
     {
-        return load(QVector<WithItem> {{std::move(relation)}});
+        return load(QList<WithItem> {{std::move(relation)}});
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(const QVector<QString> &relations) &
+    ModelsCollection<Model>::load(const QList<QString> &relations) &
     {
         return load(WithItem::fromStringVector(relations));
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(QVector<QString> &&relations) &
+    ModelsCollection<Model>::load(QList<QString> &&relations) &
     {
         return load(WithItem::fromStringVector(std::move(relations)));
     }
@@ -1728,7 +1728,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename>
     ModelsCollection<Model> &&
-    ModelsCollection<Model>::load(const QVector<WithItem> &relations) &&
+    ModelsCollection<Model>::load(const QList<WithItem> &relations) &&
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1748,19 +1748,19 @@ namespace Types
     ModelsCollection<Model> &&
     ModelsCollection<Model>::load(QString relation) &&
     {
-        return std::move(*this).load(QVector<WithItem> {{std::move(relation)}});
+        return std::move(*this).load(QList<WithItem> {{std::move(relation)}});
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(const QVector<QString> &relations) &&
+    ModelsCollection<Model>::load(const QList<QString> &relations) &&
     {
         return load(WithItem::fromStringVector(relations));
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(QVector<QString> &&relations) &&
+    ModelsCollection<Model>::load(QList<QString> &&relations) &&
     {
         return load(WithItem::fromStringVector(std::move(relations)));
     }
@@ -1769,10 +1769,10 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename PivotType>
-    QVector<QVector<AttributeItem>>
+    QList<QList<AttributeItem>>
     ModelsCollection<Model>::toVector() const
     {
-        return map<QVector<AttributeItem>>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        return map<QList<AttributeItem>>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return model.template toVector<PivotType>();
         });
@@ -1780,7 +1780,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename PivotType>
-    QVector<QVariantMap>
+    QList<QVariantMap>
     ModelsCollection<Model>::toMap() const
     {
         return map<QVariantMap>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2334,7 +2334,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(const QVector<QVector<Tiny::AttributeItem>> &attributesList)
+    collect(const QList<QList<Tiny::AttributeItem>> &attributesList)
     {
         Tiny::Types::ModelsCollection<Model> result;
         result.reserve(attributesList.size());
@@ -2348,7 +2348,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(const QVector<QVector<Tiny::AttributeItem>> &attributesList,
+    collect(const QList<QList<Tiny::AttributeItem>> &attributesList,
             const QString &connection)
     {
         Tiny::Types::ModelsCollection<Model> result;
@@ -2363,7 +2363,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    collect(QList<QList<Tiny::AttributeItem>> &&attributesList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         Tiny::Types::ModelsCollection<Model> result;
         result.reserve(attributesList.size());
@@ -2377,7 +2377,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+    collect(QList<QList<Tiny::AttributeItem>> &&attributesList, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &connection)
     {
         Tiny::Types::ModelsCollection<Model> result;

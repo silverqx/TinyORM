@@ -134,10 +134,10 @@ namespace Orm::Tiny
 
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
-        explicit Model(const QVector<AttributeItem> &attributes);
+        explicit Model(const QList<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
-        explicit Model(QVector<AttributeItem> &&attributes);
+        explicit Model(QList<AttributeItem> &&attributes);
 
         /*! Create a new TinyORM model instance from attributes
             (list initialization). */
@@ -153,14 +153,14 @@ namespace Orm::Tiny
         /*! Create a new TinyORM model instance. */
         static Derived instance(const QString &connection);
         /*! Create a new TinyORM model instance with given attributes. */
-        static Derived instance(const QVector<AttributeItem> &attributes);
+        static Derived instance(const QList<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance with given attributes. */
-        static Derived instance(QVector<AttributeItem> &&attributes);
+        static Derived instance(QList<AttributeItem> &&attributes);
         /*! Create a new TinyORM model instance with given attributes. */
-        static Derived instance(const QVector<AttributeItem> &attributes,
+        static Derived instance(const QList<AttributeItem> &attributes,
                                 const QString &connection);
         /*! Create a new TinyORM model instance with given attributes. */
-        static Derived instance(QVector<AttributeItem> &&attributes,
+        static Derived instance(QList<AttributeItem> &&attributes,
                                 const QString &connection);
 
         /*! Create a new TinyORM model instance on the heap. */
@@ -169,17 +169,17 @@ namespace Orm::Tiny
         static std::unique_ptr<Derived> instanceHeap(const QString &connection);
         /*! Create a new TinyORM model instance on the heap with given attributes. */
         static std::unique_ptr<Derived>
-        instanceHeap(const QVector<AttributeItem> &attributes);
+        instanceHeap(const QList<AttributeItem> &attributes);
         /*! Create a new TinyORM model instance on the heap with given attributes. */
         static std::unique_ptr<Derived>
-        instanceHeap(QVector<AttributeItem> &&attributes);
+        instanceHeap(QList<AttributeItem> &&attributes);
         /*! Create a new TinyORM model instance on the heap with given attributes. */
         static std::unique_ptr<Derived>
-        instanceHeap(const QVector<AttributeItem> &attributes,
+        instanceHeap(const QList<AttributeItem> &attributes,
                      const QString &connection);
         /*! Create a new TinyORM model instance on the heap with given attributes. */
         static std::unique_ptr<Derived>
-        instanceHeap(QVector<AttributeItem> &&attributes, const QString &connection);
+        instanceHeap(QList<AttributeItem> &&attributes, const QString &connection);
 
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Derived>> query();
@@ -187,10 +187,10 @@ namespace Orm::Tiny
         static std::unique_ptr<TinyBuilder<Derived>> on(const QString &connection = "");
 
         /*! Get all of the models from the database. */
-        static ModelsCollection<Derived> all(const QVector<Column> &columns = {ASTERISK});
+        static ModelsCollection<Derived> all(const QList<Column> &columns = {ASTERISK});
 
         /*! Destroy the models for the given IDs. */
-        static std::size_t destroy(const QVector<QVariant> &ids);
+        static std::size_t destroy(const QList<QVariant> &ids);
         /*! Destroy the model by the given ID. */
         inline static std::size_t destroy(const QVariant &id);
 
@@ -201,18 +201,18 @@ namespace Orm::Tiny
         bool push();
 
         /*! Update records in the database. */
-        bool update(const QVector<AttributeItem> &attributes, SaveOptions options = {});
+        bool update(const QList<AttributeItem> &attributes, SaveOptions options = {});
 
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         inline std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<AttributeItem> &extra = {}, bool all = false);
+                  const QList<AttributeItem> &extra = {}, bool all = false);
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         inline std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<AttributeItem> &extra = {}, bool all = false);
+                  const QList<AttributeItem> &extra = {}, bool all = false);
 
         /*! Delete the model from the database. */
         bool remove();
@@ -220,7 +220,7 @@ namespace Orm::Tiny
         bool deleteModel();
 
         /*! Reload a fresh model instance from the database. */
-        std::optional<Derived> fresh(const QVector<WithItem> &relations = {}) const;
+        std::optional<Derived> fresh(const QList<WithItem> &relations = {}) const;
         /*! Reload a fresh model instance from the database. */
         std::optional<Derived> fresh(const QString &relation) const;
         /*! Reload the current model instance with fresh attributes from the database. */
@@ -228,14 +228,14 @@ namespace Orm::Tiny
 
         /*! Eager load relations on the model. */
         template<typename = void>
-        Derived &load(const QVector<WithItem> &relations);
+        Derived &load(const QList<WithItem> &relations);
         /*! Eager load relations on the model. */
         template<typename = void>
         Derived &load(QString relation);
         /*! Eager load relations on the model. */
-        inline Derived &load(const QVector<QString> &relations);
+        inline Derived &load(const QList<QString> &relations);
         /*! Eager load relations on the model. */
-        inline Derived &load(QVector<QString> &&relations);
+        inline Derived &load(QList<QString> &&relations);
 
         /*! Determine if two models have the same ID and belong to the same table. */
         template<ModelConcept ModelToCompare>
@@ -257,13 +257,13 @@ namespace Orm::Tiny
 #endif
 
         /*! Fill the model with a vector of attributes. */
-        Derived &fill(const QVector<AttributeItem> &attributes);
+        Derived &fill(const QList<AttributeItem> &attributes);
         /*! Fill the model with a vector of attributes. */
-        Derived &fill(QVector<AttributeItem> &&attributes);
+        Derived &fill(QList<AttributeItem> &&attributes);
         /*! Fill the model with a vector of attributes. Force mass assignment. */
-        Derived &forceFill(const QVector<AttributeItem> &attributes);
+        Derived &forceFill(const QList<AttributeItem> &attributes);
         /*! Fill the model with a vector of attributes. Force mass assignment. */
-        Derived &forceFill(QVector<AttributeItem> &&attributes);
+        Derived &forceFill(QList<AttributeItem> &&attributes);
 
         /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
@@ -281,19 +281,19 @@ namespace Orm::Tiny
 
         /*! Create a new model instance that is existing. */
         Derived
-        newFromBuilder(const QVector<AttributeItem> &attributes = {},
+        newFromBuilder(const QList<AttributeItem> &attributes = {},
                        const std::optional<QString> &connection = std::nullopt) const;
         /*! Create a new model instance that is existing. */
         Derived
-        newFromBuilder(QVector<AttributeItem> &&attributes = {},
+        newFromBuilder(QList<AttributeItem> &&attributes = {},
                        const std::optional<QString> &connection = std::nullopt) const;
         /*! Create a new instance of the given model. */
         inline Derived newInstance() const;
         /*! Create a new instance of the given model. */
-        Derived newInstance(const QVector<AttributeItem> &attributes,
+        Derived newInstance(const QList<AttributeItem> &attributes,
                             bool exists = false) const;
         /*! Create a new instance of the given model. */
-        Derived newInstance(QVector<AttributeItem> &&attributes,
+        Derived newInstance(QList<AttributeItem> &&attributes,
                             bool exists = false) const;
 
         /*! Clone the model into a new, non-existing instance. */
@@ -302,7 +302,7 @@ namespace Orm::Tiny
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
         PivotType
-        newPivot(const Parent &parent, const QVector<AttributeItem> &attributes,
+        newPivot(const Parent &parent, const QList<AttributeItem> &attributes,
                  const QString &table, bool exists, bool withTimestamps = false,
                  const QString &createdAt = Constants::CREATED_AT,
                  const QString &updatedAt = Constants::UPDATED_AT) const;
@@ -316,7 +316,7 @@ namespace Orm::Tiny
         QVariantMap toMap() const;
         /*! Convert the model instance to the vector of attributes and relations. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVector<AttributeItem> toVector() const;
+        QList<AttributeItem> toVector() const;
 
         /*! Convert the model instance to QJsonObject. */
         inline QJsonObject toJsonObject() const;
@@ -400,7 +400,7 @@ namespace Orm::Tiny
 
         /*! Insert the given attributes and set the ID on the model. */
         quint64 insertAndSetId(const TinyBuilder<Derived> &query,
-                               const QVector<AttributeItem> &attributes);
+                               const QList<AttributeItem> &attributes);
 
         /* Data members */
         /*! The table associated with the model. */
@@ -414,9 +414,9 @@ namespace Orm::Tiny
 
         // TODO detect (best at compile time) circular eager relation problem, the exception which happens during this problem is stackoverflow in QRegularExpression silverqx
         /*! The relations to eager load on every query. */
-        QVector<QString> u_with;
+        QList<QString> u_with;
         /*! The relationship counts that should be eager loaded on every query. */
-//        QVector<WithItem> u_withCount;
+//        QList<WithItem> u_withCount;
 
     private:
         /* Operations on a Model instance */
@@ -435,29 +435,29 @@ namespace Orm::Tiny
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         incrementOrDecrement(
-                const QString &column, T amount, const QVector<AttributeItem> &extra,
+                const QString &column, T amount, const QList<AttributeItem> &extra,
                 IncrementOrDecrement method, bool all);
         /*! Invoke the increment or decrement method on the model. */
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         invokeIncrementOrDecrement(
                 TinyBuilder<Derived> &query, const QString &column, T amount,
-                const QVector<AttributeItem> &extra, IncrementOrDecrement method,
+                const QList<AttributeItem> &extra, IncrementOrDecrement method,
                 bool all);
 
         /* HasAttributes */
         /*! Fill the model with a vector of attributes with the CRTP check. */
-        void fillWithCRTPCheck(const QVector<AttributeItem> &attributes);
+        void fillWithCRTPCheck(const QList<AttributeItem> &attributes);
         /*! Fill the model with a vector of attributes with the CRTP check. */
-        void fillWithCRTPCheck(QVector<AttributeItem> &&attributes);
+        void fillWithCRTPCheck(QList<AttributeItem> &&attributes);
 
         /*! Throw an InvalidArgumentError if the attributes passed to the constructor
             contain any value that causes access to some data member in the derived
             instance that is not yet initialized. */
         inline static void
-        throwIfCRTPctorProblem(const QVector<AttributeItem> &attributes);
+        throwIfCRTPctorProblem(const QList<AttributeItem> &attributes);
         /*! The QDateTime attribute detected, causes CRTP ctor problem. */
-        static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes);
+        static void throwIfQDateTimeAttribute(const QList<AttributeItem> &attributes);
         /*! Throw if an attempt to fill a guarded attribute is detected
             (mass assignment). */
         [[noreturn]] static void throwTotallyGuarded(const QString &key);
@@ -571,14 +571,14 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...>::Model(const QVector<AttributeItem> &attributes)
+    Model<Derived, AllRelations...>::Model(const QList<AttributeItem> &attributes)
         : Model()
     {
         fillWithCRTPCheck(attributes);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...>::Model(QVector<AttributeItem> &&attributes)
+    Model<Derived, AllRelations...>::Model(QList<AttributeItem> &&attributes)
         : Model()
     {
         fillWithCRTPCheck(std::move(attributes));
@@ -588,7 +588,7 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::Model(
             std::initializer_list<AttributeItem> attributes
     )
-        : Model(QVector<AttributeItem>(attributes.begin(), attributes.end()))
+        : Model(QList<AttributeItem>(attributes.begin(), attributes.end()))
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -630,7 +630,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    Model<Derived, AllRelations...>::instance(const QVector<AttributeItem> &attributes)
+    Model<Derived, AllRelations...>::instance(const QList<AttributeItem> &attributes)
     {
         auto model = instance();
 
@@ -641,7 +641,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes)
+    Model<Derived, AllRelations...>::instance(QList<AttributeItem> &&attributes)
     {
         auto model = instance();
 
@@ -652,7 +652,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    Model<Derived, AllRelations...>::instance(const QVector<AttributeItem> &attributes,
+    Model<Derived, AllRelations...>::instance(const QList<AttributeItem> &attributes,
                                               const QString &connection)
     {
         auto model = instance(attributes);
@@ -664,7 +664,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    Model<Derived, AllRelations...>::instance(QVector<AttributeItem> &&attributes,
+    Model<Derived, AllRelations...>::instance(QList<AttributeItem> &&attributes,
                                               const QString &connection)
     {
         auto model = instance(std::move(attributes));
@@ -702,7 +702,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<Derived>
     Model<Derived, AllRelations...>::instanceHeap(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         auto model = instanceHeap();
 
@@ -713,7 +713,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<Derived>
-    Model<Derived, AllRelations...>::instanceHeap(QVector<AttributeItem> &&attributes)
+    Model<Derived, AllRelations...>::instanceHeap(QList<AttributeItem> &&attributes)
     {
         auto model = instanceHeap();
 
@@ -725,7 +725,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<Derived>
     Model<Derived, AllRelations...>::instanceHeap(
-            const QVector<AttributeItem> &attributes, const QString &connection)
+            const QList<AttributeItem> &attributes, const QString &connection)
     {
         auto model = instanceHeap(attributes);
 
@@ -737,7 +737,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<Derived>
     Model<Derived, AllRelations...>::instanceHeap(
-            QVector<AttributeItem> &&attributes, const QString &connection)
+            QList<AttributeItem> &&attributes, const QString &connection)
     {
         auto model = instanceHeap(std::move(attributes));
 
@@ -770,7 +770,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     ModelsCollection<Derived>
-    Model<Derived, AllRelations...>::all(const QVector<Column> &columns)
+    Model<Derived, AllRelations...>::all(const QList<Column> &columns)
     {
         return query()->get(columns);
     }
@@ -780,7 +780,7 @@ namespace Orm::Tiny
     // TODO next test all this remove()/destroy() methods, when deletion fails silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::size_t
-    Model<Derived, AllRelations...>::destroy(const QVector<QVariant> &ids)
+    Model<Derived, AllRelations...>::destroy(const QList<QVariant> &ids)
     {
         if (ids.isEmpty())
             return 0;
@@ -804,7 +804,7 @@ namespace Orm::Tiny
     std::size_t
     Model<Derived, AllRelations...>::destroy(const QVariant &id)
     {
-        return destroy(QVector<QVariant> {id});
+        return destroy(QList<QVariant> {id});
     }
 
     /* Operations on a Model instance */
@@ -874,7 +874,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::update(
-            const QVector<AttributeItem> &attributes,
+            const QList<AttributeItem> &attributes,
             const SaveOptions options)
     {
         if (!exists)
@@ -888,7 +888,7 @@ namespace Orm::Tiny
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::increment(
-            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const QString &column, const T amount, const QList<AttributeItem> &extra,
             const bool all)
     {
         return incrementOrDecrement(column, amount, extra, Increment, all);
@@ -898,7 +898,7 @@ namespace Orm::Tiny
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::decrement(
-            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const QString &column, const T amount, const QList<AttributeItem> &extra,
             const bool all)
     {
         return incrementOrDecrement(column, amount, extra, Decrement, all);
@@ -953,7 +953,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
-    Model<Derived, AllRelations...>::fresh(const QVector<WithItem> &relations) const
+    Model<Derived, AllRelations...>::fresh(const QList<WithItem> &relations) const
     {
         if (!exists)
             return std::nullopt;
@@ -967,7 +967,7 @@ namespace Orm::Tiny
     std::optional<Derived>
     Model<Derived, AllRelations...>::fresh(const QString &relation) const
     {
-        return fresh(QVector<WithItem> {{relation}});
+        return fresh(QList<WithItem> {{relation}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -992,7 +992,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     Derived &
-    Model<Derived, AllRelations...>::load(const QVector<WithItem> &relations)
+    Model<Derived, AllRelations...>::load(const QList<WithItem> &relations)
     {
         auto &model = this->model();
 
@@ -1010,19 +1010,19 @@ namespace Orm::Tiny
     Derived &
     Model<Derived, AllRelations...>::load(QString relation)
     {
-        return load(QVector<WithItem> {{std::move(relation)}});
+        return load(QList<WithItem> {{std::move(relation)}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::load(const QVector<QString> &relations)
+    Model<Derived, AllRelations...>::load(const QList<QString> &relations)
     {
         return load(WithItem::fromStringVector(relations));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::load(QVector<QString> &&relations)
+    Model<Derived, AllRelations...>::load(QList<QString> &&relations)
     {
         return load(WithItem::fromStringVector(std::move(relations)));
     }
@@ -1142,7 +1142,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::fill(const QVector<AttributeItem> &attributes)
+    Model<Derived, AllRelations...>::fill(const QList<AttributeItem> &attributes)
     {
         const auto totallyGuarded = this->totallyGuarded();
 
@@ -1163,7 +1163,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::fill(QVector<AttributeItem> &&attributes)
+    Model<Derived, AllRelations...>::fill(QList<AttributeItem> &&attributes)
     {
         const auto totallyGuarded = this->totallyGuarded();
 
@@ -1186,7 +1186,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::forceFill(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         // Prevent unnecessary unguard
         if (attributes.isEmpty())
@@ -1202,7 +1202,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::forceFill(QVector<AttributeItem> &&attributes)
+    Model<Derived, AllRelations...>::forceFill(QList<AttributeItem> &&attributes)
     {
         // Prevent unnecessary unguard
         if (attributes.isEmpty())
@@ -1280,7 +1280,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
-            const QVector<AttributeItem> &attributes,
+            const QList<AttributeItem> &attributes,
             const std::optional<QString> &connection) const
     {
         auto model = newInstance({}, true);
@@ -1295,7 +1295,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
-            QVector<AttributeItem> &&attributes,
+            QList<AttributeItem> &&attributes,
             const std::optional<QString> &connection) const
     {
         auto model = newInstance({}, true);
@@ -1317,7 +1317,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            const QVector<AttributeItem> &attributes, const bool exists_) const
+            const QList<AttributeItem> &attributes, const bool exists_) const
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1342,7 +1342,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            QVector<AttributeItem> &&attributes, const bool exists_) const
+            QList<AttributeItem> &&attributes, const bool exists_) const
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1388,7 +1388,7 @@ namespace Orm::Tiny
     template<typename PivotType, typename Parent>
     PivotType
     Model<Derived, AllRelations...>::newPivot(
-            const Parent &parent, const QVector<AttributeItem> &attributes,
+            const Parent &parent, const QList<AttributeItem> &attributes,
             const QString &table, const bool exists_, const bool withTimestamps,
             const QString &createdAt, const QString &updatedAt) const
     {
@@ -1422,12 +1422,12 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     Model<Derived, AllRelations...>::toVector() const
     {
         auto attributes = this->attributesToVector();
 
-        attributes << this->template serializeRelations<QVector<AttributeItem>,
+        attributes << this->template serializeRelations<QList<AttributeItem>,
                                                         PivotType>();
         return attributes;
     }
@@ -1763,7 +1763,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64 Model<Derived, AllRelations...>::insertAndSetId(
             const TinyBuilder<Derived> &query,
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         const auto &keyName = getKeyName();
 
@@ -1787,7 +1787,7 @@ namespace Orm::Tiny
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::incrementOrDecrement(
-            const QString &column, const T amount, const QVector<AttributeItem> &extra,
+            const QString &column, const T amount, const QList<AttributeItem> &extra,
             const IncrementOrDecrement method, const bool all)
     {
         // Ownership of a unique_ptr()
@@ -1838,7 +1838,7 @@ namespace Orm::Tiny
     std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::invokeIncrementOrDecrement(
             TinyBuilder<Derived> &query, const QString &column, const T amount,
-            const QVector<AttributeItem> &extra, const IncrementOrDecrement method,
+            const QList<AttributeItem> &extra, const IncrementOrDecrement method,
             const bool all)
     {
         if (!all)
@@ -1859,7 +1859,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::fillWithCRTPCheck(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         if (attributes.isEmpty())
             return;
@@ -1871,7 +1871,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::fillWithCRTPCheck(
-            QVector<AttributeItem> &&attributes)
+            QList<AttributeItem> &&attributes)
     {
         if (attributes.isEmpty())
             return;
@@ -1883,14 +1883,14 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfCRTPctorProblem(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         throwIfQDateTimeAttribute(attributes);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::throwIfQDateTimeAttribute(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         static const auto message = QStringLiteral(
             "Attributes passed to the '%1' model's constructor or Default Attribute "

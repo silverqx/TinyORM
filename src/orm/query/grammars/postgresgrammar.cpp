@@ -10,13 +10,13 @@ namespace Orm::Query::Grammars
 /* public */
 
 QString PostgresGrammar::compileInsertOrIgnore(const QueryBuilder &query,
-                                               const QVector<QVariantMap> &values) const
+                                               const QList<QVariantMap> &values) const
 {
     return QStringLiteral("%1 on conflict do nothing").arg(compileInsert(query, values));
 }
 
 QString PostgresGrammar::compileInsertGetId(const QueryBuilder &query,
-                                            const QVector<QVariantMap> &values,
+                                            const QList<QVariantMap> &values,
                                             const QString &sequence) const
 {
     return QStringLiteral("%1 returning %2")
@@ -25,7 +25,7 @@ QString PostgresGrammar::compileInsertGetId(const QueryBuilder &query,
 }
 
 QString PostgresGrammar::compileUpdate(QueryBuilder &query,
-                                       const QVector<UpdateItem> &values) const
+                                       const QList<UpdateItem> &values) const
 {
     if (!query.getJoins().isEmpty() || query.getLimit() > -1)
         return compileUpdateWithJoinsOrLimit(query, values);
@@ -34,7 +34,7 @@ QString PostgresGrammar::compileUpdate(QueryBuilder &query,
 }
 
 QString PostgresGrammar::compileUpsert(
-            QueryBuilder &query, const QVector<QVariantMap> &values,
+            QueryBuilder &query, const QList<QVariantMap> &values,
             const QStringList &uniqueBy, const QStringList &update) const
 {
     auto sql = compileInsert(query, values);
@@ -61,7 +61,7 @@ QString PostgresGrammar::compileDelete(QueryBuilder &query) const
     return Grammar::compileDelete(query);
 }
 
-std::unordered_map<QString, QVector<QVariant>>
+std::unordered_map<QString, QList<QVariant>>
 PostgresGrammar::compileTruncate(const QueryBuilder &query) const
 {
     return {{QStringLiteral("truncate %1 restart identity cascade")
@@ -105,7 +105,7 @@ QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
 
 /* protected */
 
-const QVector<Grammar::SelectComponentValue> &
+const QList<Grammar::SelectComponentValue> &
 PostgresGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -126,7 +126,7 @@ PostgresGrammar::getCompileMap() const
     };
 
     // Pointers to compile methods, yes yes c++ 😂
-    static const QVector<SelectComponentValue> cached {
+    static const QList<SelectComponentValue> cached {
         {bind(&PostgresGrammar::compileAggregate),
          [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
         {bind(&PostgresGrammar::compileColumns),
@@ -177,7 +177,7 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
     /* Pointers to a where member methods by whereType, yes yes c++. 😂
        An order has to be the same as in enum struct WhereType.
        QVector is ideal for this as we lookup using the index. */
-    static const QVector<WhereMemFn> cached {
+    static const QList<WhereMemFn> cached {
         bind(&PostgresGrammar::whereBasic),
         bind(&PostgresGrammar::whereNested),
         bind(&PostgresGrammar::whereColumn),
@@ -250,7 +250,7 @@ QString PostgresGrammar::dateBasedWhere(const QString &type,
                                                            parameter(where.value));
 }
 
-QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+QString PostgresGrammar::compileUpdateColumns(const QList<UpdateItem> &values) const
 {
     QStringList compiledAssignments;
     compiledAssignments.reserve(values.size());
@@ -266,7 +266,7 @@ QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values)
 /* private */
 
 QString PostgresGrammar::compileUpdateWithJoinsOrLimit(
-        QueryBuilder &query, const QVector<UpdateItem> &values) const
+        QueryBuilder &query, const QList<UpdateItem> &values) const
 {
     const auto table = std::get<QString>(query.getFrom());
 

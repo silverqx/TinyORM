@@ -35,10 +35,10 @@ namespace Orm::Tiny::Relations::Concerns
         withDefault(bool value = true);
         /*! Return a new model instance in case the relationship does not exist. */
         RelationType<Model, Related> &
-        withDefault(const QVector<AttributeItem> &attributes);
+        withDefault(const QList<AttributeItem> &attributes);
         /*! Return a new model instance in case the relationship does not exist. */
         RelationType<Model, Related> &
-        withDefault(QVector<AttributeItem> &&attributes);
+        withDefault(QList<AttributeItem> &&attributes);
         /*! Return a new model instance in case the relationship does not exist. */
 //        RelationType<Model, Related> &
 //        withDefault(Callback &&callback);
@@ -53,7 +53,7 @@ namespace Orm::Tiny::Relations::Concerns
         inline std::optional<Related> getDefaultFor(const Model *parent) const;
 
         /*! Indicates if a default model instance should be used. */
-        std::variant<bool, QVector<AttributeItem>/*, Callback*/> m_withDefault = false;
+        std::variant<bool, QList<AttributeItem>/*, Callback*/> m_withDefault = false;
 
     private:
         /*! Static cast *this to the HasOne/BelongsTo & derived type. */
@@ -78,7 +78,7 @@ namespace Orm::Tiny::Relations::Concerns
     template<class Model, class Related, template<class, class> class RelationType>
     RelationType<Model, Related> &
     SupportsDefaultModels<Model, Related, RelationType>::withDefault(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         m_withDefault = attributes;
 
@@ -88,7 +88,7 @@ namespace Orm::Tiny::Relations::Concerns
     template<class Model, class Related, template<class, class> class RelationType>
     RelationType<Model, Related> &
     SupportsDefaultModels<Model, Related, RelationType>::withDefault(
-            QVector<AttributeItem> &&attributes)
+            QList<AttributeItem> &&attributes)
     {
         m_withDefault = std::move(attributes);
 
@@ -120,8 +120,8 @@ namespace Orm::Tiny::Relations::Concerns
         auto instance = newRelatedInstanceFor(parent);
 
         // If model attributes were passed then fill them
-        if (std::holds_alternative<QVector<AttributeItem>>(m_withDefault)) {
-            if (const auto &attributes = std::get<QVector<AttributeItem>>(m_withDefault);
+        if (std::holds_alternative<QList<AttributeItem>>(m_withDefault)) {
+            if (const auto &attributes = std::get<QList<AttributeItem>>(m_withDefault);
                 !attributes.isEmpty()
             )
                 /* Don't use the std::move() here because can happen that the Default

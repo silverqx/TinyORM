@@ -90,7 +90,7 @@ namespace Tom
         /* Migrate */
         /*! Get the migration instances that have not yet run. */
         std::vector<std::shared_ptr<Migration>>
-        pendingMigrations(const QVector<QVariant> &ran) const;
+        pendingMigrations(const QList<QVariant> &ran) const;
         /*! Run "up" a migration instance. */
         void runUp(const Migration &migration, int batch, bool pretend) const;
 
@@ -124,7 +124,7 @@ namespace Tom
         /*! Pretend to run the migrations. */
         void pretendToRun(const Migration &migration, MigrateMethod method) const;
         /*! Get all of the queries that would be run for a migration. */
-        QVector<Log> getQueries(const Migration &migration, MigrateMethod method) const;
+        QList<Log> getQueries(const Migration &migration, MigrateMethod method) const;
 
         /* Migrate up/down common */
         /*! Run a migration inside a transaction if the database supports it. */

@@ -34,7 +34,7 @@ void MySqlSchemaBuilder::dropAllTables() const
     if (querySize <= 0)
         return;
 
-    QVector<QString> tables;
+    QList<QString> tables;
     tables.reserve(querySize);
 
     while (query.next())
@@ -58,7 +58,7 @@ void MySqlSchemaBuilder::dropAllViews() const
     if (querySize <= 0)
         return;
 
-    QVector<QString> views;
+    QList<QString> views;
     views.reserve(querySize);
 
     while (query.next())

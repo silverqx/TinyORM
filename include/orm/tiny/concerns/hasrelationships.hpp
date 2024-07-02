@@ -355,11 +355,11 @@ namespace Concerns
 
         /* Operations on a Model instance */
         /*! Obtain all loaded relation names except pivot relations. */
-        QVector<WithItem> getLoadedRelationsWithoutPivot() const;
+        QList<WithItem> getLoadedRelationsWithoutPivot() const;
 
         /*! Replace relations in the m_relation. */
         void replaceRelations(RelationsContainer<AllRelations...> &relations,
-                              const QVector<WithItem> &onlyRelations);
+                              const QList<WithItem> &onlyRelations);
 
         /* Serialization - Relations */
         /*! Create and visit the serialize relation store. */
@@ -390,7 +390,7 @@ namespace Concerns
                                  const QVariant &relationSerialized);
         /*! Emplace the serialized relation attributes to the final attributes vector. */
         inline static void
-        insertSerializedRelation(QVector<AttributeItem> &attributes, QString &&relation,
+        insertSerializedRelation(QList<AttributeItem> &attributes, QString &&relation,
                                  QVariant &&relationSerialized);
 
         /* Serialization - HidesAttributes */
@@ -1391,10 +1391,10 @@ namespace Concerns
     /* Operations on a Model instance */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<WithItem>
+    QList<WithItem>
     HasRelationships<Derived, AllRelations...>::getLoadedRelationsWithoutPivot() const
     {
-        QVector<WithItem> relations;
+        QList<WithItem> relations;
         relations.reserve(static_cast<decltype (relations)::size_type>(
                               m_relations.size()));
 
@@ -1418,7 +1418,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::replaceRelations(
             RelationsContainer<AllRelations...> &relations,
-            const QVector<WithItem> &onlyRelations)
+            const QList<WithItem> &onlyRelations)
     {
         /* Replace only relations which was passed to this method, leave other
            relations untouched. */
@@ -1544,7 +1544,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::insertSerializedRelation(
-            QVector<AttributeItem> &attributes, QString &&relation,
+            QList<AttributeItem> &attributes, QString &&relation,
             QVariant &&relationSerialized)
     {
         attributes.emplaceBack(std::move(relation),

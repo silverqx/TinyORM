@@ -68,12 +68,12 @@ namespace Orm::Query
 
         /* Retrieving results */
         /*! Execute the query as a "select" statement. */
-        SqlQuery get(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery get(const QList<Column> &columns = {ASTERISK});
         /*! Execute a query for a single record by ID. */
-        SqlQuery find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        SqlQuery find(const QVariant &id, const QList<Column> &columns = {ASTERISK});
 
         /*! Execute a query for a single record by ID or call a callback. */
-        SqlQuery findOr(const QVariant &id, const QVector<Column> &columns,
+        SqlQuery findOr(const QVariant &id, const QList<Column> &columns,
                         const std::function<void()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         inline SqlQuery findOr(const QVariant &id,
@@ -82,7 +82,7 @@ namespace Orm::Query
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<SqlQuery, R>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<R()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
@@ -90,7 +90,7 @@ namespace Orm::Query
         findOr(const QVariant &id, const std::function<R()> &callback);
 
         /*! Execute the query and get the first result. */
-        SqlQuery first(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery first(const QList<Column> &columns = {ASTERISK});
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
         /*! Get a single column's value from the first result of a query if it's
@@ -98,7 +98,7 @@ namespace Orm::Query
         QVariant soleValue(const Column &column);
 
         /*! Get a vector with values in the given column. */
-        QVector<QVariant> pluck(const Column &column);
+        QList<QVariant> pluck(const Column &column);
         /*! Get a map with values in the given column and keyed by values in the key
             column. */
         template<typename T>
@@ -113,43 +113,43 @@ namespace Orm::Query
         /* Insert, Update, Delete */
         /*! Insert new records into the database (multi-rows insert). */
         std::optional<SqlQuery>
-        insert(const QVector<QVariantMap> &values);
+        insert(const QList<QVariantMap> &values);
         /*! Insert a new record into the database. */
         std::optional<SqlQuery>
         insert(const QVariantMap &values);
         /*! Insert new records into the database (multi insert with separated columns). */
         std::optional<SqlQuery>
-        insert(const QVector<QString> &columns, const QVector<QVector<QVariant>> &values);
+        insert(const QList<QString> &columns, const QList<QList<QVariant>> &values);
 
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QVariantMap> &values);
+        insertOrIgnore(const QList<QVariantMap> &values);
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
         /*! Insert new records into the database while ignoring errors (multi insert). */
         std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QString> &columns,
-                       const QVector<QVector<QVariant>> &values);
+        insertOrIgnore(const QList<QString> &columns,
+                       const QList<QList<QVariant>> &values);
 
         /*! Update records in the database. */
         std::tuple<int, TSqlQuery>
-        update(const QVector<UpdateItem> &values);
+        update(const QList<UpdateItem> &values);
         /*! Insert or update a record matching the attributes, and fill it with values. */
         std::tuple<int, std::optional<TSqlQuery>>
-        updateOrInsert(const QVector<WhereItem> &attributes,
-                       const QVector<UpdateItem> &values);
+        updateOrInsert(const QList<WhereItem> &attributes,
+                       const QList<UpdateItem> &values);
 
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy);
 
         /*! Delete records from the database. */
         std::tuple<int, TSqlQuery> deleteRow();
@@ -167,7 +167,7 @@ namespace Orm::Query
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        inline quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
+        inline quint64 count(const QList<Column> &columns = {ASTERISK}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         inline quint64 count(const Column &column);
@@ -184,7 +184,7 @@ namespace Orm::Query
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {ASTERISK}) const;
+                           const QList<Column> &columns = {ASTERISK}) const;
 
         /*! Determine if any rows exist for the current query. */
         bool exists();
@@ -204,20 +204,20 @@ namespace Orm::Query
         std::pair<bool, R> doesntExistOr(const std::function<R()> &callback);
 
         /*! Set the columns to be selected. */
-        Builder &select(const QVector<Column> &columns = {ASTERISK});
+        Builder &select(const QList<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
         Builder &select(const Column &column);
         /*! Add new select columns to the query. */
-        Builder &addSelect(const QVector<Column> &columns);
+        Builder &addSelect(const QList<Column> &columns);
         /*! Add a new select column to the query. */
         Builder &addSelect(const Column &column);
 
         /*! Set the columns to be selected. */
-        Builder &select(QVector<Column> &&columns);
+        Builder &select(QList<Column> &&columns);
         /*! Set the column to be selected. */
         Builder &select(Column &&column);
         /*! Add new select columns to the query. */
-        Builder &addSelect(QVector<Column> &&columns);
+        Builder &addSelect(QList<Column> &&columns);
         /*! Add a new select column to the query. */
         Builder &addSelect(Column &&column);
 
@@ -233,7 +233,7 @@ namespace Orm::Query
         Builder &selectSub(T &&query, const QString &as);
         /*! Add a new "raw" select expression to the query. */
         Builder &selectRaw(const QString &expression,
-                           const QVector<QVariant> &bindings = {});
+                           const QList<QVariant> &bindings = {});
 
         /*! Force the query to only return distinct results. */
         Builder &distinct();
@@ -254,7 +254,7 @@ namespace Orm::Query
         Builder &fromSub(T &&query, const QString &as);
         /*! Set the table which the query is targeting. */
         Builder &fromRaw(const QString &expression,
-                         const QVector<QVariant> &bindings = {});
+                         const QList<QVariant> &bindings = {});
 
         /* Joins */
         /*! Add a join clause to the query. */
@@ -397,26 +397,26 @@ namespace Orm::Query
 
         /* Array where */
         /*! Add a vector of basic where clauses to the query. */
-        Builder &where(const QVector<WhereItem> &values,
+        Builder &where(const QList<WhereItem> &values,
                        const QString &condition = AND,
                        const QString &defaultCondition = "");
         /*! Add a vector of basic "or where" clauses to the query. */
-        Builder &orWhere(const QVector<WhereItem> &values,
+        Builder &orWhere(const QList<WhereItem> &values,
                          const QString &defaultCondition = "");
         /*! Add a vector of basic "where not" clauses to the query. */
-        Builder &whereNot(const QVector<WhereItem> &values,
+        Builder &whereNot(const QList<WhereItem> &values,
                           const QString &condition = AND,
                           const QString &defaultCondition = "");
         /*! Add a vector of basic "or where not" clauses to the query. */
-        Builder &orWhereNot(const QVector<WhereItem> &values,
+        Builder &orWhereNot(const QList<WhereItem> &values,
                             const QString &defaultCondition = "");
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
-        Builder &whereColumn(const QVector<WhereColumnItem> &values,
+        Builder &whereColumn(const QList<WhereColumnItem> &values,
                              const QString &condition = AND);
         /*! Add a vector of "or where" clauses comparing two columns to the query. */
-        Builder &orWhereColumn(const QVector<WhereColumnItem> &values);
+        Builder &orWhereColumn(const QList<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
         Builder &whereColumn(const Column &first, const QString &comparison,
@@ -432,27 +432,27 @@ namespace Orm::Query
 
         /* where IN */
         /*! Add a "where in" clause to the query. */
-        Builder &whereIn(const Column &column, const QVector<QVariant> &values,
+        Builder &whereIn(const Column &column, const QList<QVariant> &values,
                          const QString &condition = AND, bool nope = false);
         /*! Add an "or where in" clause to the query. */
-        Builder &orWhereIn(const Column &column, const QVector<QVariant> &values);
+        Builder &orWhereIn(const Column &column, const QList<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
-        Builder &whereNotIn(const Column &column, const QVector<QVariant> &values,
+        Builder &whereNotIn(const Column &column, const QList<QVariant> &values,
                             const QString &condition = AND);
         /*! Add an "or where not in" clause to the query. */
-        Builder &orWhereNotIn(const Column &column, const QVector<QVariant> &values);
+        Builder &orWhereNotIn(const Column &column, const QList<QVariant> &values);
 
         /* where null */
         /*! Add a "where null" clause to the query. */
-        Builder &whereNull(const QVector<Column> &columns = {ASTERISK},
+        Builder &whereNull(const QList<Column> &columns = {ASTERISK},
                            const QString &condition = AND, bool nope = false);
         /*! Add an "or where null" clause to the query. */
-        Builder &orWhereNull(const QVector<Column> &columns = {ASTERISK});
+        Builder &orWhereNull(const QList<Column> &columns = {ASTERISK});
         /*! Add a "where not null" clause to the query. */
-        Builder &whereNotNull(const QVector<Column> &columns = {ASTERISK},
+        Builder &whereNotNull(const QList<Column> &columns = {ASTERISK},
                               const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
-        Builder &orWhereNotNull(const QVector<Column> &columns = {ASTERISK});
+        Builder &orWhereNotNull(const QList<Column> &columns = {ASTERISK});
 
         /*! Add a "where null" clause to the query. */
         Builder &whereNull(const Column &column, const QString &condition = AND,
@@ -547,19 +547,19 @@ namespace Orm::Query
         /* where row values */
         /*! Adds a where condition using row values. */
         Builder &
-        whereRowValues(const QVector<Column> &columns, const QString &comparison,
-                       const QVector<QVariant> &values, const QString &condition = AND);
+        whereRowValues(const QList<Column> &columns, const QString &comparison,
+                       const QList<QVariant> &values, const QString &condition = AND);
         /*! Adds an or where condition using row values. */
         Builder &
-        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
-                         const QVector<QVariant> &values);
+        orWhereRowValues(const QList<Column> &columns, const QString &comparison,
+                         const QList<QVariant> &values);
         Builder &
-        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+        whereRowValuesEq(const QList<Column> &columns, const QList<QVariant> &values,
                          const QString &condition = AND);
         /*! Adds an or where condition using row values. */
         Builder &
-        orWhereRowValuesEq(const QVector<Column> &columns,
-                           const QVector<QVariant> &values);
+        orWhereRowValuesEq(const QList<Column> &columns,
+                           const QList<QVariant> &values);
 
         /* where dates */
         /*! Add a "where date" statement to the query. */
@@ -612,14 +612,14 @@ namespace Orm::Query
 
         /* where raw */
         /*! Add a raw "where" clause to the query. */
-        Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+        Builder &whereRaw(const QString &sql, const QList<QVariant> &bindings = {},
                           const QString &condition = AND);
         /*! Add a raw "or where" clause to the query. */
-        Builder &orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        Builder &orWhereRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /* Group by and having */
         /*! Add a "group by" clause to the query. */
-        Builder &groupBy(const QVector<Column> &groups);
+        Builder &groupBy(const QList<Column> &groups);
         /*! Add a "group by" clause to the query. */
         Builder &groupBy(const Column &group);
         /*! Add a "group by" clause to the query. */
@@ -627,7 +627,7 @@ namespace Orm::Query
         inline Builder &groupBy(Args &&...groups);
 
         /*! Add a raw "groupBy" clause to the query. */
-        Builder &groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        Builder &groupByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /*! Add a "having" clause to the query. */
         Builder &having(const Column &column, const QString &comparison,
@@ -637,10 +637,10 @@ namespace Orm::Query
                           const QVariant &value);
 
         /*! Add a raw "having" clause to the query. */
-        Builder &havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+        Builder &havingRaw(const QString &sql, const QList<QVariant> &bindings = {},
                            const QString &condition = AND);
         /*! Add a raw "or having" clause to the query. */
-        Builder &orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        Builder &orHavingRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /* Ordering */
         /*! Add an "order by" clause to the query. */
@@ -658,7 +658,7 @@ namespace Orm::Query
         /*! Put the query's results in random order. */
         Builder &inRandomOrder(const QString &seed = "");
         /*! Add a raw "order by" clause to the query. */
-        Builder &orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        Builder &orderByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         Builder &latest(const Column &column = CREATED_AT);
@@ -694,12 +694,12 @@ namespace Orm::Query
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QList<UpdateItem> &extra = {});
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {});
+                  const QList<UpdateItem> &extra = {});
 
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
@@ -735,7 +735,7 @@ namespace Orm::Query
         inline std::shared_ptr<QueryGrammar> getGrammarShared() const noexcept;
 
         /*! Get the current query value bindings as flattened QVector. */
-        QVector<QVariant> getBindings() const;
+        QList<QVariant> getBindings() const;
         /*! Get the raw map of bindings. */
         inline const BindingsMap &getRawBindings() const noexcept;
         /*! Add a binding to the query. */
@@ -745,13 +745,13 @@ namespace Orm::Query
         Builder &addBinding(QVariant &&binding,
                             BindingType type = BindingType::WHERE);
         /*! Add bindings to the query. */
-        Builder &addBinding(const QVector<QVariant> &bindings,
+        Builder &addBinding(const QList<QVariant> &bindings,
                             BindingType type = BindingType::WHERE);
         /*! Add bindings to the query. */
-        Builder &addBinding(QVector<QVariant> &&bindings,
+        Builder &addBinding(QList<QVariant> &&bindings,
                             BindingType type = BindingType::WHERE);
         /*! Set the bindings on the query builder. */
-        Builder &setBindings(QVector<QVariant> &&bindings,
+        Builder &setBindings(QList<QVariant> &&bindings,
                              BindingType type = BindingType::WHERE);
 
         /*! Get an aggregate function and column to be run. */
@@ -766,23 +766,23 @@ namespace Orm::Query
         inline const QStringList &getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
-        inline const QVector<Column> &getColumns() const noexcept;
+        inline const QList<Column> &getColumns() const noexcept;
         /*! Set the columns that should be returned. */
-        inline Builder &setColumns(const QVector<Column> &columns) noexcept;
+        inline Builder &setColumns(const QList<Column> &columns) noexcept;
         /*! Set the columns that should be returned. */
-        inline Builder &setColumns(QVector<Column> &&columns) noexcept;
+        inline Builder &setColumns(QList<Column> &&columns) noexcept;
         /*! Get the table associated with the query builder. */
         inline const FromClause &getFrom() const noexcept;
         /*! Get the table joins for the query. */
-        inline const QVector<std::shared_ptr<JoinClause>> &getJoins() const noexcept;
+        inline const QList<std::shared_ptr<JoinClause>> &getJoins() const noexcept;
         /*! Get the where constraints for the query. */
-        inline const QVector<WhereConditionItem> &getWheres() const noexcept;
+        inline const QList<WhereConditionItem> &getWheres() const noexcept;
         /*! Get the groupings for the query. */
-        inline const QVector<Column> &getGroups() const noexcept;
+        inline const QList<Column> &getGroups() const noexcept;
         /*! Get the having constraints for the query. */
-        inline const QVector<HavingConditionItem> &getHavings() const noexcept;
+        inline const QList<HavingConditionItem> &getHavings() const noexcept;
         /*! Get the orderings for the query. */
-        inline const QVector<OrderByItem> &getOrders() const noexcept;
+        inline const QList<OrderByItem> &getOrders() const noexcept;
         /*! Get the maximum number of records to return. */
         inline qint64 getLimit() const noexcept;
         /*! Get the number of records to skip. */
@@ -813,11 +813,11 @@ namespace Orm::Query
                                      bool nope = false);
 
         /*! Merge an array of where clauses and bindings. */
-        Builder &mergeWheres(const QVector<WhereConditionItem> &wheres,
-                             const QVector<QVariant> &bindings);
+        Builder &mergeWheres(const QList<WhereConditionItem> &wheres,
+                             const QList<QVariant> &bindings);
         /*! Merge an array of where clauses and bindings. */
-        Builder &mergeWheres(QVector<WhereConditionItem> &&wheres,
-                             QVector<QVariant> &&bindings);
+        Builder &mergeWheres(QList<WhereConditionItem> &&wheres,
+                             QList<QVariant> &&bindings);
 
         /*! Builder property types. */
         enum struct PropertyType : quint8
@@ -838,20 +838,20 @@ namespace Orm::Query
         void throwIfInvalidOperator(const QString &comparison) const;
 
         /*! Remove all of the expressions from a list of bindings. */
-        static QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings);
+        static QList<QVariant> cleanBindings(const QList<QVariant> &bindings);
         /*! Remove all of the expressions from a list of bindings. */
-        static QVector<QVariant> cleanBindings(QVector<QVariant> &&bindings);
+        static QList<QVariant> cleanBindings(QList<QVariant> &&bindings);
         /*! Remove all of the expressions from the WhereBetweenItem bindings. */
-        static QVector<QVariant> cleanBindings(const WhereBetweenItem &bindings);
+        static QList<QVariant> cleanBindings(const WhereBetweenItem &bindings);
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &
-        addArrayOfWheres(const QVector<WhereItem> &values,
+        addArrayOfWheres(const QList<WhereItem> &values,
                          const QString &condition = AND,
                          const QString &defaultCondition = "");
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &
-        addArrayOfWheres(const QVector<WhereColumnItem> &values,
+        addArrayOfWheres(const QList<WhereColumnItem> &values,
                          const QString &condition = AND);
 
         /*! Get a new join clause. */
@@ -865,20 +865,20 @@ namespace Orm::Query
         Builder &clearColumns();
         /*! Execute the given callback while selecting the given columns. */
         SqlQuery
-        onceWithColumns(const QVector<Column> &columns,
+        onceWithColumns(const QList<Column> &columns,
                         const std::function<SqlQuery()> &callback);
 
         /*! Creates a subquery and parse it. */
-        std::pair<QString, QVector<QVariant>>
+        std::pair<QString, QList<QVariant>>
         createSub(const std::function<void(Builder &)> &callback) const;
         /*! Creates a subquery and parse it. */
-        std::pair<QString, QVector<QVariant>>
+        std::pair<QString, QList<QVariant>>
         createSub(Builder &query) const;
         /*! Creates a subquery and parse it. */
-        static std::pair<QString, QVector<QVariant>>
+        static std::pair<QString, QList<QVariant>>
         createSub(const QString &query) noexcept;
         /*! Creates a subquery and parse it. */
-        static std::pair<QString, QVector<QVariant>>
+        static std::pair<QString, QList<QVariant>>
         createSub(QString &&query) noexcept;
 
         /*! Determine whether the T type is a query builder instance or a lambda expr. */
@@ -896,7 +896,7 @@ namespace Orm::Query
         /*! Throw an exception if the query doesn't have an orderBy clause. */
         void enforceOrderBy() const;
         /*! Get an array with all orders with a given column removed. */
-        QVector<OrderByItem> removeExistingOrdersFor(const QString &column) const;
+        QList<OrderByItem> removeExistingOrdersFor(const QString &column) const;
 
         /*! Strip off the table name or alias from a column identifier. */
         static QString stripTableForPluck(const Column &column);
@@ -904,7 +904,7 @@ namespace Orm::Query
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
         Builder &setAggregate(const QString &function,
-                              const QVector<Column> &columns = {ASTERISK});
+                              const QList<Column> &columns = {ASTERISK});
 
     private:
         /*! Run the query as a "select" statement against the connection. */
@@ -926,12 +926,12 @@ namespace Orm::Query
 
         /*! Add a subquery join clause to the query, common code. */
         Builder &joinSubInternal(
-                std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+                std::pair<QString, QList<QVariant>> &&subQuery, const QString &as,
                 const QString &first, const QString &comparison, const QVariant &second,
                 const QString &type, bool where);
         /*! Add a subquery join clause to the query, common code. */
         Builder &joinSubInternal(
-                std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+                std::pair<QString, QList<QVariant>> &&subQuery, const QString &as,
                 const std::function<void(JoinClause &)> &callback,
                 const QString &type);
 
@@ -970,19 +970,19 @@ namespace Orm::Query
         /*! Indicates if the query returns distinct results. */
         std::variant<bool, QStringList> m_distinct = false;
         /*! The columns that should be returned. */
-        QVector<Column> m_columns;
+        QList<Column> m_columns;
         /*! The table which the query is targeting. */
         FromClause m_from;
         /*! The table joins for the query. */
-        QVector<std::shared_ptr<JoinClause>> m_joins;
+        QList<std::shared_ptr<JoinClause>> m_joins;
         /*! The where constraints for the query. */
-        QVector<WhereConditionItem> m_wheres;
+        QList<WhereConditionItem> m_wheres;
         /*! The groupings for the query. */
-        QVector<Column> m_groups;
+        QList<Column> m_groups;
         /*! The having constraints for the query. */
-        QVector<HavingConditionItem> m_havings;
+        QList<HavingConditionItem> m_havings;
         /*! The orderings for the query. */
-        QVector<OrderByItem> m_orders;
+        QList<OrderByItem> m_orders;
         /*! The maximum number of records to return. */
         qint64 m_limit = -1;
         /*! The number of records to skip. */
@@ -1003,7 +1003,7 @@ namespace Orm::Query
 
     template<typename R>
     std::pair<SqlQuery, R>
-    Builder::findOr(const QVariant &id, const QVector<Column> &columns,
+    Builder::findOr(const QVariant &id, const QList<Column> &columns,
                     const std::function<R()> &callback)
     {
         auto query = find(id, columns);
@@ -1081,7 +1081,7 @@ namespace Orm::Query
 
     /* Select */
 
-    quint64 Builder::count(const QVector<Column> &columns) const
+    quint64 Builder::count(const QList<Column> &columns) const
     {
         return aggregate(QStringLiteral("count"), columns).template value<quint64>();
     }
@@ -1155,8 +1155,8 @@ namespace Orm::Query
     Builder &Builder::addSelect(T &&query, const QString &as)
     {
         if (m_columns.isEmpty())
-            select(QVector<Column> {QStringLiteral("%1.*")
-                                    .arg(std::get<QString>(m_from))});
+            select(QList<Column> {QStringLiteral("%1.*")
+                                  .arg(std::get<QString>(m_from))});
 
         return selectSub(std::forward<T>(query), as);
     }
@@ -1596,7 +1596,7 @@ namespace Orm::Query
     template<ColumnConcept ...Args>
     Builder &Builder::groupBy(Args &&...groups)
     {
-        return groupBy(QVector<Column> {std::forward<Args>(groups)...});
+        return groupBy(QList<Column> {std::forward<Args>(groups)...});
     }
 
     template<Queryable T>
@@ -1620,12 +1620,12 @@ namespace Orm::Query
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     Builder::increment(const QString &column, const T amount,
-                       const QVector<UpdateItem> &extra)
+                       const QList<UpdateItem> &extra)
     {
         const auto expression = QStringLiteral("%1 + %2").arg(m_grammar->wrap(column))
                                 .arg(amount);
 
-        QVector<UpdateItem> columns {{column, raw(expression)}};
+        QList<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
 
         return update(columns);
@@ -1634,12 +1634,12 @@ namespace Orm::Query
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     Builder::decrement(const QString &column, const T amount,
-                       const QVector<UpdateItem> &extra)
+                       const QList<UpdateItem> &extra)
     {
         const auto expression = QStringLiteral("%1 - %2").arg(m_grammar->wrap(column))
                                 .arg(amount);
 
-        QVector<UpdateItem> columns {{column, raw(expression)}};
+        QList<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
 
         return update(columns);
@@ -1695,14 +1695,14 @@ namespace Orm::Query
         return std::get<QStringList>(m_distinct);
     }
 
-    const QVector<Column> &
+    const QList<Column> &
     Builder::getColumns() const noexcept
     {
         return m_columns;
     }
 
     Builder &
-    Builder::setColumns(const QVector<Column> &columns) noexcept
+    Builder::setColumns(const QList<Column> &columns) noexcept
     {
         m_columns = columns;
 
@@ -1710,7 +1710,7 @@ namespace Orm::Query
     }
 
     Builder &
-    Builder::setColumns(QVector<Column> &&columns) noexcept
+    Builder::setColumns(QList<Column> &&columns) noexcept
     {
         m_columns = std::move(columns);
 
@@ -1723,31 +1723,31 @@ namespace Orm::Query
         return m_from;
     }
 
-    const QVector<std::shared_ptr<JoinClause>> &
+    const QList<std::shared_ptr<JoinClause>> &
     Builder::getJoins() const noexcept
     {
         return m_joins;
     }
 
-    const QVector<WhereConditionItem> &
+    const QList<WhereConditionItem> &
     Builder::getWheres() const noexcept
     {
         return m_wheres;
     }
 
-    const QVector<Column> &
+    const QList<Column> &
     Builder::getGroups() const noexcept
     {
         return m_groups;
     }
 
-    const QVector<HavingConditionItem> &
+    const QList<HavingConditionItem> &
     Builder::getHavings() const noexcept
     {
         return m_havings;
     }
 
-    const QVector<OrderByItem> &
+    const QList<OrderByItem> &
     Builder::getOrders() const noexcept
     {
         return m_orders;

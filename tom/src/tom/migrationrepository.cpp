@@ -32,7 +32,7 @@ MigrationRepository::MigrationRepository(
     , m_table(std::move(table))
 {}
 
-QVector<QVariant> MigrationRepository::getRanSimple() const
+QList<QVariant> MigrationRepository::getRanSimple() const
 {
     // Ownership of the std::shared_ptr<QueryBuilder>
     return table()

@@ -31,24 +31,24 @@ QString MySqlSchemaGrammar::compileDropDatabaseIfExists(const QString &name) con
     return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
 }
 
-QString MySqlSchemaGrammar::compileDropAllTables(const QVector<QString> &tables) const
+QString MySqlSchemaGrammar::compileDropAllTables(const QList<QString> &tables) const
 {
     return QStringLiteral("drop table %1").arg(columnize(tables));
 }
 
-QString MySqlSchemaGrammar::compileDropAllViews(const QVector<QString> &views) const
+QString MySqlSchemaGrammar::compileDropAllViews(const QList<QString> &views) const
 {
     return QStringLiteral("drop view %1").arg(columnize(views));
 }
 
 QString
-MySqlSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+MySqlSchemaGrammar::compileGetAllTables(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("show full tables where table_type = 'BASE TABLE'");
 }
 
 QString
-MySqlSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+MySqlSchemaGrammar::compileGetAllViews(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("show full tables where table_type = 'VIEW'");
 }
@@ -80,7 +80,7 @@ QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) cons
 
 /* Compile methods for commands */
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
                                   const DatabaseConnection &connection) const
 {
@@ -96,15 +96,15 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
     return {std::move(sqlCreateTable)};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
-                                                   const RenameCommand &command) const
+QList<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
+                                                 const RenameCommand &command) const
 {
     return {QStringLiteral("rename table %1 to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
-                                                const BasicCommand &/*unused*/) const
+QList<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
+                                              const BasicCommand &/*unused*/) const
 {
     return {QStringLiteral("alter table %1 %2")
                 .arg(wrapTable(blueprint),
@@ -113,12 +113,12 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                      getColumns(blueprint))))};
 }
 
-QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
-                                                   const BasicCommand &/*unused*/) const
+QList<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
+                                                 const BasicCommand &/*unused*/) const
 {
     auto changedColumns = blueprint.getChangedColumns();
 
-    QVector<QString> columns;
+    QList<QString> columns;
     columns.reserve(changedColumns.size());
 
     for (auto &column : changedColumns) {
@@ -140,7 +140,7 @@ QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
                                                     columnizeWithoutWrap(columns))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                       const DropColumnsCommand &command) const
 {
@@ -150,7 +150,7 @@ MySqlSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                                       wrapArray(command.columns))))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                         const RenameCommand &command) const
 {
@@ -159,7 +159,7 @@ MySqlSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                      BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                                    const IndexCommand &command) const
 {
@@ -171,35 +171,35 @@ MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                      columnize(command.columns))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                   const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, QStringLiteral("unique index"))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                  const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, Index)};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileFullText(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, QStringLiteral("fulltext index"))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
                                         const IndexCommand &command) const
 {
     return {compileKey(blueprint, command, QStringLiteral("spatial index"))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                        const IndexCommand &/*unused*/) const
 {
@@ -207,7 +207,7 @@ MySqlSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                 .arg(wrapTable(blueprint))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileDropIndex(const Blueprint &blueprint,
                                      const IndexCommand &command) const
 {
@@ -215,7 +215,7 @@ MySqlSchemaGrammar::compileDropIndex(const Blueprint &blueprint,
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileDropForeign(const Blueprint &blueprint,
                                        const IndexCommand &command) const
 {
@@ -223,7 +223,7 @@ MySqlSchemaGrammar::compileDropForeign(const Blueprint &blueprint,
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
                                        const RenameCommand &command) const
 {
@@ -232,7 +232,7 @@ MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
                      BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileTableComment(const Blueprint &blueprint,
                                         const TableCommentCommand &command) const
 {
@@ -245,7 +245,7 @@ MySqlSchemaGrammar::compileTableComment(const Blueprint &blueprint,
                      quoteString(escapeString(command.comment)))};
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const DatabaseConnection &connection,
                                         const Blueprint &blueprint) const
@@ -261,7 +261,7 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     /*! Type for the compileXx() methods. */
     using CompileMemFn =
-            std::function<QVector<QString>(
+            std::function<QList<QString>(
                 const MySqlSchemaGrammar &, const Blueprint &,
                 const CommandDefinition &)>;
 
@@ -412,7 +412,7 @@ void MySqlSchemaGrammar::compileCreateEngine(
         sql += engineTmpl.arg(engine);
 }
 
-QVector<QString>
+QList<QString>
 MySqlSchemaGrammar::compileAutoIncrementStartingValue(
         const Blueprint &blueprint,
         const AutoIncrementStartingValueCommand &command) const

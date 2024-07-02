@@ -75,7 +75,7 @@ int AboutCommand::run()
 
 /* protected */
 
-void AboutCommand::display(const QVector<SectionItem> &sections)
+void AboutCommand::display(const QList<SectionItem> &sections)
 {
     if (isSet(json_))
         displayJson(sections);
@@ -83,7 +83,7 @@ void AboutCommand::display(const QVector<SectionItem> &sections)
         displayDetail(sections);
 }
 
-void AboutCommand::displayDetail(const QVector<SectionItem> &sections) const
+void AboutCommand::displayDetail(const QList<SectionItem> &sections) const
 {
     auto firstSection = true;
 
@@ -128,7 +128,7 @@ void AboutCommand::displayDetail(const QVector<SectionItem> &sections) const
     }
 }
 
-void AboutCommand::displayJson(const QVector<SectionItem> &sections)
+void AboutCommand::displayJson(const QList<SectionItem> &sections)
 {
     QJsonObject jsonSections;
 
@@ -289,7 +289,7 @@ void AboutCommand::prepareAboutItemsJson(
 
 /* Gathering */
 
-QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
+QList<SectionItem> AboutCommand::gatherAllAboutInformation() const
 {
     return {
         {sl("Environment"),                        gatherEnvironmentInformation()},
@@ -309,7 +309,7 @@ using Orm::Constants::ON;
 #endif
 #endif // TINYORM_MSVC_RUNTIME_DYNAMIC
 
-QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
+QList<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
     return {
         {std::nullopt,
@@ -348,7 +348,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
     };
 }
 
-QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
+QList<SubSectionItem> AboutCommand::gatherMacrosInformation()
 {
     auto allCMacrosMap = LibraryInfo::allCMacrosMap();
 #ifdef TINYORM_USING_TINYDRIVERS
@@ -360,7 +360,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
     };
 }
 
-QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
+QList<SubSectionItem> AboutCommand::gatherVersionsInformation()
 {
     auto versions = Application::createVersionsSubsection();
 
@@ -373,7 +373,7 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
     return versions;
 }
 
-QVector<SubSectionItem> AboutCommand::gatherConnectionsInformation()
+QList<SubSectionItem> AboutCommand::gatherConnectionsInformation()
 {
     return {
         {std::nullopt,

@@ -118,7 +118,7 @@ namespace Support::Stores
         if constexpr (std::is_same_v<C, QVariantMap>)
             return RelationStoreType::RELATION_TO_MAP;
 
-        else if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+        else if constexpr (std::is_same_v<C, QList<AttributeItem>>)
             return RelationStoreType::RELATION_TO_VECTOR;
 
         else

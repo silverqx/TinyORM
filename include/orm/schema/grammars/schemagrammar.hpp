@@ -47,14 +47,14 @@ namespace Grammars
         virtual QString compileDropDatabaseIfExists(const QString &name) const;
 
         /*! Compile the SQL needed to drop all tables. */
-        virtual QString compileDropAllTables(const QVector<QString> &tables) const;
+        virtual QString compileDropAllTables(const QList<QString> &tables) const;
         /*! Compile the SQL needed to drop all views. */
-        virtual QString compileDropAllViews(const QVector<QString> &views) const;
+        virtual QString compileDropAllViews(const QList<QString> &views) const;
 
         /*! Compile the SQL needed to retrieve all table names. */
-        virtual QString compileGetAllTables(const QVector<QString> &databases = {}) const; // NOLINT(google-default-arguments)
+        virtual QString compileGetAllTables(const QList<QString> &databases = {}) const; // NOLINT(google-default-arguments)
         /*! Compile the SQL needed to retrieve all view names. */
-        virtual QString compileGetAllViews(const QVector<QString> &databases = {}) const; // NOLINT(google-default-arguments)
+        virtual QString compileGetAllViews(const QList<QString> &databases = {}) const; // NOLINT(google-default-arguments)
 
         /*! Compile the command to enable foreign key constraints. */
         virtual QString compileEnableForeignKeyConstraints() const = 0;
@@ -68,33 +68,33 @@ namespace Grammars
 
         /* Compile methods for commands */
         /*! Compile a change column command. */
-        QVector<QString> compileChange(const Blueprint &blueprint,
-                                       const BasicCommand &command) const;
+        QList<QString> compileChange(const Blueprint &blueprint,
+                                     const BasicCommand &command) const;
 
         /*! Compile a drop table command. */
-        QVector<QString> compileDrop(const Blueprint &blueprint,
-                                     const BasicCommand &command) const;
+        QList<QString> compileDrop(const Blueprint &blueprint,
+                                   const BasicCommand &command) const;
         /*! Compile a drop table (if exists) command. */
-        QVector<QString> compileDropIfExists(const Blueprint &blueprint,
-                                             const BasicCommand &command) const;
+        QList<QString> compileDropIfExists(const Blueprint &blueprint,
+                                           const BasicCommand &command) const;
 
         /*! Compile a fulltext index key command. */
-        virtual QVector<QString>
+        virtual QList<QString>
         compileFullText(const Blueprint &blueprint,
                         const IndexCommand &command) const;
 
         /*! Compile a foreign key command. */
-        virtual QVector<QString>
+        virtual QList<QString>
         compileForeign(const Blueprint &blueprint,
                        const ForeignKeyCommand &command) const;
 
         /*! Compile a drop fulltext index command. */
-        virtual QVector<QString>
+        virtual QList<QString>
         compileDropFullText(const Blueprint &blueprint,
                             const IndexCommand &command) const;
 
         /*! Compile a table comment command. */
-        virtual QVector<QString>
+        virtual QList<QString>
         compileTableComment(const Blueprint &blueprint,
                             const TableCommentCommand &command) const;
 
@@ -105,10 +105,10 @@ namespace Grammars
         QString wrapTable(const Blueprint &blueprint) const;
         /*! Add a prefix to an array of values. */
         template<ColumnContainer T>
-        QVector<QString> prefixArray(const QString &prefix, const T &values) const;
+        QList<QString> prefixArray(const QString &prefix, const T &values) const;
 
         /*! Run command's compile method and return SQL queries. */
-        virtual QVector<QString>
+        virtual QList<QString>
         invokeCompileMethod(const CommandDefinition &command,
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const = 0;
@@ -156,7 +156,7 @@ namespace Grammars
     /* others */
 
     template<ColumnContainer T>
-    QVector<QString>
+    QList<QString>
     SchemaGrammar::prefixArray(const QString &prefix, const T &values) const
     {
         return values
@@ -164,7 +164,7 @@ namespace Grammars
         {
             return SPACE_IN.arg(prefix, value);
         })
-                | ranges::to<QVector<QString>>();
+                | ranges::to<QList<QString>>();
     }
 
 } // namespace Grammars

@@ -20,10 +20,10 @@ namespace Query
 }
 
     /*! Concept for container passed to the parametrize() method (QVariantMap
-        or QVector<QString>). */
+        or QList<QString>). */
     template<typename T>
     concept Parametrize = std::same_as<T, QVariantMap> ||
-                          std::same_as<T, QVector<QVariant>>;
+                          std::same_as<T, QList<QVariant>>;
 
     /*! Base class for the database grammar. */
     class SHAREDLIB_EXPORT BaseGrammar
@@ -59,13 +59,13 @@ namespace Query
 
         /*! Wrap an array of values. */
         template<ColumnContainer T>
-        QVector<QString> wrapArray(const T &values) const;
+        QList<QString> wrapArray(const T &values) const;
 
         /*! Quote the given string literal. */
         static QString quoteString(const QString &value);
         /*! Quote the given string literal. */
         template<typename = void>
-        static QString quoteString(const QVector<QString> &values);
+        static QString quoteString(const QList<QString> &values);
 
         /*! Determine if the given value is a raw expression. */
         static bool isExpression(const QVariant &value);
@@ -153,9 +153,9 @@ namespace Query
     }
 
     template<ColumnContainer T>
-    QVector<QString> BaseGrammar::wrapArray(const T &values) const
+    QList<QString> BaseGrammar::wrapArray(const T &values) const
     {
-        QVector<QString> wrapped;
+        QList<QString> wrapped;
         wrapped.reserve(values.size());
 
         for (const auto &value : values)
@@ -165,7 +165,7 @@ namespace Query
     }
 
     template<typename>
-    QString BaseGrammar::quoteString(const QVector<QString> &values)
+    QString BaseGrammar::quoteString(const QList<QString> &values)
     {
         // Nothing to quote
         if (values.isEmpty())

@@ -64,8 +64,8 @@ namespace Orm::Tiny::Relations
         /* TinyBuilder proxy methods */
         /*! Find multiple models by their primary keys. */
         inline ModelsCollection<Related>
-        findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {ASTERISK}) const;
+        findMany(const QList<QVariant> &ids,
+                 const QList<Column> &columns = {ASTERISK}) const;
 
         /* Others */
         /*! The textual representation of the Relation type. */
@@ -162,7 +162,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     ModelsCollection<Related>
     HasMany<Model, Related>::findMany(
-            const QVector<QVariant> &ids, const QVector<Column> &columns) const
+            const QList<QVariant> &ids, const QList<Column> &columns) const
     {
         return this->m_query->findMany(ids, columns);
     }

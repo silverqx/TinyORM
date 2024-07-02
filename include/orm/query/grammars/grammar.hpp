@@ -36,38 +36,38 @@ namespace Orm::Query::Grammars
         /*! Compile an insert statement into SQL. */
         virtual QString
         compileInsert(const QueryBuilder &query,
-                      const QVector<QVariantMap> &values) const;
+                      const QList<QVariantMap> &values) const;
         /*! Compile an insert ignore statement into SQL. */
         virtual QString
         compileInsertOrIgnore(const QueryBuilder &query,
-                              const QVector<QVariantMap> &values) const;
+                              const QList<QVariantMap> &values) const;
         /*! Compile an insert and get ID statement into SQL. */
         inline virtual QString
         compileInsertGetId(const QueryBuilder &query,
-                           const QVector<QVariantMap> &values,
+                           const QList<QVariantMap> &values,
                            const QString &sequence) const;
 
         /*! Compile an update statement into SQL. */
         virtual QString
-        compileUpdate(QueryBuilder &query, const QVector<UpdateItem> &values) const;
+        compileUpdate(QueryBuilder &query, const QList<UpdateItem> &values) const;
         /*! Prepare the bindings for an update statement. */
-        static QVector<QVariant>
+        static QList<QVariant>
         prepareBindingsForUpdate(const BindingsMap &bindings,
-                                 const QVector<UpdateItem> &values);
+                                 const QList<UpdateItem> &values);
 
         /*! Compile an "upsert" statement into SQL. */
         virtual QString
-        compileUpsert(QueryBuilder &query, const QVector<QVariantMap> &values,
+        compileUpsert(QueryBuilder &query, const QList<QVariantMap> &values,
                       const QStringList &uniqueBy, const QStringList &update) const;
 
         /*! Compile a delete statement into SQL. */
         virtual QString compileDelete(QueryBuilder &query) const;
         /*! Prepare the bindings for a delete statement. */
-        static QVector<QVariant> prepareBindingsForDelete(const BindingsMap &bindings);
+        static QList<QVariant> prepareBindingsForDelete(const BindingsMap &bindings);
 
         /*! Compile a truncate table statement into SQL. Returns a map of
             the query string and bindings. */
-        virtual std::unordered_map<QString, QVector<QVariant>>
+        virtual std::unordered_map<QString, QList<QVariant>>
         compileTruncate(const QueryBuilder &query) const;
 
         /*! Compile the random statement into SQL. */
@@ -90,7 +90,7 @@ namespace Orm::Query::Grammars
                                                  const WhereConditionItem &)>;
 
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        virtual const QVector<SelectComponentValue> &getCompileMap() const = 0;
+        virtual const QList<SelectComponentValue> &getCompileMap() const = 0;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         virtual const WhereMemFn &getWhereMethod(WhereType whereType) const = 0;
 
@@ -188,11 +188,11 @@ namespace Orm::Query::Grammars
         dateBasedWhere(const QString &type, const WhereConditionItem &where) const;
 
         /*! Compile a insert values lists. */
-        QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;
+        QStringList compileInsertToVector(const QList<QVariantMap> &values) const;
 
         /*! Compile the columns for an update statement. */
         virtual QString
-        compileUpdateColumns(const QVector<UpdateItem> &values) const;
+        compileUpdateColumns(const QList<UpdateItem> &values) const;
         /*! Compile an update statement without joins into SQL. */
         virtual QString
         compileUpdateWithoutJoins(const QueryBuilder &query, const QString &table,
@@ -217,14 +217,14 @@ namespace Orm::Query::Grammars
         static QString removeLeadingBoolean(QString &&statement);
 
         /*! Flat bindings map and exclude given binding types. */
-        static QVector<std::reference_wrapper<const QVariant>>
+        static QList<std::reference_wrapper<const QVariant>>
         flatBindingsForUpdateDelete(const BindingsMap &bindings,
-                                    const QVector<BindingType> &exclude);
+                                    const QList<BindingType> &exclude);
 
         /*! Compute the reserve size for the BindingsMap. */
-        static QVector<QVariant>::size_type
+        static QList<QVariant>::size_type
         computeReserveForBindingsMap(const BindingsMap &bindings,
-                                     const QVector<BindingType> &exclude = {});
+                                     const QList<BindingType> &exclude = {});
     };
 
     /* public */
@@ -232,7 +232,7 @@ namespace Orm::Query::Grammars
     Grammar::~Grammar() = default;
 
     QString Grammar::compileInsertGetId(
-            const QueryBuilder &query, const QVector<QVariantMap> &values,
+            const QueryBuilder &query, const QList<QVariantMap> &values,
             const QString &/*unused*/) const
     {
         return compileInsert(query, values);

@@ -193,7 +193,7 @@ namespace Orm::Tiny
         const auto timestamp = model.freshTimestamp();
         auto timestampString = model.fromDateTime(timestamp);
 
-        QVector<UpdateItem> columns;
+        QList<UpdateItem> columns;
         columns.reserve(2);
 
         columns.append({getDeletedAtColumn(), timestampString});

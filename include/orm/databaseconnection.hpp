@@ -110,35 +110,35 @@ namespace Orm
         /* Running SQL Queries */
         /*! Run a select statement against the database. */
         SqlQuery
-        select(const QString &queryString, QVector<QVariant> bindings = {});
+        select(const QString &queryString, QList<QVariant> bindings = {});
         /*! Run a select statement against the database. */
         inline SqlQuery
         selectFromWriteConnection(const QString &queryString,
-                                  QVector<QVariant> bindings = {});
+                                  QList<QVariant> bindings = {});
 
         /*! Run a select statement and return a single result. */
         SqlQuery
-        selectOne(const QString &queryString, QVector<QVariant> bindings = {});
+        selectOne(const QString &queryString, QList<QVariant> bindings = {});
         /*! Run a select statement and return the first column of the first row. */
         QVariant
-        scalar(const QString &queryString, QVector<QVariant> bindings = {});
+        scalar(const QString &queryString, QList<QVariant> bindings = {});
 
         /*! Run an insert statement against the database. */
         inline SqlQuery
-        insert(const QString &queryString, QVector<QVariant> bindings = {});
+        insert(const QString &queryString, QList<QVariant> bindings = {});
         /*! Run an update statement against the database. */
         inline std::tuple<int, TSqlQuery>
-        update(const QString &queryString, QVector<QVariant> bindings = {});
+        update(const QString &queryString, QList<QVariant> bindings = {});
         /*! Run a delete statement against the database. */
         inline std::tuple<int, TSqlQuery>
-        remove(const QString &queryString, QVector<QVariant> bindings = {});
+        remove(const QString &queryString, QList<QVariant> bindings = {});
 
         /*! Execute an SQL statement, should be used for DDL/DML queries, internally
             calls DatabaseConnection::recordsHaveBeenModified(). */
-        SqlQuery statement(const QString &queryString, QVector<QVariant> bindings = {});
+        SqlQuery statement(const QString &queryString, QList<QVariant> bindings = {});
         /*! Run an SQL statement and get the number of rows affected (for DML queries). */
         std::tuple<int, TSqlQuery>
-        affectingStatement(const QString &queryString, QVector<QVariant> bindings = {});
+        affectingStatement(const QString &queryString, QList<QVariant> bindings = {});
 
         /*! Run a raw, unprepared query against the database (good for DDL queries). */
         SqlQuery unprepared(const QString &queryString);
@@ -159,9 +159,9 @@ namespace Orm
         TSqlQuery getQtQuery();
 
         /*! Prepare the query bindings for execution. */
-        QVector<QVariant> &prepareBindings(QVector<QVariant> &bindings) const;
+        QList<QVariant> &prepareBindings(QList<QVariant> &bindings) const;
         /*! Bind values to their parameters in the given statement. */
-        static void bindValues(TSqlQuery &query, const QVector<QVariant> &bindings);
+        static void bindValues(TSqlQuery &query, const QList<QVariant> &bindings);
 
         /*! Determine whether the database connection is currently open. */
         inline bool isOpen();
@@ -237,9 +237,9 @@ namespace Orm
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log> pretend(const std::function<void()> &callback);
+        QList<Log> pretend(const std::function<void()> &callback);
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log> pretend(const std::function<void(DatabaseConnection &)> &callback);
+        QList<Log> pretend(const std::function<void(DatabaseConnection &)> &callback);
         /*! Determine if the connection is in a "dry run". */
         inline bool pretending() const;
 
@@ -272,17 +272,17 @@ namespace Orm
         /*! Callback type used in the run() method. */
         template<typename Return>
         using RunCallback = std::function<Return(const QString &,
-                                                 const QVector<QVariant> &)>;
+                                                 const QList<QVariant> &)>;
 
         /*! Run a SQL statement and log its execution context. */
         template<typename Return>
         Return run(
-                const QString &queryString, QVector<QVariant> &&bindings,
+                const QString &queryString, QList<QVariant> &&bindings,
                 const QString &type, const RunCallback<Return> &callback);
         /*! Run a SQL statement. */
         template<typename Return>
         Return runQueryCallback(
-                const QString &queryString, const QVector<QVariant> &preparedBindings,
+                const QString &queryString, const QList<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
 
         /*! The active QSqlDatabase connection name. */
@@ -330,13 +330,13 @@ namespace Orm
         template<typename Return>
         Return handleQueryException(
                 const std::exception_ptr &ePtr, const QString &errorMessage,
-                const QString &queryString, const QVector<QVariant> &preparedBindings,
+                const QString &queryString, const QList<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
                 const std::exception_ptr &ePtr, const QString &errorMessage,
-                const QString &queryString, const QVector<QVariant> &preparedBindings,
+                const QString &queryString, const QList<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
 
         /*! Determine if the elapsed time for queries should be counted. */
@@ -390,7 +390,7 @@ namespace Orm
 
     SqlQuery
     DatabaseConnection::selectFromWriteConnection(const QString &queryString,
-                                                  QVector<QVariant> bindings)
+                                                  QList<QVariant> bindings)
     {
         // This member function is used from the schema builders/post-processors only
         // FEATURE read/write connection silverqx
@@ -398,19 +398,19 @@ namespace Orm
     }
 
     SqlQuery
-    DatabaseConnection::insert(const QString &queryString, QVector<QVariant> bindings)
+    DatabaseConnection::insert(const QString &queryString, QList<QVariant> bindings)
     {
         return statement(queryString, std::move(bindings));
     }
 
     std::tuple<int, TSqlQuery>
-    DatabaseConnection::update(const QString &queryString, QVector<QVariant> bindings)
+    DatabaseConnection::update(const QString &queryString, QList<QVariant> bindings)
     {
         return affectingStatement(queryString, std::move(bindings));
     }
 
     std::tuple<int, TSqlQuery>
-    DatabaseConnection::remove(const QString &queryString, QVector<QVariant> bindings)
+    DatabaseConnection::remove(const QString &queryString, QList<QVariant> bindings)
     {
         return affectingStatement(queryString, std::move(bindings));
     }
@@ -521,7 +521,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::run(
-            const QString &queryString, QVector<QVariant> &&bindings, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+            const QString &queryString, QList<QVariant> &&bindings, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &type, const RunCallback<Return> &callback)
     {
         reconnectIfMissingConnection();
@@ -575,7 +575,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::runQueryCallback(
-            const QString &queryString, const QVector<QVariant> &preparedBindings,
+            const QString &queryString, const QList<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         /* To execute the statement, we'll simply call the callback, which will actually
@@ -595,7 +595,7 @@ namespace Orm
     Return
     DatabaseConnection::handleQueryException(
             const std::exception_ptr &ePtr, const QString &errorMessage,
-            const QString &queryString, const QVector<QVariant> &preparedBindings,
+            const QString &queryString, const QList<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         // FUTURE add info about in transaction into the exception that it was a reason why connection was not reconnected/recovered silverqx
@@ -610,7 +610,7 @@ namespace Orm
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
             const std::exception_ptr &ePtr, const QString &errorMessage,
-            const QString &queryString, const QVector<QVariant> &preparedBindings,
+            const QString &queryString, const QList<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/8.4/en/c-api-auto-reconnect.html silverqx

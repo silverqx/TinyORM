@@ -67,42 +67,42 @@ namespace Orm
 
         /*! Run a select statement against the database. */
         static SqlQuery
-        select(const QString &query, QVector<QVariant> bindings = {},
+        select(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a select statement against the database. */
         static SqlQuery
-        selectFromWriteConnection(const QString &query, QVector<QVariant> bindings = {},
+        selectFromWriteConnection(const QString &query, QList<QVariant> bindings = {},
                                   const QString &connection = "");
 
         /*! Run a select statement and return a single result. */
         static SqlQuery
-        selectOne(const QString &query, QVector<QVariant> bindings = {},
+        selectOne(const QString &query, QList<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run a select statement and return the first column of the first row. */
         static QVariant
-        scalar(const QString &query, QVector<QVariant> bindings = {},
+        scalar(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
 
         /*! Run an insert statement against the database. */
         static SqlQuery
-        insert(const QString &query, QVector<QVariant> bindings = {},
+        insert(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
         static std::tuple<int, TSqlQuery>
-        update(const QString &query, QVector<QVariant> bindings = {},
+        update(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a delete statement against the database. */
         static std::tuple<int, TSqlQuery>
-        remove(const QString &query, QVector<QVariant> bindings = {},
+        remove(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
 
         /*! Execute an SQL statement and return the boolean result and SqlQuery. */
         static SqlQuery
-        statement(const QString &query, QVector<QVariant> bindings = {},
+        statement(const QString &query, QList<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
         static std::tuple<int, TSqlQuery>
-        affectingStatement(const QString &query, QVector<QVariant> bindings = {},
+        affectingStatement(const QString &query, QList<QVariant> bindings = {},
                            const QString &connection = "");
 
         /*! Run a raw, unprepared query against the database. */
@@ -238,11 +238,11 @@ namespace Orm
 
         /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
-        static QVector<Log>
+        static QList<Log>
         pretend(const std::function<void()> &callback,
                 const QString &connection = "");
         /*! Execute the given callback in "dry run" mode. */
-        static QVector<Log>
+        static QList<Log>
         pretend(const std::function<void(DatabaseConnection &)> &callback,
                 const QString &connection = "");
 
@@ -257,7 +257,7 @@ namespace Orm
 
         /* Logging */
         /*! Get the connection query log. */
-        static std::shared_ptr<QVector<Log>>
+        static std::shared_ptr<QList<Log>>
         getQueryLog(const QString &connection = "");
         /*! Clear the query log. */
         static void flushQueryLog(const QString &connection = "");

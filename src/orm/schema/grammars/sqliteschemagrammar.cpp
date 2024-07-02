@@ -22,27 +22,27 @@ namespace Orm::SchemaNs::Grammars
 /* Compile methods for the SchemaBuilder */
 
 QString
-SQLiteSchemaGrammar::compileDropAllTables(const QVector<QString> &/*unused*/) const
+SQLiteSchemaGrammar::compileDropAllTables(const QList<QString> &/*unused*/) const
 {
     return QStringLiteral("delete from sqlite_master "
                           "where type in ('table', 'index', 'trigger')");
 }
 
 QString
-SQLiteSchemaGrammar::compileDropAllViews(const QVector<QString> &/*unused*/) const
+SQLiteSchemaGrammar::compileDropAllViews(const QList<QString> &/*unused*/) const
 {
     return QStringLiteral("delete from sqlite_master where type in ('view')");
 }
 
 QString
-SQLiteSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+SQLiteSchemaGrammar::compileGetAllTables(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select name, type "
                           "from sqlite_master "
                           "where type = 'table' and name not like 'sqlite_%'");
 }
 
-QString SQLiteSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
+QString SQLiteSchemaGrammar::compileGetAllViews(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select name, type "
                           "from sqlite_master where type = 'view'");
@@ -86,7 +86,7 @@ QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const //
 
 /* Compile methods for commands */
 
-QVector<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) const
+QList<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 {
     return {QStringLiteral("%1 table %2 (%3%4%5)")
                 .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
@@ -97,15 +97,15 @@ QVector<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) 
                      addPrimaryKeys(blueprint))};
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileRename(const Blueprint &blueprint,
-                                                    const RenameCommand &command) const
+QList<QString> SQLiteSchemaGrammar::compileRename(const Blueprint &blueprint,
+                                                  const RenameCommand &command) const
 {
     return {QStringLiteral("alter table %1 rename to %2")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
-                                                 const BasicCommand &/*unused*/) const
+QList<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
+                                               const BasicCommand &/*unused*/) const
 {
     // TODO regex, avoid it silverqx
     static const QRegularExpression regex(QStringLiteral(R"(as \(.*\) stored)"));
@@ -121,14 +121,14 @@ QVector<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
     {
         return QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint), column);
     })
-            | ranges::to<QVector<QString>>();
+            | ranges::to<QList<QString>>();
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                        const DropColumnsCommand &command) const
 {
-    QVector<QString> sql;
+    QList<QString> sql;
     sql.reserve(command.columns.size());
 
     for (const auto &column : command.columns)
@@ -138,7 +138,7 @@ SQLiteSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
     return sql;
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                          const RenameCommand &command) const
 {
@@ -147,8 +147,8 @@ SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                      BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileUnique(const Blueprint &blueprint,
-                                                    const IndexCommand &command) const
+QList<QString> SQLiteSchemaGrammar::compileUnique(const Blueprint &blueprint,
+                                                  const IndexCommand &command) const
 {
     return {QStringLiteral("create unique index %1 on %2 (%3)")
                 .arg(BaseGrammar::wrap(command.index),
@@ -156,8 +156,8 @@ QVector<QString> SQLiteSchemaGrammar::compileUnique(const Blueprint &blueprint,
                      columnize(command.columns))};
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileIndex(const Blueprint &blueprint,
-                                                   const IndexCommand &command) const
+QList<QString> SQLiteSchemaGrammar::compileIndex(const Blueprint &blueprint,
+                                                 const IndexCommand &command) const
 {
     return {QStringLiteral("create index %1 on %2 (%3)")
                 .arg(BaseGrammar::wrap(command.index),
@@ -165,7 +165,7 @@ QVector<QString> SQLiteSchemaGrammar::compileIndex(const Blueprint &blueprint,
                      columnize(command.columns))};
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileSpatialIndex(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                          const IndexCommand &/*unused*/) const
 {
@@ -173,7 +173,7 @@ SQLiteSchemaGrammar::compileSpatialIndex(const Blueprint &/*unused*/,    // NOLI
                 "The database driver in use does not support spatial indexes.");
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileDropPrimary(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                         const IndexCommand &/*unused*/) const
 {
@@ -183,13 +183,13 @@ SQLiteSchemaGrammar::compileDropPrimary(const Blueprint &/*unused*/,    // NOLIN
                 "(you would need to re-create the table).");
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileDropIndex(const Blueprint &/*unused*/,
-                                                       const IndexCommand &command) const
+QList<QString> SQLiteSchemaGrammar::compileDropIndex(const Blueprint &/*unused*/,
+                                                     const IndexCommand &command) const
 {
     return {QStringLiteral("drop index %1").arg(BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileDropSpatialIndex(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                              const IndexCommand &/*unused*/) const
 {
@@ -197,7 +197,7 @@ SQLiteSchemaGrammar::compileDropSpatialIndex(const Blueprint &/*unused*/,    // 
                 "The database driver in use does not support dropping spatial indexes.");
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileDropForeign(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                         const IndexCommand &/*unused*/) const
 {
@@ -206,7 +206,7 @@ SQLiteSchemaGrammar::compileDropForeign(const Blueprint &/*unused*/,    // NOLIN
                 "indexes (you would need to re-create the table).");
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,     // NOLINT(readability-convert-member-functions-to-static)
                                         const RenameCommand &/*unused*/) const
 {
@@ -215,7 +215,7 @@ SQLiteSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,     // NOLI
                 "drop and re-create index manually.");
 }
 
-QVector<QString>
+QList<QString>
 SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                          const DatabaseConnection &/*unused*/,
                                          const Blueprint &blueprint) const
@@ -229,7 +229,7 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     /*! Type for the compileXx() methods. */
     using CompileMemFn =
-            std::function<QVector<QString>(
+            std::function<QList<QString>(
                 const SQLiteSchemaGrammar &, const Blueprint &,
                 const CommandDefinition &)>;
 
@@ -296,7 +296,7 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     const auto &method = cached.at(name);
 
     return method ? std::invoke(method, *this, blueprint, command)
-                  : QVector<QString>();
+                  : QList<QString>();
 }
 
 /* protected */
@@ -364,7 +364,7 @@ SQLiteSchemaGrammar::getCommandByName(const Blueprint &blueprint, const QString 
     return commands.isEmpty() ? nullptr : std::move(commands.first());
 }
 
-QVector<std::shared_ptr<CommandDefinition>>
+QList<std::shared_ptr<CommandDefinition>>
 SQLiteSchemaGrammar::getCommandsByName(const Blueprint &blueprint, const QString &name)
 {
     return blueprint.getCommands()
@@ -372,7 +372,7 @@ SQLiteSchemaGrammar::getCommandsByName(const Blueprint &blueprint, const QString
     {
         return std::reinterpret_pointer_cast<BasicCommand>(command)->name == name;
     })
-            | ranges::to<QVector<std::shared_ptr<CommandDefinition>>>();
+            | ranges::to<QList<std::shared_ptr<CommandDefinition>>>();
 }
 
 /* Others */

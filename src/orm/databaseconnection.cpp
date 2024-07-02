@@ -93,12 +93,12 @@ std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 /* Running SQL Queries */
 
 SqlQuery
-DatabaseConnection::select(const QString &queryString, QVector<QVariant> bindings)
+DatabaseConnection::select(const QString &queryString, QList<QVariant> bindings)
 {
     auto queryResult = run<TSqlQuery>(
                            queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
-                                  const QVector<QVariant> &preparedBindings)
+                                  const QList<QVariant> &preparedBindings)
                            -> TSqlQuery
     {
         if (m_pretending)
@@ -135,7 +135,7 @@ DatabaseConnection::select(const QString &queryString, QVector<QVariant> binding
 }
 
 SqlQuery
-DatabaseConnection::selectOne(const QString &queryString, QVector<QVariant> bindings)
+DatabaseConnection::selectOne(const QString &queryString, QList<QVariant> bindings)
 {
     auto query = select(queryString, std::move(bindings));
 
@@ -145,7 +145,7 @@ DatabaseConnection::selectOne(const QString &queryString, QVector<QVariant> bind
 }
 
 QVariant
-DatabaseConnection::scalar(const QString &queryString, QVector<QVariant> bindings)
+DatabaseConnection::scalar(const QString &queryString, QList<QVariant> bindings)
 {
     const auto query = selectOne(queryString, std::move(bindings));
 
@@ -162,12 +162,12 @@ DatabaseConnection::scalar(const QString &queryString, QVector<QVariant> binding
 }
 
 SqlQuery
-DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bindings)
+DatabaseConnection::statement(const QString &queryString, QList<QVariant> bindings)
 {
     auto queryResult = run<TSqlQuery>(
                            queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
-                                  const QVector<QVariant> &preparedBindings)
+                                  const QList<QVariant> &preparedBindings)
                            -> TSqlQuery
     {
         if (m_pretending)
@@ -211,12 +211,12 @@ DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bind
    timezones. */
 std::tuple<int, TSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
-                                       QVector<QVariant> bindings)
+                                       QList<QVariant> bindings)
 {
     return run<std::tuple<int, TSqlQuery>>(
                queryString, std::move(bindings), Prepared,
                [this](const QString &queryString_,
-                      const QVector<QVariant> &preparedBindings)
+                      const QList<QVariant> &preparedBindings)
                -> std::tuple<int, TSqlQuery>
     {
         if (m_pretending)
@@ -260,7 +260,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
     auto queryResult = run<TSqlQuery>(
                            queryString, {}, Unprepared,
                            [this](const QString &queryString_,
-                                  const QVector<QVariant> &/*unused*/)
+                                  const QList<QVariant> &/*unused*/)
                            -> TSqlQuery
     {
         if (m_pretending)
@@ -359,8 +359,8 @@ TSqlQuery DatabaseConnection::getQtQuery()
     return TSqlQuery(getQtConnection());
 }
 
-QVector<QVariant> &
-DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
+QList<QVariant> &
+DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
 {
     /* Weird return value (non-const reference) is for better variable naming in caller.
        Also, I tried to revert back movable bindings to const & bindings only because
@@ -414,7 +414,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
     return bindings;
 }
 
-void DatabaseConnection::bindValues(TSqlQuery &query, const QVector<QVariant> &bindings)
+void DatabaseConnection::bindValues(TSqlQuery &query, const QList<QVariant> &bindings)
 {
     for (const auto &binding : bindings)
         query.addBindValue(binding);
@@ -579,7 +579,7 @@ DatabaseConnection::setQtTimeZone(QtTimeZoneConfig &&qtTimeZone) noexcept
     return *this;
 }
 
-QVector<Log>
+QList<Log>
 DatabaseConnection::pretend(const std::function<void()> &callback)
 {
     return withFreshQueryLog([this, &callback]
@@ -597,7 +597,7 @@ DatabaseConnection::pretend(const std::function<void()> &callback)
     });
 }
 
-QVector<Log>
+QList<Log>
 DatabaseConnection::pretend(const std::function<void(DatabaseConnection &)> &callback)
 {
     return withFreshQueryLog([this, &callback]

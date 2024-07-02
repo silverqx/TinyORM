@@ -43,7 +43,7 @@ namespace Tiny
         static QVariant soleValue(const Column &column);
 
         /*! Get a vector with values in the given column. */
-        static QVector<QVariant> pluck(const Column &column);
+        static QList<QVariant> pluck(const Column &column);
         /*! Get a map with values in the given column and keyed by values in the key
             column. */
         template<typename T>
@@ -54,21 +54,21 @@ namespace Tiny
 
         /*! Find a model by its primary key. */
         static std::optional<Derived>
-        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        find(const QVariant &id, const QList<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or return fresh model instance. */
         static Derived
-        findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        findOrNew(const QVariant &id, const QList<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or throw an exception. */
         static Derived
-        findOrFail(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        findOrFail(const QVariant &id, const QList<Column> &columns = {ASTERISK});
         /*! Find multiple models by their primary keys. */
         static ModelsCollection<Derived>
-        findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {ASTERISK});
+        findMany(const QList<QVariant> &ids,
+                 const QList<Column> &columns = {ASTERISK});
 
         /*! Execute a query for a single record by ID or call a callback. */
         static std::optional<Derived>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<void()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         static std::optional<Derived>
@@ -77,7 +77,7 @@ namespace Tiny
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         static std::pair<std::optional<Derived>, R>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<R()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
@@ -86,21 +86,21 @@ namespace Tiny
 
         /*! Execute the query and get the first result. */
         static std::optional<Derived>
-        first(const QVector<Column> &columns = {ASTERISK});
+        first(const QList<Column> &columns = {ASTERISK});
         /*! Get the first record matching the attributes or instantiate it. */
         static Derived
-        firstOrNew(const QVector<WhereItem> &attributes = {},
-                   const QVector<AttributeItem> &values = {});
+        firstOrNew(const QList<WhereItem> &attributes = {},
+                   const QList<AttributeItem> &values = {});
         /*! Get the first record matching the attributes or create it. */
         static Derived
-        firstOrCreate(const QVector<WhereItem> &attributes = {},
-                      const QVector<AttributeItem> &values = {});
+        firstOrCreate(const QList<WhereItem> &attributes = {},
+                      const QList<AttributeItem> &values = {});
         /*! Execute the query and get the first result or throw an exception. */
-        static Derived firstOrFail(const QVector<Column> &columns = {ASTERISK});
+        static Derived firstOrFail(const QList<Column> &columns = {ASTERISK});
 
         /*! Execute the query and get the first result or call a callback. */
         static std::optional<Derived>
-        firstOr(const QVector<Column> &columns,
+        firstOr(const QList<Column> &columns,
                 const std::function<void()> &callback = nullptr);
         /*! Execute the query and get the first result or call a callback. */
         static std::optional<Derived>
@@ -109,7 +109,7 @@ namespace Tiny
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         static std::pair<std::optional<Derived>, R>
-        firstOr(const QVector<Column> &columns, const std::function<R()> &callback);
+        firstOr(const QList<Column> &columns, const std::function<R()> &callback);
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         static std::pair<std::optional<Derived>, R>
@@ -129,32 +129,32 @@ namespace Tiny
         whereKey(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereKey(const QVector<QVariant> &ids);
+        whereKey(const QList<QVariant> &ids);
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereKeyNot(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereKeyNot(const QVector<QVariant> &ids);
+        whereKeyNot(const QList<QVariant> &ids);
 
         /*! Begin querying a model with eager loading. */
         template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
-        with(const QVector<WithItem> &relations);
+        with(const QList<WithItem> &relations);
         /*! Begin querying a model with eager loading. */
         template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
         with(QString relation);
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        with(const QVector<QString> &relations);
+        with(const QList<QString> &relations);
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        with(QVector<QString> &&relations);
+        with(QList<QString> &&relations);
 
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        without(const QVector<QString> &relations);
+        without(const QList<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
         without(QString relation);
@@ -163,7 +163,7 @@ namespace Tiny
             any previously added eager loading specifications. */
         template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
-        withOnly(const QVector<WithItem> &relations);
+        withOnly(const QList<WithItem> &relations);
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         template<typename = void>
@@ -172,21 +172,21 @@ namespace Tiny
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        withOnly(const QVector<QString> &relations);
+        withOnly(const QList<QString> &relations);
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        withOnly(QVector<QString> &&relations);
+        withOnly(QList<QString> &&relations);
 
         /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
-        static Derived create(const QVector<AttributeItem> &attributes = {});
+        static Derived create(const QList<AttributeItem> &attributes = {});
         /*! Save a new model and return the instance. */
-        static Derived create(QVector<AttributeItem> &&attributes = {});
+        static Derived create(QList<AttributeItem> &&attributes = {});
 
         /*! Create or update a record matching the attributes, and fill it with values. */
-        static Derived updateOrCreate(const QVector<WhereItem> &attributes,
-                                      const QVector<AttributeItem> &values = {});
+        static Derived updateOrCreate(const QList<WhereItem> &attributes,
+                                      const QList<AttributeItem> &values = {});
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /*! The table which the query is targeting. */
@@ -195,37 +195,37 @@ namespace Tiny
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         static std::optional<SqlQuery>
-        insert(const QVector<AttributeItem> &values);
+        insert(const QList<AttributeItem> &values);
         /*! Insert new records into the database. */
         static std::optional<SqlQuery>
-        insert(const QVector<QVector<AttributeItem>> &values);
+        insert(const QList<QList<AttributeItem>> &values);
         /*! Insert new records into the database (multi insert). */
         static std::optional<SqlQuery>
-        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values);
+        insert(const QList<QString> &columns, QList<QList<QVariant>> values);
 
         /*! Insert a new record and get the value of the primary key. */
         static quint64
-        insertGetId(const QVector<AttributeItem> &values,
+        insertGetId(const QList<AttributeItem> &values,
                     const QString &sequence = "");
 
         /*! Insert a new record into the database while ignoring errors. */
         static std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<AttributeItem> &values);
+        insertOrIgnore(const QList<AttributeItem> &values);
         /*! Insert new records into the database while ignoring errors. */
         static std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QVector<AttributeItem>> &values);
+        insertOrIgnore(const QList<QList<AttributeItem>> &values);
         /*! Insert new records into the database while ignoring errors (multi insert). */
         static std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QString> &columns,
-                       QVector<QVector<QVariant>> values);
+        insertOrIgnore(const QList<QString> &columns,
+                       QList<QList<QVariant>> values);
 
         /*! Insert new records or update the existing ones. */
         static std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
         static std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy);
 
         /*! Run a truncate statement on the table. */
         static void truncate();
@@ -237,7 +237,7 @@ namespace Tiny
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        static quint64 count(const QVector<Column> &columns = {ASTERISK});
+        static quint64 count(const QList<Column> &columns = {ASTERISK});
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         static quint64 count(const Column &column);
@@ -254,7 +254,7 @@ namespace Tiny
 
         /*! Execute an aggregate function on the database. */
         static QVariant aggregate(const QString &function,
-                                  const QVector<Column> &columns = {ASTERISK});
+                                  const QList<Column> &columns = {ASTERISK});
 
         /*! Determine if any rows exist for the current query. */
         static bool exists();
@@ -275,26 +275,26 @@ namespace Tiny
 
         /*! Set the columns to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        select(const QVector<Column> &columns = {ASTERISK});
+        select(const QList<Column> &columns = {ASTERISK});
         /*! Set the column to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
         select(const Column &column);
         /*! Add new select columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        addSelect(const QVector<Column> &columns);
+        addSelect(const QList<Column> &columns);
         /*! Add a new select column to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(const Column &column);
 
         /*! Set the columns to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        select(QVector<Column> &&columns);
+        select(QList<Column> &&columns);
         /*! Set the column to be selected. */
         static std::unique_ptr<TinyBuilder<Derived>>
         select(Column &&column);
         /*! Add new select columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        addSelect(QVector<Column> &&columns);
+        addSelect(QList<Column> &&columns);
         /*! Add a new select column to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         addSelect(Column &&column);
@@ -314,7 +314,7 @@ namespace Tiny
         selectSub(T &&query, const QString &as);
         /*! Add a new "raw" select expression to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        selectRaw(const QString &expression, const QVector<QVariant> &bindings = {});
+        selectRaw(const QString &expression, const QList<QVariant> &bindings = {});
 
         /*! Force the query to only return distinct results. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -479,27 +479,27 @@ namespace Tiny
         /* Array where */
         /*! Add a vector of basic where clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        where(const QVector<WhereItem> &values, const QString &condition = AND);
+        where(const QList<WhereItem> &values, const QString &condition = AND);
         /*! Add a vector of basic "or where" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhere(const QVector<WhereItem> &values);
+        orWhere(const QList<WhereItem> &values);
         /*! Add a vector of basic "where not" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNot(const QVector<WhereItem> &values, const QString &condition = AND,
+        whereNot(const QList<WhereItem> &values, const QString &condition = AND,
                  const QString &defaultCondition = "");
         /*! Add a vector of basic "or where not" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNot(const QVector<WhereItem> &values,
+        orWhereNot(const QList<WhereItem> &values,
                    const QString &defaultCondition = "");
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereColumn(const QVector<WhereColumnItem> &values,
+        whereColumn(const QList<WhereColumnItem> &values,
                     const QString &condition = AND);
         /*! Add a vector of "or where" clauses comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereColumn(const QVector<WhereColumnItem> &values);
+        orWhereColumn(const QList<WhereColumnItem> &values);
 
         /*! Add a "where" clause comparing two columns to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -520,34 +520,34 @@ namespace Tiny
         /* where IN */
         /*! Add a "where in" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereIn(const Column &column, const QVector<QVariant> &values,
+        whereIn(const Column &column, const QList<QVariant> &values,
                 const QString &condition = AND, bool nope = false);
         /*! Add an "or where in" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereIn(const Column &column, const QVector<QVariant> &values);
+        orWhereIn(const Column &column, const QList<QVariant> &values);
         /*! Add a "where not in" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNotIn(const Column &column, const QVector<QVariant> &values,
+        whereNotIn(const Column &column, const QList<QVariant> &values,
                    const QString &condition = AND);
         /*! Add an "or where not in" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNotIn(const Column &column, const QVector<QVariant> &values);
+        orWhereNotIn(const Column &column, const QList<QVariant> &values);
 
         /* where null */
         /*! Add a "where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNull(const QVector<Column> &columns = {ASTERISK},
+        whereNull(const QList<Column> &columns = {ASTERISK},
                   const QString &condition = AND, bool nope = false);
         /*! Add an "or where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNull(const QVector<Column> &columns = {ASTERISK});
+        orWhereNull(const QList<Column> &columns = {ASTERISK});
         /*! Add a "where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNotNull(const QVector<Column> &columns = {ASTERISK},
+        whereNotNull(const QList<Column> &columns = {ASTERISK},
                      const QString &condition = AND);
         /*! Add an "or where not null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNotNull(const QVector<Column> &columns = {ASTERISK});
+        orWhereNotNull(const QList<Column> &columns = {ASTERISK});
 
         /*! Add a "where null" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -666,19 +666,19 @@ namespace Tiny
         /* where row values */
         /*! Adds a where condition using row values. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereRowValues(const QVector<Column> &columns, const QString &comparison,
-                       const QVector<QVariant> &values, const QString &condition = AND);
+        whereRowValues(const QList<Column> &columns, const QString &comparison,
+                       const QList<QVariant> &values, const QString &condition = AND);
         /*! Adds an or where condition using row values. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
-                         const QVector<QVariant> &values);
+        orWhereRowValues(const QList<Column> &columns, const QString &comparison,
+                         const QList<QVariant> &values);
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+        whereRowValuesEq(const QList<Column> &columns, const QList<QVariant> &values,
                          const QString &condition = AND);
         /*! Adds an or where condition using row values. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereRowValuesEq(const QVector<Column> &columns,
-                           const QVector<QVariant> &values);
+        orWhereRowValuesEq(const QList<Column> &columns,
+                           const QList<QVariant> &values);
 
         /* where dates */
         /*! Add a "where date" statement to the query. */
@@ -742,16 +742,16 @@ namespace Tiny
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+        whereRaw(const QString &sql, const QList<QVariant> &bindings = {},
                  const QString &condition = AND);
         /*! Add a raw "or where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        orWhereRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /* Group by and having */
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        groupBy(const QVector<Column> &groups);
+        groupBy(const QList<Column> &groups);
         /*! Add a "group by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         groupBy(const Column &group);
@@ -762,7 +762,7 @@ namespace Tiny
 
         /*! Add a raw "groupBy" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        groupByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        groupByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /*! Add a "having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -775,11 +775,11 @@ namespace Tiny
 
         /*! Add a raw "having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        havingRaw(const QString &sql, const QVector<QVariant> &bindings = {},
+        havingRaw(const QString &sql, const QList<QVariant> &bindings = {},
                   const QString &condition = AND);
         /*! Add a raw "or having" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orHavingRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        orHavingRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /* Ordering */
         /*! Add an "order by" clause to the query. */
@@ -803,7 +803,7 @@ namespace Tiny
         inRandomOrder(const QString &seed = "");
         /*! Add a raw "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        orderByRaw(const QString &sql, const QVector<QVariant> &bindings = {});
+        orderByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -882,7 +882,7 @@ namespace Tiny
                  qint64 count = 1000);
         /*! Run a map over each item while chunking. */
         template<typename T>
-        static QVector<T>
+        static QList<T>
         chunkMap(const std::function<T(Derived &&model)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
@@ -899,7 +899,7 @@ namespace Tiny
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
-        static Derived sole(const QVector<Column> &columns = {ASTERISK});
+        static Derived sole(const QList<Column> &columns = {ASTERISK});
 
         /*! Pass the query to a given callback. */
         static Builder<Derived> &
@@ -1055,7 +1055,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<QVariant>
+    QList<QVariant>
     ModelProxies<Derived, AllRelations...>::pluck(const Column &column)
     {
         return query()->pluck(column);
@@ -1080,7 +1080,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::find(const QVariant &id,
-                                                 const QVector<Column> &columns)
+                                                 const QList<Column> &columns)
     {
         return query()->find(id, columns);
     }
@@ -1088,7 +1088,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::findOrNew(const QVariant &id,
-                                                      const QVector<Column> &columns)
+                                                      const QList<Column> &columns)
     {
         return query()->findOrNew(id, columns);
     }
@@ -1096,15 +1096,15 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::findOrFail(const QVariant &id,
-                                                       const QVector<Column> &columns)
+                                                       const QList<Column> &columns)
     {
         return query()->findOrFail(id, columns);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     ModelsCollection<Derived>
-    ModelProxies<Derived, AllRelations...>::findMany(const QVector<QVariant> &ids,
-                                                     const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::findMany(const QList<QVariant> &ids,
+                                                     const QList<Column> &columns)
     {
         return query()->findMany(ids, columns);
     }
@@ -1112,7 +1112,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<void()> &callback)
     {
         return query()->findOr(id, columns, callback);
@@ -1130,7 +1130,7 @@ namespace Tiny
     template<typename R>
     std::pair<std::optional<Derived>, R>
     ModelProxies<Derived, AllRelations...>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<R()> &callback)
     {
         return query()->template findOr<R>(id, columns, callback);
@@ -1147,7 +1147,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
-    ModelProxies<Derived, AllRelations...>::first(const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::first(const QList<Column> &columns)
     {
         return query()->first(columns);
     }
@@ -1155,8 +1155,8 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::firstOrNew(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values)
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values)
     {
         return query()->firstOrNew(attributes, values);
     }
@@ -1164,15 +1164,15 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::firstOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values)
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values)
     {
         return query()->firstOrCreate(attributes, values);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    ModelProxies<Derived, AllRelations...>::firstOrFail(const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::firstOrFail(const QList<Column> &columns)
     {
         return query()->firstOrFail(columns);
     }
@@ -1180,7 +1180,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
     ModelProxies<Derived, AllRelations...>::firstOr(
-            const QVector<Column> &columns, const std::function<void()> &callback)
+            const QList<Column> &columns, const std::function<void()> &callback)
     {
         return query()->firstOr(columns, callback);
     }
@@ -1196,7 +1196,7 @@ namespace Tiny
     template<typename R>
     std::pair<std::optional<Derived>, R>
     ModelProxies<Derived, AllRelations...>::firstOr(
-            const QVector<Column> &columns, const std::function<R()> &callback)
+            const QList<Column> &columns, const std::function<R()> &callback)
     {
         return query()->template firstOr<R>(columns, callback);
     }
@@ -1239,7 +1239,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::whereKey(const QVector<QVariant> &ids)
+    ModelProxies<Derived, AllRelations...>::whereKey(const QList<QVariant> &ids)
     {
         auto builder = query();
 
@@ -1261,7 +1261,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::whereKeyNot(const QVector<QVariant> &ids)
+    ModelProxies<Derived, AllRelations...>::whereKeyNot(const QList<QVariant> &ids)
     {
         auto builder = query();
 
@@ -1273,7 +1273,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::with(const QVector<WithItem> &relations)
+    ModelProxies<Derived, AllRelations...>::with(const QList<WithItem> &relations)
     {
         auto builder = query();
 
@@ -1287,12 +1287,12 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::with(QString relation)
     {
-        return with(QVector<WithItem> {{std::move(relation)}});
+        return with(QList<WithItem> {{std::move(relation)}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::with(const QVector<QString> &relations)
+    ModelProxies<Derived, AllRelations...>::with(const QList<QString> &relations)
     {
         auto builder = query();
 
@@ -1303,7 +1303,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::with(QVector<QString> &&relations)
+    ModelProxies<Derived, AllRelations...>::with(QList<QString> &&relations)
     {
         auto builder = query();
 
@@ -1314,7 +1314,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::without(const QVector<QString> &relations)
+    ModelProxies<Derived, AllRelations...>::without(const QList<QString> &relations)
     {
         auto builder = query();
 
@@ -1327,13 +1327,13 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::without(QString relation)
     {
-        return without(QVector<QString> {std::move(relation)});
+        return without(QList<QString> {std::move(relation)});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::withOnly(const QVector<WithItem> &relations)
+    ModelProxies<Derived, AllRelations...>::withOnly(const QList<WithItem> &relations)
     {
         auto builder = query();
 
@@ -1347,12 +1347,12 @@ namespace Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::withOnly(QString relation)
     {
-        return withOnly(QVector<WithItem> {{std::move(relation)}});
+        return withOnly(QList<WithItem> {{std::move(relation)}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::withOnly(const QVector<QString> &relations)
+    ModelProxies<Derived, AllRelations...>::withOnly(const QList<QString> &relations)
     {
         auto builder = query();
 
@@ -1363,7 +1363,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::withOnly(QVector<QString> &&relations)
+    ModelProxies<Derived, AllRelations...>::withOnly(QList<QString> &&relations)
     {
         auto builder = query();
 
@@ -1377,14 +1377,14 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::create(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         return query()->create(attributes);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    ModelProxies<Derived, AllRelations...>::create(QVector<AttributeItem> &&attributes)
+    ModelProxies<Derived, AllRelations...>::create(QList<AttributeItem> &&attributes)
     {
         return query()->create(std::move(attributes));
     }
@@ -1392,7 +1392,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     ModelProxies<Derived, AllRelations...>::updateOrCreate(
-            const QVector<WhereItem> &attributes, const QVector<AttributeItem> &values)
+            const QList<WhereItem> &attributes, const QList<AttributeItem> &values)
     {
         return query()->updateOrCreate(attributes, values);
     }
@@ -1411,7 +1411,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
-            const QVector<AttributeItem> &values)
+            const QList<AttributeItem> &values)
     {
         return query()->insert(values);
     }
@@ -1419,7 +1419,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
-            const QVector<QVector<AttributeItem>> &values)
+            const QList<QList<AttributeItem>> &values)
     {
         return query()->insert(values);
     }
@@ -1427,7 +1427,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<SqlQuery>
     ModelProxies<Derived, AllRelations...>::insert(
-            const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+            const QList<QString> &columns, QList<QList<QVariant>> values)
     {
         return query()->insert(columns, std::move(values));
     }
@@ -1436,7 +1436,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     quint64
     ModelProxies<Derived, AllRelations...>::insertGetId(
-            const QVector<AttributeItem> &values, const QString &sequence)
+            const QList<AttributeItem> &values, const QString &sequence)
     {
         return query()->insertGetId(values, sequence);
     }
@@ -1444,7 +1444,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
-            const QVector<AttributeItem> &values)
+            const QList<AttributeItem> &values)
     {
         return query()->insertOrIgnore(values);
     }
@@ -1452,7 +1452,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
-            const QVector<QVector<AttributeItem>> &values)
+            const QList<QList<AttributeItem>> &values)
     {
         return query()->insertOrIgnore(values);
     }
@@ -1460,7 +1460,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
-            const QVector<QString> &columns, QVector<QVector<QVariant>> values)
+            const QList<QString> &columns, QList<QList<QVariant>> values)
     {
         return query()->insertOrIgnore(columns, std::move(values));
     }
@@ -1468,7 +1468,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QList<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update)
     {
         return query()->upsert(values, uniqueBy, update);
@@ -1477,7 +1477,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy)
+            const QList<QVariantMap> &values, const QStringList &uniqueBy)
     {
         return query()->upsert(values, uniqueBy);
     }
@@ -1500,7 +1500,7 @@ namespace Tiny
     /* Select */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    quint64 ModelProxies<Derived, AllRelations...>::count(const QVector<Column> &columns)
+    quint64 ModelProxies<Derived, AllRelations...>::count(const QList<Column> &columns)
     {
         return query()->count(columns);
     }
@@ -1509,7 +1509,7 @@ namespace Tiny
     template<typename>
     quint64 ModelProxies<Derived, AllRelations...>::count(const Column &column)
     {
-        return query()->count(QVector<Column> {column});
+        return query()->count(QList<Column> {column});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1545,7 +1545,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     ModelProxies<Derived, AllRelations...>::aggregate(const QString &function,
-                                               const QVector<Column> &columns)
+                                               const QList<Column> &columns)
     {
         return query()->aggregate(function, columns);
     }
@@ -1594,7 +1594,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::select(const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::select(const QList<Column> &columns)
     {
         auto builder = query();
 
@@ -1616,7 +1616,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::addSelect(const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::addSelect(const QList<Column> &columns)
     {
         auto builder = query();
 
@@ -1638,7 +1638,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::select(QVector<Column> &&columns)
+    ModelProxies<Derived, AllRelations...>::select(QList<Column> &&columns)
     {
         auto builder = query();
 
@@ -1660,7 +1660,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::addSelect(QVector<Column> &&columns)
+    ModelProxies<Derived, AllRelations...>::addSelect(QList<Column> &&columns)
     {
         auto builder = query();
 
@@ -1719,7 +1719,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::selectRaw(
-            const QString &expression, const QVector<QVariant> &bindings)
+            const QString &expression, const QList<QVariant> &bindings)
     {
         auto builder = query();
 
@@ -2178,7 +2178,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::where(const QVector<WhereItem> &values,
+    ModelProxies<Derived, AllRelations...>::where(const QList<WhereItem> &values,
                                                   const QString &condition)
     {
         /* The parentheses in this query are ok:
@@ -2192,7 +2192,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::orWhere(const QVector<WhereItem> &values)
+    ModelProxies<Derived, AllRelations...>::orWhere(const QList<WhereItem> &values)
     {
         auto builder = query();
 
@@ -2204,7 +2204,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNot(
-            const QVector<WhereItem> &values, const QString &condition,
+            const QList<WhereItem> &values, const QString &condition,
             const QString &defaultCondition)
     {
         auto builder = query();
@@ -2217,7 +2217,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNot(
-            const QVector<WhereItem> &values, const QString &defaultCondition)
+            const QList<WhereItem> &values, const QString &defaultCondition)
     {
         auto builder = query();
 
@@ -2231,7 +2231,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereColumn(
-            const QVector<WhereColumnItem> &values, const QString &condition)
+            const QList<WhereColumnItem> &values, const QString &condition)
     {
         auto builder = query();
 
@@ -2243,7 +2243,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereColumn(
-            const QVector<WhereColumnItem> &values)
+            const QList<WhereColumnItem> &values)
     {
         auto builder = query();
 
@@ -2306,7 +2306,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereIn(
-            const Column &column, const QVector<QVariant> &values,
+            const Column &column, const QList<QVariant> &values,
             const QString &condition, const bool nope)
     {
         auto builder = query();
@@ -2319,7 +2319,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereIn(
-            const Column &column, const QVector<QVariant> &values)
+            const Column &column, const QList<QVariant> &values)
     {
         auto builder = query();
 
@@ -2331,7 +2331,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotIn(
-            const Column &column, const QVector<QVariant> &values,
+            const Column &column, const QList<QVariant> &values,
             const QString &condition)
     {
         auto builder = query();
@@ -2344,7 +2344,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNotIn(
-            const Column &column, const QVector<QVariant> &values)
+            const Column &column, const QList<QVariant> &values)
     {
         auto builder = query();
 
@@ -2358,7 +2358,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNull(
-            const QVector<Column> &columns, const QString &condition, const bool nope)
+            const QList<Column> &columns, const QString &condition, const bool nope)
     {
         auto builder = query();
 
@@ -2369,7 +2369,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::orWhereNull(const QVector<Column> &columns)
+    ModelProxies<Derived, AllRelations...>::orWhereNull(const QList<Column> &columns)
     {
         auto builder = query();
 
@@ -2381,7 +2381,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotNull(
-            const QVector<Column> &columns, const QString &condition)
+            const QList<Column> &columns, const QString &condition)
     {
         auto builder = query();
 
@@ -2393,7 +2393,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereNotNull(
-            const QVector<Column> &columns)
+            const QList<Column> &columns)
     {
         auto builder = query();
 
@@ -2732,8 +2732,8 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereRowValues(
-            const QVector<Column> &columns, const QString &comparison,
-            const QVector<QVariant> &values, const QString &condition)
+            const QList<Column> &columns, const QString &comparison,
+            const QList<QVariant> &values, const QString &condition)
     {
         auto builder = query();
 
@@ -2745,8 +2745,8 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereRowValues(
-            const QVector<Column> &columns, const QString &comparison,
-            const QVector<QVariant> &values)
+            const QList<Column> &columns, const QString &comparison,
+            const QList<QVariant> &values)
     {
         auto builder = query();
 
@@ -2758,7 +2758,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereRowValuesEq(
-            const QVector<Column> &columns, const QVector<QVariant> &values,
+            const QList<Column> &columns, const QList<QVariant> &values,
             const QString &condition)
     {
         auto builder = query();
@@ -2771,7 +2771,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereRowValuesEq(
-            const QVector<Column> &columns, const QVector<QVariant> &values)
+            const QList<Column> &columns, const QList<QVariant> &values)
     {
         auto builder = query();
 
@@ -2972,7 +2972,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereRaw(
-            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &sql, const QList<QVariant> &bindings,
             const QString &condition)
     {
         auto builder = query();
@@ -2985,7 +2985,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orWhereRaw(
-            const QString &sql, const QVector<QVariant> &bindings)
+            const QString &sql, const QList<QVariant> &bindings)
     {
         auto builder = query();
 
@@ -2998,7 +2998,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::groupBy(const QVector<Column> &groups)
+    ModelProxies<Derived, AllRelations...>::groupBy(const QList<Column> &groups)
     {
         auto builder = query();
 
@@ -3021,7 +3021,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::groupByRaw(
-            const QString &sql, const QVector<QVariant> &bindings)
+            const QString &sql, const QList<QVariant> &bindings)
     {
         auto builder = query();
 
@@ -3037,7 +3037,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->groupBy(QVector<Column> {std::forward<Args>(groups)...});
+        builder->groupBy(QList<Column> {std::forward<Args>(groups)...});
 
         return builder;
     }
@@ -3070,7 +3070,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::havingRaw(
-            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &sql, const QList<QVariant> &bindings,
             const QString &condition)
     {
         auto builder = query();
@@ -3083,7 +3083,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orHavingRaw(
-            const QString &sql, const QVector<QVariant> &bindings)
+            const QString &sql, const QList<QVariant> &bindings)
     {
         auto builder = query();
 
@@ -3155,7 +3155,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::orderByRaw(
-            const QString &sql, const QVector<QVariant> &bindings)
+            const QString &sql, const QList<QVariant> &bindings)
     {
         auto builder = query();
 
@@ -3386,7 +3386,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T>
-    QVector<T>
+    QList<T>
     ModelProxies<Derived, AllRelations...>::chunkMap(
             const std::function<T(Derived &&)> &callback, const qint64 count)
     {
@@ -3411,7 +3411,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived ModelProxies<Derived, AllRelations...>::sole(const QVector<Column> &columns)
+    Derived ModelProxies<Derived, AllRelations...>::sole(const QList<Column> &columns)
     {
         return query()->sole(columns);
     }

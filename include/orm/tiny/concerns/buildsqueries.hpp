@@ -57,7 +57,7 @@ namespace Concerns
                  qint64 count = 1000);
         /*! Run a map over each item while chunking. */
         template<typename T>
-        QVector<T>
+        QList<T>
         chunkMap(const std::function<T(Model &&model)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
@@ -72,7 +72,7 @@ namespace Concerns
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
-        Model sole(const QVector<Column> &columns = {ASTERISK});
+        Model sole(const QList<Column> &columns = {ASTERISK});
 
         /*! Pass the query to a given callback. */
         Builder<Model> &tap(const std::function<void(Builder<Model> &query)> &callback);
@@ -181,11 +181,11 @@ namespace Concerns
 
     template<ModelConcept Model>
     template<typename T>
-    QVector<T>
+    QList<T>
     BuildsQueries<Model>::chunkMap(const std::function<T(Model &&)> &callback,
                                    const qint64 count)
     {
-        QVector<T> result;
+        QList<T> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(count);
 
@@ -281,7 +281,7 @@ namespace Concerns
     }
 
     template<ModelConcept Model>
-    Model BuildsQueries<Model>::sole(const QVector<Column> &columns)
+    Model BuildsQueries<Model>::sole(const QList<Column> &columns)
     {
         auto models = builder().take(2).get(columns);
 

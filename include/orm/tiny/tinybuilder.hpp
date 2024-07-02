@@ -69,11 +69,11 @@ namespace Orm::Tiny
         /*! Get the SQL representation of the query. */
         inline QString toSql();
         /*! Get the current query value bindings as flattened QVector. */
-        inline QVector<QVariant> getBindings() const;
+        inline QList<QVariant> getBindings() const;
 
         /* Retrieving results */
         /*! Execute the query as a "select" statement. */
-        ModelsCollection<Model> get(const QVector<Column> &columns = {ASTERISK});
+        ModelsCollection<Model> get(const QList<Column> &columns = {ASTERISK});
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
@@ -82,7 +82,7 @@ namespace Orm::Tiny
         QVariant soleValue(const Column &column);
 
         /*! Get a vector with values in the given column. */
-        QVector<QVariant> pluck(const Column &column);
+        QList<QVariant> pluck(const Column &column);
         /*! Get a map with values in the given column and keyed by values in the key
             column. */
         template<typename T>
@@ -90,20 +90,20 @@ namespace Orm::Tiny
 
         /*! Find a model by its primary key. */
         std::optional<Model>
-        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        find(const QVariant &id, const QList<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or return fresh model instance. */
-        Model findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
+        Model findOrNew(const QVariant &id, const QList<Column> &columns = {ASTERISK});
         /*! Find a model by its primary key or throw an exception. */
         Model findOrFail(const QVariant &id,
-                         const QVector<Column> &columns = {ASTERISK});
+                         const QList<Column> &columns = {ASTERISK});
         /*! Find multiple models by their primary keys. */
         ModelsCollection<Model>
-        findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {ASTERISK});
+        findMany(const QList<QVariant> &ids,
+                 const QList<Column> &columns = {ASTERISK});
 
         /*! Execute a query for a single record by ID or call a callback. */
         std::optional<Model>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<void()> &callback = nullptr);
         /*! Execute a query for a single record by ID or call a callback. */
         std::optional<Model>
@@ -112,7 +112,7 @@ namespace Orm::Tiny
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<std::optional<Model>, R>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<R()> &callback);
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
@@ -120,19 +120,19 @@ namespace Orm::Tiny
         findOr(const QVariant &id, const std::function<R()> &callback);
 
         /*! Execute the query and get the first result. */
-        std::optional<Model> first(const QVector<Column> &columns = {ASTERISK});
+        std::optional<Model> first(const QList<Column> &columns = {ASTERISK});
         /*! Get the first record matching the attributes or instantiate it. */
-        Model firstOrNew(const QVector<WhereItem> &attributes = {},
-                         const QVector<AttributeItem> &values = {});
+        Model firstOrNew(const QList<WhereItem> &attributes = {},
+                         const QList<AttributeItem> &values = {});
         /*! Get the first record matching the attributes or create it. */
-        Model firstOrCreate(const QVector<WhereItem> &attributes = {},
-                            const QVector<AttributeItem> &values = {});
+        Model firstOrCreate(const QList<WhereItem> &attributes = {},
+                            const QList<AttributeItem> &values = {});
         /*! Execute the query and get the first result or throw an exception. */
-        Model firstOrFail(const QVector<Column> &columns = {ASTERISK});
+        Model firstOrFail(const QList<Column> &columns = {ASTERISK});
 
         /*! Execute the query and get the first result or call a callback. */
         std::optional<Model>
-        firstOr(const QVector<Column> &columns,
+        firstOr(const QList<Column> &columns,
                 const std::function<void()> &callback = nullptr);
         /*! Execute the query and get the first result or call a callback. */
         std::optional<Model>
@@ -141,7 +141,7 @@ namespace Orm::Tiny
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         std::pair<std::optional<Model>, R>
-        firstOr(const QVector<Column> &columns, const std::function<R()> &callback);
+        firstOr(const QList<Column> &columns, const std::function<R()> &callback);
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         std::pair<std::optional<Model>, R>
@@ -159,53 +159,53 @@ namespace Orm::Tiny
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKey(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
-        Builder &whereKey(const QVector<QVariant> &ids);
+        Builder &whereKey(const QList<QVariant> &ids);
         /*! Add a where clause on the primary key to the query. */
         Builder &whereKeyNot(const QVariant &id);
         /*! Add a where clause on the primary key to the query. */
-        Builder &whereKeyNot(const QVector<QVariant> &ids);
+        Builder &whereKeyNot(const QList<QVariant> &ids);
 
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
-        Builder &with(const QVector<WithItem> &relations);
+        Builder &with(const QList<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
         Builder &with(QString relation);
         /*! Set the relationships that should be eager loaded. */
-        inline Builder &with(const QVector<QString> &relations);
+        inline Builder &with(const QList<QString> &relations);
         /*! Set the relationships that should be eager loaded. */
-        inline Builder &with(QVector<QString> &&relations);
+        inline Builder &with(QList<QString> &&relations);
 
         /*! Prevent the specified relations from being eager loaded. */
-        Builder &without(const QVector<QString> &relations);
+        Builder &without(const QList<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         inline Builder &without(QString relation);
 
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
         template<typename = void>
-        Builder &withOnly(const QVector<WithItem> &relations);
+        Builder &withOnly(const QList<WithItem> &relations);
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         template<typename = void>
         Builder &withOnly(QString relation);
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
-        inline Builder &withOnly(const QVector<QString> &relations);
+        inline Builder &withOnly(const QList<QString> &relations);
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
-        inline Builder &withOnly(QVector<QString> &&relations);
+        inline Builder &withOnly(QList<QString> &&relations);
 
         /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
-        Model create(const QVector<AttributeItem> &attributes = {});
+        Model create(const QList<AttributeItem> &attributes = {});
         /*! Save a new model and return the instance. */
-        Model create(QVector<AttributeItem> &&attributes = {});
+        Model create(QList<AttributeItem> &&attributes = {});
 
         /*! Create or update a record matching the attributes, and fill it with
             values. */
-        Model updateOrCreate(const QVector<WhereItem> &attributes,
-                             const QVector<AttributeItem> &values = {});
+        Model updateOrCreate(const QList<WhereItem> &attributes,
+                             const QList<AttributeItem> &values = {});
 
         /*! Update the column's update timestamp. */
         std::tuple<int, std::optional<TSqlQuery>>
@@ -214,7 +214,7 @@ namespace Orm::Tiny
         /* QueryBuilder proxy methods that need modifications */
         /*! Update records in the database. */
         std::tuple<int, TSqlQuery>
-        update(const QVector<UpdateItem> &values);
+        update(const QList<UpdateItem> &values);
 
         /*! Delete records from the database. */
         std::tuple<int, TSqlQuery> remove();
@@ -223,11 +223,11 @@ namespace Orm::Tiny
 
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy);
 
         /* Casting Attributes */
         /*! Apply query-time casts to the model instance. */
@@ -243,12 +243,12 @@ namespace Orm::Tiny
         /*! Clone the Tiny query. */
         inline Builder clone() const;
         /*! Create a new instance of the model being queried. */
-        Model newModelInstance(const QVector<AttributeItem> &attributes) const;
+        Model newModelInstance(const QList<AttributeItem> &attributes) const;
         /*! Create a new instance of the model being queried. */
-        Model newModelInstance(QVector<AttributeItem> &&attributes = {}) const;
+        Model newModelInstance(QList<AttributeItem> &&attributes = {}) const;
 
         /*! Get the hydrated models without eager loading. */
-        ModelsCollection<Model> getModels(const QVector<Column> &columns = {ASTERISK});
+        ModelsCollection<Model> getModels(const QList<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
         template<SameDerivedCollectionModel<Model> CollectionModel>
@@ -301,30 +301,30 @@ namespace Orm::Tiny
         inline const QString &defaultKeyName() const;
 
         /*! Parse a list of relations into individuals. */
-        QVector<WithItem> parseWithRelations(const QVector<WithItem> &relations);
+        QList<WithItem> parseWithRelations(const QList<WithItem> &relations);
         /*! Create a constraint to select the given columns for the relation. */
         WithItem createSelectWithConstraint(const QString &name);
         /*! Parse the nested relationships in a relation. */
-        void addNestedWiths(const QString &name, QVector<WithItem> &results) const;
+        void addNestedWiths(const QString &name, QList<WithItem> &results) const;
 
         /*! Guess number of relations for the reserve (including nested relations). */
-        static QVector<WithItem>::size_type
-        guessParseWithRelationsSize(const QVector<WithItem> &relations);
+        static QList<WithItem>::size_type
+        guessParseWithRelationsSize(const QList<WithItem> &relations);
 
         /*! Get the deeply nested relations for a given top-level relation. */
-        QVector<WithItem>
+        QList<WithItem>
         relationsNestedUnder(const QString &topRelationName) const;
         /*! Determine if the relationship is nested. */
         bool isNestedUnder(const QString &topRelation,
                            const QString &nestedRelation) const;
 
         /*! Add the "updated at" column to the vector of values. */
-        QVector<UpdateItem>
-        addUpdatedAtColumn(QVector<UpdateItem> values) const;
+        QList<UpdateItem>
+        addUpdatedAtColumn(QList<UpdateItem> values) const;
 
         /*! Add timestamps to the inserted values. */
-        QVector<QVariantMap>
-        addTimestampsToUpsertValues(const QVector<QVariantMap> &values) const;
+        QList<QVariantMap>
+        addTimestampsToUpsertValues(const QList<QVariantMap> &values) const;
         /*! Add the "updated at" column to the updated columns. */
         QStringList addUpdatedAtToUpsertColumns(const QStringList &update) const;
 
@@ -347,7 +347,7 @@ namespace Orm::Tiny
         /*! The model being queried. */
         Model m_model;
         /*! The relationships that should be eager loaded. */
-        QVector<WithItem> m_eagerLoad;
+        QList<WithItem> m_eagerLoad;
 
         /*! A replacement for the typical delete function. */
         std::function<std::tuple<int, TSqlQuery>(Builder<Model> &)> m_onDelete = nullptr;
@@ -378,7 +378,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<QVariant> Builder<Model>::getBindings() const
+    QList<QVariant> Builder<Model>::getBindings() const
     {
         // toBase() not needed as the BuildsSoftDeletes is not adding any new bindings
         return getQuery().getBindings();
@@ -388,7 +388,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     ModelsCollection<Model>
-    Builder<Model>::get(const QVector<Column> &columns)
+    Builder<Model>::get(const QList<Column> &columns)
     {
         applySoftDeletes();
 
@@ -449,7 +449,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<QVariant> Builder<Model>::pluck(const Column &column)
+    QList<QVariant> Builder<Model>::pluck(const Column &column)
     {
         auto result = toBase().pluck(column);
 
@@ -511,13 +511,13 @@ namespace Orm::Tiny
     // FEATURE dilemma primarykey, Model::KeyType for id silverqx
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::find(const QVariant &id, const QVector<Column> &columns)
+    Builder<Model>::find(const QVariant &id, const QList<Column> &columns)
     {
         return whereKey(id).first(columns);
     }
 
     template<typename Model>
-    Model Builder<Model>::findOrNew(const QVariant &id, const QVector<Column> &columns)
+    Model Builder<Model>::findOrNew(const QVariant &id, const QList<Column> &columns)
     {
         auto model = find(id, columns);
 
@@ -529,7 +529,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::findOrFail(const QVariant &id, const QVector<Column> &columns)
+    Model Builder<Model>::findOrFail(const QVariant &id, const QList<Column> &columns)
     {
         auto model = find(id, columns);
 
@@ -543,8 +543,8 @@ namespace Orm::Tiny
 
     template<typename Model>
     ModelsCollection<Model>
-    Builder<Model>::findMany(const QVector<QVariant> &ids,
-                             const QVector<Column> &columns)
+    Builder<Model>::findMany(const QList<QVariant> &ids,
+                             const QList<Column> &columns)
     {
         if (ids.isEmpty())
             return {};
@@ -554,7 +554,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::findOr(const QVariant &id, const QVector<Column> &columns,
+    Builder<Model>::findOr(const QVariant &id, const QList<Column> &columns,
                            const std::function<void()> &callback)
     {
         auto model = find(id, columns);
@@ -580,7 +580,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename R>
     std::pair<std::optional<Model>, R>
-    Builder<Model>::findOr(const QVariant &id, const QVector<Column> &columns,
+    Builder<Model>::findOr(const QVariant &id, const QList<Column> &columns,
                            const std::function<R()> &callback)
     {
         auto model = find(id, columns);
@@ -607,7 +607,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::first(const QVector<Column> &columns)
+    Builder<Model>::first(const QList<Column> &columns)
     {
         auto models = this->take(1).get(columns);
 
@@ -619,8 +619,8 @@ namespace Orm::Tiny
 
     template<typename Model>
     Model
-    Builder<Model>::firstOrNew(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values)
+    Builder<Model>::firstOrNew(const QList<WhereItem> &attributes,
+                               const QList<AttributeItem> &values)
     {
         auto instance = this->where(attributes).first();
 
@@ -634,8 +634,8 @@ namespace Orm::Tiny
 
     template<typename Model>
     Model
-    Builder<Model>::firstOrCreate(const QVector<WhereItem> &attributes,
-                                  const QVector<AttributeItem> &values)
+    Builder<Model>::firstOrCreate(const QList<WhereItem> &attributes,
+                                  const QList<AttributeItem> &values)
     {
         // Model found in db
         if (auto instance = this->where(attributes).first(); instance)
@@ -651,7 +651,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::firstOrFail(const QVector<Column> &columns)
+    Model Builder<Model>::firstOrFail(const QList<Column> &columns)
     {
         auto model = first(columns);
 
@@ -664,7 +664,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     std::optional<Model>
-    Builder<Model>::firstOr(const QVector<Column> &columns,
+    Builder<Model>::firstOr(const QList<Column> &columns,
                             const std::function<void()> &callback)
     {
         auto model = first(columns);
@@ -690,7 +690,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename R>
     std::pair<std::optional<Model>, R>
-    Builder<Model>::firstOr(const QVector<Column> &columns,
+    Builder<Model>::firstOr(const QList<Column> &columns,
                             const std::function<R()> &callback)
     {
         auto model = first(columns);
@@ -740,7 +740,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereKey(const QVector<QVariant> &ids)
+    Builder<Model>::whereKey(const QList<QVariant> &ids)
     {
         m_query->whereIn(m_model.getQualifiedKeyName(), ids);
 
@@ -756,7 +756,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::whereKeyNot(const QVector<QVariant> &ids)
+    Builder<Model>::whereKeyNot(const QList<QVariant> &ids)
     {
         m_query->whereNotIn(m_model.getQualifiedKeyName(), ids);
 
@@ -766,7 +766,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename>
     Builder<Model> &
-    Builder<Model>::with(const QVector<WithItem> &relations)
+    Builder<Model>::with(const QList<WithItem> &relations)
     {
         /* Don't make the rvalue variant or pass relations by value, I have tested it and
            it's ~0.4ms slower, very interesting. 😮 Talking about the with() and
@@ -785,26 +785,26 @@ namespace Orm::Tiny
     Builder<Model> &
     Builder<Model>::with(QString relation)
     {
-        return with(QVector<WithItem> {{std::move(relation)}});
+        return with(QList<WithItem> {{std::move(relation)}});
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::with(const QVector<QString> &relations)
+    Builder<Model>::with(const QList<QString> &relations)
     {
         return with(WithItem::fromStringVector(relations));
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::with(QVector<QString> &&relations)
+    Builder<Model>::with(QList<QString> &&relations)
     {
         return with(WithItem::fromStringVector(std::move(relations)));
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::without(const QVector<QString> &relations)
+    Builder<Model>::without(const QList<QString> &relations)
     {
         // Remove relations in the "relations" vector from the m_eagerLoad vector
         m_eagerLoad = m_eagerLoad
@@ -812,7 +812,7 @@ namespace Orm::Tiny
         {
             return relations.contains(with.name);
         })
-                | ranges::to<QVector<WithItem>>();
+                | ranges::to<QList<WithItem>>();
 
         return *this;
     }
@@ -821,13 +821,13 @@ namespace Orm::Tiny
     Builder<Model> &
     Builder<Model>::without(QString relation)
     {
-        return without(QVector<QString> {std::move(relation)});
+        return without(QList<QString> {std::move(relation)});
     }
 
     template<typename Model>
     template<typename>
     Builder<Model> &
-    Builder<Model>::withOnly(const QVector<WithItem> &relations)
+    Builder<Model>::withOnly(const QList<WithItem> &relations)
     {
         m_eagerLoad.clear();
 
@@ -839,19 +839,19 @@ namespace Orm::Tiny
     Builder<Model> &
     Builder<Model>::withOnly(QString relation)
     {
-        return withOnly(QVector<WithItem> {{std::move(relation)}});
+        return withOnly(QList<WithItem> {{std::move(relation)}});
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::withOnly(const QVector<QString> &relations)
+    Builder<Model>::withOnly(const QList<QString> &relations)
     {
         return withOnly(WithItem::fromStringVector(relations));
     }
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::withOnly(QVector<QString> &&relations)
+    Builder<Model>::withOnly(QList<QString> &&relations)
     {
         return withOnly(WithItem::fromStringVector(std::move(relations)));
     }
@@ -859,7 +859,7 @@ namespace Orm::Tiny
     /* Insert, Update, Delete */
 
     template<typename Model>
-    Model Builder<Model>::create(const QVector<AttributeItem> &attributes)
+    Model Builder<Model>::create(const QList<AttributeItem> &attributes)
     {
         auto model = newModelInstance(attributes);
 
@@ -869,7 +869,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::create(QVector<AttributeItem> &&attributes)
+    Model Builder<Model>::create(QList<AttributeItem> &&attributes)
     {
         auto model = newModelInstance(std::move(attributes));
 
@@ -879,8 +879,8 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::updateOrCreate(const QVector<WhereItem> &attributes,
-                                         const QVector<AttributeItem> &values)
+    Model Builder<Model>::updateOrCreate(const QList<WhereItem> &attributes,
+                                         const QList<AttributeItem> &values)
     {
         auto instance = firstOrNew(attributes);
 
@@ -910,7 +910,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     std::tuple<int, TSqlQuery>
-    Builder<Model>::update(const QVector<UpdateItem> &values)
+    Builder<Model>::update(const QList<UpdateItem> &values)
     {
         return toBase().update(addUpdatedAtColumn(values));
     }
@@ -934,7 +934,7 @@ namespace Orm::Tiny
     template<typename Model>
     std::tuple<int, std::optional<TSqlQuery>>
     Builder<Model>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QList<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update)
     {
         // Nothing to do, no values to insert or update
@@ -955,7 +955,7 @@ namespace Orm::Tiny
     template<typename Model>
     std::tuple<int, std::optional<TSqlQuery>>
     Builder<Model>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy)
+            const QList<QVariantMap> &values, const QStringList &uniqueBy)
     {
         // Update all columns
         // Columns are obtained only from a first QMap
@@ -1011,14 +1011,14 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes) const
+    Model Builder<Model>::newModelInstance(const QList<AttributeItem> &attributes) const
     {
         return m_model.newInstance(attributes)
                 .setConnection(m_query->getConnection().getName());
     }
 
     template<typename Model>
-    Model Builder<Model>::newModelInstance(QVector<AttributeItem> &&attributes) const
+    Model Builder<Model>::newModelInstance(QList<AttributeItem> &&attributes) const
     {
         return m_model.newInstance(std::move(attributes))
                 .setConnection(m_query->getConnection().getName());
@@ -1026,7 +1026,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     ModelsCollection<Model>
-    Builder<Model>::getModels(const QVector<Column> &columns)
+    Builder<Model>::getModels(const QList<Column> &columns)
     {
         return hydrate(m_query->get(columns));
     }
@@ -1154,7 +1154,7 @@ namespace Orm::Tiny
             const auto record = result.record();
             const auto fieldsCount = record.count();
 
-            QVector<AttributeItem> row;
+            QList<AttributeItem> row;
             row.reserve(fieldsCount);
 
             // Populate model attributes with data from the database (one table row)
@@ -1249,8 +1249,8 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<WithItem>
-    Builder<Model>::parseWithRelations(const QVector<WithItem> &relations)
+    QList<WithItem>
+    Builder<Model>::parseWithRelations(const QList<WithItem> &relations)
     {
         // Guess number of relations (including nested relations)
         const auto relationsSize = guessParseWithRelationsSize(relations);
@@ -1259,7 +1259,7 @@ namespace Orm::Tiny
         if (relationsSize == 0)
             return {};
 
-        QVector<WithItem> results;
+        QList<WithItem> results;
         results.reserve(relationsSize);
 
         for (auto relation : relations) {
@@ -1327,7 +1327,7 @@ namespace Orm::Tiny
                 if (columnsSplitted.isEmpty())
                     return;
 
-                QVector<Column> columnsList;
+                QList<Column> columnsList;
                 columnsList.reserve(columnsSplitted.size());
 
                 // Avoid 'clazy might detach' warning
@@ -1355,7 +1355,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     void Builder<Model>::addNestedWiths(const QString &name,
-                                        QVector<WithItem> &results) const
+                                        QList<WithItem> &results) const
     {
         /* If the relation has already been set on the result vector, we will not set it
            again, since that would override any constraints that were already placed
@@ -1386,10 +1386,10 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<WithItem>::size_type
-    Builder<Model>::guessParseWithRelationsSize(const QVector<WithItem> &relations)
+    QList<WithItem>::size_type
+    Builder<Model>::guessParseWithRelationsSize(const QList<WithItem> &relations)
     {
-        QVector<WithItem>::size_type size = 0;
+        QList<WithItem>::size_type size = 0;
 
         for (const auto &[relation, _] : relations)
             // Nested relations (x.y.z == 3 relations)
@@ -1404,7 +1404,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<WithItem>
+    QList<WithItem>
     Builder<Model>::relationsNestedUnder(const QString &topRelationName) const
     {
         /*! Count the number of nested relations, it always returns the qint64 difference
@@ -1420,7 +1420,7 @@ namespace Orm::Tiny
         if (nestedSize == 0)
             return {};
 
-        QVector<WithItem> nested;
+        QList<WithItem> nested;
         nested.reserve(nestedSize);
 
         /* We are basically looking for any relationships that are nested deeper than
@@ -1448,8 +1448,8 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<UpdateItem>
-    Builder<Model>::addUpdatedAtColumn(QVector<UpdateItem> values) const
+    QList<UpdateItem>
+    Builder<Model>::addUpdatedAtColumn(QList<UpdateItem> values) const
     {
         const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
 
@@ -1480,8 +1480,8 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<QVariantMap>
-    Builder<Model>::addTimestampsToUpsertValues(const QVector<QVariantMap> &values) const
+    QList<QVariantMap>
+    Builder<Model>::addTimestampsToUpsertValues(const QList<QVariantMap> &values) const
     {
         // Nothing to do (model doesn't use timestamps)
         if (!m_model.usesTimestamps())

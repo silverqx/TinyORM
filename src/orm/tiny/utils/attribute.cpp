@@ -13,7 +13,7 @@ namespace Orm::Tiny::Utils
 
 /* public */
 
-std::set<QString> Attribute::keys(const QVector<AttributeItem> &attributes)
+std::set<QString> Attribute::keys(const QList<AttributeItem> &attributes)
 {
     std::set<QString> keys;
 
@@ -23,7 +23,7 @@ std::set<QString> Attribute::keys(const QVector<AttributeItem> &attributes)
     return keys;
 }
 
-QVariantMap Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
+QVariantMap Attribute::convertVectorToMap(const QList<AttributeItem> &attributes)
 {
     QVariantMap result;
 
@@ -33,14 +33,14 @@ QVariantMap Attribute::convertVectorToMap(const QVector<AttributeItem> &attribut
     return result;
 }
 
-QVector<QVariantMap>
-Attribute::convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector)
+QList<QVariantMap>
+Attribute::convertVectorsToMaps(const QList<QList<AttributeItem>> &attributesVector)
 {
     const auto size = attributesVector.size();
 
-    QVector<QVariantMap> result(size);
+    QList<QVariantMap> result(size);
 
-    for (QVector<QVariantMap>::size_type i = 0; i < size; ++i)
+    for (QList<QVariantMap>::size_type i = 0; i < size; ++i)
         for (const auto &attribute : attributesVector[i])
             result[i][attribute.key] = attribute.value;
 
@@ -48,7 +48,7 @@ Attribute::convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attribute
 }
 
 ModelAttributes
-Attribute::convertVectorToModelAttributes(const QVector<AttributeItem> &attributes)
+Attribute::convertVectorToModelAttributes(const QList<AttributeItem> &attributes)
 {
     ModelAttributes result;
     result.reserve(static_cast<decltype (result)::size_type>(attributes.size()));
@@ -59,10 +59,10 @@ Attribute::convertVectorToModelAttributes(const QVector<AttributeItem> &attribut
     return result;
 }
 
-QVector<UpdateItem>
-Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
+QList<UpdateItem>
+Attribute::convertVectorToUpdateItem(const QList<AttributeItem> &attributes)
 {
-    QVector<UpdateItem> result;
+    QList<UpdateItem> result;
     result.reserve(attributes.size());
 
     for (const auto &attribute : attributes)
@@ -71,10 +71,10 @@ Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
     return result;
 }
 
-QVector<UpdateItem>
-Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+QList<UpdateItem>
+Attribute::convertVectorToUpdateItem(QList<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
-    QVector<UpdateItem> result;
+    QList<UpdateItem> result;
     result.reserve(attributes.size());
 
     for (auto &&attribute : attributes)
@@ -84,8 +84,8 @@ Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes) // NOL
     return result;
 }
 
-QVector<AttributeItem>
-Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
+QList<AttributeItem>
+Attribute::removeDuplicateKeys(const QList<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
 
@@ -93,7 +93,7 @@ Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
     using AddedType = std::unordered_set<QString>;
     AddedType added(static_cast<AddedType::size_type>(size));
 
-    QVector<std::reference_wrapper<const AttributeItem>> dedupedAttributesReversed;
+    QList<std::reference_wrapper<const AttributeItem>> dedupedAttributesReversed;
     dedupedAttributesReversed.reserve(size);
 
     /* If I want to get only the last duplicate, I have to loop in the reverse order,
@@ -111,11 +111,11 @@ Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
     // Materialize the vector of references in reverse order
     return dedupedAttributesReversed
             | ranges::views::reverse
-            | ranges::to<QVector<AttributeItem>>();
+            | ranges::to<QList<AttributeItem>>();
 }
 
-QVector<AttributeItem>
-Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+QList<AttributeItem>
+Attribute::removeDuplicateKeys(QList<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     const auto size = attributes.size();
 
@@ -123,7 +123,7 @@ Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cp
     using AddedType = std::unordered_set<QString>;
     AddedType added(static_cast<AddedType::size_type>(size));
 
-    QVector<std::reference_wrapper<AttributeItem>> dedupedAttributesReversed;
+    QList<std::reference_wrapper<AttributeItem>> dedupedAttributesReversed;
     dedupedAttributesReversed.reserve(size);
 
     /* If I want to get only the last duplicate, I have to loop in the reverse order,
@@ -139,7 +139,7 @@ Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cp
     }
 
     // Materialize the vector of references in reverse order
-    QVector<AttributeItem> dedupedAttributes;
+    QList<AttributeItem> dedupedAttributes;
     dedupedAttributes.reserve(dedupedAttributesReversed.size());
 
     for (auto &&attribute : dedupedAttributesReversed | ranges::views::reverse)
@@ -148,9 +148,9 @@ Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cp
     return dedupedAttributes;
 }
 
-QVector<AttributeItem>
-Attribute::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
-                                    const QVector<AttributeItem> &values,
+QList<AttributeItem>
+Attribute::joinAttributesForFirstOr(const QList<WhereItem> &attributes,
+                                    const QList<AttributeItem> &values,
                                     const QString &keyName)
 {
     // Remove the primary key from attributes
@@ -170,7 +170,7 @@ Attribute::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
            expression in the column name. */
         return AttributeItem {std::get<QString>(attribute.column), attribute.value};
     })
-            | ranges::to<QVector<AttributeItem>>();
+            | ranges::to<QList<AttributeItem>>();
 
     // Attributes which already exist in 'attributes' will be removed from 'values'
     auto valuesFiltered = values
@@ -182,7 +182,7 @@ Attribute::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
             return attribute.key == value.key;
         });
     })
-            | ranges::to<QVector<AttributeItem>>();
+            | ranges::to<QList<AttributeItem>>();
 
     return attributesFiltered + valuesFiltered;
 }

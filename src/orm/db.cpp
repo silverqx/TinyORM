@@ -57,14 +57,14 @@ TSqlQuery DB::qtQuery(const QString &connection)
 }
 
 SqlQuery
-DB::select(const QString &query, QVector<QVariant> bindings,
+DB::select(const QString &query, QList<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).select(query, std::move(bindings));
 }
 
 SqlQuery
-DB::selectFromWriteConnection(const QString &query, QVector<QVariant> bindings,
+DB::selectFromWriteConnection(const QString &query, QList<QVariant> bindings,
                               const QString &connection)
 {
     return manager().connection(connection)
@@ -72,49 +72,49 @@ DB::selectFromWriteConnection(const QString &query, QVector<QVariant> bindings,
 }
 
 SqlQuery
-DB::selectOne(const QString &query, QVector<QVariant> bindings,
+DB::selectOne(const QString &query, QList<QVariant> bindings,
               const QString &connection)
 {
     return manager().connection(connection).selectOne(query, std::move(bindings));
 }
 
 QVariant
-DB::scalar(const QString &query, QVector<QVariant> bindings,
+DB::scalar(const QString &query, QList<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).scalar(query, std::move(bindings));
 }
 
 SqlQuery
-DB::insert(const QString &query, QVector<QVariant> bindings,
+DB::insert(const QString &query, QList<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).insert(query, std::move(bindings));
 }
 
 std::tuple<int, TSqlQuery>
-DB::update(const QString &query, QVector<QVariant> bindings,
+DB::update(const QString &query, QList<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).update(query, std::move(bindings));
 }
 
 std::tuple<int, TSqlQuery>
-DB::remove(const QString &query, QVector<QVariant> bindings,
+DB::remove(const QString &query, QList<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).remove(query, std::move(bindings));
 }
 
 SqlQuery
-DB::statement(const QString &query, QVector<QVariant> bindings,
+DB::statement(const QString &query, QList<QVariant> bindings,
               const QString &connection)
 {
     return manager().connection(connection).statement(query, std::move(bindings));
 }
 
 std::tuple<int, TSqlQuery>
-DB::affectingStatement(const QString &query, QVector<QVariant> bindings,
+DB::affectingStatement(const QString &query, QList<QVariant> bindings,
                        const QString &connection)
 {
     return manager().connection(connection)
@@ -391,13 +391,13 @@ bool DB::hasConfigValue(const QString &option, const QString &connection)
 
 /* Pretending */
 
-QVector<Log>
+QList<Log>
 DB::pretend(const std::function<void()> &callback, const QString &connection)
 {
     return manager().connection(connection).pretend(callback);
 }
 
-QVector<Log>
+QList<Log>
 DB::pretend(const std::function<void(DatabaseConnection &)> &callback,
             const QString &connection)
 {
@@ -423,7 +423,7 @@ void DB::forgetRecordModificationState(const QString &connection)
 
 /* Logging */
 
-std::shared_ptr<QVector<Log>>
+std::shared_ptr<QList<Log>>
 DB::getQueryLog(const QString &connection)
 {
     return manager().connection(connection).getQueryLog();

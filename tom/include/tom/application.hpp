@@ -199,7 +199,7 @@ namespace Concerns
         void printFullVersions() const;
         /*! Create the versions subsection container for the tom --version and tom about
             commands. */
-        static QVector<SubSectionItem> createVersionsSubsection();
+        static QList<SubSectionItem> createVersionsSubsection();
 
         /*! Invoke the list command. */
         Q_NORETURN void showCommandsList(int exitCode);

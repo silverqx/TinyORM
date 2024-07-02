@@ -43,7 +43,7 @@ QString Grammar::compileExists(QueryBuilder &query) const
 }
 
 QString Grammar::compileInsert(const QueryBuilder &query,
-                               const QVector<QVariantMap> &values) const
+                               const QList<QVariantMap> &values) const
 {
     const auto table = wrapTable(query.getFrom());
 
@@ -59,7 +59,7 @@ QString Grammar::compileInsert(const QueryBuilder &query,
 }
 
 QString Grammar::compileInsertOrIgnore(const QueryBuilder &/*unused*/,
-                                       const QVector<QVariantMap> &/*unused*/) const
+                                       const QList<QVariantMap> &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
                 "This database engine does not support inserting while ignoring "
@@ -67,7 +67,7 @@ QString Grammar::compileInsertOrIgnore(const QueryBuilder &/*unused*/,
 }
 
 QString Grammar::compileUpdate(QueryBuilder &query,
-                               const QVector<UpdateItem> &values) const
+                               const QList<UpdateItem> &values) const
 {
     const auto table   = wrapTable(query.getFrom());
     const auto columns = compileUpdateColumns(values);
@@ -78,9 +78,9 @@ QString Grammar::compileUpdate(QueryBuilder &query,
             : compileUpdateWithJoins(query, table, columns, wheres);
 }
 
-QVector<QVariant>
+QList<QVariant>
 Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
-                                  const QVector<UpdateItem> &values)
+                                  const QList<UpdateItem> &values)
 {
 #if defined(__GNUG__) && !defined(__clang__)
 #  pragma GCC diagnostic push
@@ -91,7 +91,7 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 #  pragma GCC diagnostic pop
 #endif
 
-    QVector<QVariant> preparedBindings;
+    QList<QVariant> preparedBindings;
     preparedBindings.reserve(
                 joinBindings.size() + values.size() +
                 // Rest of the bindings
@@ -120,7 +120,7 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
 }
 
 QString Grammar::compileUpsert(
-            QueryBuilder &/*unused*/, const QVector<QVariantMap> &/*unused*/,
+            QueryBuilder &/*unused*/, const QList<QVariantMap> &/*unused*/,
             const QStringList &/*unused*/, const QStringList &/*unused*/) const
 {
     throw Exceptions::RuntimeError("This database engine does not support upserts.");
@@ -135,9 +135,9 @@ QString Grammar::compileDelete(QueryBuilder &query) const
                                       : compileDeleteWithJoins(query, table, wheres);
 }
 
-QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
+QList<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
 {
-    QVector<QVariant> preparedBindings;
+    QList<QVariant> preparedBindings;
     preparedBindings.reserve(
                 computeReserveForBindingsMap(bindings, {BindingType::SELECT}));
 
@@ -151,7 +151,7 @@ QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
     return preparedBindings;
 }
 
-std::unordered_map<QString, QVector<QVariant>>
+std::unordered_map<QString, QList<QVariant>>
 Grammar::compileTruncate(const QueryBuilder &query) const
 {
     return {{QStringLiteral("truncate table %1").arg(wrapTable(query.getFrom())), {}}};
@@ -554,7 +554,7 @@ Grammar::dateBasedWhere(const QString &type, const WhereConditionItem &where) co
 }
 
 QStringList
-Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
+Grammar::compileInsertToVector(const QList<QVariantMap> &values) const
 {
     /* We need to build a list of parameter place-holders of values that are bound
        to the query. Each insert should have the exact same amount of parameter
@@ -569,7 +569,7 @@ Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 }
 
 QString
-Grammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+Grammar::compileUpdateColumns(const QList<UpdateItem> &values) const
 {
     QStringList compiledAssignments;
     compiledAssignments.reserve(values.size());
@@ -664,11 +664,11 @@ QString Grammar::removeLeadingBoolean(QString &&statement)
     return std::move(statement);
 }
 
-QVector<std::reference_wrapper<const QVariant>>
+QList<std::reference_wrapper<const QVariant>>
 Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
-                                     const QVector<BindingType> &exclude)
+                                     const QList<BindingType> &exclude)
 {
-    QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
+    QList<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
     cleanBindingsFlatten.reserve(computeReserveForBindingsMap(bindings, exclude));
 
     for (auto itBindings = bindings.constBegin();
@@ -683,11 +683,11 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
     return cleanBindingsFlatten;
 }
 
-QVector<QVariant>::size_type
+QList<QVariant>::size_type
 Grammar::computeReserveForBindingsMap(const BindingsMap &bindings,
-                                      const QVector<BindingType> &exclude)
+                                      const QList<BindingType> &exclude)
 {
-    QVector<QVariant>::size_type size = 0;
+    QList<QVariant>::size_type size = 0;
 
     for (auto itBindings = bindings.constBegin();
          itBindings != bindings.constEnd(); ++itBindings

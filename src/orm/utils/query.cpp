@@ -36,13 +36,13 @@ void Query::logExecutedQuery(const TSqlQuery &/*unused*/)
 {}
 #endif
 
-QVector<QVariantMap>
-Query::zipForInsert(const QVector<QString> &columns,
-                    const QVector<QVector<QVariant>> &values)
+QList<QVariantMap>
+Query::zipForInsert(const QList<QString> &columns,
+                    const QList<QList<QVariant>> &values)
 {
     const auto columnsSize = columns.size();
 
-    QVector<QVariantMap> zippedValues;
+    QList<QVariantMap> zippedValues;
     zippedValues.reserve(columnsSize);
 
     using SizeType = std::remove_cvref_t<decltype (columns)>::size_type;

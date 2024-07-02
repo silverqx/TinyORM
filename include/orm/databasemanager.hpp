@@ -73,42 +73,42 @@ namespace Query
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
         SqlQuery
-        select(const QString &query, QVector<QVariant> bindings = {},
+        select(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a select statement against the database. */
         SqlQuery
-        selectFromWriteConnection(const QString &query, QVector<QVariant> bindings = {},
+        selectFromWriteConnection(const QString &query, QList<QVariant> bindings = {},
                                   const QString &connection = "");
 
         /*! Run a select statement and return a single result. */
         SqlQuery
-        selectOne(const QString &query, QVector<QVariant> bindings = {},
+        selectOne(const QString &query, QList<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run a select statement and return the first column of the first row. */
         QVariant
-        scalar(const QString &query, QVector<QVariant> bindings = {},
+        scalar(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
 
         /*! Run an insert statement against the database. */
         SqlQuery
-        insert(const QString &query, QVector<QVariant> bindings = {},
+        insert(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
         std::tuple<int, TSqlQuery>
-        update(const QString &query, QVector<QVariant> bindings = {},
+        update(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a delete statement against the database. */
         std::tuple<int, TSqlQuery>
-        remove(const QString &query, QVector<QVariant> bindings = {},
+        remove(const QString &query, QList<QVariant> bindings = {},
                const QString &connection = "");
 
         /*! Execute an SQL statement and return the boolean result and SqlQuery. */
         SqlQuery
-        statement(const QString &query, QVector<QVariant> bindings = {},
+        statement(const QString &query, QList<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
         std::tuple<int, TSqlQuery>
-        affectingStatement(const QString &query, QVector<QVariant> bindings = {},
+        affectingStatement(const QString &query, QList<QVariant> bindings = {},
                            const QString &connection = "");
 
         /*! Run a raw, unprepared query against the database. */
@@ -250,11 +250,11 @@ namespace Query
 
         /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log> pretend(const std::function<void()> &callback,
-                             const QString &connection = "");
+        QList<Log> pretend(const std::function<void()> &callback,
+                           const QString &connection = "");
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log> pretend(const std::function<void(DatabaseConnection &)> &callback,
-                             const QString &connection = "");
+        QList<Log> pretend(const std::function<void(DatabaseConnection &)> &callback,
+                           const QString &connection = "");
 
         /* Records were modified */
         /*! Check if any records have been modified. */
@@ -266,7 +266,7 @@ namespace Query
 
         /* Logging */
         /*! Get the connection query log. */
-        std::shared_ptr<QVector<Log>>
+        std::shared_ptr<QList<Log>>
         getQueryLog(const QString &connection = "");
         /*! Clear the query log. */
         void flushQueryLog(const QString &connection = "");

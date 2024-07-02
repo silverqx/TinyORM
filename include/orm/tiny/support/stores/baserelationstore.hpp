@@ -213,7 +213,7 @@ namespace Support::Stores
                 break;
 
             case RelationStoreType::RELATION_TO_VECTOR:
-                static_cast<SerializeRelationStore<QVector<AttributeItem>> *>(this)
+                static_cast<SerializeRelationStore<QList<AttributeItem>> *>(this)
                         ->visited(method);
                 break;
 

@@ -38,12 +38,12 @@ ForeignIdColumnDefinitionReference::constrained(const QString &table,
                                        QStringLiteral("_%1").arg(column))));
     };
 
-    return references(QVector<QString> {column})
+    return references(QList<QString> {column})
             .on(table.isEmpty() ? guessTableName() : table);
 }
 
 ForeignKeyDefinitionReference
-ForeignIdColumnDefinitionReference::references(const QVector<QString> &columns)
+ForeignIdColumnDefinitionReference::references(const QList<QString> &columns)
 {
     m_foreignKeyDefinitionReference =
             m_blueprint.get().foreign(m_columnDefinition.get().name);

@@ -377,7 +377,7 @@ struct ZshCompletionPathsItem
 
 /*! Paths to the TinyORM tom zsh completion files. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        QVector<ZshCompletionPathsItem>, TomZshCompletionPaths, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
+        QList<ZshCompletionPathsItem>, TomZshCompletionPaths, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
         ({{ZshCompletionsDirPaths->constFirst(),
            QString("%1/_tom").arg(ZshCompletionsDirPaths->constFirst())},
           {ZshCompletionsDirPaths->at(1),

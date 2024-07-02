@@ -56,7 +56,7 @@ namespace Orm::Tiny
     /*! Concept to check the container for serialized model attributes. */
     template<typename C>
     concept SerializedAttributes = std::same_as<C, QVariantMap> ||
-                                   std::same_as<C, QVector<AttributeItem>>;
+                                   std::same_as<C, QList<AttributeItem>>;
 
     /* Others */
     template<typename C>

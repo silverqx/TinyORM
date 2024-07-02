@@ -65,7 +65,7 @@ void Pretendable::optionalPretend(
 /* private */
 
 void Pretendable::optionalPretendInternal(
-        QVector<Orm::Log> &&queriesLog, const std::optional<QString> &title, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        QList<Orm::Log> &&queriesLog, const std::optional<QString> &title, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const bool newline) const
 {
     // Log gathered queries to the console

@@ -20,7 +20,7 @@ namespace Orm::Concerns
 /* public */
 
 void LogsQueries::logQueryForPretend(
-        const QString &query, const QVector<QVariant> &preparedBindings,
+        const QString &query, const QList<QVariant> &preparedBindings,
 #ifdef TINYORM_DEBUG_SQL
         const QString &type) const
 #else
@@ -100,15 +100,15 @@ void LogsQueries::enableQueryLog()
     /* Instantiate the query log vector lazily, right before it is really needed,
        and do not flush it. */
     if (!m_queryLog)
-        m_queryLog = std::make_shared<QVector<Log>>();
+        m_queryLog = std::make_shared<QList<Log>>();
 
     m_loggingQueries = true;
 }
 
 /* protected */
 
-QVector<Log>
-LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
+QList<Log>
+LogsQueries::withFreshQueryLog(const std::function<QList<Log>()> &callback)
 {
     /* First we will back up the value of the logging queries data members and then
        we'll enable query logging. The query log will also get cleared so we will
@@ -123,7 +123,7 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
         m_queryLogForPretend->clear();
     else T_UNLIKELY
         // Create the query log lazily, right before it is really needed
-        m_queryLogForPretend = std::make_shared<QVector<Log>>();
+        m_queryLogForPretend = std::make_shared<QList<Log>>();
 
     // Swap query logs, so I don't have to manage separate logic for pretend code
     m_queryLog.swap(m_queryLogForPretend);

@@ -36,7 +36,7 @@ namespace Orm::Tiny::Relations
         /*! Create a new pivot model instance. */
         template<typename Parent>
         static PivotModel
-        fromAttributes(const Parent &parent, const QVector<AttributeItem> &attributes,
+        fromAttributes(const Parent &parent, const QList<AttributeItem> &attributes,
                        const QString &table, bool exists = false,
                        bool withTimestamps = false,
                        const QString &createdAt = Constants::CREATED_AT,
@@ -44,14 +44,14 @@ namespace Orm::Tiny::Relations
         template<typename Parent>
         /*! Create a new pivot model from raw values returned from a query. */
         static PivotModel
-        fromRawAttributes(const Parent &parent, const QVector<AttributeItem> &attributes,
+        fromRawAttributes(const Parent &parent, const QList<AttributeItem> &attributes,
                           const QString &table, bool exists = false,
                           bool withTimestamps = false,
                           const QString &createdAt = Constants::CREATED_AT,
                           const QString &updatedAt = Constants::UPDATED_AT);
 
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
-        static bool hasTimestampAttributes(const QVector<AttributeItem> &attributes);
+        static bool hasTimestampAttributes(const QList<AttributeItem> &attributes);
         /*! Determine if the pivot model or given attributes has timestamp attributes. */
         bool hasTimestampAttributes() const;
 
@@ -92,9 +92,9 @@ namespace Orm::Tiny::Relations
         std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery() const;
 
         /*! Merge attributes from the database to the original (default) attributes. */
-        static QVector<AttributeItem>
-        mergeAttributes(const QVector<AttributeItem> &rawOriginals,
-                        const QVector<AttributeItem> &attributes);
+        static QList<AttributeItem>
+        mergeAttributes(const QList<AttributeItem> &rawOriginals,
+                        const QList<AttributeItem> &attributes);
 
         /* BasePivot */
         /*! Indicates if the ID is auto-incrementing. */
@@ -144,7 +144,7 @@ namespace Orm::Tiny::Relations
     template<typename Parent>
     PivotModel
     BasePivot<PivotModel>::fromAttributes(
-            const Parent &parent, const QVector<AttributeItem> &attributes,
+            const Parent &parent, const QList<AttributeItem> &attributes,
             const QString &table, const bool exists, const bool withTimestamps,
             const QString &createdAt, const QString &updatedAt)
     {
@@ -178,7 +178,7 @@ namespace Orm::Tiny::Relations
     template<typename Parent>
     PivotModel
     BasePivot<PivotModel>::fromRawAttributes(
-            const Parent &parent, const QVector<AttributeItem> &attributes,
+            const Parent &parent, const QList<AttributeItem> &attributes,
             const QString &table, const bool exists, const bool withTimestamps,
             const QString &createdAt, const QString &updatedAt)
     {
@@ -204,7 +204,7 @@ namespace Orm::Tiny::Relations
 
     template<typename PivotModel>
     bool BasePivot<PivotModel>::hasTimestampAttributes(
-            const QVector<AttributeItem> &attributes)
+            const QList<AttributeItem> &attributes)
     {
         // NOTE api different, has to contain both timestamp columns silverqx
         auto hasCreatedAt = false;
@@ -356,11 +356,11 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
-    QVector<AttributeItem>
-    BasePivot<PivotModel>::mergeAttributes(const QVector<AttributeItem> &rawOriginals,
-                                           const QVector<AttributeItem> &attributes)
+    QList<AttributeItem>
+    BasePivot<PivotModel>::mergeAttributes(const QList<AttributeItem> &rawOriginals,
+                                           const QList<AttributeItem> &attributes)
     {
-        QVector<AttributeItem> mergedAttributes;
+        QList<AttributeItem> mergedAttributes;
         mergedAttributes.reserve(rawOriginals.size() + attributes.size());
 
         mergedAttributes = rawOriginals;

@@ -101,7 +101,7 @@ namespace Orm::Tiny::Relations
         getResults() const override;
         /*! Execute the query as a "select" statement. */
         ModelsCollection<Related>
-        get(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
+        get(const QList<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
 
         /* Getters / Setters */
         /*! Get the fully qualified foreign key for the relation. */
@@ -156,23 +156,23 @@ namespace Orm::Tiny::Relations
         /*! Find a model by its primary key. */
         std::optional<Related>
         find(const QVariant &id, // NOLINT(google-default-arguments)
-             const QVector<Column> &columns = {ASTERISK}) const override;
+             const QList<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or return fresh model instance. */
         Related
         findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
-                  const QVector<Column> &columns = {ASTERISK}) const override;
+                  const QList<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or throw an exception. */
         Related
         findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
-                   const QVector<Column> &columns = {ASTERISK}) const override;
+                   const QList<Column> &columns = {ASTERISK}) const override;
         /*! Find multiple models by their primary keys. */
         ModelsCollection<Related>
-        findMany(const QVector<QVariant> &ids,
-                 const QVector<Column> &columns = {ASTERISK}) const;
+        findMany(const QList<QVariant> &ids,
+                 const QList<Column> &columns = {ASTERISK}) const;
 
         /*! Execute a query for a single record by ID or call a callback. */
         std::optional<Related>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<void()> &callback) const override;
         /*! Execute a query for a single record by ID or call a callback. */
         inline std::optional<Related>
@@ -181,7 +181,7 @@ namespace Orm::Tiny::Relations
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<R()> &callback) const;
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
@@ -190,21 +190,21 @@ namespace Orm::Tiny::Relations
 
         /*! Execute the query and get the first result. */
         std::optional<Related>
-        first(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
+        first(const QList<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
         /*! Get the first record matching the attributes or instantiate it. */
-        Related firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
-                           const QVector<AttributeItem> &values = {}) const override;
+        Related firstOrNew(const QList<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
+                           const QList<AttributeItem> &values = {}) const override;
         /*! Get the first record matching the attributes or create it. */
-        Related firstOrCreate(const QVector<WhereItem> &attributes = {},
-                              const QVector<AttributeItem> &values = {},
-                              const QVector<AttributeItem> &pivotValues = {},
+        Related firstOrCreate(const QList<WhereItem> &attributes = {},
+                              const QList<AttributeItem> &values = {},
+                              const QList<AttributeItem> &pivotValues = {},
                               bool touch = true) const;
         /*! Execute the query and get the first result or throw an exception. */
-        Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
+        Related firstOrFail(const QList<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         std::optional<Related>
-        firstOr(const QVector<Column> &columns, // NOLINT(google-default-arguments)
+        firstOr(const QList<Column> &columns, // NOLINT(google-default-arguments)
                 const std::function<void()> &callback = nullptr) const override;
         /*! Execute the query and get the first result or call a callback. */
         inline std::optional<Related>
@@ -213,7 +213,7 @@ namespace Orm::Tiny::Relations
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
-        firstOr(const QVector<Column> &columns, const std::function<R()> &callback) const;
+        firstOr(const QList<Column> &columns, const std::function<R()> &callback) const;
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         inline std::pair<std::optional<Related>, R>
@@ -245,7 +245,7 @@ namespace Orm::Tiny::Relations
                  qint64 count = 1000) const override;
         /*! Run a map over each item while chunking. */
         template<typename T>
-        QVector<T>
+        QList<T>
         chunkMap(const std::function<T(Related &&model)> &callback,
                  qint64 count = 1000) const;
 
@@ -265,44 +265,44 @@ namespace Orm::Tiny::Relations
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related &>
         save(Related &model,
-             const QVector<AttributeItem> &pivotValues = {},
+             const QList<AttributeItem> &pivotValues = {},
              bool touch = true) const;
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related>
         save(Related &&model,
-             const QVector<AttributeItem> &pivotValues = {},
+             const QList<AttributeItem> &pivotValues = {},
              bool touch = true) const;
         /*! Attach a vector of models to the parent instance. */
         ModelsCollection<Related> &
         saveMany(ModelsCollection<Related> &models,
-                 const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
+                 const QList<QList<AttributeItem>> &pivotValues = {}) const;
         /*! Attach a vector of models to the parent instance. */
         ModelsCollection<Related>
         saveMany(ModelsCollection<Related> &&models,
-                 const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
+                 const QList<QList<AttributeItem>> &pivotValues = {}) const;
 
         /*! Create a new instance of the related model. */
-        Related create(const QVector<AttributeItem> &attributes = {},
-                       const QVector<AttributeItem> &pivotValues = {},
+        Related create(const QList<AttributeItem> &attributes = {},
+                       const QList<AttributeItem> &pivotValues = {},
                        bool touch = true) const;
         /*! Create a new instance of the related model. */
-        Related create(QVector<AttributeItem> &&attributes = {},
-                       const QVector<AttributeItem> &pivotValues = {},
+        Related create(QList<AttributeItem> &&attributes = {},
+                       const QList<AttributeItem> &pivotValues = {},
                        bool touch = true) const;
         /*! Create a vector of new instances of the related model. */
         ModelsCollection<Related>
-        createMany(const QVector<QVector<AttributeItem>> &records,
-                   const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
+        createMany(const QList<QList<AttributeItem>> &records,
+                   const QList<QList<AttributeItem>> &pivotValues = {}) const;
         /*! Create a vector of new instances of the related model. */
         ModelsCollection<Related>
-        createMany(QVector<QVector<AttributeItem>> &&records,
-                   const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
+        createMany(QList<QList<AttributeItem>> &&records,
+                   const QList<QList<AttributeItem>> &pivotValues = {}) const;
 
         /*! Create or update a related record matching the attributes, and fill it
             with values. */
-        Related updateOrCreate(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values = {},
-                               const QVector<AttributeItem> &pivotValues = {},
+        Related updateOrCreate(const QList<WhereItem> &attributes,
+                               const QList<AttributeItem> &values = {},
+                               const QList<AttributeItem> &pivotValues = {},
                                bool touch = true) const;
 
         /* Others */
@@ -310,7 +310,7 @@ namespace Orm::Tiny::Relations
         QString qualifyPivotColumn(const QString &column) const;
 
         /*! Get all of the IDs for the related models. */
-        QVector<QVariant> allRelatedIds() const;
+        QList<QVariant> allRelatedIds() const;
 
         /*! The textual representation of the Relation type. */
         inline const QString &relationTypeName() const override;
@@ -334,7 +334,7 @@ namespace Orm::Tiny::Relations
         /*! Prepare the query builder for query execution. */
         Builder<Related> &prepareQueryBuilder() const;
         /*! Get the select columns for the relation query. */
-        QVector<Column> shouldSelect(QVector<Column> columns = {ASTERISK}) const;
+        QList<Column> shouldSelect(QList<Column> columns = {ASTERISK}) const;
         /*! Get the pivot columns for the relation, "pivot_" is prefixed
             to each column for easy removal later. */
         QStringList aliasedPivotColumns() const;
@@ -342,7 +342,7 @@ namespace Orm::Tiny::Relations
         /*! Hydrate the pivot table relationship on the models. */
         void hydratePivotRelation(ModelsCollection<Related> &models) const;
         /*! Get the pivot attributes from a model. */
-        QVector<AttributeItem> migratePivotAttributes(Related &model) const;
+        QList<AttributeItem> migratePivotAttributes(Related &model) const;
 
         /* Inserting & Updating relationship */
         /*! Determine if we should touch the parent on sync. */
@@ -360,7 +360,7 @@ namespace Orm::Tiny::Relations
         getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
-                const QVector<Column> &columns = {ASTERISK}) const override;
+                const QList<Column> &columns = {ASTERISK}) const override;
 
         /*! The intermediate table for the relation. */
         QString m_table;
@@ -540,7 +540,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
-    BelongsToMany<Model, Related, PivotType>::get(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
+    BelongsToMany<Model, Related, PivotType>::get(const QList<Column> &columns) const // NOLINT(google-default-arguments)
     {
         /* First we'll add the proper select columns onto the query so it is run with
            the proper columns. Then, we will get the results and hydrate out pivot
@@ -550,7 +550,7 @@ namespace Orm::Tiny::Relations
 
         auto l_columns = this->getBaseQuery().getColumns().isEmpty()
                          ? columns
-                         : QVector<Column>();
+                         : QList<Column>();
 
         // Hydrated related models
         auto models = this->m_query->addSelect(shouldSelect(std::move(l_columns)))
@@ -727,7 +727,7 @@ namespace Orm::Tiny::Relations
 
         const auto &key = related->getKeyName();
 
-        const QVector<UpdateItem> record {
+        const QList<UpdateItem> record {
             {related->getUpdatedAtColumn(), related->freshTimestampString()},
         };
 
@@ -747,7 +747,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     std::optional<Related>
     BelongsToMany<Model, Related, PivotType>::find( // NOLINT(google-default-arguments)
-            const QVariant &id, const QVector<Column> &columns) const
+            const QVariant &id, const QList<Column> &columns) const
     {
         return this->where(this->m_related->getQualifiedKeyName(), EQ, id)
                 .first(columns);
@@ -755,7 +755,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     Related BelongsToMany<Model, Related, PivotType>::findOrNew( // NOLINT(google-default-arguments)
-            const QVariant &id, const QVector<Column> &columns) const
+            const QVariant &id, const QList<Column> &columns) const
     {
         // Found
         if (auto instance = find(id, columns); instance)
@@ -766,7 +766,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     Related BelongsToMany<Model, Related, PivotType>::findOrFail( // NOLINT(google-default-arguments)
-            const QVariant &id, const QVector<Column> &columns) const
+            const QVariant &id, const QList<Column> &columns) const
     {
         auto model = find(id, columns);
 
@@ -781,7 +781,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::findMany(
-            const QVector<QVariant> &ids, const QVector<Column> &columns) const
+            const QList<QVariant> &ids, const QList<Column> &columns) const
     {
         if (ids.isEmpty())
             return {};
@@ -792,7 +792,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     std::optional<Related>
     BelongsToMany<Model, Related, PivotType>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<void()> &callback) const
     {
         auto model = find(id, columns);
@@ -820,7 +820,7 @@ namespace Orm::Tiny::Relations
     template<typename R>
     std::pair<std::optional<Related>, R>
     BelongsToMany<Model, Related, PivotType>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<R()> &callback) const
     {
         auto model = find(id, columns);
@@ -848,7 +848,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::first(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
+    BelongsToMany<Model, Related, PivotType>::first(const QList<Column> &columns) const // NOLINT(google-default-arguments)
     {
         auto results = this->take(1).get(columns);
 
@@ -861,8 +861,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     Related
     BelongsToMany<Model, Related, PivotType>::firstOrNew( // NOLINT(google-default-arguments)
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         // Model found in db
         if (auto instance = this->m_related->where(attributes)->first(); instance)
@@ -876,9 +876,9 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     Related
     BelongsToMany<Model, Related, PivotType>::firstOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values,
-            const QVector<AttributeItem> &pivotValues,
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values,
+            const QList<AttributeItem> &pivotValues,
             const bool touch) const
     {
         // Related model is attached and attributes were found
@@ -905,7 +905,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     Related
     BelongsToMany<Model, Related, PivotType>::firstOrFail( // NOLINT(google-default-arguments)
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         if (auto model = first(columns); model)
             return std::move(*model);
@@ -916,7 +916,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     std::optional<Related>
     BelongsToMany<Model, Related, PivotType>::firstOr( // NOLINT(google-default-arguments)
-            const QVector<Column> &columns, const std::function<void()> &callback) const
+            const QList<Column> &columns, const std::function<void()> &callback) const
     {
         auto model = first(columns);
 
@@ -943,7 +943,7 @@ namespace Orm::Tiny::Relations
     template<typename R>
     std::pair<std::optional<Related>, R>
     BelongsToMany<Model, Related, PivotType>::firstOr(
-            const QVector<Column> &columns, const std::function<R()> &callback) const
+            const QList<Column> &columns, const std::function<R()> &callback) const
     {
         auto model = first(columns);
 
@@ -1047,11 +1047,11 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     template<typename T>
-    QVector<T>
+    QList<T>
     BelongsToMany<Model, Related, PivotType>::chunkMap(
             const std::function<T(Related &&)> &callback, const qint64 count) const
     {
-        QVector<T> result;
+        QList<T> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(count);
 
@@ -1119,7 +1119,7 @@ namespace Orm::Tiny::Relations
     std::tuple<bool, Related &>
     BelongsToMany<Model, Related, PivotType>::save(
             Related &model,
-            const QVector<AttributeItem> &pivotValues, const bool touch) const
+            const QList<AttributeItem> &pivotValues, const bool touch) const
     {
         const auto result = model.save({.touch = false});
 
@@ -1132,7 +1132,7 @@ namespace Orm::Tiny::Relations
     std::tuple<bool, Related>
     BelongsToMany<Model, Related, PivotType>::save(
             Related &&model,
-            const QVector<AttributeItem> &pivotValues, const bool touch) const
+            const QList<AttributeItem> &pivotValues, const bool touch) const
     {
         const auto result = model.save({.touch = false});
 
@@ -1145,7 +1145,7 @@ namespace Orm::Tiny::Relations
     ModelsCollection<Related> &
     BelongsToMany<Model, Related, PivotType>::saveMany(
             ModelsCollection<Related> &models,
-            const QVector<QVector<AttributeItem>> &pivotValues) const
+            const QList<QList<AttributeItem>> &pivotValues) const
     {
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
 
@@ -1166,7 +1166,7 @@ namespace Orm::Tiny::Relations
     ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::saveMany(
             ModelsCollection<Related> &&models,
-            const QVector<QVector<AttributeItem>> &pivotValues) const
+            const QList<QList<AttributeItem>> &pivotValues) const
     {
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
 
@@ -1186,8 +1186,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     Related
     BelongsToMany<Model, Related, PivotType>::create(
-            const QVector<AttributeItem> &attributes,
-            const QVector<AttributeItem> &pivotValues, const bool touch) const
+            const QList<AttributeItem> &attributes,
+            const QList<AttributeItem> &pivotValues, const bool touch) const
     {
         auto instance = this->m_related->newInstance(attributes);
 
@@ -1204,8 +1204,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     Related
     BelongsToMany<Model, Related, PivotType>::create(
-            QVector<AttributeItem> &&attributes,
-            const QVector<AttributeItem> &pivotValues, const bool touch) const
+            QList<AttributeItem> &&attributes,
+            const QList<AttributeItem> &pivotValues, const bool touch) const
     {
         auto instance = this->m_related->newInstance(std::move(attributes));
 
@@ -1222,8 +1222,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
-            const QVector<QVector<AttributeItem>> &records,
-            const QVector<QVector<AttributeItem>> &pivotValues) const
+            const QList<QList<AttributeItem>> &records,
+            const QList<QList<AttributeItem>> &pivotValues) const
     {
         const auto recordsSize = records.size();
 
@@ -1247,8 +1247,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
-            QVector<QVector<AttributeItem>> &&records,
-            const QVector<QVector<AttributeItem>> &pivotValues) const
+            QList<QList<AttributeItem>> &&records,
+            const QList<QList<AttributeItem>> &pivotValues) const
     {
         const auto recordsSize = records.size();
 
@@ -1271,9 +1271,9 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     Related BelongsToMany<Model, Related, PivotType>::updateOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values,
-            const QVector<AttributeItem> &pivotValues,
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values,
+            const QList<AttributeItem> &pivotValues,
             const bool touch) const
     {
         auto instance = clone().where(attributes).first();
@@ -1321,13 +1321,13 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVariant>
+    QList<QVariant>
     BelongsToMany<Model, Related, PivotType>::allRelatedIds() const
     {
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = this->newPivotQuery()->get({m_relatedPivotKey});
 
-        QVector<QVariant> ids;
+        QList<QVariant> ids;
         ids.reserve(QueryUtils::queryResultSize(query));
 
         while (query.next())
@@ -1407,18 +1407,18 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Column>
-    BelongsToMany<Model, Related, PivotType>::shouldSelect(QVector<Column> columns) const
+    QList<Column>
+    BelongsToMany<Model, Related, PivotType>::shouldSelect(QList<Column> columns) const
     {
-        if (columns == QVector<Column> {ASTERISK})
-            columns = QVector<Column> {QStringLiteral("%1.*")
-                                       .arg(this->m_related->getTable())};
+        if (columns == QList<Column> {ASTERISK})
+            columns = QList<Column> {QStringLiteral("%1.*")
+                                     .arg(this->m_related->getTable())};
 
         // Obtain aliased pivot columns
         auto aliasedPivotColumns = this->aliasedPivotColumns();
 
         // Will contain final result
-        QVector<Column> mergedColumns;
+        QList<Column> mergedColumns;
         mergedColumns.reserve(aliasedPivotColumns.size() + columns.size());
 
         std::ranges::move(aliasedPivotColumns, std::back_inserter(mergedColumns));
@@ -1475,13 +1475,13 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     BelongsToMany<Model, Related, PivotType>::migratePivotAttributes(
             Related &model) const
     {
         const auto &modelAttributes = model.getAttributes();
 
-        QVector<AttributeItem> values;
+        QList<AttributeItem> values;
         values.reserve(modelAttributes.size());
 
         for (const auto &attribute : modelAttributes)
@@ -1531,7 +1531,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &parentQuery,
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         // CUR finish self query silverqx
 //        if (query->getQuery()->from == parentQuery.getQuery()->from)

@@ -11,7 +11,7 @@ namespace Orm::Query::Grammars
 /* public */
 
 QString MySqlGrammar::compileInsert(const QueryBuilder &query,
-                                    const QVector<QVariantMap> &values) const
+                                    const QList<QVariantMap> &values) const
 {
     // MySQL doesn't support 'default values' statement
     if (values.isEmpty())
@@ -21,13 +21,13 @@ QString MySqlGrammar::compileInsert(const QueryBuilder &query,
 }
 
 QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
-                                            const QVector<QVariantMap> &values) const
+                                            const QList<QVariantMap> &values) const
 {
     return compileInsert(query, values).replace(0, 6, QStringLiteral("insert ignore"));
 }
 
 QString MySqlGrammar::compileUpsert(
-        QueryBuilder &query, const QVector<QVariantMap> &values,
+        QueryBuilder &query, const QList<QVariantMap> &values,
         const QStringList &/*unused*/, const QStringList &update) const
 {
     static const auto TinyOrmUpsertAlias = QStringLiteral("tinyorm_upsert_alias");
@@ -99,7 +99,7 @@ QString MySqlGrammar::wrapValue(QString value) const
                                                     QStringLiteral("``")));
 }
 
-const QVector<Grammar::SelectComponentValue> &
+const QList<Grammar::SelectComponentValue> &
 MySqlGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -120,7 +120,7 @@ MySqlGrammar::getCompileMap() const
     };
 
     // Pointers to compile methods, yes yes c++ 😂
-    static const QVector<SelectComponentValue> cached {
+    static const QList<SelectComponentValue> cached {
         {bind(&MySqlGrammar::compileAggregate),
          [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
         {bind(&MySqlGrammar::compileColumns),
@@ -172,7 +172,7 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
     /* Pointers to a where member methods by whereType, yes yes c++. 😂
        An order has to be the same as in enum struct WhereType.
        QVector is ideal for this as we lookup using the index. */
-    static const QVector<WhereMemFn> cached {
+    static const QList<WhereMemFn> cached {
         bind(&MySqlGrammar::whereBasic),
         bind(&MySqlGrammar::whereNested),
         bind(&MySqlGrammar::whereColumn),

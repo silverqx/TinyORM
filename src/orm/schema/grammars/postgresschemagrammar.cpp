@@ -30,20 +30,20 @@ QString PostgresSchemaGrammar::compileDropDatabaseIfExists(const QString &name) 
     return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
 }
 
-QString PostgresSchemaGrammar::compileDropAllTables(const QVector<QString> &tables) const
+QString PostgresSchemaGrammar::compileDropAllTables(const QList<QString> &tables) const
 {
     return QStringLiteral("drop table %1 cascade").arg(columnizeWithoutWrap(
                                                            escapeNames(tables)));
 }
 
-QString PostgresSchemaGrammar::compileDropAllViews(const QVector<QString> &views) const
+QString PostgresSchemaGrammar::compileDropAllViews(const QList<QString> &views) const
 {
     return QStringLiteral("drop view %1 cascade").arg(columnizeWithoutWrap(
                                                           escapeNames(views)));
 }
 
 QString
-PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) const // NOLINT(google-default-arguments)
+PostgresSchemaGrammar::compileGetAllTables(const QList<QString> &databases) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral(
                 "select tablename, "
@@ -54,7 +54,7 @@ PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) co
 }
 
 QString
-PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) const // NOLINT(google-default-arguments)
+PostgresSchemaGrammar::compileGetAllViews(const QList<QString> &databases) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral(
                 "select viewname, "
@@ -92,7 +92,7 @@ QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) c
 
 /* Compile methods for commands */
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 {
     return {QStringLiteral("%1 table %2 (%3)")
@@ -102,7 +102,7 @@ PostgresSchemaGrammar::compileCreate(const Blueprint &blueprint) const
                      columnizeWithoutWrap(getColumns(blueprint)))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
@@ -110,7 +110,7 @@ PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                   const BasicCommand &/*unused*/) const
 {
@@ -121,17 +121,17 @@ PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                      getColumns(blueprint))))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileChange(const Blueprint &blueprint,
                                      const BasicCommand &/*unused*/) const
 {
     auto changedColumns = blueprint.getChangedColumns();
 
-    QVector<QString> columns;
+    QList<QString> columns;
     columns.reserve(changedColumns.size());
 
     for (auto &column : changedColumns) {
-        QVector<QString> changes;
+        QList<QString> changes;
         changes.reserve(m_modifierMethodsForChangeSize + 1);
 
         const auto collate = modifyCollate(column);
@@ -153,7 +153,7 @@ PostgresSchemaGrammar::compileChange(const Blueprint &blueprint,
                                                     columnizeWithoutWrap(columns))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                          const DropColumnsCommand &command) const
 {
@@ -163,7 +163,7 @@ PostgresSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                                       wrapArray(command.columns))))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                            const RenameCommand &command) const
 {
@@ -172,7 +172,7 @@ PostgresSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                      BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                                       const IndexCommand &command) const
 {
@@ -180,7 +180,7 @@ PostgresSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                 .arg(wrapTable(blueprint), columnize(command.columns))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                      const IndexCommand &command) const
 {
@@ -189,7 +189,7 @@ PostgresSchemaGrammar::compileUnique(const Blueprint &blueprint,
                      columnize(command.columns))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
@@ -202,7 +202,7 @@ PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
                      algorithm, columnize(command.columns))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
                                        const IndexCommand &command) const
 {
@@ -217,7 +217,7 @@ PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
     {
         return TsVectorTmpl.arg(quoteString(language), BaseGrammar::wrap(column));
     })
-            | ranges::to<QVector<QString>>();
+            | ranges::to<QList<QString>>();
 
     /* Double (()) described here, simply it's a expression not the column name:
        https://www.postgresql.org/docs/10/indexes-expressional.html */
@@ -227,7 +227,7 @@ PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
                      ContainerUtils::join(columns, QStringLiteral(" || ")))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
                                            const IndexCommand &command) const
 {
@@ -237,7 +237,7 @@ PostgresSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
     return compileIndex(blueprint, command);
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileForeign(const Blueprint &blueprint,
                                       const ForeignKeyCommand &command) const
 {
@@ -263,7 +263,7 @@ PostgresSchemaGrammar::compileForeign(const Blueprint &blueprint,
     return sqlCommands;
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                           const IndexCommand &/*unused*/) const
 {
@@ -274,14 +274,14 @@ PostgresSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
             .arg(wrapTable(blueprint), index)};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileDropIndex(const Blueprint &/*unused*/,
                                         const IndexCommand &command) const
 {
     return {QStringLiteral("drop index %1").arg(BaseGrammar::wrap(command.index))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,
                                           const RenameCommand &command) const
 {
@@ -289,7 +289,7 @@ PostgresSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,
                 .arg(BaseGrammar::wrap(command.from), BaseGrammar::wrap(command.to))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
                                       const CommentCommand &command) const
 {
@@ -305,7 +305,7 @@ PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
                                     : quoteString(escapeString(command.comment)))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileTableComment(const Blueprint &blueprint,
                                            const TableCommentCommand &command) const
 {
@@ -318,7 +318,7 @@ PostgresSchemaGrammar::compileTableComment(const Blueprint &blueprint,
                      quoteString(escapeString(command.comment)))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                            const DatabaseConnection &/*unused*/,
                                            const Blueprint &blueprint) const
@@ -332,7 +332,7 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     /*! Type for the compileXx() methods. */
     using CompileMemFn =
-            std::function<QVector<QString>(
+            std::function<QList<QString>(
                 const PostgresSchemaGrammar &, const Blueprint &,
                 const CommandDefinition &)>;
 
@@ -432,10 +432,10 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
     return std::move(sql);
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::getModifiersForChange(const ColumnDefinition &column) const
 {
-    QVector<QString> modifiers;
+    QList<QString> modifiers;
     modifiers.reserve(static_cast<decltype (modifiers)::size_type>(
                           m_modifierMethodsForChangeSize));
 
@@ -445,7 +445,7 @@ PostgresSchemaGrammar::getModifiersForChange(const ColumnDefinition &column) con
     return modifiers;
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileAutoIncrementStartingValue( // NOLINT(readability-convert-member-functions-to-static)
         const Blueprint &blueprint,
         const AutoIncrementStartingValueCommand &command) const
@@ -455,7 +455,7 @@ PostgresSchemaGrammar::compileAutoIncrementStartingValue( // NOLINT(readability-
                 .arg(command.startingValue)};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::compileDropConstraint(const Blueprint &blueprint,
                                              const IndexCommand &command) const
 {
@@ -895,7 +895,7 @@ QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column)
     return formatPostGisType(QStringLiteral("multipolygonz"), column);
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
 {
     if (column.collation.isEmpty())
@@ -904,7 +904,7 @@ PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
     return {QStringLiteral(" collate %1").arg(wrapValue(column.collation))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const std::unordered_set serials {
@@ -922,7 +922,7 @@ PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // 
     return {};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.change)
@@ -936,7 +936,7 @@ PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // N
                                                 : QStringLiteral(" not null")};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
     const auto &defaultValue = column.defaultValue;
@@ -955,7 +955,7 @@ PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     return {QStringLiteral(" default %1").arg(getDefaultValue(defaultValue))};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     /* Currently, PostgreSQL 15 doesn't support virtual generated columns, only stored,
@@ -974,7 +974,7 @@ PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // 
     return {QStringLiteral(" generated always as (%1)").arg(*column.virtualAs)};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.storedAs)
@@ -990,7 +990,7 @@ PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // N
     return {QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs)};
 }
 
-QVector<QString>
+QList<QString>
 PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     QString sql;
@@ -1010,7 +1010,7 @@ PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const /
                                                  : QString(""));
 
     if (column.change) {
-        QVector<QString> changes;
+        QList<QString> changes;
         changes.reserve(2);
 
         changes << QStringLiteral("drop identity if exists");

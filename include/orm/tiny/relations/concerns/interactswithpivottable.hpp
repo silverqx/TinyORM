@@ -91,46 +91,46 @@ namespace Concerns
         inline bool hasPivotColumn(const QString &column) const;
 
         /*! Attach models to the parent. */
-        void attach(const QVector<QVariant> &ids,
-                    const QVector<AttributeItem> &attributes = {},
+        void attach(const QList<QVariant> &ids,
+                    const QList<AttributeItem> &attributes = {},
                     bool touch = true) const;
         /*! Attach models to the parent. */
         inline void
-        attach(const QVector<std::reference_wrapper<Related>> &models,
-               const QVector<AttributeItem> &attributes = {},
+        attach(const QList<std::reference_wrapper<Related>> &models,
+               const QList<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach a model to the parent. */
         inline void
-        attach(const QVariant &id, const QVector<AttributeItem> &attributes = {},
+        attach(const QVariant &id, const QList<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach a model to the parent. */
         inline void
-        attach(const Related &model, const QVector<AttributeItem> &attributes = {},
+        attach(const Related &model, const QList<AttributeItem> &attributes = {},
                bool touch = true) const;
         /*! Attach models to the parent. */
         void attach(const std::map<RelatedKeyType,
-                                   QVector<AttributeItem>> &idsWithAttributes,
+                                   QList<AttributeItem>> &idsWithAttributes,
                     bool touch = true) const;
 
         /*! Sync the intermediate tables with a list of IDs. */
         SyncChanges sync(const std::map<RelatedKeyType,
-                                        QVector<AttributeItem>> &idsWithAttributes,
+                                        QList<AttributeItem>> &idsWithAttributes,
                          bool detaching = true) const;
         /*! Sync the intermediate tables with a vector of IDs. */
-        inline SyncChanges sync(const QVector<QVariant> &ids,
+        inline SyncChanges sync(const QList<QVariant> &ids,
                                 bool detaching = true) const;
 
         /*! Sync the intermediate tables with a vector of IDs without detaching. */
         inline SyncChanges syncWithoutDetaching(
                 const std::map<RelatedKeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const;
+                               QList<AttributeItem>> &idsWithAttributes) const;
         /*! Sync the intermediate tables with a vector of IDs without detaching. */
-        inline SyncChanges syncWithoutDetaching(const QVector<QVariant> &ids) const;
+        inline SyncChanges syncWithoutDetaching(const QList<QVariant> &ids) const;
 
         /*! Detach models from the relationship. */
-        inline int detach(const QVector<QVariant> &ids, bool touch = true) const;
+        inline int detach(const QList<QVariant> &ids, bool touch = true) const;
         /*! Detach models from the relationship. */
-        inline int detach(const QVector<std::reference_wrapper<Related>> &models,
+        inline int detach(const QList<std::reference_wrapper<Related>> &models,
                           bool touch = true) const;
         /*! Detach model from the relationship. */
         inline int detach(const QVariant &id, bool touch = true) const;
@@ -141,17 +141,17 @@ namespace Concerns
 
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
-                                QVector<AttributeItem> attributes,
+                                QList<AttributeItem> attributes,
                                 bool touch = true) const;
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const Related &model,
-                                const QVector<AttributeItem> &attributes,
+                                const QList<AttributeItem> &attributes,
                                 bool touch = true) const;
 
         /*! Create a new existing pivot model instance. */
-        PivotType newExistingPivot(const QVector<AttributeItem> &attributes = {}) const;
+        PivotType newExistingPivot(const QList<AttributeItem> &attributes = {}) const;
         /*! Create a new pivot model instance. */
-        PivotType newPivot(const QVector<AttributeItem> &attributes = {},
+        PivotType newPivot(const QList<AttributeItem> &attributes = {},
                            bool exists = false) const;
 
         /*! Create a new query builder for the pivot table. */
@@ -160,48 +160,48 @@ namespace Concerns
         std::shared_ptr<QueryBuilder> newPivotStatement() const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
         std::shared_ptr<QueryBuilder>
-        newPivotStatementForId(const QVector<QVariant> &ids) const;
+        newPivotStatementForId(const QList<QVariant> &ids) const;
         /*! Get a new pivot statement for a given "other" / "related" ID. */
         std::shared_ptr<QueryBuilder>
         inline newPivotStatementForId(const QVariant &id) const;
 
     protected:
         /*! Attach a model to the parent using a custom class. */
-        void attachUsingCustomClass(const QVector<QVariant> &ids,
-                                    const QVector<AttributeItem> &attributes) const;
+        void attachUsingCustomClass(const QList<QVariant> &ids,
+                                    const QList<AttributeItem> &attributes) const;
         /*! Create the vector of records to insert into the pivot table. */
-        QVector<QVector<AttributeItem>>
-        formatAttachRecords(const QVector<QVariant> &ids,
-                            const QVector<AttributeItem> &attributes) const;
+        QList<QList<AttributeItem>>
+        formatAttachRecords(const QList<QVariant> &ids,
+                            const QList<AttributeItem> &attributes) const;
         /*! Create a full attachment record payload. */
-        QVector<AttributeItem>
-        formatAttachRecord(const QVariant &id, const QVector<AttributeItem> &attributes,
+        QList<AttributeItem>
+        formatAttachRecord(const QVariant &id, const QList<AttributeItem> &attributes,
                            bool hasTimestamps) const;
 
         /*! Attach a model to the parent using a custom class. */
         void attachUsingCustomClass(
                 const std::map<RelatedKeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const;
+                               QList<AttributeItem>> &idsWithAttributes) const;
         /*! Create the vector of records to insert into the pivot table. */
-        QVector<QVector<AttributeItem>>
+        QList<QList<AttributeItem>>
         formatAttachRecords(
                 const std::map<RelatedKeyType,
-                               QVector<AttributeItem>> &idsWithAttributes) const;
+                               QList<AttributeItem>> &idsWithAttributes) const;
 
         /*! Create a new pivot attachment record. */
-        QVector<AttributeItem>
+        QList<AttributeItem>
         baseAttachRecord(const QVariant &id, bool timed) const;
         /*! Set the creation and update timestamps on an attach record. */
-        QVector<AttributeItem> &
-        addTimestampsToAttachment(QVector<AttributeItem> &record,
+        QList<AttributeItem> &
+        addTimestampsToAttachment(QList<AttributeItem> &record,
                                   bool exists = false) const;
 
         /*! Get the pivot models that are currently attached. */
-        QVector<PivotType> getCurrentlyAttachedPivots() const;
+        QList<PivotType> getCurrentlyAttachedPivots() const;
         /*! Get the attached pivot model by related model ID. */
         std::optional<PivotType> getAttachedPivot(const QVariant &id) const;
-        /*! Convert a TSqlRecord to the QVector<AttributeItem>. */
-        QVector<AttributeItem> attributesFromRecord(const TSqlRecord &record) const;
+        /*! Convert a TSqlRecord to the QList<AttributeItem>. */
+        QList<AttributeItem> attributesFromRecord(const TSqlRecord &record) const;
 
         /*! Cast the given key to the primary key type. */
         template<typename T>
@@ -209,47 +209,47 @@ namespace Concerns
 
         /*! Update an existing pivot record on the table via a custom class. */
         int updateExistingPivotUsingCustomClass(
-                const QVariant &id, const QVector<AttributeItem> &attributes,
+                const QVariant &id, const QList<AttributeItem> &attributes,
                 bool touch = true) const;
 
         /*! Attach all of the records that aren't in the given current records. */
         SyncChanges
         attachNew(const std::map<RelatedKeyType,
-                                 QVector<AttributeItem>> &records,
-                  const QVector<QVariant> &current, bool touch = true) const;
+                                 QList<AttributeItem>> &records,
+                  const QList<QVariant> &current, bool touch = true) const;
 
         /*! Convert IDs vector to the map with attributes keyed by IDs. */
-        std::map<RelatedKeyType, QVector<AttributeItem>>
-        recordsFromIds(const QVector<QVariant> &ids) const;
+        std::map<RelatedKeyType, QList<AttributeItem>>
+        recordsFromIds(const QList<QVariant> &ids) const;
         /*! Convert IDs vector to the map with attributes keyed by IDs. */
-        QVector<QVariant>
+        QList<QVariant>
         idsFromRecords(const std::map<RelatedKeyType,
-                                      QVector<AttributeItem>> &idsWithAttributes) const;
+                                      QList<AttributeItem>> &idsWithAttributes) const;
 
         /*! Cast the given pivot attributes. */
-        const QVector<AttributeItem> &
-        castAttributes(const QVector<AttributeItem> &attributes) const
+        const QList<AttributeItem> &
+        castAttributes(const QList<AttributeItem> &attributes) const
         requires OurPivot<PivotType>;
         /*! Cast the given pivot attributes. */
-        QVector<AttributeItem>
-        castAttributes(const QVector<AttributeItem> &attributes) const
+        QList<AttributeItem>
+        castAttributes(const QList<AttributeItem> &attributes) const
         requires CustomPivot<PivotType>;
         /*! Cast the given pivot attributes. */
-//        QVector<AttributeItem>
-//        castAttributes(QVector<AttributeItem> &&attributes) const
+//        QList<AttributeItem>
+//        castAttributes(QList<AttributeItem> &&attributes) const
 //        requires OurPivot<PivotType>;
 
         /*! Detach models from the relationship. */
-        int detach(bool detachAll, const QVector<QVariant> &ids, bool touch) const;
+        int detach(bool detachAll, const QList<QVariant> &ids, bool touch) const;
         /*! Detach models from the relationship using a custom class. */
-        int detachUsingCustomClass(const QVector<QVariant> &ids) const;
+        int detachUsingCustomClass(const QList<QVariant> &ids) const;
 
         /*! Obtain IDs from the Related models. */
-        QVector<QVariant>
-        getRelatedIds(const QVector<std::reference_wrapper<Related>> &models) const;
+        QList<QVariant>
+        getRelatedIds(const QList<std::reference_wrapper<Related>> &models) const;
         /*! Obtain IDs from the vector of pivot models. */
-        QVector<QVariant>
-        getRelatedIds(const QVector<PivotType> &pivots) const;
+        QList<QVariant>
+        getRelatedIds(const QList<PivotType> &pivots) const;
 
     private:
         /*! Throw domain exception, when a user tries to override ID key
@@ -374,7 +374,7 @@ namespace Concerns
     // FEATURE move semantics, for attributes silverqx
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attach(
-            const QVector<QVariant> &ids, const QVector<AttributeItem> &attributes,
+            const QList<QVariant> &ids, const QList<AttributeItem> &attributes,
             const bool touch) const
     {
         // FUTURE add the number of affected/attached models as return value silverqx
@@ -394,33 +394,33 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attach(
-            const QVector<std::reference_wrapper<Related>> &models,
-            const QVector<AttributeItem> &attributes, const bool touch) const
+            const QList<std::reference_wrapper<Related>> &models,
+            const QList<AttributeItem> &attributes, const bool touch) const
     {
         attach(getRelatedIds(models), attributes, touch);
     }
 
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attach(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
+            const QVariant &id, const QList<AttributeItem> &attributes,
             const bool touch) const
     {
-        attach(QVector<QVariant> {id}, attributes, touch);
+        attach(QList<QVariant> {id}, attributes, touch);
     }
 
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attach(
-            const Related &model, const QVector<AttributeItem> &attributes,
+            const Related &model, const QList<AttributeItem> &attributes,
             const bool touch) const
     {
-        attach(QVector<QVariant> {model.getAttribute(getRelatedKeyName_())},
+        attach(QList<QVariant> {model.getAttribute(getRelatedKeyName_())},
                attributes, touch);
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attach(
-            const std::map<RelatedKeyType, QVector<AttributeItem>> &idsWithAttributes,
+            const std::map<RelatedKeyType, QList<AttributeItem>> &idsWithAttributes,
             const bool touch) const
     {
         if constexpr (std::is_same_v<PivotType, Pivot>)
@@ -440,7 +440,7 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     SyncChanges
     InteractsWithPivotTable<Model, Related, PivotType>::sync(
-            const std::map<RelatedKeyType, QVector<AttributeItem>> &idsWithAttributes,
+            const std::map<RelatedKeyType, QList<AttributeItem>> &idsWithAttributes,
             const bool detaching) const
     {
         /*! Cast the primary key to the Related::KeyType, for ranges::sort(). */
@@ -463,7 +463,7 @@ namespace Concerns
         std::ranges::sort(current, {}, castKey);
         auto detach =
                 ranges::views::set_difference(current, ids, {}, castKey, castKey) |
-                ranges::to<QVector<QVariant>>();
+                ranges::to<QList<QVariant>>();
 
         /* Next, we will take the differences of the currents and given IDs and detach
            all of the entities that exist in the "current" vector but are not in the
@@ -492,7 +492,7 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     SyncChanges
     InteractsWithPivotTable<Model, Related, PivotType>::sync(
-            const QVector<QVariant> &ids, const bool detaching) const
+            const QList<QVariant> &ids, const bool detaching) const
     {
         return sync(recordsFromIds(ids), detaching);
     }
@@ -501,7 +501,7 @@ namespace Concerns
     SyncChanges
     InteractsWithPivotTable<Model, Related, PivotType>::syncWithoutDetaching(
             const std::map<RelatedKeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
+                           QList<AttributeItem>> &idsWithAttributes) const
     {
         return sync(idsWithAttributes, false);
     }
@@ -509,21 +509,21 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     SyncChanges
     InteractsWithPivotTable<Model, Related, PivotType>::syncWithoutDetaching(
-            const QVector<QVariant> &ids) const
+            const QList<QVariant> &ids) const
     {
         return sync(ids, false);
     }
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
-            const QVector<QVariant> &ids, const bool touch) const
+            const QList<QVariant> &ids, const bool touch) const
     {
         return detach(false, ids, touch);
     }
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
-            const QVector<std::reference_wrapper<Related>> &models,
+            const QList<std::reference_wrapper<Related>> &models,
             const bool touch) const
     {
         return detach(getRelatedIds(models), touch);
@@ -533,14 +533,14 @@ namespace Concerns
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
             const QVariant &id, const bool touch) const
     {
-        return detach(QVector<QVariant> {id}, touch);
+        return detach(QList<QVariant> {id}, touch);
     }
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
             const Related &model, const bool touch) const
     {
-        return detach(QVector<QVariant> {model.getAttribute(getRelatedKeyName_())},
+        return detach(QList<QVariant> {model.getAttribute(getRelatedKeyName_())},
                       touch);
     }
 
@@ -553,7 +553,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::updateExistingPivot(
-            const QVariant &id, QVector<AttributeItem> attributes,
+            const QVariant &id, QList<AttributeItem> attributes,
             const bool touch) const
     {
         if (!std::is_same_v<PivotType, Pivot>
@@ -587,7 +587,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::updateExistingPivot(
-            const Related &model, const QVector<AttributeItem> &attributes,
+            const Related &model, const QList<AttributeItem> &attributes,
             const bool touch) const
     {
         return updateExistingPivot(model.getAttribute(getRelatedKeyName_()),
@@ -596,14 +596,14 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     PivotType InteractsWithPivotTable<Model, Related, PivotType>::newExistingPivot(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     {
         return newPivot(attributes, true);
     }
 
     template<class Model, class Related, class PivotType>
     PivotType InteractsWithPivotTable<Model, Related, PivotType>::newPivot(
-            const QVector<AttributeItem> &attributes, const bool exists) const
+            const QList<AttributeItem> &attributes, const bool exists) const
     {
         return getRelated_().template newPivot<PivotType, Model>(
                     getParent_(), attributes, getTable_(), exists,
@@ -651,7 +651,7 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     std::shared_ptr<QueryBuilder>
     InteractsWithPivotTable<Model, Related, PivotType>::newPivotStatementForId(
-            const QVector<QVariant> &ids) const
+            const QList<QVariant> &ids) const
     {
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newPivotQuery();
@@ -666,27 +666,27 @@ namespace Concerns
     InteractsWithPivotTable<Model, Related, PivotType>::newPivotStatementForId(
             const QVariant &id) const
     {
-        return newPivotStatementForId(QVector<QVariant> {id});
+        return newPivotStatementForId(QList<QVariant> {id});
     }
 
     /* protected */
 
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attachUsingCustomClass(
-            const QVector<QVariant> &ids,
-            const QVector<AttributeItem> &attributes) const
+            const QList<QVariant> &ids,
+            const QList<AttributeItem> &attributes) const
     {
         for (const auto &record : formatAttachRecords(ids, attributes))
             newPivot(record).save();
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVector<AttributeItem>>
+    QList<QList<AttributeItem>>
     InteractsWithPivotTable<Model, Related, PivotType>::formatAttachRecords(
-            const QVector<QVariant> &ids,
-            const QVector<AttributeItem> &attributes) const
+            const QList<QVariant> &ids,
+            const QList<AttributeItem> &attributes) const
     {
-        QVector<QVector<AttributeItem>> records;
+        QList<QList<AttributeItem>> records;
         records.reserve(ids.size());
 
         const auto hasTimestamps = hasPivotColumn(createdAt_()) ||
@@ -702,9 +702,9 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     InteractsWithPivotTable<Model, Related, PivotType>::formatAttachRecord(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
+            const QVariant &id, const QList<AttributeItem> &attributes,
             const bool hasTimestamps) const
     {
         auto baseAttributes = baseAttachRecord(id, hasTimestamps);
@@ -737,19 +737,19 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     void InteractsWithPivotTable<Model, Related, PivotType>::attachUsingCustomClass(
             const std::map<RelatedKeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
+                           QList<AttributeItem>> &idsWithAttributes) const
     {
         for (const auto &record : formatAttachRecords(idsWithAttributes))
             newPivot(record).save();
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVector<AttributeItem>>
+    QList<QList<AttributeItem>>
     InteractsWithPivotTable<Model, Related, PivotType>::formatAttachRecords(
             const std::map<RelatedKeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
+                           QList<AttributeItem>> &idsWithAttributes) const
     {
-        QVector<QVector<AttributeItem>> records;
+        QList<QList<AttributeItem>> records;
         records.reserve(static_cast<decltype (records)::size_type>(
                             idsWithAttributes.size()));
 
@@ -766,11 +766,11 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     InteractsWithPivotTable<Model, Related, PivotType>::baseAttachRecord(
             const QVariant &id, const bool timed) const
     {
-        QVector<AttributeItem> record;
+        QList<AttributeItem> record;
         // 2 keys and 2 columns for timestamps
         record.reserve(4);
 
@@ -792,9 +792,9 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem> &
+    QList<AttributeItem> &
     InteractsWithPivotTable<Model, Related, PivotType>::addTimestampsToAttachment(
-            QVector<AttributeItem> &record, const bool exists) const
+            QList<AttributeItem> &record, const bool exists) const
     {
         // QDateTime
         QVariant fresh = getParent_().freshTimestamp();
@@ -818,12 +818,12 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<PivotType>
+    QList<PivotType>
     InteractsWithPivotTable<Model, Related, PivotType>::getCurrentlyAttachedPivots() const
     {
         auto query = newPivotQuery()->get();
 
-        QVector<PivotType> pivots;
+        QList<PivotType> pivots;
         pivots.reserve(QueryUtils::queryResultSize(query));
 
         while (query.next())
@@ -858,13 +858,13 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     InteractsWithPivotTable<Model, Related, PivotType>::attributesFromRecord(
             const TSqlRecord &record) const
     {
         const auto recordsCount = record.count();
 
-        QVector<AttributeItem> attributes;
+        QList<AttributeItem> attributes;
         attributes.reserve(recordsCount);
 
         for (int i = 0; i < recordsCount; ++i)
@@ -885,7 +885,7 @@ namespace Concerns
     int
     InteractsWithPivotTable<Model, Related, PivotType>::
     updateExistingPivotUsingCustomClass(
-            const QVariant &id, const QVector<AttributeItem> &attributes,
+            const QVariant &id, const QList<AttributeItem> &attributes,
             const bool touch) const
     {
         auto pivot = getAttachedPivot(id);
@@ -906,8 +906,8 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     SyncChanges
     InteractsWithPivotTable<Model, Related, PivotType>::attachNew(
-            const std::map<RelatedKeyType, QVector<AttributeItem>> &records,
-            const QVector<QVariant> &current, const bool touch) const
+            const std::map<RelatedKeyType, QList<AttributeItem>> &records,
+            const QList<QVariant> &current, const bool touch) const
     {
         SyncChanges changes;
 
@@ -937,11 +937,11 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     std::map<typename InteractsWithPivotTable<Model, Related, PivotType>::RelatedKeyType,
-             QVector<AttributeItem>>
+             QList<AttributeItem>>
     InteractsWithPivotTable<Model, Related, PivotType>::recordsFromIds(
-            const QVector<QVariant> &ids) const
+            const QList<QVariant> &ids) const
     {
-        std::map<RelatedKeyType, QVector<AttributeItem>> records;
+        std::map<RelatedKeyType, QList<AttributeItem>> records;
 
         for (const auto &id : ids)
             records.try_emplace(castKey<RelatedKeyType>(id));
@@ -950,12 +950,12 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVariant>
+    QList<QVariant>
     InteractsWithPivotTable<Model, Related, PivotType>::idsFromRecords(
             const std::map<RelatedKeyType,
-                           QVector<AttributeItem>> &idsWithAttributes) const
+                           QList<AttributeItem>> &idsWithAttributes) const
     {
-        QVector<QVariant> ids;
+        QList<QVariant> ids;
         ids.reserve(static_cast<decltype (ids)::size_type>(idsWithAttributes.size()));
 
         for (const auto &record : idsWithAttributes)
@@ -971,9 +971,9 @@ namespace Concerns
        here is that we don't have the formatAttachRecord() overload that accepts
        the attributes as a rvalue reference. */
     template<class Model, class Related, class PivotType>
-    const QVector<AttributeItem> &
+    const QList<AttributeItem> &
     InteractsWithPivotTable<Model, Related, PivotType>::castAttributes(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     requires OurPivot<PivotType>
     {
         static_assert (std::is_same_v<PivotType, Pivot>,
@@ -985,9 +985,9 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<AttributeItem>
+    QList<AttributeItem>
     InteractsWithPivotTable<Model, Related, PivotType>::castAttributes(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     requires CustomPivot<PivotType>
     {
         static_assert (!std::is_same_v<PivotType, Pivot>,
@@ -1001,9 +1001,9 @@ namespace Concerns
        needed, it will be needed when the pivotWheres/pivotWhereIns/pivotWhereNulls
        will be implemented, so I'm currently disabling this overload. */
 //    template<class Model, class Related, class PivotType>
-//    QVector<AttributeItem>
+//    QList<AttributeItem>
 //    InteractsWithPivotTable<Model, Related, PivotType>::castAttributes(
-//            QVector<AttributeItem> &&attributes) const
+//            QList<AttributeItem> &&attributes) const
 //    requires OurPivot<PivotType>
 //    {
 //        static_assert (std::is_same_v<PivotType, Pivot>,
@@ -1014,7 +1014,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
-            const bool detachAll, const QVector<QVariant> &ids,
+            const bool detachAll, const QList<QVariant> &ids,
             const bool touch) const
     {
         int affected = 0;
@@ -1056,7 +1056,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detachUsingCustomClass(
-            const QVector<QVariant> &ids) const
+            const QList<QVariant> &ids) const
     {
         int affected = 0;
 
@@ -1072,11 +1072,11 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVariant>
+    QList<QVariant>
     InteractsWithPivotTable<Model, Related, PivotType>::getRelatedIds(
-            const QVector<std::reference_wrapper<Related>> &models) const
+            const QList<std::reference_wrapper<Related>> &models) const
     {
-        QVector<QVariant> ids;
+        QList<QVariant> ids;
         ids.reserve(models.size());
 
         for (const auto &model : models)
@@ -1086,11 +1086,11 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<QVariant>
+    QList<QVariant>
     InteractsWithPivotTable<Model, Related, PivotType>::getRelatedIds(
-            const QVector<PivotType> &pivots) const
+            const QList<PivotType> &pivots) const
     {
-        QVector<QVariant> ids;
+        QList<QVariant> ids;
         ids.reserve(pivots.size());
 
         for (const auto &pivot : pivots)

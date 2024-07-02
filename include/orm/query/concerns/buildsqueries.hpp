@@ -41,7 +41,7 @@ namespace Orm::Query::Concerns
                   qint64 count = 1000);
 
         /*! Run a map over each item while chunking. */
-//        QVector<TSqlQuery>
+//        QList<TSqlQuery>
 //        chunkMap(const std::function<void(TSqlQuery &row)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
@@ -57,7 +57,7 @@ namespace Orm::Query::Concerns
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
-        SqlQuery sole(const QVector<Column> &columns = {ASTERISK});
+        SqlQuery sole(const QList<Column> &columns = {ASTERISK});
 
         /*! Pass the query to a given callback. */
         Builder &tap(const std::function<void(Builder &query)> &callback);

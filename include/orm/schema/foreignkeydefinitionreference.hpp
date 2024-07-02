@@ -26,7 +26,7 @@ namespace Orm::SchemaNs
         ForeignKeyDefinitionReference(ForeignKeyCommand &foreignKeyCommandDefinition); // NOLINT(google-explicit-constructor)
 
         /*! Specify the referenced columns. */
-        ForeignKeyDefinitionReference &references(const QVector<QString> &columns);
+        ForeignKeyDefinitionReference &references(const QList<QString> &columns);
         /*! Specify the referenced column. */
         template<typename = void>
         ForeignKeyDefinitionReference &references(const QString &column);
@@ -70,7 +70,7 @@ namespace Orm::SchemaNs
     ForeignKeyDefinitionReference &
     ForeignKeyDefinitionReference::references(const QString &column)
     {
-        return references(QVector<QString> {column});
+        return references(QList<QString> {column});
     }
 
 } // namespace Orm::SchemaNs

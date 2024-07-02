@@ -23,17 +23,17 @@ namespace Orm::Exceptions
     public:
         /*! const char * constructor. */
         QueryError(QString connectionName, const char *message, const QSqlQuery &query,
-                   const QVector<QVariant> &bindings = {});
+                   const QList<QVariant> &bindings = {});
         /*! QString constructor. */
         QueryError(QString connectionName, const QString &message, const QSqlQuery &query,
-                   const QVector<QVariant> &bindings = {});
+                   const QList<QVariant> &bindings = {});
 
         /*! Get the connection name for the query. */
         inline const QString &getConnectionName() const noexcept;
         /*! Get the SQL for the query. */
         inline const QString &getSql() const noexcept;
         /*! Get the bindings for the query. */
-        inline const QVector<QVariant> &getBindings() const noexcept;
+        inline const QList<QVariant> &getBindings() const noexcept;
 
     protected:
         /*! Format the Qt SQL error message. */
@@ -45,7 +45,7 @@ namespace Orm::Exceptions
         /*! The SQL for the query. */
         QString m_sql;
         /*! The bindings for the query. */
-        QVector<QVariant> m_bindings;
+        QList<QVariant> m_bindings;
     };
 
     /* public */
@@ -60,7 +60,7 @@ namespace Orm::Exceptions
         return m_sql;
     }
 
-    const QVector<QVariant> &QueryError::getBindings() const noexcept
+    const QList<QVariant> &QueryError::getBindings() const noexcept
     {
         return m_bindings;
     }

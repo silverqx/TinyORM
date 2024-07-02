@@ -16,7 +16,7 @@ namespace Orm::Support
 
     /*! Concept for a bindings type used in the replaceBindingsInSql(). */
     template<typename T>
-    concept BindingsConcept = std::convertible_to<T, QVector<QVariant>> ||
+    concept BindingsConcept = std::convertible_to<T, QList<QVariant>> ||
                               std::convertible_to<T, QVariantList>;
 
     /*! Library class for replace placeholders in SQL queries. */

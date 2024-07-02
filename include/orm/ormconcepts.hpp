@@ -76,11 +76,11 @@ namespace Query
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 
-    /*! QString/Column container concept (QStringList or QVector<QString>). */
+    /*! QString/Column container concept (QStringList or QList<QString>). */
     template<typename T>
     concept ColumnContainer = std::convertible_to<T, QStringList> ||
-                              std::convertible_to<T, QVector<QString>> ||
-                              std::convertible_to<T, QVector<Column>>;
+                              std::convertible_to<T, QList<QString>> ||
+                              std::convertible_to<T, QList<Column>>;
 
     /*! QString container concept (used by ContainerUtils::join()). */
     template<typename T>
@@ -88,7 +88,7 @@ namespace Query
                             std::convertible_to<T, std::set<QString>> ||
                             std::convertible_to<T, std::deque<QString>> ||
                             std::convertible_to<T, std::vector<QString>> ||
-                            std::convertible_to<T, QVector<QStringView>> ||
+                            std::convertible_to<T, QList<QStringView>> ||
                             std::convertible_to<T, QSet<QString>>;
 
     /*! Concept for delimiter for joining containers. */
@@ -100,7 +100,7 @@ namespace Query
     template<typename T>
     concept QStringContainer = requires { typename T::value_type::size_type; } &&
                                JoinContainer<T> &&
-                               !std::convertible_to<T, QVector<Column>>;
+                               !std::convertible_to<T, QList<Column>>;
 
 } // namespace Orm
 

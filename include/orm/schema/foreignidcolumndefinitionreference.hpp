@@ -50,7 +50,7 @@ namespace Orm::SchemaNs
                     const QString &column = Orm::Constants::ID);
 
         /*! Specify the referenced columns. */
-        ForeignKeyDefinitionReference references(const QVector<QString> &columns);
+        ForeignKeyDefinitionReference references(const QList<QString> &columns);
         /*! Specify the referenced column. */
         template<typename = void>
         ForeignKeyDefinitionReference references(const QString &column);
@@ -67,7 +67,7 @@ namespace Orm::SchemaNs
     ForeignKeyDefinitionReference
     ForeignIdColumnDefinitionReference::references(const QString &column)
     {
-        return references(QVector<QString> {column});
+        return references(QList<QString> {column});
     }
 
 } // namespace Orm::SchemaNs

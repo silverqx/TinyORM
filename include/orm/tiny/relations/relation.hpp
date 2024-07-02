@@ -107,7 +107,7 @@ namespace Relations
         inline ModelsCollection<Related> getEager() const;
         /*! Execute the query as a "select" statement. */
         inline virtual ModelsCollection<Related>
-        get(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
+        get(const QList<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
 
         /* Getters / Setters */
         /*! Get the underlying query for the relation. */
@@ -141,7 +141,7 @@ namespace Relations
         /* Others */
         /*! Run a raw update against the base query. */
         inline std::tuple<int, TSqlQuery>
-        rawUpdate(const QVector<UpdateItem> &values = {}) const;
+        rawUpdate(const QList<UpdateItem> &values = {}) const;
 
         /*! The textual representation of the Relation type. */
         virtual const QString &relationTypeName() const = 0;
@@ -152,11 +152,11 @@ namespace Relations
         inline void init() const;
 
         /*! Add a whereIn eager constraint for a given set of model keys to be loaded. */
-        void whereInEager(const QString &key, const QVector<QVariant> &modelKeys);
+        void whereInEager(const QString &key, const QList<QVariant> &modelKeys);
 
         /*! Get all of the primary keys for the vector of models. */
         template<SameDerivedCollectionModel<Model> CollectionModel>
-        QVector<QVariant>
+        QList<QVariant>
         getKeys(const ModelsCollection<CollectionModel> &models,
                 const QString &key = "") const;
 
@@ -176,7 +176,7 @@ namespace Relations
         getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
-                const QVector<Column> &columns = {ASTERISK}) const;
+                const QList<Column> &columns = {ASTERISK}) const;
         /*! Add the constraints for a relationship count query. */
         std::unique_ptr<Builder<Related>>
         getRelationExistenceCountQuery(
@@ -251,7 +251,7 @@ namespace Relations
 
     template<class Model, class Related>
     ModelsCollection<Related>
-    Relation<Model, Related>::get(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
+    Relation<Model, Related>::get(const QList<Column> &columns) const // NOLINT(google-default-arguments)
     {
         return m_query->get(columns);
     }
@@ -346,7 +346,7 @@ namespace Relations
 
     template<class Model, class Related>
     std::tuple<int, TSqlQuery>
-    Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
+    Relation<Model, Related>::rawUpdate(const QList<UpdateItem> &values) const
     {
         // FEATURE scopes silverqx
         return m_query->update(values);
@@ -364,7 +364,7 @@ namespace Relations
 
     template<class Model, class Related>
     void Relation<Model, Related>::whereInEager(const QString &key,
-                                                const QVector<QVariant> &modelKeys)
+                                                const QList<QVariant> &modelKeys)
     {
         getBaseQuery().whereIn(key, modelKeys);
 
@@ -375,11 +375,11 @@ namespace Relations
 
     template<class Model, class Related>
     template<SameDerivedCollectionModel<Model> CollectionModel>
-    QVector<QVariant>
+    QList<QVariant>
     Relation<Model, Related>::getKeys(const ModelsCollection<CollectionModel> &models,
                                       const QString &key) const
     {
-        QVector<QVariant> keys;
+        QList<QVariant> keys;
         keys.reserve(models.size());
 
         /*! Const Model type used in the for-ranged loops. */
@@ -437,7 +437,7 @@ namespace Relations
     std::unique_ptr<Builder<Related>>
     Relation<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query, const Builder<Model> &/*unused*/,
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         query->select(columns).whereColumnEq(getQualifiedParentKeyName(),
                                              getExistenceCompareKey());

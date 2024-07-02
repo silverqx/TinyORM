@@ -57,20 +57,20 @@ namespace Orm::Tiny::Relations
         /*! Find a model by its primary key or return a new instance of the related
             model. */
         Related findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
-                          const QVector<Column> &columns = {ASTERISK}) const override;
+                          const QList<Column> &columns = {ASTERISK}) const override;
 
         /*! Get the first related model record matching the attributes or instantiate
             it. */
-        Related firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
-                           const QVector<AttributeItem> &values = {}) const override;
+        Related firstOrNew(const QList<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
+                           const QList<AttributeItem> &values = {}) const override;
         /*! Get the first related record matching the attributes or create it. */
-        Related firstOrCreate(const QVector<WhereItem> &attributes = {},
-                              const QVector<AttributeItem> &values = {}) const;
+        Related firstOrCreate(const QList<WhereItem> &attributes = {},
+                              const QList<AttributeItem> &values = {}) const;
 
         /*! Create or update a related record matching the attributes, and fill it
             with values. */
-        Related updateOrCreate(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values = {}) const;
+        Related updateOrCreate(const QList<WhereItem> &attributes,
+                               const QList<AttributeItem> &values = {}) const;
 
         /* Inserting operations on the relationship */
         /*! Attach a model instance to the parent model. */
@@ -83,15 +83,15 @@ namespace Orm::Tiny::Relations
         ModelsCollection<Related> saveMany(ModelsCollection<Related> &&models) const;
 
         /*! Create a new instance of the related model. */
-        Related create(const QVector<AttributeItem> &attributes = {}) const;
+        Related create(const QList<AttributeItem> &attributes = {}) const;
         /*! Create a new instance of the related model. */
-        Related create(QVector<AttributeItem> &&attributes = {}) const;
+        Related create(QList<AttributeItem> &&attributes = {}) const;
         /*! Create a vector of new instances of the related model. */
         ModelsCollection<Related>
-        createMany(const QVector<QVector<AttributeItem>> &records) const;
+        createMany(const QList<QList<AttributeItem>> &records) const;
         /*! Create a vector of new instances of the related model. */
         ModelsCollection<Related>
-        createMany(QVector<QVector<AttributeItem>> &&records) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        createMany(QList<QList<AttributeItem>> &&records) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
     protected:
         /* Relation related operations */
@@ -122,7 +122,7 @@ namespace Orm::Tiny::Relations
         getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
-                const QVector<Column> &columns = {ASTERISK}) const override;
+                const QList<Column> &columns = {ASTERISK}) const override;
 
         /* Much safer to make a copy here than save references, original objects get
            out of scope, because they are defined in member function blocks. */
@@ -209,7 +209,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
-                                                    const QVector<Column> &columns) const
+                                                    const QList<Column> &columns) const
     {
         // Found
         if (auto instance = this->find(id, columns); instance)
@@ -224,8 +224,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::firstOrNew( // NOLINT(google-default-arguments)
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         // Model found in db
         if (auto instance = this->where(attributes).first(); instance)
@@ -243,8 +243,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::firstOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         auto instance = this->where(attributes).first();
 
@@ -258,8 +258,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::updateOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         auto instance = firstOrNew(attributes);
 
@@ -312,7 +312,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::create(
-            const QVector<AttributeItem> &attributes) const
+            const QList<AttributeItem> &attributes) const
     {
         auto instance = this->m_related->newInstance(attributes);
 
@@ -325,7 +325,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     Related HasOneOrMany<Model, Related>::create(
-            QVector<AttributeItem> &&attributes) const
+            QList<AttributeItem> &&attributes) const
     {
         auto instance = this->m_related->newInstance(std::move(attributes));
 
@@ -339,7 +339,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     ModelsCollection<Related>
     HasOneOrMany<Model, Related>::createMany(
-            const QVector<QVector<AttributeItem>> &records) const
+            const QList<QList<AttributeItem>> &records) const
     {
         ModelsCollection<Related> instances;
         instances.reserve(records.size());
@@ -353,7 +353,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     ModelsCollection<Related>
     HasOneOrMany<Model, Related>::createMany(
-            QVector<QVector<AttributeItem>> &&records) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+            QList<QList<AttributeItem>> &&records) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         ModelsCollection<Related> instances;
         instances.reserve(records.size());
@@ -458,7 +458,7 @@ namespace Orm::Tiny::Relations
     HasOneOrMany<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &parentQuery,
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         // CUR1 finish self query silverqx
 //        if (query->getQuery()->from == parentQuery.getQuery()->from)

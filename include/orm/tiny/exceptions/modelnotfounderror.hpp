@@ -19,29 +19,29 @@ namespace Orm::Tiny::Exceptions
     {
     public:
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-        // TODO perf add overload ctor for QVector<quint64>, better QVector<Model::KeyType> silverqx
+        // TODO perf add overload ctor for QList<quint64>, better QList<Model::KeyType> silverqx
         /*! const char * constructor. */
         explicit ModelNotFoundError(const char *model,
-                                    const QVector<QVariant> &ids = {});
+                                    const QList<QVariant> &ids = {});
         /*! QString constructor. */
         explicit ModelNotFoundError(const QString &model,
-                                    const QVector<QVariant> &ids = {});
+                                    const QList<QVariant> &ids = {});
 
         /*! Get the affected TinyORM model. */
         inline const QString &getModel() const noexcept;
         /*! Get the affected TinyORM model IDs. */
-        inline const QVector<QVariant> &getIds() const noexcept;
+        inline const QList<QVariant> &getIds() const noexcept;
 
     protected:
         /*! Name of the affected TinyORM model. */
         QString m_model;
         /*! The affected model IDs. */
-        QVector<QVariant> m_ids;
+        QList<QVariant> m_ids;
 
     private:
         /*! Format the error message. */
         static QString formatMessage(const char *model,
-                                     const QVector<QVariant> &ids = {});
+                                     const QList<QVariant> &ids = {});
     };
 
     /* public */
@@ -52,7 +52,7 @@ namespace Orm::Tiny::Exceptions
         return m_model;
     }
 
-    const QVector<QVariant> &
+    const QList<QVariant> &
     ModelNotFoundError::getIds() const noexcept
     {
         return m_ids;

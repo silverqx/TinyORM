@@ -39,7 +39,7 @@ namespace Types
     public:
         /* Container related */
         using key_type               = QString;
-        using mapped_type            = QVector<QVariant>;
+        using mapped_type            = QList<QVariant>;
         using value_type             = typename std::pair<const key_type, mapped_type>;
         using reference              = value_type &;
         using const_reference        = const value_type &;
@@ -80,19 +80,19 @@ namespace Types
 
         /* Getters */
         /*! Vector of attached models IDs. */
-        inline QVector<QVariant> &attached();
+        inline QList<QVariant> &attached();
         /*! Vector of attached models IDs, const version. */
-        inline const QVector<QVariant> &attached() const;
+        inline const QList<QVariant> &attached() const;
         /*! Vector of detached models IDs. */
-        inline QVector<QVariant> &detached();
+        inline QList<QVariant> &detached();
         /*! Vector of detached models IDs, const version. */
-        inline const QVector<QVariant> &detached() const;
+        inline const QList<QVariant> &detached() const;
         /*! Vector of model IDs for which pivot records were updated in the pivot
             table. */
-        inline QVector<QVariant> &updated();
+        inline QList<QVariant> &updated();
         /*! Vector of model IDs for which pivot records were updated in the pivot table,
             const version. */
-        inline const QVector<QVariant> &updated() const;
+        inline const QList<QVariant> &updated() const;
 
         /* std::map proxy methods */
         /*! Returns an iterator to the beginning. */
@@ -209,7 +209,7 @@ namespace Types
             std::ranges::sort(values, {}, castKey);
 
             // Then merge two vectors
-            QVector<QVariant> merged;
+            QList<QVariant> merged;
             merged.reserve(currentValuesCopy.size() + values.size());
 
             std::ranges::merge(currentValuesCopy, values, std::back_inserter(merged),
@@ -238,32 +238,32 @@ namespace Types
 
     /* Getters */
 
-    QVector<QVariant> &SyncChanges::attached()
+    QList<QVariant> &SyncChanges::attached()
     {
         return m_data.at(Constants::Attached);
     }
 
-    const QVector<QVariant> &SyncChanges::attached() const
+    const QList<QVariant> &SyncChanges::attached() const
     {
         return m_data.at(Constants::Attached);
     }
 
-    QVector<QVariant> &SyncChanges::detached()
+    QList<QVariant> &SyncChanges::detached()
     {
         return m_data.at(Constants::Detached);
     }
 
-    const QVector<QVariant> &SyncChanges::detached() const
+    const QList<QVariant> &SyncChanges::detached() const
     {
         return m_data.at(Constants::Detached);
     }
 
-    QVector<QVariant> &SyncChanges::updated()
+    QList<QVariant> &SyncChanges::updated()
     {
         return m_data.at(Constants::Updated_);
     }
 
-    const QVector<QVariant> &SyncChanges::updated() const
+    const QList<QVariant> &SyncChanges::updated() const
     {
         return m_data.at(Constants::Updated_);
     }

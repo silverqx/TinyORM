@@ -70,7 +70,7 @@ namespace Tom
         /*! Section item name. */
         QString name;
         /*! Subsection items list. */
-        QVector<SubSectionItem> subSections;
+        QList<SubSectionItem> subSections;
     };
 
 } // namespace Tom

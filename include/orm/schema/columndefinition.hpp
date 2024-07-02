@@ -42,7 +42,7 @@ namespace Orm::SchemaNs
         QString name;
 
         /*! Columns to drop. */
-        QVector<Column> columns;
+        QList<Column> columns;
     };
 
     /*! Rename table, column or index command. */
@@ -68,7 +68,7 @@ namespace Orm::SchemaNs
         /*! Index name. */
         QString index;
         /*! Columns for which to create an index. */
-        QVector<Column> columns;
+        QList<Column> columns;
         /*! Algorithm to use during index creation. */
         QString algorithm {}; // NOLINT(readability-redundant-member-init)
         /*! Dictionary for the to_tsvector function for fulltext search (PostgreSQL). */
@@ -85,10 +85,10 @@ namespace Orm::SchemaNs
         /*! Index name for the foreign key. */
         QString index;
         /*! Columns for which to create the foreign key. */
-        QVector<Column> columns;
+        QList<Column> columns;
 
         /*! Specifies the referenced columns. */
-        QVector<QString> references {}; // NOLINT(readability-redundant-member-init)
+        QList<QString> references {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies the referenced table. */
         QString on {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies ON DELETE action (cascade/restrict/set null/no action/
@@ -158,7 +158,7 @@ namespace Orm::SchemaNs
 
         /* Column type specific */
         /*! Allowed index values for Enumaration Literals (enum/set). */
-        QVector<QString> allowed {}; // NOLINT(readability-redundant-member-init)
+        QList<QString> allowed {}; // NOLINT(readability-redundant-member-init)
         /*! Value for a generated, computed column type (SQL Server). */
         QString expression {}; // NOLINT(readability-redundant-member-init)
         /*! Length of the char or varchar column. */

@@ -49,16 +49,16 @@ namespace Grammars
         QString compileDropDatabaseIfExists(const QString &name) const override;
 
         /*! Compile the SQL needed to drop all tables. */
-        QString compileDropAllTables(const QVector<QString> &tables) const override;
+        QString compileDropAllTables(const QList<QString> &tables) const override;
         /*! Compile the SQL needed to drop all views. */
-        QString compileDropAllViews(const QVector<QString> &views) const override;
+        QString compileDropAllViews(const QList<QString> &views) const override;
 
         /*! Compile the SQL needed to retrieve all table names. */
         QString compileGetAllTables( // NOLINT(google-default-arguments)
-                    const QVector<QString> &databases = {}) const override;
+                    const QList<QString> &databases = {}) const override;
         /*! Compile the SQL needed to retrieve all view names. */
         QString compileGetAllViews( // NOLINT(google-default-arguments)
-                    const QVector<QString> &databases = {}) const override;
+                    const QList<QString> &databases = {}) const override;
 
         /*! Compile the command to enable foreign key constraints. */
         QString compileEnableForeignKeyConstraints() const override;
@@ -72,83 +72,83 @@ namespace Grammars
 
         /* Compile methods for commands */
         /*! Compile a create table command. */
-        QVector<QString> compileCreate(const Blueprint &blueprint) const;
+        QList<QString> compileCreate(const Blueprint &blueprint) const;
 
         /*! Compile a rename table command. */
-        QVector<QString> compileRename(const Blueprint &blueprint,
-                                       const RenameCommand &command) const;
+        QList<QString> compileRename(const Blueprint &blueprint,
+                                     const RenameCommand &command) const;
 
         /*! Compile an add column command. */
-        QVector<QString> compileAdd(const Blueprint &blueprint,
-                                    const BasicCommand &command) const;
+        QList<QString> compileAdd(const Blueprint &blueprint,
+                                  const BasicCommand &command) const;
         /*! Compile a change column command. */
-        QVector<QString> compileChange(const Blueprint &blueprint,
-                                       const BasicCommand &command) const;
+        QList<QString> compileChange(const Blueprint &blueprint,
+                                     const BasicCommand &command) const;
         /*! Compile a drop column command. */
-        QVector<QString> compileDropColumn(const Blueprint &blueprint,
-                                           const DropColumnsCommand &command) const;
+        QList<QString> compileDropColumn(const Blueprint &blueprint,
+                                         const DropColumnsCommand &command) const;
         /*! Compile a rename column command. */
-        QVector<QString> compileRenameColumn(const Blueprint &blueprint,
-                                             const RenameCommand &command) const;
+        QList<QString> compileRenameColumn(const Blueprint &blueprint,
+                                           const RenameCommand &command) const;
 
         /*! Compile a primary key command. */
-        QVector<QString> compilePrimary(const Blueprint &blueprint,
-                                        const IndexCommand &command) const;
-        /*! Compile a unique key command. */
-        QVector<QString> compileUnique(const Blueprint &blueprint,
-                                       const IndexCommand &command) const;
-        /*! Compile a plain index key command. */
-        QVector<QString> compileIndex(const Blueprint &blueprint,
+        QList<QString> compilePrimary(const Blueprint &blueprint,
                                       const IndexCommand &command) const;
+        /*! Compile a unique key command. */
+        QList<QString> compileUnique(const Blueprint &blueprint,
+                                     const IndexCommand &command) const;
+        /*! Compile a plain index key command. */
+        QList<QString> compileIndex(const Blueprint &blueprint,
+                                    const IndexCommand &command) const;
         /*! Compile a fulltext index key command. */
-        QVector<QString> compileFullText(const Blueprint &blueprint,
-                                         const IndexCommand &command) const override;
+        QList<QString> compileFullText(const Blueprint &blueprint,
+                                       const IndexCommand &command) const override;
         /*! Compile a spatial index key command. */
-        QVector<QString> compileSpatialIndex(const Blueprint &blueprint,
-                                             const IndexCommand &command) const;
+        QList<QString> compileSpatialIndex(const Blueprint &blueprint,
+                                           const IndexCommand &command) const;
 
         /*! Compile a foreign key command. */
-        QVector<QString>
+        QList<QString>
         compileForeign(const Blueprint &blueprint,
                        const ForeignKeyCommand &command) const override;
 
         /*! Compile a drop primary key command. */
-        QVector<QString> compileDropPrimary(const Blueprint &blueprint,
-                                            const IndexCommand &command) const;
-        /*! Compile a drop unique key command. */
-        inline QVector<QString> compileDropUnique(const Blueprint &blueprint,
-                                                  const IndexCommand &command) const;
-        /*! Compile a drop index command. */
-        QVector<QString> compileDropIndex(const Blueprint &blueprint,
+        QList<QString> compileDropPrimary(const Blueprint &blueprint,
                                           const IndexCommand &command) const;
+        /*! Compile a drop unique key command. */
+        inline QList<QString> compileDropUnique(const Blueprint &blueprint,
+                                                const IndexCommand &command) const;
+        /*! Compile a drop index command. */
+        QList<QString> compileDropIndex(const Blueprint &blueprint,
+                                        const IndexCommand &command) const;
         /*! Compile a drop fulltext index command. */
-        inline QVector<QString>
+        inline QList<QString>
         compileDropFullText(const Blueprint &blueprint,
                             const IndexCommand &command) const override;
         /*! Compile a drop spatial index command. */
-        inline QVector<QString>
+        inline QList<QString>
         compileDropSpatialIndex(const Blueprint &blueprint,
                                 const IndexCommand &command) const;
 
         /*! Compile a drop foreign key command. */
-        inline QVector<QString> compileDropForeign(const Blueprint &blueprint,
-                                                   const IndexCommand &command) const;
+        inline QList<QString> compileDropForeign(const Blueprint &blueprint,
+                                                 const IndexCommand &command) const;
 
         /*! Compile a rename index command. */
-        QVector<QString> compileRenameIndex(const Blueprint &blueprint,
-                                            const RenameCommand &command) const;
+        QList<QString> compileRenameIndex(const Blueprint &blueprint,
+                                          const RenameCommand &command) const;
 
         /*! Compile a comment command. */
-        QVector<QString> compileComment(const Blueprint &blueprint,
-                                        const CommentCommand &command) const;
+        QList<QString> compileComment(const Blueprint &blueprint,
+                                      const CommentCommand &command) const;
 
         /*! Compile a table comment command. */
-        QVector<QString>
+        QList<QString>
         compileTableComment(const Blueprint &blueprint,
                             const TableCommentCommand &command) const override;
 
         /*! Run command's compile method and return SQL queries. */
-        QVector<QString>
+        QList<QString>
         invokeCompileMethod(const CommandDefinition &command,
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const override;
@@ -161,17 +161,17 @@ namespace Grammars
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
         /*! Add the column modifiers to the definition for "alter column" (change()). */
-        QVector<QString> getModifiersForChange(const ColumnDefinition &column) const;
+        QList<QString> getModifiersForChange(const ColumnDefinition &column) const;
 
         /*! Compile the auto-incrementing column starting value. */
-        QVector<QString>
+        QList<QString>
         compileAutoIncrementStartingValue(
                 const Blueprint &blueprint,
                 const AutoIncrementStartingValueCommand &command) const;
 
         /*! Compile a drop unique key command. */
-        QVector<QString> compileDropConstraint(const Blueprint &blueprint,
-                                               const IndexCommand &command) const;
+        QList<QString> compileDropConstraint(const Blueprint &blueprint,
+                                             const IndexCommand &command) const;
 
         /*! Escape special characters (used by the defaultValue and comment). */
         QString escapeString(QString value) const override;
@@ -271,19 +271,19 @@ namespace Grammars
         QString typeMultiPolygonZ(const ColumnDefinition &column) const;
 
         /*! Get the SQL for a collation column modifier. */
-        QVector<QString> modifyCollate(const ColumnDefinition &column) const;
+        QList<QString> modifyCollate(const ColumnDefinition &column) const;
         /*! Get the SQL for an auto-increment column modifier. */
-        QVector<QString> modifyIncrement(const ColumnDefinition &column) const;
+        QList<QString> modifyIncrement(const ColumnDefinition &column) const;
         /*! Get the SQL for a nullable column modifier. */
-        QVector<QString> modifyNullable(const ColumnDefinition &column) const;
+        QList<QString> modifyNullable(const ColumnDefinition &column) const;
         /*! Get the SQL for a default column modifier. */
-        QVector<QString> modifyDefault(const ColumnDefinition &column) const;
+        QList<QString> modifyDefault(const ColumnDefinition &column) const;
         /*! Get the SQL for a generated virtual column modifier. */
-        QVector<QString> modifyVirtualAs(const ColumnDefinition &column) const;
+        QList<QString> modifyVirtualAs(const ColumnDefinition &column) const;
         /*! Get the SQL for a generated stored column modifier. */
-        QVector<QString> modifyStoredAs(const ColumnDefinition &column) const;
+        QList<QString> modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for an identity column modifier. */
-        QVector<QString> modifyGeneratedAs(const ColumnDefinition &column) const;
+        QList<QString> modifyGeneratedAs(const ColumnDefinition &column) const;
 
     private:
         /*! Throw if modifying a generated column using the change() method. */
@@ -330,28 +330,28 @@ namespace Grammars
 
     /* Compile methods for commands */
 
-    QVector<QString>
+    QList<QString>
     PostgresSchemaGrammar::compileDropUnique(const Blueprint &blueprint,
                                              const IndexCommand &command) const
     {
         return compileDropConstraint(blueprint, command);
     }
 
-    QVector<QString>
+    QList<QString>
     PostgresSchemaGrammar::compileDropFullText(
                 const Blueprint &blueprint, const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
-    QVector<QString>
+    QList<QString>
     PostgresSchemaGrammar::compileDropSpatialIndex(
                 const Blueprint &blueprint, const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
-    QVector<QString>
+    QList<QString>
     PostgresSchemaGrammar::compileDropForeign(
                 const Blueprint &blueprint, const IndexCommand &command) const
     {

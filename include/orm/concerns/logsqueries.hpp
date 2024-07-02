@@ -45,7 +45,7 @@ namespace Concerns
                              std::optional<qint64> elapsed, const QString &type) const;
         /*! Log a query into the connection's query log in the pretending mode. */
         void logQueryForPretend(const QString &query,
-                                const QVector<QVariant> &preparedBindings,
+                                const QList<QVariant> &preparedBindings,
                                 const QString &type) const;
         /*! Log a transaction query into the connection's query log. */
         void logTransactionQuery(const QString &query,
@@ -55,7 +55,7 @@ namespace Concerns
         void logTransactionQueryForPretend(const QString &query) const;
 
         /*! Get the connection query log. */
-        inline std::shared_ptr<QVector<Log>> getQueryLog() const noexcept;
+        inline std::shared_ptr<QList<Log>> getQueryLog() const noexcept;
         /*! Clear the query log. */
         void flushQueryLog();
         /*! Enable the query log on the connection. */
@@ -77,13 +77,13 @@ namespace Concerns
 
     protected:
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        withFreshQueryLog(const std::function<QVector<Log>()> &callback);
+        QList<Log>
+        withFreshQueryLog(const std::function<QList<Log>()> &callback);
 
         /*! Indicates if changes have been made to the database. */
         bool m_recordsModified = false;
         /*! All of the queries run against the connection. */
-        std::shared_ptr<QVector<Log>> m_queryLog = nullptr;
+        std::shared_ptr<QList<Log>> m_queryLog = nullptr;
         /*! ID of the query log record. */
         inline static std::atomic<std::size_t> m_queryLogId = 0;
 
@@ -106,7 +106,7 @@ namespace Concerns
         /*! Indicates whether queries are being logged (private intentionally). */
         bool m_loggingQueries = false;
         /*! All of the queries run against the connection. */
-        std::shared_ptr<QVector<Log>> m_queryLogForPretend = nullptr;
+        std::shared_ptr<QList<Log>> m_queryLogForPretend = nullptr;
     };
 
     /* public */
@@ -127,7 +127,7 @@ namespace Concerns
         logQueryInternal(std::get<1>(queryResult), elapsed, type);
     }
 
-    std::shared_ptr<QVector<Log>> LogsQueries::getQueryLog() const noexcept
+    std::shared_ptr<QList<Log>> LogsQueries::getQueryLog() const noexcept
     {
         return m_queryLog;
     }

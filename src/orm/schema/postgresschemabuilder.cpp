@@ -39,7 +39,7 @@ void PostgresSchemaBuilder::dropAllTables() const
     if (querySize <= 0)
         return;
 
-    QVector<QString> tables;
+    QList<QString> tables;
     tables.reserve(querySize);
 
     while (query.next())
@@ -66,7 +66,7 @@ void PostgresSchemaBuilder::dropAllViews() const
     if (querySize <= 0)
         return;
 
-    QVector<QString> views;
+    QList<QString> views;
     views.reserve(querySize);
 
     while (query.next())
@@ -89,7 +89,7 @@ SqlQuery PostgresSchemaBuilder::getAllTables() const
     auto searchPathList = searchPath();
 
     // Move to the vector (toVector() uses copy)
-    QVector<QString> searchPath;
+    QList<QString> searchPath;
     searchPath.reserve(searchPathList.size());
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
@@ -103,7 +103,7 @@ SqlQuery PostgresSchemaBuilder::getAllViews() const
     auto searchPathList = searchPath();
 
     // Move to the vector (toVector() uses copy)
-    QVector<QString> searchPath;
+    QList<QString> searchPath;
     searchPath.reserve(searchPathList.size());
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
 

@@ -18,7 +18,7 @@ namespace Orm::Exceptions
 /* public */
 
 QueryError::QueryError(QString connectionName, const char *message,
-                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+                       const QSqlQuery &query, const QList<QVariant> &bindings)
     : SqlError(formatMessage(connectionName, message, query), query.lastError(), 1)
     , m_connectionName(std::move(connectionName))
     , m_sql(query.executedQuery())
@@ -26,7 +26,7 @@ QueryError::QueryError(QString connectionName, const char *message,
 {}
 
 QueryError::QueryError(QString connectionName, const QString &message,
-                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+                       const QSqlQuery &query, const QList<QVariant> &bindings)
     : QueryError(std::move(connectionName), message.toUtf8().constData(), query, bindings)
 {}
 

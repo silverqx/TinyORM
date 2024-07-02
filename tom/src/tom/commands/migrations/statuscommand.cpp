@@ -98,7 +98,7 @@ int StatusCommand::run()
 /* protected */
 
 std::vector<StatusCommand::TableRow>
-StatusCommand::getStatusFor(const QVector<QVariant> &ran,
+StatusCommand::getStatusFor(const QList<QVariant> &ran,
                             const std::map<QString, QVariant> &batches) const
 {
     return m_migrator->migrationNames()

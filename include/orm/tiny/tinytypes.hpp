@@ -86,10 +86,10 @@ namespace Types
         QString name;
         std::function<void(QueryBuilder &)> constraints = nullptr;
 
-        /*! Create the QVector<WithItem> from the QVector<QString>. */
-        static QVector<WithItem> fromStringVector(const QVector<QString> &relations);
-        /*! Create the QVector<WithItem> from the QVector<QString>. */
-        static QVector<WithItem> fromStringVector(QVector<QString> &&relations);
+        /*! Create the QList<WithItem> from the QList<QString>. */
+        static QList<WithItem> fromStringVector(const QList<QString> &relations);
+        /*! Create the QList<WithItem> from the QList<QString>. */
+        static QList<WithItem> fromStringVector(QList<QString> &&relations);
     };
 
     /*! Equality comparison operator for the WithItem. */

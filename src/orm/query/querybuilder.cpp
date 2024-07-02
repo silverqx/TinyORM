@@ -31,7 +31,7 @@ Builder::Builder(std::shared_ptr<DatabaseConnection> connection,
 
 /* Retrieving results */
 
-SqlQuery Builder::get(const QVector<Column> &columns)
+SqlQuery Builder::get(const QList<Column> &columns)
 {
     return onceWithColumns(columns, [this]
     {
@@ -39,12 +39,12 @@ SqlQuery Builder::get(const QVector<Column> &columns)
     });
 }
 
-SqlQuery Builder::find(const QVariant &id, const QVector<Column> &columns)
+SqlQuery Builder::find(const QVariant &id, const QList<Column> &columns)
 {
     return where(ID, EQ, id).first(columns);
 }
 
-SqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
+SqlQuery Builder::findOr(const QVariant &id, const QList<Column> &columns,
                          const std::function<void()> &callback)
 {
     auto query = find(id, columns);
@@ -61,7 +61,7 @@ SqlQuery Builder::findOr(const QVariant &id, const QVector<Column> &columns,
     return query;
 }
 
-SqlQuery Builder::first(const QVector<Column> &columns)
+SqlQuery Builder::first(const QList<Column> &columns)
 {
     auto query = take(1).get(columns);
 
@@ -109,7 +109,7 @@ QVariant Builder::soleValue(const Column &column)
     return query.value(column_);
 }
 
-QVector<QVariant> Builder::pluck(const Column &column)
+QList<QVariant> Builder::pluck(const Column &column)
 {
     /* First, we will need to select the results of the query accounting for the
        given column. Once we have the results, we will be able to take the results
@@ -127,7 +127,7 @@ QVector<QVariant> Builder::pluck(const Column &column)
        use the alias name instead. */
     const auto unqualifiedColumn = stripTableForPluck(column);
 
-    QVector<QVariant> result;
+    QList<QVariant> result;
     result.reserve(size);
 
     while (query.next())
@@ -162,7 +162,7 @@ namespace
     {
         // All 'values' are const lvalues so no need to for the rvalue 'values'
 
-        QVector<QVariant> flattenValues;
+        QList<QVariant> flattenValues;
 
         for (const auto &insertMap : values)
             for (const auto &value : insertMap)
@@ -176,7 +176,7 @@ namespace
 
 // TEST for insert silverqx
 std::optional<SqlQuery>
-Builder::insert(const QVector<QVariantMap> &values)
+Builder::insert(const QList<QVariantMap> &values)
 {
     if (values.isEmpty())
         return std::nullopt;
@@ -195,12 +195,12 @@ Builder::insert(const QVector<QVariantMap> &values)
 std::optional<SqlQuery>
 Builder::insert(const QVariantMap &values)
 {
-    return insert(QVector<QVariantMap> {values});
+    return insert(QList<QVariantMap> {values});
 }
 
 std::optional<SqlQuery>
-Builder::insert(const QVector<QString> &columns,
-                const QVector<QVector<QVariant>> &values)
+Builder::insert(const QList<QString> &columns,
+                const QList<QList<QVariant>> &values)
 {
     return insert(QueryUtils::zipForInsert(columns, values));
 }
@@ -208,7 +208,7 @@ Builder::insert(const QVector<QString> &columns,
 // FEATURE dilemma primarykey, add support for Model::KeyType in QueryBuilder/TinyBuilder or should it be QVariant and runtime type check? 🤔 silverqx
 quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
-    const QVector<QVariantMap> valuesVector {values};
+    const QList<QVariantMap> valuesVector {values};
 
     auto query = m_connection->insert(
                      m_grammar->compileInsertGetId(*this, valuesVector, sequence),
@@ -219,7 +219,7 @@ quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 }
 
 std::tuple<int, std::optional<TSqlQuery>>
-Builder::insertOrIgnore(const QVector<QVariantMap> &values)
+Builder::insertOrIgnore(const QList<QVariantMap> &values)
 {
     if (values.isEmpty())
         return {0, std::nullopt};
@@ -232,18 +232,18 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
 std::tuple<int, std::optional<TSqlQuery>>
 Builder::insertOrIgnore(const QVariantMap &values)
 {
-    return insertOrIgnore(QVector<QVariantMap> {values});
+    return insertOrIgnore(QList<QVariantMap> {values});
 }
 
 std::tuple<int, std::optional<TSqlQuery>>
-Builder::insertOrIgnore(const QVector<QString> &columns,
-                        const QVector<QVector<QVariant>> &values)
+Builder::insertOrIgnore(const QList<QString> &columns,
+                        const QList<QList<QVariant>> &values)
 {
     return insertOrIgnore(QueryUtils::zipForInsert(columns, values));
 }
 
 std::tuple<int, TSqlQuery>
-Builder::update(const QVector<UpdateItem> &values)
+Builder::update(const QList<UpdateItem> &values)
 {
     return m_connection->update(
                 m_grammar->compileUpdate(*this, values),
@@ -254,8 +254,8 @@ Builder::update(const QVector<UpdateItem> &values)
 namespace
 {
     /*! Merge attributes and values for the updateOrInsert() method. */
-    const auto mergeValuesForInsert = [](const QVector<WhereItem> &attributes,
-                                         const QVector<UpdateItem> &values)
+    const auto mergeValuesForInsert = [](const QList<WhereItem> &attributes,
+                                         const QList<UpdateItem> &values)
     {
         QVariantMap result;
 
@@ -272,8 +272,8 @@ namespace
 } // namespace
 
 std::tuple<int, std::optional<TSqlQuery>>
-Builder::updateOrInsert(const QVector<WhereItem> &attributes,
-                        const QVector<UpdateItem> &values)
+Builder::updateOrInsert(const QList<WhereItem> &attributes,
+                        const QList<UpdateItem> &values)
 {
     if (!where(attributes).exists())
         return {-1, insert(mergeValuesForInsert(attributes, values))};
@@ -294,7 +294,7 @@ namespace
 } // namespace
 
 std::tuple<int, std::optional<TSqlQuery>>
-Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+Builder::upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
                 const QStringList &update)
 {
     // Nothing to do, no values to insert or update
@@ -316,7 +316,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
 }
 
 std::tuple<int, std::optional<TSqlQuery>>
-Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
+Builder::upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy)
 {
     // Update all columns
     // Columns are obtained only from a first QMap
@@ -353,7 +353,7 @@ void Builder::truncate()
 /* Select */
 
 QVariant Builder::aggregate(const QString &function,
-                            const QVector<Column> &columns) const
+                            const QList<Column> &columns) const
 {
     auto resultsQuery = cloneWithout({PropertyType::COLUMNS})
                         .cloneWithoutBindings({BindingType::SELECT})
@@ -400,7 +400,7 @@ bool Builder::doesntExistOr(const std::function<void()> &callback)
     return false;
 }
 
-Builder &Builder::select(const QVector<Column> &columns)
+Builder &Builder::select(const QList<Column> &columns)
 {
     clearColumns();
 
@@ -420,7 +420,7 @@ Builder &Builder::select(const Column &column)
     return *this;
 }
 
-Builder &Builder::addSelect(const QVector<Column> &columns)
+Builder &Builder::addSelect(const QList<Column> &columns)
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
@@ -443,7 +443,7 @@ Builder &Builder::addSelect(const Column &column)
     return *this;
 }
 
-Builder &Builder::select(QVector<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+Builder &Builder::select(QList<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     clearColumns();
 
@@ -463,7 +463,7 @@ Builder &Builder::select(Column &&column)
     return *this;
 }
 
-Builder &Builder::addSelect(QVector<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+Builder &Builder::addSelect(QList<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
@@ -486,7 +486,7 @@ Builder &Builder::addSelect(Column &&column)
     return *this;
 }
 
-Builder &Builder::selectRaw(const QString &expression, const QVector<QVariant> &bindings)
+Builder &Builder::selectRaw(const QString &expression, const QList<QVariant> &bindings)
 {
     addSelect(Expression(expression));
 
@@ -537,7 +537,7 @@ Builder &Builder::from(Expression &&table)
     return *this;
 }
 
-Builder &Builder::fromRaw(const QString &expression, const QVector<QVariant> &bindings)
+Builder &Builder::fromRaw(const QString &expression, const QList<QVariant> &bindings)
 {
     m_from.emplace<Expression>(expression);
 
@@ -577,7 +577,7 @@ Builder &Builder::orWhereNot(const std::function<void(Builder &)> &callback)
 
 /* Array where */
 
-Builder &Builder::where(const QVector<WhereItem> &values, const QString &condition,
+Builder &Builder::where(const QList<WhereItem> &values, const QString &condition,
                         const QString &defaultCondition)
 {
     /* We will maintain the boolean we received when the method was called and pass it
@@ -587,13 +587,13 @@ Builder &Builder::where(const QVector<WhereItem> &values, const QString &conditi
     return addArrayOfWheres(values, condition, defaultCondition);
 }
 
-Builder &Builder::orWhere(const QVector<WhereItem> &values,
+Builder &Builder::orWhere(const QList<WhereItem> &values,
                           const QString &defaultCondition)
 {
     return where(values, OR, defaultCondition);
 }
 
-Builder &Builder::whereNot(const QVector<WhereItem> &values, const QString &condition,
+Builder &Builder::whereNot(const QList<WhereItem> &values, const QString &condition,
                            const QString &defaultCondition)
 {
     return where(values, SPACE_IN.arg(condition, NOT),
@@ -601,7 +601,7 @@ Builder &Builder::whereNot(const QVector<WhereItem> &values, const QString &cond
                  defaultCondition.isEmpty() ? condition : defaultCondition);
 }
 
-Builder &Builder::orWhereNot(const QVector<WhereItem> &values,
+Builder &Builder::orWhereNot(const QList<WhereItem> &values,
                              const QString &defaultCondition)
 {
     return where(values, SPACE_IN.arg(OR, NOT),
@@ -611,13 +611,13 @@ Builder &Builder::orWhereNot(const QVector<WhereItem> &values,
 
 /* where column */
 
-Builder &Builder::whereColumn(const QVector<WhereColumnItem> &values,
+Builder &Builder::whereColumn(const QList<WhereColumnItem> &values,
                               const QString &condition)
 {
     return addArrayOfWheres(values, condition);
 }
 
-Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
+Builder &Builder::orWhereColumn(const QList<WhereColumnItem> &values)
 {
     return addArrayOfWheres(values, OR);
 }
@@ -654,7 +654,7 @@ Builder &Builder::orWhereColumnEq(const Column &first, const Column &second)
 
 /* where IN */
 
-Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
+Builder &Builder::whereIn(const Column &column, const QList<QVariant> &values,
                           const QString &condition, const bool nope)
 {
     const auto type = nope ? WhereType::NOT_IN : WhereType::IN_;
@@ -670,25 +670,25 @@ Builder &Builder::whereIn(const Column &column, const QVector<QVariant> &values,
     return *this;
 }
 
-Builder &Builder::orWhereIn(const Column &column, const QVector<QVariant> &values)
+Builder &Builder::orWhereIn(const Column &column, const QList<QVariant> &values)
 {
     return whereIn(column, values, OR);
 }
 
-Builder &Builder::whereNotIn(const Column &column, const QVector<QVariant> &values,
+Builder &Builder::whereNotIn(const Column &column, const QList<QVariant> &values,
                              const QString &condition)
 {
     return whereIn(column, values, condition, true);
 }
 
-Builder &Builder::orWhereNotIn(const Column &column, const QVector<QVariant> &values)
+Builder &Builder::orWhereNotIn(const Column &column, const QList<QVariant> &values)
 {
     return whereNotIn(column, values, OR);
 }
 
 /* where null */
 
-Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condition,
+Builder &Builder::whereNull(const QList<Column> &columns, const QString &condition,
                             const bool nope)
 {
     const auto type = nope ? WhereType::NOT_NULL : WhereType::NULL_;
@@ -699,17 +699,17 @@ Builder &Builder::whereNull(const QVector<Column> &columns, const QString &condi
     return *this;
 }
 
-Builder &Builder::orWhereNull(const QVector<Column> &columns)
+Builder &Builder::orWhereNull(const QList<Column> &columns)
 {
     return whereNull(columns, OR);
 }
 
-Builder &Builder::whereNotNull(const QVector<Column> &columns, const QString &condition)
+Builder &Builder::whereNotNull(const QList<Column> &columns, const QString &condition)
 {
     return whereNull(columns, condition, true);
 }
 
-Builder &Builder::orWhereNotNull(const QVector<Column> &columns)
+Builder &Builder::orWhereNotNull(const QList<Column> &columns)
 {
     return whereNotNull(columns, OR);
 }
@@ -717,22 +717,22 @@ Builder &Builder::orWhereNotNull(const QVector<Column> &columns)
 Builder &Builder::whereNull(const Column &column, const QString &condition,
                             const bool nope)
 {
-    return whereNull(QVector<Column> {column}, condition, nope);
+    return whereNull(QList<Column> {column}, condition, nope);
 }
 
 Builder &Builder::orWhereNull(const Column &column)
 {
-    return orWhereNull(QVector<Column> {column});
+    return orWhereNull(QList<Column> {column});
 }
 
 Builder &Builder::whereNotNull(const Column &column, const QString &condition)
 {
-    return whereNotNull(QVector<Column> {column}, condition);
+    return whereNotNull(QList<Column> {column}, condition);
 }
 
 Builder &Builder::orWhereNotNull(const Column &column)
 {
-    return orWhereNotNull(QVector<Column> {column});
+    return orWhereNotNull(QList<Column> {column});
 }
 
 /* where between */
@@ -800,8 +800,8 @@ Builder &Builder::orWhereNotBetweenColumns(const Column &column,
 /* where row values */
 
 Builder &
-Builder::whereRowValues(const QVector<Column> &columns, const QString &comparison,
-                        const QVector<QVariant> &values, const QString &condition)
+Builder::whereRowValues(const QList<Column> &columns, const QString &comparison,
+                        const QList<QVariant> &values, const QString &condition)
 {
     if (columns.size() != values.size() || columns.isEmpty())
         throw Exceptions::InvalidArgumentError(
@@ -819,22 +819,22 @@ Builder::whereRowValues(const QVector<Column> &columns, const QString &compariso
 }
 
 Builder &
-Builder::orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
-                          const QVector<QVariant> &values)
+Builder::orWhereRowValues(const QList<Column> &columns, const QString &comparison,
+                          const QList<QVariant> &values)
 {
     return whereRowValues(columns, comparison, values, OR);
 }
 
 Builder &
-Builder::whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+Builder::whereRowValuesEq(const QList<Column> &columns, const QList<QVariant> &values,
                           const QString &condition)
 {
     return whereRowValues(columns, EQ, values, condition);
 }
 
 Builder &
-Builder::orWhereRowValuesEq(const QVector<Column> &columns,
-                            const QVector<QVariant> &values)
+Builder::orWhereRowValuesEq(const QList<Column> &columns,
+                            const QList<QVariant> &values)
 {
     return whereRowValues(columns, EQ, values, OR);
 }
@@ -922,7 +922,7 @@ Builder &Builder::whereYear(const Column &column, const QString &comparison,
 
 /* where raw */
 
-Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings,
+Builder &Builder::whereRaw(const QString &sql, const QList<QVariant> &bindings,
                            const QString &condition)
 {
     m_wheres.append({.condition = condition, .type = WhereType::RAW, .sql = sql});
@@ -932,14 +932,14 @@ Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings
     return *this;
 }
 
-Builder &Builder::orWhereRaw(const QString &sql, const QVector<QVariant> &bindings)
+Builder &Builder::orWhereRaw(const QString &sql, const QList<QVariant> &bindings)
 {
     return whereRaw(sql, bindings, OR);
 }
 
 /* Group by and having */
 
-Builder &Builder::groupBy(const QVector<Column> &groups)
+Builder &Builder::groupBy(const QList<Column> &groups)
 {
     if (groups.isEmpty())
         return *this;
@@ -951,10 +951,10 @@ Builder &Builder::groupBy(const QVector<Column> &groups)
 
 Builder &Builder::groupBy(const Column &group)
 {
-    return groupBy(QVector<Column> {group});
+    return groupBy(QList<Column> {group});
 }
 
-Builder &Builder::groupByRaw(const QString &sql, const QVector<QVariant> &bindings)
+Builder &Builder::groupByRaw(const QString &sql, const QList<QVariant> &bindings)
 {
     m_groups << Expression(sql);
 
@@ -984,7 +984,7 @@ Builder &Builder::orHaving(const Column &column, const QString &comparison,
     return having(column, comparison, value, OR);
 }
 
-Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &bindings,
+Builder &Builder::havingRaw(const QString &sql, const QList<QVariant> &bindings,
                             const QString &condition)
 {
     m_havings.append({.condition = condition, .type = HavingType::RAW, .sql = sql});
@@ -995,7 +995,7 @@ Builder &Builder::havingRaw(const QString &sql, const QVector<QVariant> &binding
 }
 
 // TODO stackoverflow, I think all of these kind of methods should be inline silverqx
-Builder &Builder::orHavingRaw(const QString &sql, const QVector<QVariant> &bindings)
+Builder &Builder::orHavingRaw(const QString &sql, const QList<QVariant> &bindings)
 {
     return havingRaw(sql, bindings, OR);
 }
@@ -1028,7 +1028,7 @@ Builder &Builder::inRandomOrder(const QString &seed)
     return orderByRaw(m_grammar->compileRandom(seed));
 }
 
-Builder &Builder::orderByRaw(const QString &sql, const QVector<QVariant> &bindings)
+Builder &Builder::orderByRaw(const QString &sql, const QList<QVariant> &bindings)
 {
     m_orders.append({.sql = sql});
 
@@ -1223,11 +1223,11 @@ const QString &Builder::defaultKeyName() const noexcept // NOLINT(readability-co
     return ID;
 }
 
-QVector<QVariant> Builder::getBindings() const
+QList<QVariant> Builder::getBindings() const
 {
-    QVector<QVariant> flattenBindings;
+    QList<QVariant> flattenBindings;
     flattenBindings.reserve(ranges::accumulate(m_bindings, 0, std::plus(),
-                                               [](const QVector<QVariant> &bindings)
+                                               [](const QList<QVariant> &bindings)
     {
         return bindings.size();
     }));
@@ -1263,7 +1263,7 @@ Builder &Builder::addBinding(QVariant &&binding, const BindingType type)
     return *this;
 }
 
-Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingType type)
+Builder &Builder::addBinding(const QList<QVariant> &bindings, const BindingType type)
 {
 #ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
@@ -1276,7 +1276,7 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
     return *this;
 }
 
-Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+Builder &Builder::addBinding(QList<QVariant> &&bindings, const BindingType type) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
 #ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
@@ -1293,7 +1293,7 @@ Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType typ
     return *this;
 }
 
-Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType type)
+Builder &Builder::setBindings(QList<QVariant> &&bindings, const BindingType type)
 {
 #ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
@@ -1396,8 +1396,8 @@ Builder &Builder::addWhereExistsQuery(Builder &query, const QString &condition,
     return *this;
 }
 
-Builder &Builder::mergeWheres(const QVector<WhereConditionItem> &wheres,
-                              const QVector<QVariant> &bindings)
+Builder &Builder::mergeWheres(const QList<WhereConditionItem> &wheres,
+                              const QList<QVariant> &bindings)
 {
     m_wheres += wheres;
 
@@ -1407,7 +1407,7 @@ Builder &Builder::mergeWheres(const QVector<WhereConditionItem> &wheres,
 }
 
 Builder &
-Builder::mergeWheres(QVector<WhereConditionItem> &&wheres, QVector<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+Builder::mergeWheres(QList<WhereConditionItem> &&wheres, QList<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     m_wheres.reserve(wheres.size());
     std::ranges::move(wheres, std::back_inserter(m_wheres));
@@ -1471,9 +1471,9 @@ void Builder::throwIfInvalidOperator(const QString &comparison) const
                 .arg(comparison_, getConnection().driverNamePrintable(), __tiny_func__));
 }
 
-QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings)
+QList<QVariant> Builder::cleanBindings(const QList<QVariant> &bindings)
 {
-    QVector<QVariant> cleanedBindings;
+    QList<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 
     for (const auto &binding : bindings)
@@ -1483,9 +1483,9 @@ QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings)
     return cleanedBindings;
 }
 
-QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+QList<QVariant> Builder::cleanBindings(QList<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
-    QVector<QVariant> cleanedBindings;
+    QList<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 
     for (auto &&binding : bindings)
@@ -1495,9 +1495,9 @@ QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) // NOLINT
     return cleanedBindings;
 }
 
-QVector<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings)
+QList<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings)
 {
-    QVector<QVariant> cleanedBindings;
+    QList<QVariant> cleanedBindings;
     cleanedBindings.reserve(2);
 
     if (const auto &min = bindings.min;
@@ -1514,7 +1514,7 @@ QVector<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings)
 }
 
 Builder &
-Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition,
+Builder::addArrayOfWheres(const QList<WhereItem> &values, const QString &condition,
                           const QString &defaultCondition)
 {
     /* Conditions Order look confusing at first look, the order is:
@@ -1534,7 +1534,7 @@ Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condi
         for (const auto &where : values)
             query.where(where.column, where.comparison, where.value,
                         where.condition.isEmpty()
-                        // Allow to pass a default condition for the QVector<WhereItem>
+                        // Allow to pass a default condition for the QList<WhereItem>
                         ? (defaultCondition.isEmpty() ? condition : defaultCondition) // NOLINT(readability-avoid-nested-conditional-operator)
                         : where.condition);
 
@@ -1542,7 +1542,7 @@ Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condi
 }
 
 Builder &
-Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
+Builder::addArrayOfWheres(const QList<WhereColumnItem> &values,
                           const QString &condition)
 {
     // WARN condition also affects condition in QVector, I don't like it silverqx
@@ -1581,7 +1581,7 @@ Builder &Builder::clearColumns()
 }
 
 SqlQuery
-Builder::onceWithColumns(const QVector<Column> &columns,
+Builder::onceWithColumns(const QList<Column> &columns,
                          const std::function<SqlQuery()> &callback)
 {
     // Save orignal columns
@@ -1598,7 +1598,7 @@ Builder::onceWithColumns(const QVector<Column> &columns,
     return result;
 }
 
-std::pair<QString, QVector<QVariant>>
+std::pair<QString, QList<QVariant>>
 Builder::createSub(const std::function<void(Builder &)> &callback) const
 {
     // Ownership of the std::shared_ptr<QueryBuilder>
@@ -1611,7 +1611,7 @@ Builder::createSub(const std::function<void(Builder &)> &callback) const
     return {query->toSql(), query->getBindings()};
 }
 
-std::pair<QString, QVector<QVariant>>
+std::pair<QString, QList<QVariant>>
 Builder::createSub(Builder &query) const
 {
     prependDatabaseNameIfCrossDatabaseQuery(query);
@@ -1619,18 +1619,18 @@ Builder::createSub(Builder &query) const
     return {query.toSql(), query.getBindings()};
 }
 
-std::pair<QString, QVector<QVariant>>
+std::pair<QString, QList<QVariant>>
 Builder::createSub(const QString &query) noexcept
 {
     return {query, {}};
 }
 
-std::pair<QString, QVector<QVariant>>
+std::pair<QString, QList<QVariant>>
 Builder::createSub(QString &&query) noexcept
 {
-    /* Need to be explicit about the QVector<QVariant>() type to invoke
+    /* Need to be explicit about the QList<QVariant>() type to invoke
        the std::pair<>'s move constructor so std::move(query) can hit. */
-    return {std::move(query), QVector<QVariant>()};
+    return {std::move(query), QList<QVariant>()};
 }
 
 Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
@@ -1656,7 +1656,7 @@ void Builder::enforceOrderBy() const
                 .arg(__func__, __tiny_func__));
 }
 
-QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
+QList<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
 {
     return m_orders
             | ranges::views::remove_if([&column](const OrderByItem &order)
@@ -1666,7 +1666,7 @@ QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) con
 
         return std::get<QString>(order.column) == column;
     })
-            | ranges::to<QVector<OrderByItem>>();
+            | ranges::to<QList<OrderByItem>>();
 }
 
 QString Builder::stripTableForPluck(const Column &column)
@@ -1686,7 +1686,7 @@ QString Builder::stripTableForPluck(const Column &column)
 
 /* Getters / Setters */
 
-Builder &Builder::setAggregate(const QString &function, const QVector<Column> &columns)
+Builder &Builder::setAggregate(const QString &function, const QList<Column> &columns)
 {
 #if defined(__clang__) && __clang_major__ < 16
     m_aggregate = {function, columns};
@@ -1747,7 +1747,7 @@ Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join)
 }
 
 Builder &Builder::joinSubInternal(
-        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        std::pair<QString, QList<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const QString &first, const QString &comparison, const QVariant &second,
         const QString &type, const bool where)
 {
@@ -1761,7 +1761,7 @@ Builder &Builder::joinSubInternal(
 }
 
 Builder &Builder::joinSubInternal(
-        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        std::pair<QString, QList<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const std::function<void(JoinClause &)> &callback,
         const QString &type)
 {

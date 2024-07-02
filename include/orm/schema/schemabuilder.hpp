@@ -56,7 +56,7 @@ namespace Grammars
         void rename(const QString &from, const QString &to) const;
 
         /*! Drop columns from a table schema. */
-        void dropColumns(const QString &table, const QVector<QString> &columns) const;
+        void dropColumns(const QString &table, const QList<QString> &columns) const;
         /*! Drop columns from a table schema. */
         template<QStringConcept ...Args>
         void dropColumns(const QString &table, Args &&...columns);
@@ -93,7 +93,7 @@ namespace Grammars
         /*! Determine if the given table has a given column. */
         bool hasColumn(const QString &table, const QString &column) const;
         /*! Determine if the given table has given columns. */
-        bool hasColumns(const QString &table, const QVector<QString> &columns) const;
+        bool hasColumns(const QString &table, const QList<QString> &columns) const;
 
         /* Getters */
         /*! Get the database connection reference. */

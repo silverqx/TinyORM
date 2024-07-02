@@ -196,7 +196,7 @@ QString Migrator::cachedMigrationName(const Migration &migration) const
 /* Migrate */
 
 std::vector<std::shared_ptr<Migration>>
-Migrator::pendingMigrations(const QVector<QVariant> &ran) const
+Migrator::pendingMigrations(const QList<QVariant> &ran) const
 {
     return m_migrations.get()
             | ranges::views::remove_if([this, &ran](const auto &migration)
@@ -339,7 +339,7 @@ void Migrator::pretendToRun(const Migration &migration, const MigrateMethod meth
     }
 }
 
-QVector<Migrator::Log>
+QList<Migrator::Log>
 Migrator::getQueries(const Migration &migration, const MigrateMethod method) const
 {
     const auto &migrationTypeId = typeid (migration);

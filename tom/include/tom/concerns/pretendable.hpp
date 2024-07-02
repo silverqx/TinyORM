@@ -83,7 +83,7 @@ namespace Concerns
         /*! Common logic for the optionalPretend() method, log gathered queries
             to the console. */
         void optionalPretendInternal(
-                QVector<Orm::Log> &&queriesLog,
+                QList<Orm::Log> &&queriesLog,
                 const std::optional<QString> &title, bool newline) const;
 
         /*! Dynamic cast *this to the Command & base type, const version. */

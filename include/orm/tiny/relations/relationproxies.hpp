@@ -62,7 +62,7 @@ namespace Tiny::Relations
         QVariant soleValue(const Column &column) const;
 
         /*! Get a vector with values in the given column. */
-        QVector<QVariant> pluck(const Column &column) const;
+        QList<QVariant> pluck(const Column &column) const;
         /*! Get a map with values in the given column and keyed by values in the key
             column. */
         template<typename T>
@@ -73,19 +73,19 @@ namespace Tiny::Relations
 
         /*! Find a model by its primary key. */
         virtual std::optional<Related>
-        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
+        find(const QVariant &id, const QList<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Find a model by its primary key or return fresh model instance. */
         virtual Related
-        findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
+        findOrNew(const QVariant &id, const QList<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Find a model by its primary key or throw an exception. */
         virtual Related
         findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
-                   const QVector<Column> &columns = {ASTERISK}) const;
+                   const QList<Column> &columns = {ASTERISK}) const;
         // findMany() is missing intentionally doesn't make sense for one type relations
 
         /*! Execute a query for a single record by ID or call a callback. */
         virtual std::optional<Related>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<void()> &callback) const;
         /*! Execute a query for a single record by ID or call a callback. */
         virtual std::optional<Related>
@@ -94,7 +94,7 @@ namespace Tiny::Relations
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
-        findOr(const QVariant &id, const QVector<Column> &columns,
+        findOr(const QVariant &id, const QList<Column> &columns,
                const std::function<R()> &callback) const;
         /*! Execute a query for a single record by ID or call a callback. */
         template<typename R>
@@ -103,21 +103,21 @@ namespace Tiny::Relations
 
         /*! Execute the query and get the first result. */
         virtual std::optional<Related>
-        first(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
+        first(const QList<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Get the first record matching the attributes or instantiate it. */
         virtual Related
-        firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
-                   const QVector<AttributeItem> &values = {}) const;
+        firstOrNew(const QList<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
+                   const QList<AttributeItem> &values = {}) const;
         /*! Get the first record matching the attributes or create it. */
         Related
-        firstOrCreate(const QVector<WhereItem> &attributes = {},
-                      const QVector<AttributeItem> &values = {}) const;
+        firstOrCreate(const QList<WhereItem> &attributes = {},
+                      const QList<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
-        virtual Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
+        virtual Related firstOrFail(const QList<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         virtual std::optional<Related>
-        firstOr(const QVector<Column> &columns, // NOLINT(google-default-arguments)
+        firstOr(const QList<Column> &columns, // NOLINT(google-default-arguments)
                 const std::function<void()> &callback = nullptr) const;
         /*! Execute the query and get the first result or call a callback. */
         virtual std::optional<Related>
@@ -126,7 +126,7 @@ namespace Tiny::Relations
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
-        firstOr(const QVector<Column> &columns, const std::function<R()> &callback) const;
+        firstOr(const QList<Column> &columns, const std::function<R()> &callback) const;
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
         std::pair<std::optional<Related>, R>
@@ -144,25 +144,25 @@ namespace Tiny::Relations
         /*! Add a where clause on the primary key to the query. */
         const Relation<Model, Related> &whereKey(const QVariant &id) const;
         /*! Add a where clause on the primary key to the query. */
-        const Relation<Model, Related> &whereKey(const QVector<QVariant> &ids) const;
+        const Relation<Model, Related> &whereKey(const QList<QVariant> &ids) const;
         /*! Add a where clause on the primary key to the query. */
         const Relation<Model, Related> &whereKeyNot(const QVariant &id) const;
         /*! Add a where clause on the primary key to the query. */
-        const Relation<Model, Related> &whereKeyNot(const QVector<QVariant> &ids) const;
+        const Relation<Model, Related> &whereKeyNot(const QList<QVariant> &ids) const;
 
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
-        const Relation<Model, Related> &with(const QVector<WithItem> &relations) const;
+        const Relation<Model, Related> &with(const QList<WithItem> &relations) const;
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
         const Relation<Model, Related> &with(QString relation) const;
         /*! Begin querying a model with eager loading. */
-        const Relation<Model, Related> &with(const QVector<QString> &relations) const;
+        const Relation<Model, Related> &with(const QList<QString> &relations) const;
         /*! Begin querying a model with eager loading. */
-        const Relation<Model, Related> &with(QVector<QString> &&relations) const;
+        const Relation<Model, Related> &with(QList<QString> &&relations) const;
 
         /*! Prevent the specified relations from being eager loaded. */
-        const Relation<Model, Related> &without(const QVector<QString> &relations) const;
+        const Relation<Model, Related> &without(const QList<QString> &relations) const;
         /*! Prevent the specified relations from being eager loaded. */
         const Relation<Model, Related> &without(QString relation) const;
 
@@ -170,23 +170,23 @@ namespace Tiny::Relations
             any previously added eager loading specifications. */
         template<typename = void>
         const Relation<Model, Related> &
-        withOnly(const QVector<WithItem> &relations) const;
+        withOnly(const QList<WithItem> &relations) const;
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
         template<typename = void>
         const Relation<Model, Related> &withOnly(QString relation) const;
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
-        const Relation<Model, Related> &withOnly(const QVector<QString> &relations) const;
+        const Relation<Model, Related> &withOnly(const QList<QString> &relations) const;
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
-        const Relation<Model, Related> &withOnly(QVector<QString> &&relations) const;
+        const Relation<Model, Related> &withOnly(QList<QString> &&relations) const;
 
         /* Insert, Update, Delete */
         /*! Create or update a related record matching the attributes, and fill it
             with values. */
-        Related updateOrCreate(const QVector<WhereItem> &attributes,
-                               const QVector<AttributeItem> &values = {}) const;
+        Related updateOrCreate(const QList<WhereItem> &attributes,
+                               const QList<AttributeItem> &values = {}) const;
 
         /* Proxies to TinyBuilder -> QueryBuilder */
         /*! The table which the query is targeting. */
@@ -195,45 +195,45 @@ namespace Tiny::Relations
         /*! Get the SQL representation of the query. */
         QString toSql() const;
         /*! Get the current query value bindings as flattened QVector. */
-        QVector<QVariant> getBindings() const;
+        QList<QVariant> getBindings() const;
 
         /* Insert, Update, Delete */
         /*! Insert a new record into the database. */
         std::optional<SqlQuery>
-        insert(const QVector<AttributeItem> &values) const;
+        insert(const QList<AttributeItem> &values) const;
         /*! Insert new records into the database. */
         std::optional<SqlQuery>
-        insert(const QVector<QVector<AttributeItem>> &values) const;
+        insert(const QList<QList<AttributeItem>> &values) const;
         /*! Insert new records into the database (multi insert). */
         std::optional<SqlQuery>
-        insert(const QVector<QString> &columns, QVector<QVector<QVariant>> values) const;
+        insert(const QList<QString> &columns, QList<QList<QVariant>> values) const;
 
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVector<AttributeItem> &attributes,
+        quint64 insertGetId(const QList<AttributeItem> &attributes,
                             const QString &sequence = "") const;
 
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<AttributeItem> &values) const;
+        insertOrIgnore(const QList<AttributeItem> &values) const;
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
+        insertOrIgnore(const QList<QList<AttributeItem>> &values) const;
         /*! Insert new records into the database while ignoring errors (multi insert). */
         std::tuple<int, std::optional<TSqlQuery>>
-        insertOrIgnore(const QVector<QString> &columns,
-                       QVector<QVector<QVariant>> values) const;
+        insertOrIgnore(const QList<QString> &columns,
+                       QList<QList<QVariant>> values) const;
 
         /*! Update records in the database. */
         std::tuple<int, TSqlQuery>
-        update(const QVector<UpdateItem> &values) const;
+        update(const QList<UpdateItem> &values) const;
 
         /*! Insert new records or update the existing ones. */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update) const;
         /*! Insert new records or update the existing ones (update all columns). */
         std::tuple<int, std::optional<TSqlQuery>>
-        upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy) const;
+        upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy) const;
 
         /*! Delete records from the database. */
         std::tuple<int, TSqlQuery> remove() const;
@@ -245,7 +245,7 @@ namespace Tiny::Relations
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
-        quint64 count(const QVector<Column> &columns = {ASTERISK}) const;
+        quint64 count(const QList<Column> &columns = {ASTERISK}) const;
         /*! Retrieve the "count" result of the query. */
         template<typename = void>
         quint64 count(const Column &column) const;
@@ -262,7 +262,7 @@ namespace Tiny::Relations
 
         /*! Execute an aggregate function on the database. */
         QVariant aggregate(const QString &function,
-                           const QVector<Column> &columns = {ASTERISK}) const;
+                           const QList<Column> &columns = {ASTERISK}) const;
 
         /*! Determine if any rows exist for the current query. */
         bool exists() const;
@@ -283,20 +283,20 @@ namespace Tiny::Relations
 
         /*! Set the columns to be selected. */
         const Relation<Model, Related> &
-        select(const QVector<Column> &columns = {ASTERISK}) const;
+        select(const QList<Column> &columns = {ASTERISK}) const;
         /*! Set the column to be selected. */
         const Relation<Model, Related> &select(const Column &column) const;
         /*! Add new select columns to the query. */
-        const Relation<Model, Related> &addSelect(const QVector<Column> &columns) const;
+        const Relation<Model, Related> &addSelect(const QList<Column> &columns) const;
         /*! Add a new select column to the query. */
         const Relation<Model, Related> &addSelect(const Column &column) const;
 
         /*! Set the columns to be selected. */
-        const Relation<Model, Related> &select(QVector<Column> &&columns) const;
+        const Relation<Model, Related> &select(QList<Column> &&columns) const;
         /*! Set the column to be selected. */
         const Relation<Model, Related> &select(Column &&column) const;
         /*! Add new select columns to the query. */
-        const Relation<Model, Related> &addSelect(QVector<Column> &&columns) const;
+        const Relation<Model, Related> &addSelect(QList<Column> &&columns) const;
         /*! Add a new select column to the query. */
         const Relation<Model, Related> &addSelect(Column &&column) const;
 
@@ -312,7 +312,7 @@ namespace Tiny::Relations
         const Relation<Model, Related> &selectSub(T &&query, const QString &as) const;
         /*! Add a new "raw" select expression to the query. */
         const Relation<Model, Related> &selectRaw(
-                const QString &expression, const QVector<QVariant> &bindings = {}) const;
+                const QString &expression, const QList<QVariant> &bindings = {}) const;
 
         /*! Force the query to only return distinct results. */
         const Relation<Model, Related> &distinct() const;
@@ -472,26 +472,26 @@ namespace Tiny::Relations
         /* Array where */
         /*! Add a vector of basic where clauses to the query. */
         const Relation<Model, Related> &where(
-                const QVector<WhereItem> &values, const QString &condition = AND) const;
+                const QList<WhereItem> &values, const QString &condition = AND) const;
         /*! Add a vector of basic "or where" clauses to the query. */
-        const Relation<Model, Related> &orWhere(const QVector<WhereItem> &values) const;
+        const Relation<Model, Related> &orWhere(const QList<WhereItem> &values) const;
         /*! Add a vector of basic "where not" clauses to the query. */
         const Relation<Model, Related> &whereNot(
-                const QVector<WhereItem> &values, const QString &condition = AND,
+                const QList<WhereItem> &values, const QString &condition = AND,
                 const QString &defaultCondition = "") const;
         /*! Add a vector of basic "or where not" clauses to the query. */
         const Relation<Model, Related> &orWhereNot(
-                const QVector<WhereItem> &values,
+                const QList<WhereItem> &values,
                 const QString &defaultCondition = "") const;
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
         const Relation<Model, Related> &whereColumn(
-                const QVector<WhereColumnItem> &values,
+                const QList<WhereColumnItem> &values,
                 const QString &condition = AND) const;
         /*! Add a vector of "or where" clauses comparing two columns to the query. */
         const Relation<Model, Related> &orWhereColumn(
-                const QVector<WhereColumnItem> &values) const;
+                const QList<WhereColumnItem> &values) const;
 
         /*! Add a "where" clause comparing two columns to the query. */
         const Relation<Model, Related> &whereColumn(
@@ -512,34 +512,34 @@ namespace Tiny::Relations
         /* where IN */
         /*! Add a "where in" clause to the query. */
         const Relation<Model, Related> &whereIn(
-                const Column &column, const QVector<QVariant> &values,
+                const Column &column, const QList<QVariant> &values,
                 const QString &condition = AND, bool nope = false) const;
         /*! Add an "or where in" clause to the query. */
         const Relation<Model, Related> &orWhereIn(
-                const Column &column, const QVector<QVariant> &values) const;
+                const Column &column, const QList<QVariant> &values) const;
         /*! Add a "where not in" clause to the query. */
         const Relation<Model, Related> &whereNotIn(
-                const Column &column, const QVector<QVariant> &values,
+                const Column &column, const QList<QVariant> &values,
                 const QString &condition = AND) const;
         /*! Add an "or where not in" clause to the query. */
         const Relation<Model, Related> &orWhereNotIn(
-                const Column &column, const QVector<QVariant> &values) const;
+                const Column &column, const QList<QVariant> &values) const;
 
         /* where null */
         /*! Add a "where null" clause to the query. */
         const Relation<Model, Related> &whereNull(
-                const QVector<Column> &columns = {ASTERISK},
+                const QList<Column> &columns = {ASTERISK},
                 const QString &condition = AND, bool nope = false) const;
         /*! Add an "or where null" clause to the query. */
         const Relation<Model, Related> &orWhereNull(
-                const QVector<Column> &columns = {ASTERISK}) const;
+                const QList<Column> &columns = {ASTERISK}) const;
         /*! Add a "where not null" clause to the query. */
         const Relation<Model, Related> &whereNotNull(
-                const QVector<Column> &columns = {ASTERISK},
+                const QList<Column> &columns = {ASTERISK},
                 const QString &condition = AND) const;
         /*! Add an "or where not null" clause to the query. */
         const Relation<Model, Related> &orWhereNotNull(
-                const QVector<Column> &columns = {ASTERISK}) const;
+                const QList<Column> &columns = {ASTERISK}) const;
 
         /*! Add a "where null" clause to the query. */
         const Relation<Model, Related> &whereNull(
@@ -653,20 +653,20 @@ namespace Tiny::Relations
         /* where row values */
         /*! Adds a where condition using row values. */
         const Relation<Model, Related> &
-        whereRowValues(const QVector<Column> &columns, const QString &comparison,
-                       const QVector<QVariant> &values,
+        whereRowValues(const QList<Column> &columns, const QString &comparison,
+                       const QList<QVariant> &values,
                        const QString &condition = AND) const;
         /*! Adds an or where condition using row values. */
         const Relation<Model, Related> &
-        orWhereRowValues(const QVector<Column> &columns, const QString &comparison,
-                         const QVector<QVariant> &values) const;
+        orWhereRowValues(const QList<Column> &columns, const QString &comparison,
+                         const QList<QVariant> &values) const;
         const Relation<Model, Related> &
-        whereRowValuesEq(const QVector<Column> &columns, const QVector<QVariant> &values,
+        whereRowValuesEq(const QList<Column> &columns, const QList<QVariant> &values,
                          const QString &condition = AND) const;
         /*! Adds an or where condition using row values. */
         const Relation<Model, Related> &
-        orWhereRowValuesEq(const QVector<Column> &columns,
-                           const QVector<QVariant> &values) const;
+        orWhereRowValuesEq(const QList<Column> &columns,
+                           const QList<QVariant> &values) const;
 
         /* where dates */
         /*! Add a "where date" statement to the query. */
@@ -735,15 +735,15 @@ namespace Tiny::Relations
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         const Relation<Model, Related> &whereRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {},
+                const QString &sql, const QList<QVariant> &bindings = {},
                 const QString &condition = AND) const;
         /*! Add a raw "or where" clause to the query. */
         const Relation<Model, Related> &orWhereRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {}) const;
+                const QString &sql, const QList<QVariant> &bindings = {}) const;
 
         /* Group by and having */
         /*! Add a "group by" clause to the query. */
-        const Relation<Model, Related> &groupBy(const QVector<Column> &groups) const;
+        const Relation<Model, Related> &groupBy(const QList<Column> &groups) const;
         /*! Add a "group by" clause to the query. */
         const Relation<Model, Related> &groupBy(const Column &group) const;
         /*! Add a "group by" clause to the query. */
@@ -752,7 +752,7 @@ namespace Tiny::Relations
 
         /*! Add a raw "groupBy" clause to the query. */
         const Relation<Model, Related> &groupByRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {}) const;
+                const QString &sql, const QList<QVariant> &bindings = {}) const;
 
         /*! Add a "having" clause to the query. */
         const Relation<Model, Related> &having(
@@ -765,11 +765,11 @@ namespace Tiny::Relations
 
         /*! Add a raw "having" clause to the query. */
         const Relation<Model, Related> &havingRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {},
+                const QString &sql, const QList<QVariant> &bindings = {},
                 const QString &condition = AND) const;
         /*! Add a raw "or having" clause to the query. */
         const Relation<Model, Related> &orHavingRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {}) const;
+                const QString &sql, const QList<QVariant> &bindings = {}) const;
 
         /* Ordering */
         /*! Add an "order by" clause to the query. */
@@ -790,7 +790,7 @@ namespace Tiny::Relations
         const Relation<Model, Related> &inRandomOrder(const QString &seed = "") const;
         /*! Add a raw "order by" clause to the query. */
         const Relation<Model, Related> &orderByRaw(
-                const QString &sql, const QVector<QVariant> &bindings = {}) const;
+                const QString &sql, const QList<QVariant> &bindings = {}) const;
 
         /*! Add an "order by" clause for a timestamp to the query. */
         const Relation<Model, Related> &latest(const Column &column = "") const;
@@ -829,12 +829,12 @@ namespace Tiny::Relations
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
+                  const QList<UpdateItem> &extra = {}) const;
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
         std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
-                  const QVector<UpdateItem> &extra = {}) const;
+                  const QList<UpdateItem> &extra = {}) const;
 
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */
@@ -873,7 +873,7 @@ namespace Tiny::Relations
                  qint64 count = 1000) const;
         /*! Run a map over each item while chunking. */
         template<typename T>
-        QVector<T>
+        QList<T>
         chunkMap(const std::function<T(Related &&model)> &callback,
                  qint64 count = 1000) const;
 
@@ -891,7 +891,7 @@ namespace Tiny::Relations
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
-        Related sole(const QVector<Column> &columns = {ASTERISK}) const;
+        Related sole(const QList<Column> &columns = {ASTERISK}) const;
 
         /*! Pass the query to a given callback. */
         Builder<Related> &
@@ -1066,7 +1066,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<QVariant>
+    QList<QVariant>
     RelationProxies<Model, Related>::pluck(const Column &column) const
     {
         return getQuery().pluck(column);
@@ -1092,7 +1092,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::optional<Related>
     RelationProxies<Model, Related>::find(const QVariant &id, // NOLINT(google-default-arguments)
-                                          const QVector<Column> &columns) const
+                                          const QList<Column> &columns) const
     {
         return getQuery().find(id, columns);
     }
@@ -1100,7 +1100,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     Related
     RelationProxies<Model, Related>::findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
-                                               const QVector<Column> &columns) const
+                                               const QList<Column> &columns) const
     {
         return getQuery().findOrNew(id, columns);
     }
@@ -1108,7 +1108,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     Related
     RelationProxies<Model, Related>::findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
-                                                const QVector<Column> &columns) const
+                                                const QList<Column> &columns) const
     {
         return getQuery().findOrFail(id, columns);
     }
@@ -1116,7 +1116,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::optional<Related>
     RelationProxies<Model, Related>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<void()> &callback) const
     {
         return getQuery().findOr(id, columns, callback);
@@ -1134,7 +1134,7 @@ namespace Tiny::Relations
     template<typename R>
     std::pair<std::optional<Related>, R>
     RelationProxies<Model, Related>::findOr(
-            const QVariant &id, const QVector<Column> &columns,
+            const QVariant &id, const QList<Column> &columns,
             const std::function<R()> &callback) const
     {
         return getQuery().template findOr<R>(id, columns, callback);
@@ -1151,7 +1151,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::first(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
+    RelationProxies<Model, Related>::first(const QList<Column> &columns) const // NOLINT(google-default-arguments)
     {
         return getQuery().first(columns);
     }
@@ -1159,8 +1159,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     Related
     RelationProxies<Model, Related>::firstOrNew( // NOLINT(google-default-arguments)
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         return getQuery().firstOrNew(attributes, values);
     }
@@ -1168,15 +1168,15 @@ namespace Tiny::Relations
     template<class Model, class Related>
     Related
     RelationProxies<Model, Related>::firstOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         return getQuery().firstOrCreate(attributes, values);
     }
 
     template<class Model, class Related>
     Related RelationProxies<Model, Related>::firstOrFail( // NOLINT(google-default-arguments)
-            const QVector<Column> &columns) const
+            const QList<Column> &columns) const
     {
         return getQuery().firstOrFail(columns);
     }
@@ -1184,7 +1184,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::optional<Related>
     RelationProxies<Model, Related>::firstOr( // NOLINT(google-default-arguments)
-            const QVector<Column> &columns, const std::function<void()> &callback) const
+            const QList<Column> &columns, const std::function<void()> &callback) const
     {
         return getQuery().firstOr(columns, callback);
     }
@@ -1200,7 +1200,7 @@ namespace Tiny::Relations
     template<typename R>
     std::pair<std::optional<Related>, R>
     RelationProxies<Model, Related>::firstOr(
-            const QVector<Column> &columns, const std::function<R()> &callback) const
+            const QList<Column> &columns, const std::function<R()> &callback) const
     {
         return getQuery().template firstOr<R>(columns, callback);
     }
@@ -1241,7 +1241,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::whereKey(const QVector<QVariant> &ids) const
+    RelationProxies<Model, Related>::whereKey(const QList<QVariant> &ids) const
     {
         getQuery().whereKey(ids);
 
@@ -1259,7 +1259,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::whereKeyNot(const QVector<QVariant> &ids) const
+    RelationProxies<Model, Related>::whereKeyNot(const QList<QVariant> &ids) const
     {
         getQuery().whereKeyNot(ids);
 
@@ -1269,7 +1269,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     template<typename>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::with(const QVector<WithItem> &relations) const
+    RelationProxies<Model, Related>::with(const QList<WithItem> &relations) const
     {
         getQuery().with(relations);
 
@@ -1288,7 +1288,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::with(const QVector<QString> &relations) const
+    RelationProxies<Model, Related>::with(const QList<QString> &relations) const
     {
         getQuery().with(relations);
 
@@ -1297,7 +1297,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::with(QVector<QString> &&relations) const
+    RelationProxies<Model, Related>::with(QList<QString> &&relations) const
     {
         getQuery().with(std::move(relations));
 
@@ -1306,7 +1306,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::without(const QVector<QString> &relations) const
+    RelationProxies<Model, Related>::without(const QList<QString> &relations) const
     {
         getQuery().without(relations);
 
@@ -1325,7 +1325,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     template<typename>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::withOnly(const QVector<WithItem> &relations) const
+    RelationProxies<Model, Related>::withOnly(const QList<WithItem> &relations) const
     {
         getQuery().withOnly(relations);
 
@@ -1344,7 +1344,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::withOnly(const QVector<QString> &relations) const
+    RelationProxies<Model, Related>::withOnly(const QList<QString> &relations) const
     {
         getQuery().withOnly(relations);
 
@@ -1353,7 +1353,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::withOnly(QVector<QString> &&relations) const
+    RelationProxies<Model, Related>::withOnly(QList<QString> &&relations) const
     {
         getQuery().withOnly(std::move(relations));
 
@@ -1365,8 +1365,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     Related
     RelationProxies<Model, Related>::updateOrCreate(
-            const QVector<WhereItem> &attributes,
-            const QVector<AttributeItem> &values) const
+            const QList<WhereItem> &attributes,
+            const QList<AttributeItem> &values) const
     {
         return getQuery().updateOrCreate(attributes, values);
     }
@@ -1390,7 +1390,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<QVariant>
+    QList<QVariant>
     RelationProxies<Model, Related>::getBindings() const
     {
         return getBaseQuery().getBindings();
@@ -1400,7 +1400,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<SqlQuery>
-    RelationProxies<Model, Related>::insert(const QVector<AttributeItem> &values) const
+    RelationProxies<Model, Related>::insert(const QList<AttributeItem> &values) const
     {
         return getQuery().insert(values);
     }
@@ -1408,7 +1408,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::optional<SqlQuery>
     RelationProxies<Model, Related>::insert(
-            const QVector<QVector<AttributeItem>> &values) const
+            const QList<QList<AttributeItem>> &values) const
     {
         return getQuery().insert(values);
     }
@@ -1416,7 +1416,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::optional<SqlQuery>
     RelationProxies<Model, Related>::insert(
-            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+            const QList<QString> &columns, QList<QList<QVariant>> values) const
     {
         return getQuery().insert(columns, std::move(values));
     }
@@ -1425,7 +1425,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     quint64
     RelationProxies<Model, Related>::insertGetId(
-            const QVector<AttributeItem> &attributes, const QString &sequence) const
+            const QList<AttributeItem> &attributes, const QString &sequence) const
     {
         return getQuery().insertGetId(attributes, sequence);
     }
@@ -1433,7 +1433,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
-            const QVector<AttributeItem> &values) const
+            const QList<AttributeItem> &values) const
     {
         return getQuery().insertOrIgnore(values);
     }
@@ -1441,7 +1441,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
-            const QVector<QVector<AttributeItem>> &values) const
+            const QList<QList<AttributeItem>> &values) const
     {
         return getQuery().insertOrIgnore(values);
     }
@@ -1449,14 +1449,14 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
-            const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
+            const QList<QString> &columns, QList<QList<QVariant>> values) const
     {
         return getQuery().insertOrIgnore(columns, std::move(values));
     }
 
     template<class Model, class Related>
     std::tuple<int, TSqlQuery>
-    RelationProxies<Model, Related>::update(const QVector<UpdateItem> &values) const
+    RelationProxies<Model, Related>::update(const QList<UpdateItem> &values) const
     {
         return getQuery().update(values);
     }
@@ -1464,7 +1464,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy,
+            const QList<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update) const
     {
         return getQuery().upsert(values, uniqueBy, update);
@@ -1473,7 +1473,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::upsert(
-            const QVector<QVariantMap> &values, const QStringList &uniqueBy) const
+            const QList<QVariantMap> &values, const QStringList &uniqueBy) const
     {
         return getQuery().upsert(values, uniqueBy);
     }
@@ -1501,7 +1501,7 @@ namespace Tiny::Relations
     /* Select */
 
     template<class Model, class Related>
-    quint64 RelationProxies<Model, Related>::count(const QVector<Column> &columns) const
+    quint64 RelationProxies<Model, Related>::count(const QList<Column> &columns) const
     {
         return getQuery().count(columns);
     }
@@ -1510,7 +1510,7 @@ namespace Tiny::Relations
     template<typename>
     quint64 RelationProxies<Model, Related>::count(const Column &column) const
     {
-        return getQuery().count(QVector<Column> {column});
+        return getQuery().count(QList<Column> {column});
     }
 
     template<class Model, class Related>
@@ -1545,7 +1545,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     QVariant RelationProxies<Model, Related>::aggregate(
-            const QString &function, const QVector<Column> &columns) const
+            const QString &function, const QList<Column> &columns) const
     {
         return getQuery().aggregate(function, columns);
     }
@@ -1596,7 +1596,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::select(const QVector<Column> &columns) const
+    RelationProxies<Model, Related>::select(const QList<Column> &columns) const
     {
         getQuery().select(columns);
 
@@ -1614,7 +1614,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::addSelect(const QVector<Column> &columns) const
+    RelationProxies<Model, Related>::addSelect(const QList<Column> &columns) const
     {
         getQuery().addSelect(columns);
 
@@ -1632,7 +1632,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::select(QVector<Column> &&columns) const
+    RelationProxies<Model, Related>::select(QList<Column> &&columns) const
     {
         getQuery().select(std::move(columns));
 
@@ -1650,7 +1650,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::addSelect(QVector<Column> &&columns) const
+    RelationProxies<Model, Related>::addSelect(QList<Column> &&columns) const
     {
         getQuery().addSelect(std::move(columns));
 
@@ -1699,7 +1699,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::selectRaw(
-            const QString &expression, const QVector<QVariant> &bindings) const
+            const QString &expression, const QList<QVariant> &bindings) const
     {
         getQuery().selectRaw(expression, bindings);
 
@@ -2090,7 +2090,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::where(
-            const QVector<WhereItem> &values, const QString &condition) const
+            const QList<WhereItem> &values, const QString &condition) const
     {
         getQuery().where(values, condition);
 
@@ -2099,7 +2099,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::orWhere(const QVector<WhereItem> &values) const
+    RelationProxies<Model, Related>::orWhere(const QList<WhereItem> &values) const
     {
         getQuery().orWhere(values);
 
@@ -2109,7 +2109,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereNot(
-            const QVector<WhereItem> &values, const QString &condition,
+            const QList<WhereItem> &values, const QString &condition,
             const QString &defaultCondition) const
     {
         getQuery().whereNot(values, condition, defaultCondition);
@@ -2120,7 +2120,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereNot(
-            const QVector<WhereItem> &values, const QString &defaultCondition) const
+            const QList<WhereItem> &values, const QString &defaultCondition) const
     {
         getQuery().orWhereNot(values, defaultCondition);
 
@@ -2132,7 +2132,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereColumn(
-            const QVector<WhereColumnItem> &values, const QString &condition) const
+            const QList<WhereColumnItem> &values, const QString &condition) const
     {
         getQuery().whereColumn(values, condition);
 
@@ -2142,7 +2142,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereColumn(
-            const QVector<WhereColumnItem> &values) const
+            const QList<WhereColumnItem> &values) const
     {
         getQuery().orWhereColumn(values);
 
@@ -2195,7 +2195,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereIn(
-            const Column &column, const QVector<QVariant> &values,
+            const Column &column, const QList<QVariant> &values,
             const QString &condition, const bool nope) const
     {
         getQuery().whereIn(column, values, condition, nope);
@@ -2206,7 +2206,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereIn(const Column &column,
-                                               const QVector<QVariant> &values) const
+                                               const QList<QVariant> &values) const
     {
         getQuery().orWhereIn(column, values);
 
@@ -2216,7 +2216,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereNotIn(
-            const Column &column, const QVector<QVariant> &values,
+            const Column &column, const QList<QVariant> &values,
             const QString &condition) const
     {
         getQuery().whereNotIn(column, values, condition);
@@ -2227,7 +2227,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereNotIn(const Column &column,
-                                                  const QVector<QVariant> &values) const
+                                                  const QList<QVariant> &values) const
     {
         getQuery().orWhereNotIn(column, values);
 
@@ -2239,7 +2239,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereNull(
-            const QVector<Column> &columns, const QString &condition,
+            const QList<Column> &columns, const QString &condition,
             const bool nope) const
     {
         getQuery().whereNull(columns, condition, nope);
@@ -2249,7 +2249,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::orWhereNull(const QVector<Column> &columns) const
+    RelationProxies<Model, Related>::orWhereNull(const QList<Column> &columns) const
     {
         getQuery().orWhereNull(columns);
 
@@ -2258,7 +2258,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::whereNotNull(const QVector<Column> &columns,
+    RelationProxies<Model, Related>::whereNotNull(const QList<Column> &columns,
                                                   const QString &condition) const
     {
         getQuery().whereNotNull(columns, condition);
@@ -2268,7 +2268,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::orWhereNotNull(const QVector<Column> &columns) const
+    RelationProxies<Model, Related>::orWhereNotNull(const QList<Column> &columns) const
     {
         getQuery().orWhereNotNull(columns);
 
@@ -2559,8 +2559,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereRowValues(
-            const QVector<Column> &columns, const QString &comparison,
-            const QVector<QVariant> &values, const QString &condition) const
+            const QList<Column> &columns, const QString &comparison,
+            const QList<QVariant> &values, const QString &condition) const
     {
         getQuery().whereRowValues(columns, comparison, values, condition);
 
@@ -2570,8 +2570,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereRowValues(
-            const QVector<Column> &columns, const QString &comparison,
-            const QVector<QVariant> &values) const
+            const QList<Column> &columns, const QString &comparison,
+            const QList<QVariant> &values) const
     {
         getQuery().whereRowValues(columns, comparison, values, OR);
 
@@ -2581,7 +2581,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereRowValuesEq(
-            const QVector<Column> &columns, const QVector<QVariant> &values,
+            const QList<Column> &columns, const QList<QVariant> &values,
             const QString &condition) const
     {
         getQuery().whereRowValues(columns, EQ, values, condition);
@@ -2592,7 +2592,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereRowValuesEq(
-            const QVector<Column> &columns, const QVector<QVariant> &values) const
+            const QList<Column> &columns, const QList<QVariant> &values) const
     {
         getQuery().whereRowValues(columns, EQ, values, OR);
 
@@ -2761,7 +2761,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::whereRaw(
-            const QString &sql, const QVector<QVariant> &bindings,
+            const QString &sql, const QList<QVariant> &bindings,
             const QString &condition) const
     {
         getQuery().whereRaw(sql, bindings, condition);
@@ -2772,7 +2772,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereRaw(
-            const QString &sql, const QVector<QVariant> &bindings) const
+            const QString &sql, const QList<QVariant> &bindings) const
     {
         getQuery().whereRaw(sql, bindings, OR);
 
@@ -2783,7 +2783,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::groupBy(const QVector<Column> &groups) const
+    RelationProxies<Model, Related>::groupBy(const QList<Column> &groups) const
     {
         getQuery().groupBy(groups);
 
@@ -2804,7 +2804,7 @@ namespace Tiny::Relations
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::groupBy(Args &&...groups) const
     {
-        getQuery().groupBy(QVector<Column> {std::forward<Args>(groups)...});
+        getQuery().groupBy(QList<Column> {std::forward<Args>(groups)...});
 
         return relation();
     }
@@ -2812,7 +2812,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::groupByRaw(const QString &sql,
-                                                const QVector<QVariant> &bindings) const
+                                                const QList<QVariant> &bindings) const
     {
         getQuery().groupByRaw(sql, bindings);
 
@@ -2843,7 +2843,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::havingRaw(
-            const QString &sql,  const QVector<QVariant> &bindings,
+            const QString &sql,  const QList<QVariant> &bindings,
             const QString &condition) const
     {
         getQuery().havingRaw(sql, bindings, condition);
@@ -2854,7 +2854,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orHavingRaw(
-            const QString &sql,  const QVector<QVariant> &bindings) const
+            const QString &sql,  const QList<QVariant> &bindings) const
     {
         getQuery().havingRaw(sql, bindings, OR);
 
@@ -2914,7 +2914,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orderByRaw(const QString &sql,
-                                                const QVector<QVariant> &bindings) const
+                                                const QList<QVariant> &bindings) const
     {
         getQuery().orderByRaw(sql, bindings);
 
@@ -3032,7 +3032,7 @@ namespace Tiny::Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::increment(const QString &column, const T amount,
-                                               const QVector<UpdateItem> &extra) const
+                                               const QList<UpdateItem> &extra) const
     {
         return getQuery().increment(column, amount, extra);
     }
@@ -3041,7 +3041,7 @@ namespace Tiny::Relations
     template<typename T> requires std::is_arithmetic_v<T>
     std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::decrement(const QString &column, const T amount,
-                                               const QVector<UpdateItem> &extra) const
+                                               const QList<UpdateItem> &extra) const
     {
         return getQuery().decrement(column, amount, extra);
     }
@@ -3147,7 +3147,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     template<typename T>
-    QVector<T>
+    QList<T>
     RelationProxies<Model, Related>::chunkMap(
             const std::function<T(Related &&)> &callback, const qint64 count) const
     {
@@ -3172,7 +3172,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    Related RelationProxies<Model, Related>::sole(const QVector<Column> &columns) const
+    Related RelationProxies<Model, Related>::sole(const QList<Column> &columns) const
     {
         return getQuery().sole(columns);
     }

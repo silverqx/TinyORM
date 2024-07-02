@@ -192,7 +192,7 @@ R"(
 inline const auto *const ModelWithStub =
 R"(
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with {%1};)";
+    QList<QString> u_with {%1};)";
 
 /*! Model u_fillable stub. */
 inline const auto *const ModelFillableStub =
