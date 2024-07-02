@@ -269,7 +269,7 @@ private:
 
 Remember, TinyORM will automatically determine the proper foreign key column for the `Comment` model. By convention, TinyORM will take the "snake_case" name of the parent model and suffix it with `_id`. So, in this example, TinyORM will assume the foreign key column on the `Comment` model is `post_id`.
 
-Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by Model's `getRelationValue<Related, Container = QVector>` method:
+Once the relationship method has been defined, we can access the `QList<Related *>` of related comments by Model's `getRelationValue<Related, Container = QList>` method:
 
 ```cpp
 #include "models/post.hpp"
@@ -482,7 +482,7 @@ private:
 #endif // USER_HPP
 ```
 
-Once the relationship is defined, you may access the user's roles as the `QVector<Related *>`  by Model's `getRelationValue<Related, Container = QVector>` method:
+Once the relationship is defined, you may access the user's roles as the `QList<Related *>`  by Model's `getRelationValue<Related, Container = QList>` method:
 
 ```cpp
 #include <QDebug>
@@ -907,7 +907,7 @@ As described above TinyORM offers two methods to access relationships; `getRelat
 
 The `getRelation` method is for "eager loaded" relations, when the relationship is not loaded, it throws the exception `RelationNotLoadedError`. The `getRelationValue` is for "lazy loading", when the relationship is not loaded, it will load it.
 
-Both methods have two overloads, the `getRelation<Related, Container = QVector>` overload is for obtaining many type relationships:
+Both methods have two overloads, the `getRelation<Related, Container = QList>` overload is for obtaining many type relationships:
 
 ```cpp
 auto posts = User::find(1)->getRelation<Post>("posts");
@@ -1071,7 +1071,7 @@ select * from authors where id in (1, 2, 3, 4, 5, ...)
 
 #### Eager Loading Multiple Relationships
 
-Sometimes you may need to eager load several different relationships. To do so, just pass a `QVector<Orm::WithItem>` of relationships to the `with` method:
+Sometimes you may need to eager load several different relationships. To do so, just pass a `QList<Orm::WithItem>` of relationships to the `with` method:
 
 ```cpp
 auto books = Book::with({"author", "publisher"})->get();
@@ -1124,7 +1124,7 @@ private:
     };
 
     /*! The relationships that should always be loaded. */
-    QVector<QString> u_with {
+    QList<QString> u_with {
         "author",
     };
 };
@@ -1144,7 +1144,7 @@ auto books = Book::withOnly("genre")->get();
 
 ### Constraining Eager Loads
 
-Sometimes you may wish to eager load a relationship but also specify additional query conditions for the eager loading query. You can accomplish this by passing a `QVector<Orm::WithItem>` of relationships to the `with` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
+Sometimes you may wish to eager load a relationship but also specify additional query conditions for the eager loading query. You can accomplish this by passing a `QList<Orm::WithItem>` of relationships to the `with` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
 
 ```cpp
 #include "models/user.hpp"
@@ -1181,7 +1181,7 @@ if (someCondition)
     book->load("author");
 ```
 
-You may load more relationships at once, to do so, just pass a `QVector<Orm::WithItem>` of relationships to the `load` method:
+You may load more relationships at once, to do so, just pass a `QList<Orm::WithItem>` of relationships to the `load` method:
 
 ```cpp
 Book::find(1)->load({"author", "publisher"});
@@ -1191,7 +1191,7 @@ Book::find(1)->load({"author", "publisher"});
 So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
 :::
 
-If you need to set additional query constraints on the eager loading query, you may pass a `QVector<Orm::WithItem>` of relationships to the `load` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
+If you need to set additional query constraints on the eager loading query, you may pass a `QList<Orm::WithItem>` of relationships to the `load` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
 
 ```cpp
 author->load({{"books", [](auto &query)
@@ -1281,7 +1281,7 @@ post->push();
 
 ### The `create` Method
 
-In addition to the `save` and `saveMany` methods, you may also use the `create` method, which accepts a vector of attributes, creates a model, and inserts it into the database. The difference between `save` and `create` is that `save` accepts a full TinyORM model instance while `create` accepts a `QVector<Orm::AttributeItem>`. The newly created model will be returned by the `create` method:
+In addition to the `save` and `saveMany` methods, you may also use the `create` method, which accepts a vector of attributes, creates a model, and inserts it into the database. The difference between `save` and `create` is that `save` accepts a full TinyORM model instance while `create` accepts a `QList<Orm::AttributeItem>`. The newly created model will be returned by the `create` method:
 
 ```cpp
 #include "models/post.hpp"

@@ -109,7 +109,7 @@ user.value("email").toString();
 
 #### Retrieving A List Of Column Values
 
-If you would like to retrieve the `QVector<QVariant>` instance containing the values of a single column, you may use the `pluck` method. In this example, we'll retrieve a collection of user titles:
+If you would like to retrieve the `QList<QVariant>` instance containing the values of a single column, you may use the `pluck` method. In this example, we'll retrieve a collection of user titles:
 
 ```cpp
 #include <QDebug>
@@ -467,7 +467,7 @@ auto users = DB::table("users")
                  .get();
 ```
 
-You may also pass a `QVector<Orm::WhereItem>` of conditions to the `where` function. Each `Orm::WhereItem` structure should contain the four arguments typically passed to the `where` method:
+You may also pass a `QList<Orm::WhereItem>` of conditions to the `where` function. Each `Orm::WhereItem` structure should contain the four arguments typically passed to the `where` method:
 
 ```cpp
 auto users = DB::table("users")
@@ -509,7 +509,7 @@ select * from users where votes > 100 or (name = "Abigail" and votes > 50)
 ```
 ### Condition Operator Overriding
 
-The `where` method overload with a `QVector<Orm::WhereItem>` as the first argument joins conditions using the `and` operator by default:
+The `where` method overload with a `QList<Orm::WhereItem>` as the first argument joins conditions using the `and` operator by default:
 
 ```cpp
 auto users = DB::table("users")
@@ -608,7 +608,7 @@ auto files = DB::table("files")
 
 **whereIn / whereNotIn / orWhereIn / orWhereNotIn**
 
-The `whereIn` method verifies that a given column's value is contained within the given `QVector<QVariant>`:
+The `whereIn` method verifies that a given column's value is contained within the given `QList<QVariant>`:
 
 ```cpp
 auto users = DB::table("users")
@@ -616,7 +616,7 @@ auto users = DB::table("users")
                  .get();
 ```
 
-The `whereNotIn` method verifies that the given column's value is not contained in the given `QVector<QVariant>`:
+The `whereNotIn` method verifies that the given column's value is not contained in the given `QList<QVariant>`:
 
 ```cpp
 auto users = DB::table("users")
@@ -710,7 +710,7 @@ auto users = DB::table("users")
                  .get();
 ```
 
-You may also pass a `QVector<Orm::WhereColumnItem>` of column comparisons to the `whereColumn` method. These conditions will be joined using the `and` operator:
+You may also pass a `QList<Orm::WhereColumnItem>` of column comparisons to the `whereColumn` method. These conditions will be joined using the `and` operator:
 
 ```cpp
 auto users = DB::table("users")
@@ -956,7 +956,7 @@ DB::table("users")->insert({
 
 <Link id='multi-insert-overload' />
 
-You may insert several records at once by passing a `QVector<QString>` for column names as the first argument and `QVector<QVector<QVariant>>` for values as the second argument. Each `QVector<QVariant>` represents a record that should be inserted into the table. This overload is useful for multi-insert and allows to specify column names only once:
+You may insert several records at once by passing a `QList<QString>` for column names as the first argument and `QList<QList<QVariant>>` for values as the second argument. Each `QList<QVariant>` represents a record that should be inserted into the table. This overload is useful for multi-insert and allows to specify column names only once:
 
 ```cpp
 DB::table("users")->insert({"email", "votes"},
@@ -966,7 +966,7 @@ DB::table("users")->insert({"email", "votes"},
 });
 ```
 
-You may also insert several records at once by passing a `QVector<QVariantMap>`. Each `QVariantMap` represents a record that should be inserted into the table:
+You may also insert several records at once by passing a `QList<QVariantMap>`. Each `QVariantMap` represents a record that should be inserted into the table:
 
 ```cpp
 DB::table("users")->insert({
@@ -1026,7 +1026,7 @@ Row and column aliases will be used with the MySQL server >=8.0.19 instead of th
 
 ## Update Statements
 
-In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, accepts a `QVector<Orm::UpdateItem>` of column and value pairs, indicating the columns to be updated and returns a `std::tuple<int, QSqlQuery>` . You may constrain the `update` query using `where` clauses:
+In addition to inserting records into the database, the query builder can also update existing records using the `update` method. The `update` method, accepts a `QList<Orm::UpdateItem>` of column and value pairs, indicating the columns to be updated and returns a `std::tuple<int, QSqlQuery>` . You may constrain the `update` query using `where` clauses:
 
 ```cpp
 auto [affected, query] = DB::table("users")
@@ -1066,7 +1066,7 @@ DB::table("users")->decrement<int>("votes");
 DB::table("users")->decrement("votes", 5.2); // float or double type
 ```
 
-You may also specify additional columns to update during the operation as a `QVector<Orm::UpdateItem>`:
+You may also specify additional columns to update during the operation as a `QList<Orm::UpdateItem>`:
 
 ```cpp
 DB::table("users")->increment("votes", 1, {{"name", "John"}});

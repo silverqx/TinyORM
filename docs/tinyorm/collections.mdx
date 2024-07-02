@@ -15,13 +15,13 @@ keywords: [c++ orm, orm, collections, collection, model, tinyorm]
 
 The `Orm::Tiny::Types::ModelsCollection` is specialized container which provides a fluent, convenient wrapper for working with vector of models. All TinyORM methods that return more than one model result, will return instances of the `ModelsCollection` class, including results retrieved via the `get` method or methods that return relationships like the `getRelation` and `getRelationValue`.
 
-The `ModelsCollection` class extends `QVector<Model>`, so it naturally inherits dozens of methods used to work with the underlying vector of TinyORM models. Be sure to review the [`QList`](https://doc.qt.io/qt/qlist.html) documentation to learn all about these helpful methods!
+The `ModelsCollection` class extends `QList<Model>`, so it naturally inherits dozens of methods used to work with the underlying vector of TinyORM models. Be sure to review the [`QList`](https://doc.qt.io/qt/qlist.html) documentation to learn all about these helpful methods!
 
 :::info
 The `ModelsCollection` template parameter can be declared only with the model type or a model type pointer, it also can't be `const` and can't be a reference. It's constrained using the `DerivedCollectionModel` concept.
 :::
 
-You can iterate over the `ModelsCollection` the same way as over the `QVector`:
+You can iterate over the `ModelsCollection` the same way as over the `QList`:
 
 ```cpp
 using Models::User;
@@ -50,7 +50,7 @@ The `ModelsCollection<Model>` is returning from the Models' methods like `get`, 
 
 #### Collection Conversion
 
-While most TinyORM collection methods return a new instance of `ModelsCollection`, the `modelKeys`, `mapWithKeys`, and `pluck` methods return a base QVector or std unordered/map instances. Likewise, one of the `map` methods overload returns the `QVector<T>`.
+While most TinyORM collection methods return a new instance of `ModelsCollection`, the `modelKeys`, `mapWithKeys`, and `pluck` methods return a base QList or std unordered/map instances. Likewise, one of the `map` methods overload returns the `QList<T>`.
 
 ### Creating Collections
 
@@ -71,10 +71,10 @@ ModelsCollection<User *> userPointers {
 };
 ```
 
-The `ModelsCollection<Model>` is implicitly convertible and assignable from the `QVector<Model>`:
+The `ModelsCollection<Model>` is implicitly convertible and assignable from the `QList<Model>`:
 
 ```cpp
-QVector<User> usersVector {
+QList<User> usersVector {
     {{"name", "Kate"}, {"votes", 150}},
     {{"name", "John"}, {"votes", 200}},
 };
@@ -174,7 +174,7 @@ For a better understanding of the following examples, many of the variable decla
 The `all` method returns a copy of the underlying vector represented by the collection:
 
 ```cpp
-QVector<User> = users.all();
+QList<User> = users.all();
 ```
 
 :::note
@@ -541,10 +541,10 @@ auto usersAdded = users.map([](User &&userCopy)
 */
 ```
 
-The second `map` overload allows to return the `QVector<T>`:
+The second `map` overload allows to return the `QList<T>`:
 
 ```cpp
-QVector<quint64> usersAdded = users.map<quint64>([](User &&userCopy)
+QList<quint64> usersAdded = users.map<quint64>([](User &&userCopy)
 {
     const auto votesRef = userCopy["votes"];
 
@@ -616,7 +616,7 @@ ModelsCollection<User> users {
     {{"id", 5}, {"name", "Rose"}},
 };
 
-users.modelKeys(); // Returns QVector<QVariant>
+users.modelKeys(); // Returns QList<QVariant>
 users.modelKeys<quint64>();
 
 // {1, 2, 3, 5}
@@ -638,7 +638,7 @@ For the inverse of `only`, see the [except](#method-except) method.
 
 #### `pluck()` {#method-pluck}
 
-The `pluck` method retrieves all of the values for a given column, the following overload returns the `QVector<QVariant>`:
+The `pluck` method retrieves all of the values for a given column, the following overload returns the `QList<QVariant>`:
 
 ```cpp
 ModelsCollection<Product> products {
@@ -651,7 +651,7 @@ auto plucked = products.pluck("name");
 // {Desk, Chair}
 ```
 
-The second overload allows returning the custom type `QVector<T>`:
+The second overload allows returning the custom type `QList<T>`:
 
 ```cpp
 auto plucked = products.pluck<QString>("name");
@@ -915,7 +915,7 @@ It can be also called on `ModelsCollection` rvalues, it returns an rvalue refere
 The `toBase` method returns a copy of the underlying vector represented by the collection:
 
 ```cpp
-QVector<User> = users.toBase();
+QList<User> = users.toBase();
 ```
 
 :::note
@@ -942,13 +942,13 @@ The `toJsonDocument` method converts the collection of models with all nested re
 
 #### `toMap()` {#method-tomap}
 
-The `toMap`  method converts the collection of models with all nested relations into an attributes map `QVector<QVariantMap>`.
+The `toMap`  method converts the collection of models with all nested relations into an attributes map `QList<QVariantMap>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 
 #### `toMapVariantList()` {#method-tomapvariantlist}
 
-The `toMapVariantList` method converts the collection of models with all nested relations into an attributes map, but it returns the  <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVariantMap>`.
+The `toMapVariantList` method converts the collection of models with all nested relations into an attributes map, but it returns the  <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QList<QVariantMap>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 
@@ -972,13 +972,13 @@ users.toQuery()->update({
 
 #### `toList()` {#method-tolist}
 
-The `toList` method converts the collection of models with all nested relations into an attributes vector `QVector<QVector<AttributeItem>>`.
+The `toList` method converts the collection of models with all nested relations into an attributes vector `QList<QList<AttributeItem>>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 
 #### `toListVariantList()` {#method-tolistvariantlist}
 
-The `toListVariantList` method converts the collection of models with all nested relations into an attributes vector, but it returns the <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVector<AttributeItem>>`.
+The `toListVariantList` method converts the collection of models with all nested relations into an attributes vector, but it returns the <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QList<QList<AttributeItem>>`.
 
 It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
 

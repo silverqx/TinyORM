@@ -378,7 +378,7 @@ class Flight final : public Model<Flight>
 
 private:
     /*! The model's default values for attributes. */
-    inline static const QVector<AttributeItem> u_attributes {
+    inline static const QList<AttributeItem> u_attributes {
         {"delayed",  false},
         {"progress", 0},
         {"added_on", QDateTime::currentDateTimeUtc()},
@@ -454,7 +454,7 @@ flight->getAttribute("number"); // "FR 900"
 
 ### Containers
 
-As we have seen, TinyORM methods like `all` and `get` retrieve multiple records from the database. Since these methods return a `QVector<Model>`, you can iterate it like any other container with the [Range-based for loop](https://en.cppreference.com/w/cpp/language/range-for), [STL-Style Iterators](https://doc.qt.io/qt/containers.html#stl-style-iterators), [Java-Style Iterators](https://doc.qt.io/qt/containers.html#java-style-iterators) or [Ranges](https://www.walletfox.com/course/quickref_range_v3.php).
+As we have seen, TinyORM methods like `all` and `get` retrieve multiple records from the database. Since these methods return a `QList<Model>`, you can iterate it like any other container with the [Range-based for loop](https://en.cppreference.com/w/cpp/language/range-for), [STL-Style Iterators](https://doc.qt.io/qt/containers.html#stl-style-iterators), [Java-Style Iterators](https://doc.qt.io/qt/containers.html#java-style-iterators) or [Ranges](https://www.walletfox.com/course/quickref_range_v3.php).
 
 ```cpp
 #include <QDebug>
@@ -476,7 +476,7 @@ Your application may run out of memory if you attempt to load tens of thousands 
 The `chunk` method will retrieve a subset of TinyORM models, passing them to a lambda expression for processing. Since only the current chunk of TinyORM models is retrieved at a time, the `chunk` method will provide significantly reduced memory usage when working with a large number of models:
 
 ```cpp
-Flight::chunk(200, [](QVector<Flight> &&flights, const int /*unused*/)
+Flight::chunk(200, [](QList<Flight> &&flights, const int /*unused*/)
 {
     for (auto &&flight : flights) {
         //
@@ -492,7 +492,7 @@ If you are filtering the results of the `chunk` method based on a column that yo
 
 ```cpp
 Flight::whereEq("departed", true)
-    ->chunkById(200, [](QVector<Flight> &&flights, const int /*unused*/)
+    ->chunkById(200, [](QList<Flight> &&flights, const int /*unused*/)
     {
         for (auto &&flight : flights)
             flight.update({{"departed", false}});
@@ -575,7 +575,7 @@ auto flight = Flight::findOr<std::optional<Flight>>(1, [] {
 });
 ```
 
-To obtain only a subset of the model's attributes you may use the `Model::only` method, it returns the `QVector<AttributeItem>`:
+To obtain only a subset of the model's attributes you may use the `Model::only` method, it returns the `QList<AttributeItem>`:
 
 ```cpp
 #include "models/flight.hpp"
@@ -600,7 +600,7 @@ auto flight = Flight::where("legs", ">", 3)->firstOrFail();
 
 ### Retrieving Or Creating Models
 
-The `firstOrCreate` method will attempt to locate a database record using the given column / value pairs. If the model can not be found in the database, a record will be inserted with the attributes resulting from merging the first `QVector<Orm::WhereItem>` argument with the optional second `QVector<Orm::AttributeItem>` argument:
+The `firstOrCreate` method will attempt to locate a database record using the given column / value pairs. If the model can not be found in the database, a record will be inserted with the attributes resulting from merging the first `QList<Orm::WhereItem>` argument with the optional second `QList<Orm::AttributeItem>` argument:
 
 The `firstOrNew` method, like `firstOrCreate`, will attempt to locate a record in the database matching the given attributes. However, if a model is not found, a new model instance will be returned. Note that the model returned by `firstOrNew` has not yet been persisted to the database. You will need to manually call the `save` method to persist it:
 
@@ -693,7 +693,7 @@ Flight::whereEq("active", 1)
       .update({{"delayed", 1}});
 ```
 
-The `update` method expects the `QVector<Orm::UpdateItem>` of column and value pairs representing the columns that should be updated.
+The `update` method expects the `QList<Orm::UpdateItem>` of column and value pairs representing the columns that should be updated.
 
 #### Examining Attribute Changes
 

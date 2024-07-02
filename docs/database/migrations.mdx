@@ -1299,7 +1299,7 @@ Schema::table("users", [](Blueprint &table)
 });
 ```
 
-You may drop multiple columns from a table by passing a `QVector<QString>` of column names to the `dropColumns` method, the `dropColumns` method also provides parameter pack overload:
+You may drop multiple columns from a table by passing a `QList<QString>` of column names to the `dropColumns` method, the `dropColumns` method also provides parameter pack overload:
 
 ```cpp
 Schema::table("users", [](Blueprint &table)
@@ -1349,7 +1349,7 @@ Alternatively, you may create the index after defining the column. To do so, you
 table.unique("email");
 ```
 
-You may even pass a `QVector<QString>` of columns to an index method to create a compound (or composite) index:
+You may even pass a `QList<QString>` of columns to an index method to create a compound (or composite) index:
 
 ```cpp
 table.index({"account_id", "created_at"});
@@ -1415,7 +1415,7 @@ To drop an index, you must specify the index's name. By default, TinyORM automat
 </APITable>
 </div>
 
-I may also drop indexes by a column name or column names for composite keys, if you pass a `QVector<QString>` of columns into a method that drops indexes, the conventional index name will be generated based on the table name, columns, and index type:
+I may also drop indexes by a column name or column names for composite keys, if you pass a `QList<QString>` of columns into a method that drops indexes, the conventional index name will be generated based on the table name, columns, and index type:
 
 ```cpp
 Schema::table("geo", [](Blueprint &table)
@@ -1498,7 +1498,7 @@ To drop a foreign key, you may use the `dropForeign` method, passing the name of
 table.dropForeign("posts_user_id_foreign");
 ```
 
-Alternatively, you may pass a `QVector<QString>` containing the column name that holds the foreign key to the `dropForeign` method. The `QVector` will be converted to a foreign key constraint name using TinyORM's constraint naming conventions:
+Alternatively, you may pass a `QList<QString>` containing the column name that holds the foreign key to the `dropForeign` method. The `QList` will be converted to a foreign key constraint name using TinyORM's constraint naming conventions:
 
 ```cpp
 table.dropForeign({"user_id"});
