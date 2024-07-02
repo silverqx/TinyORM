@@ -1562,8 +1562,8 @@ At the beginning it was like this:
    the solution would be to add a whole new chain for eager load relations,
    which will be able to work only on one Model &, but it is around
    10-15 methods refactoring, or add a variant which can process
-   QVector<std::reference_wrapper<Derived>>.
-   For now, I have made a copy here and save it into the QVector and after
+   QList<std::reference_wrapper<Derived>>.
+   For now, I have made a copy here and save it into the QList and after
    that move relations from this copy to the real instance. */
 ModelsCollection<Model> models {&model};
 
@@ -1647,24 +1647,24 @@ QDebug operator<<(QDebug debug, const Model &model)
 conversions:
 ------------
 
-Makes possible to assign QVector<AttributeItem> to the Model,
-or implicitly converts a QVector<AttributeItem> to Model:
+Makes possible to assign QList<AttributeItem> to the Model,
+or implicitly converts a QList<AttributeItem> to Model:
 
-Model(const QVector<AttributeItem> &attributes);
-Model(QVector<AttributeItem> &&attributes);
+Model(const QList<AttributeItem> &attributes);
+Model(QList<AttributeItem> &&attributes);
 
 --
-Allows initialize the Model with QVector<AttributeItem>:
+Allows initialize the Model with QList<AttributeItem>:
 
 Model(std::initializer_list<AttributeItem> attributes)
-    : Model(QVector<AttributeItem> {attributes.begin(), attributes.end()})
+    : Model(QList<AttributeItem> {attributes.begin(), attributes.end()})
 {}
 
 --
-Makes possible to assign the Model to the QVector<AttributeItem>,
-or converts the Model to the QVector<AttributeItem>:
+Makes possible to assign the Model to the QList<AttributeItem>,
+or converts the Model to the QList<AttributeItem>:
 
-operator QVector<AttributeItem>() const;
+operator QList<AttributeItem>() const;
 
 
 Check copy/move/swap operations:
@@ -1722,7 +1722,7 @@ const auto relationToWithItem = [](const auto &relation) -> WithItem
 };
 
 builder->with(relations | ranges::views::transform(relationToWithItem)
-                        | ranges::to<QVector<WithItem>>());
+                        | ranges::to<QList<WithItem>>());
 
 
 DatabaseConnection config:
@@ -1938,8 +1938,8 @@ tmp notes - Queryable columns:
 
         /*! Set the columns to be selected. */
         template<SubQuery T>
-        Builder &select(const QVector<Queryable<T>> &columns)
-//        Builder &select(const QVector<Queryable> &columns)
+        Builder &select(const QList<Queryable<T>> &columns)
+//        Builder &select(const QList<Queryable> &columns)
         {
             clearColumns();
 
@@ -1953,7 +1953,7 @@ tmp notes - Queryable columns:
 //        Builder &select(const Column &column);
 //        /*! Add new select columns to the query. */
 //        template<SubQuery T>
-//        Builder &addSelect(const QVector<Column> &columns);
+//        Builder &addSelect(const QList<Column> &columns);
 //        /*! Add a new select column to the query. */
 //        template<SubQuery T>
 //        Builder &addSelect(const Column &column);
@@ -2011,10 +2011,10 @@ struct AssignmentListItem
     QVariant value;
 };
 
-class AssignmentList final : public QVector<AssignmentListItem>
+class AssignmentList final : public QList<AssignmentListItem>
 {
     // Inherit all the base class constructors, wow 😲✨
-    using QVector<AssignmentListItem>::QVector;
+    using QList<AssignmentListItem>::QList;
 
 public:
     AssignmentList(const QVariantHash &variantHash)
@@ -2947,7 +2947,7 @@ at https://doc.qt.io/qt-6/qjsonvalue.html#fromVariant
 
 The best what can be done is to return the QVariantMap or QVariantList from the accessors.
 
-Aggregate types and Value Objects works good with the Model's toMap() and toVector() methods,
+Aggregate types and Value Objects works good with the Model's toMap() and toList() methods,
 especially with Qt6's QVariant::fromValue(), Qt6 doesn't need to declare the Q_DECLARE_METATYPE().
 
 
