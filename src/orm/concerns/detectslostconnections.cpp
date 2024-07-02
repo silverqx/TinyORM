@@ -1,6 +1,6 @@
 #include "orm/concerns/detectslostconnections.hpp"
 
-#include <QVector>
+#include <QList>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

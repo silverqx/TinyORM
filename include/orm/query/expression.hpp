@@ -5,8 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QList>
 #include <QVariant>
-#include <QVector>
 
 #include "orm/macros/commonnamespace.hpp"
 
