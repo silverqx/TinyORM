@@ -485,9 +485,9 @@ bool String::allTagCharsAllowed(const QString &string, const QString::size_type 
 
         // All allowed chars
             // A-Z a-z 0-9
-        if ((ch >= QLatin1Char('A') && ch <= QLatin1Char('Z'))  ||
-            (ch >= QLatin1Char('a') && ch <= QLatin1Char('z'))  ||
-            (ch >= QLatin1Char('0') && ch <= QLatin1Char('9'))  ||
+        if ((ch >= QLatin1Char('A') && ch <= QLatin1Char('Z')) ||
+            (ch >= QLatin1Char('a') && ch <= QLatin1Char('z')) ||
+            (ch >= QLatin1Char('0') && ch <= QLatin1Char('9')) ||
             // space ! " # $ % & '
             (ch >= SPACE && ch <= SQUOTE) ||
             // - = ? _ @

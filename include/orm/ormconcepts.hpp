@@ -78,17 +78,17 @@ namespace Query
 
     /*! QString/Column container concept (QStringList or QList<QString>). */
     template<typename T>
-    concept ColumnContainer = std::convertible_to<T, QStringList> ||
+    concept ColumnContainer = std::convertible_to<T, QStringList>    ||
                               std::convertible_to<T, QList<QString>> ||
                               std::convertible_to<T, QList<Column>>;
 
     /*! QString container concept (used by ContainerUtils::join()). */
     template<typename T>
-    concept JoinContainer = ColumnContainer<T> ||
-                            std::convertible_to<T, std::set<QString>> ||
-                            std::convertible_to<T, std::deque<QString>> ||
+    concept JoinContainer = ColumnContainer<T>                           ||
+                            std::convertible_to<T, std::set<QString>>    ||
+                            std::convertible_to<T, std::deque<QString>>  ||
                             std::convertible_to<T, std::vector<QString>> ||
-                            std::convertible_to<T, QList<QStringView>> ||
+                            std::convertible_to<T, QList<QStringView>>   ||
                             std::convertible_to<T, QSet<QString>>;
 
     /*! Concept for delimiter for joining containers. */
