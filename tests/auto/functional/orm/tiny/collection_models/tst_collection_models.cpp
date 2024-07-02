@@ -194,7 +194,7 @@ private Q_SLOTS:
     void load_rvalue_NonExistentRelation_Failed() const;
 
     /* EnumeratesValues */
-    void toVector() const;
+    void toList() const;
     void toMap() const;
 
     void reject() const;
@@ -2915,7 +2915,7 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
 
 /* EnumeratesValues */
 
-void tst_Collection_Models::toVector() const
+void tst_Collection_Models::toList() const
 {
     auto images = AlbumImage::findMany({1, 6, 7, 8});
     QCOMPARE(images.size(), 4);
@@ -2923,7 +2923,7 @@ void tst_Collection_Models::toVector() const
     QVERIFY(Common::verifyIds(images, {1, 6, 7, 8}));
 
     // Get result
-    QList<QList<AttributeItem>> result = images.toVector();
+    QList<QList<AttributeItem>> result = images.toList();
 
     // Verify
     QCOMPARE(result.size(), 4);

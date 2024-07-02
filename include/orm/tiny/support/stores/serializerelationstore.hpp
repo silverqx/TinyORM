@@ -93,7 +93,7 @@ namespace Support::Stores
 
         /* Here is the last and only one chance where we can obtain the PivotType
            for the belongs-to-many relation, so we need to pass it down, so that
-           the toMap() or toVector() can obtain the correct pivot model type
+           the toMap() or toList() can obtain the correct pivot model type
            from the m_relations map's std::variant. */
 
         // belongs-to-many

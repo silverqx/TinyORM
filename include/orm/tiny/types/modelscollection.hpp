@@ -410,7 +410,7 @@ namespace Types
         /* EnumeratesValues */
         /*! Get the vector of models as a attributes vector with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QList<QList<AttributeItem>> toVector() const;
+        QList<QList<AttributeItem>> toList() const;
         /*! Get the vector of models as a variant map with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
         QList<QVariantMap> toMap() const;
@@ -418,7 +418,7 @@ namespace Types
         /*! Get the vector of models as the variant (variant map inside) with serialized
             models (used by toJson()). */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVariantList toVectorVariantList() const;
+        QVariantList toListVariantList() const;
         /*! Get the vector of models as the variant (variant map inside) with serialized
             models (used by toJson()). */
         template<typename PivotType = void> // PivotType is primarily internal
@@ -1770,11 +1770,11 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename PivotType>
     QList<QList<AttributeItem>>
-    ModelsCollection<Model>::toVector() const
+    ModelsCollection<Model>::toList() const
     {
         return map<QList<AttributeItem>>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            return model.template toVector<PivotType>();
+            return model.template toList<PivotType>();
         });
     }
 
@@ -1792,11 +1792,11 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename PivotType>
     QVariantList
-    ModelsCollection<Model>::toVectorVariantList() const
+    ModelsCollection<Model>::toListVariantList() const
     {
         return map<QVariant>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            return QVariant::fromValue(model.template toVector<PivotType>());
+            return QVariant::fromValue(model.template toList<PivotType>());
         });
     }
 

@@ -54,75 +54,75 @@ private Q_SLOTS:
 
     /* Serialization */
     void toMap() const;
-    void toVector() const;
+    void toList() const;
 
     void toMap_WithCasts() const;
-    void toVector_WithCasts() const;
+    void toList_WithCasts() const;
 
     void toMap_UDatesOnly_QDateTime_For_date_column() const;
-    void toVector_UDatesOnly_QDateTime_For_date_column() const;
+    void toList_UDatesOnly_QDateTime_For_date_column() const;
 
     void toMap_UDatesOnly_QDate_For_date_column() const;
-    void toVector_UDatesOnly_QDate_For_date_column() const;
+    void toList_UDatesOnly_QDate_For_date_column() const;
 
     void toMap_UDatesOnly_Timestamp() const;
-    void toVector_UDatesOnly_Timestamp() const;
+    void toList_UDatesOnly_Timestamp() const;
 
     void toMap_WithDateModfiers() const;
-    void toVector_WithDateModfiers() const;
+    void toList_WithDateModfiers() const;
 
     void toMap_WithDateModfiers_UnixTimestamp() const;
-    void toVector_WithDateModfiers_UnixTimestamp() const;
+    void toList_WithDateModfiers_UnixTimestamp() const;
 
     void toMap_UDatesOnly_OverrideSerializeDateTime() const;
-    void toVector_UDatesOnly_OverrideSerializeDateTime() const;
+    void toList_UDatesOnly_OverrideSerializeDateTime() const;
 
     void toMap_CastsOnly_OverrideSerializeDateTime() const;
-    void toVector_CastsOnly_OverrideSerializeDateTime() const;
+    void toList_CastsOnly_OverrideSerializeDateTime() const;
 
     void toMap_WithUDatesAndCasts_OverrideSerializeDateTime() const;
-    void toVector_WithUDatesAndCasts_OverrideSerializeDateTime() const;
+    void toList_WithUDatesAndCasts_OverrideSerializeDateTime() const;
 
     void toMap_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const;
-    void toVector_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const;
+    void toList_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const;
 
     void toMap_UDatesOnly_DateNullVariants() const;
-    void toVector_UDatesOnly_DateNullVariants() const;
+    void toList_UDatesOnly_DateNullVariants() const;
 
     void toMap_WithCasts_DateNullVariants() const;
-    void toVector_WithCasts_DateNullVariants() const;
+    void toList_WithCasts_DateNullVariants() const;
 
     void toMap_WithRelations_HasOne_HasMany_BelongsTo() const;
-    void toVector_WithRelations_HasOne_HasMany_BelongsTo() const;
+    void toList_WithRelations_HasOne_HasMany_BelongsTo() const;
 
     void toMap_WithRelation_BelongsToMany_TorrentTags() const;
-    void toVector_WithRelation_BelongsToMany_TorrentTags() const;
+    void toList_WithRelation_BelongsToMany_TorrentTags() const;
 
     void toMap_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
-    void toVector_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
+    void toList_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
 
     void toMap_WithRelation_BelongsToMany_UserRoles() const;
-    void toVector_WithRelation_BelongsToMany_UserRoles() const;
+    void toList_WithRelation_BelongsToMany_UserRoles() const;
 
     void toMap_u_snakeAttributes_false() const;
-    void toVector_u_snakeAttributes_false() const;
+    void toList_u_snakeAttributes_false() const;
 
     void toMap_HasMany_EmptyRelation() const;
-    void toVector_HasMany_EmptyRelation() const;
+    void toList_HasMany_EmptyRelation() const;
 
     void toMap_HasOne_EmptyRelation() const;
-    void toVector_HasOne_EmptyRelation() const;
+    void toList_HasOne_EmptyRelation() const;
 
     void toMap_BelongsTo_EmptyRelation() const;
-    void toVector_BelongsTo_EmptyRelation() const;
+    void toList_BelongsTo_EmptyRelation() const;
 
     void toMap_BelongsToMany_EmptyRelation() const;
-    void toVector_BelongsToMany_EmptyRelation() const;
+    void toList_BelongsToMany_EmptyRelation() const;
 
     void toMap_RelationOnly_HasMany() const;
-    void toVector_RelationOnly_HasMany() const;
+    void toList_RelationOnly_HasMany() const;
     void toMap_RelationOnly_BelongsToMany() const;
-    void toVector_RelationOnly_BelongsToMany() const;
+    void toList_RelationOnly_BelongsToMany() const;
 
     void toJson_WithRelations_HasOne_HasMany_BelongsTo() const;
     void toJson_WithRelation_BelongsToMany_TorrentTags() const;
@@ -193,13 +193,13 @@ void tst_Model_Serialization::toMap() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector() const
+void tst_Model_Serialization::toList() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 10);
 
     // The order must be the same as returned from the MySQL database
@@ -245,7 +245,7 @@ void tst_Model_Serialization::toMap_WithCasts() const
     datetime.resetCasts();
 }
 
-void tst_Model_Serialization::toVector_WithCasts() const
+void tst_Model_Serialization::toList_WithCasts() const
 {
     auto datetime = Datetime::instance({
         {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -257,7 +257,7 @@ void tst_Model_Serialization::toVector_WithCasts() const
                          {"date",      CastType::QDate},
                          {"timestamp", CastType::Timestamp}});
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
@@ -291,14 +291,14 @@ void tst_Model_Serialization::toMap_UDatesOnly_QDateTime_For_date_column() const
 }
 
 void
-tst_Model_Serialization::toVector_UDatesOnly_QDateTime_For_date_column() const
+tst_Model_Serialization::toList_UDatesOnly_QDateTime_For_date_column() const
 {
     auto datetime = Datetime::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
@@ -325,13 +325,13 @@ void tst_Model_Serialization::toMap_UDatesOnly_QDate_For_date_column() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_UDatesOnly_QDate_For_date_column() const
+void tst_Model_Serialization::toList_UDatesOnly_QDate_For_date_column() const
 {
     auto datetime = Datetime::instance({
         {"date", QDate(2023, 05, 14)},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
@@ -356,13 +356,13 @@ void tst_Model_Serialization::toMap_UDatesOnly_Timestamp() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_UDatesOnly_Timestamp() const
+void tst_Model_Serialization::toList_UDatesOnly_Timestamp() const
 {
     auto datetime = Datetime::instance(QList<AttributeItem> {
         {"timestamp", static_cast<qint64>(1662712888)},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
@@ -409,7 +409,7 @@ void tst_Model_Serialization::toMap_WithDateModfiers() const
     Datetime::u_timeFormat = std::move(timeFormatOriginal);
 }
 
-void tst_Model_Serialization::toVector_WithDateModfiers() const
+void tst_Model_Serialization::toList_WithDateModfiers() const
 {
     auto datetime = Datetime::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -425,7 +425,7 @@ void tst_Model_Serialization::toVector_WithDateModfiers() const
         {"time_ms",  {CastType::CustomQTime,     "HH:mm:ss.zzz"}},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
@@ -464,7 +464,7 @@ void tst_Model_Serialization::toMap_WithDateModfiers_UnixTimestamp() const
     datetime.resetCasts();
 }
 
-void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
+void tst_Model_Serialization::toList_WithDateModfiers_UnixTimestamp() const
 {
     auto datetime = Datetime::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -474,7 +474,7 @@ void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
         {"datetime", {CastType::CustomQDateTime, "U"}},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 1);
 
     // The order must be the same as returned from the MySQL database
@@ -511,7 +511,7 @@ void tst_Model_Serialization::toMap_UDatesOnly_OverrideSerializeDateTime() const
 }
 
 void
-tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
+tst_Model_Serialization::toList_UDatesOnly_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -520,7 +520,7 @@ tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
 
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
@@ -567,7 +567,7 @@ void tst_Model_Serialization::toMap_CastsOnly_OverrideSerializeDateTime() const
 }
 
 void
-tst_Model_Serialization::toVector_CastsOnly_OverrideSerializeDateTime() const
+tst_Model_Serialization::toList_CastsOnly_OverrideSerializeDateTime() const
 {
     // Prepare
     auto timeFormatOriginal = Datetime_SerializeOverride::u_timeFormat;
@@ -587,7 +587,7 @@ tst_Model_Serialization::toVector_CastsOnly_OverrideSerializeDateTime() const
         {"time_ms",  CastType::QTime},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
@@ -635,7 +635,7 @@ void tst_Model_Serialization::
 }
 
 void tst_Model_Serialization::
-     toVector_WithUDatesAndCasts_OverrideSerializeDateTime() const
+     toList_WithUDatesAndCasts_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -649,7 +649,7 @@ void tst_Model_Serialization::
         {"date",     CastType::QDate},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
@@ -705,7 +705,7 @@ void tst_Model_Serialization::
 }
 
 void tst_Model_Serialization::
-     toVector_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const
+     toList_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const
 {
     // Prepare
     auto timeFormatOriginal = Datetime_SerializeOverride::u_timeFormat;
@@ -727,7 +727,7 @@ void tst_Model_Serialization::
         {"time_ms",  {CastType::CustomQTime,     "HH_mm_ss.zzz"}},
     });
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
@@ -765,7 +765,7 @@ void tst_Model_Serialization::toMap_UDatesOnly_DateNullVariants() const
     Type::u_dates.clear();
 }
 
-void tst_Model_Serialization::toVector_UDatesOnly_DateNullVariants() const
+void tst_Model_Serialization::toList_UDatesOnly_DateNullVariants() const
 {
     Type::u_dates = {"date", "datetime", "timestamp"};
 
@@ -773,7 +773,7 @@ void tst_Model_Serialization::toVector_UDatesOnly_DateNullVariants() const
     QVERIFY(type);
     QVERIFY(type->exists);
 
-    QList<AttributeItem> serialized = type->toVector();
+    QList<AttributeItem> serialized = type->toList();
     QCOMPARE(serialized.size(), 4);
 
     const auto &serialized0 = serialized.at(0);
@@ -838,7 +838,7 @@ void tst_Model_Serialization::toMap_WithCasts_DateNullVariants() const
     type->resetCasts();
 }
 
-void tst_Model_Serialization::toVector_WithCasts_DateNullVariants() const
+void tst_Model_Serialization::toList_WithCasts_DateNullVariants() const
 {
     auto type = Type::find(3, {ID, "date", "datetime", "timestamp", "time"});
     QVERIFY(type);
@@ -851,7 +851,7 @@ void tst_Model_Serialization::toVector_WithCasts_DateNullVariants() const
         {"time",      CastType::QTime},
     });
 
-    QList<AttributeItem> serialized = type->toVector();
+    QList<AttributeItem> serialized = type->toList();
     QCOMPARE(serialized.size(), 5);
 
     const auto &serialized0 = serialized.at(0);
@@ -958,13 +958,13 @@ tst_Model_Serialization::toMap_WithRelations_HasOne_HasMany_BelongsTo() const
 }
 
 void
-tst_Model_Serialization::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
+tst_Model_Serialization::toList_WithRelations_HasOne_HasMany_BelongsTo() const
 {
     auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -1170,13 +1170,13 @@ tst_Model_Serialization::toMap_WithRelation_BelongsToMany_TorrentTags() const
 }
 
 void
-tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
+tst_Model_Serialization::toList_WithRelation_BelongsToMany_TorrentTags() const
 {
     auto torrent = Torrent::with("tags")->find(7);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -1407,13 +1407,13 @@ void tst_Model_Serialization::
 }
 
 void tst_Model_Serialization::
-     toVector_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const
+     toList_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const
 {
     auto torrent = Torrent::with({"tags", "torrentStates"})->find(7);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -1613,13 +1613,13 @@ void tst_Model_Serialization::toMap_WithRelation_BelongsToMany_UserRoles() const
 }
 
 void tst_Model_Serialization::
-     toVector_WithRelation_BelongsToMany_UserRoles() const
+     toList_WithRelation_BelongsToMany_UserRoles() const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
     QVERIFY(user->exists);
 
-    QList<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toList();
 
     QList<AttributeItem> expectedAttributes {
         {ID,          1},
@@ -1690,13 +1690,13 @@ void tst_Model_Serialization::toMap_u_snakeAttributes_false() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_u_snakeAttributes_false() const
+void tst_Model_Serialization::toList_u_snakeAttributes_false() const
 {
     auto album = Album::find(1);
     QVERIFY(album);
     QVERIFY(album->exists);
 
-    QList<AttributeItem> serialized = album->toVector();
+    QList<AttributeItem> serialized = album->toList();
 
     QList<AttributeItem> expectedAttributes {
         {ID,            1},
@@ -1753,13 +1753,13 @@ void tst_Model_Serialization::toMap_HasMany_EmptyRelation() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_HasMany_EmptyRelation() const
+void tst_Model_Serialization::toList_HasMany_EmptyRelation() const
 {
     auto albums = Album::findMany({3, 4});
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
 
-    QList<QList<AttributeItem>> serialized = albums.toVector();
+    QList<QList<AttributeItem>> serialized = albums.toList();
 
     QList<QList<AttributeItem>> expectedAttributes {{
         {ID,            3},
@@ -1834,13 +1834,13 @@ void tst_Model_Serialization::toMap_HasOne_EmptyRelation() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_HasOne_EmptyRelation() const
+void tst_Model_Serialization::toList_HasOne_EmptyRelation() const
 {
     auto torrents = Torrent::with("torrentPeer")->findMany({6, 7});
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
 
-    QList<QList<AttributeItem>> serialized = torrents.toVector();
+    QList<QList<AttributeItem>> serialized = torrents.toList();
 
     QList<QList<AttributeItem>> expectedAttributes {{
         {ID,             6},
@@ -1924,13 +1924,13 @@ void tst_Model_Serialization::toMap_BelongsTo_EmptyRelation() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_BelongsTo_EmptyRelation() const
+void tst_Model_Serialization::toList_BelongsTo_EmptyRelation() const
 {
     auto torrentPeers = TorrentPeer::with("torrent")->findMany({5, 6});
     QCOMPARE(torrentPeers.size(), 2);
     QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
 
-    QList<QList<AttributeItem>> serialized = torrentPeers.toVector();
+    QList<QList<AttributeItem>> serialized = torrentPeers.toList();
 
     QList<QList<AttributeItem>> expectedAttributes {{
         {ID,               5},
@@ -2008,13 +2008,13 @@ void tst_Model_Serialization::toMap_BelongsToMany_EmptyRelation() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_BelongsToMany_EmptyRelation() const
+void tst_Model_Serialization::toList_BelongsToMany_EmptyRelation() const
 {
     auto users = User::with("roles")->findMany({2, 3});
     QCOMPARE(users.size(), 2);
     QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
 
-    QList<QList<AttributeItem>> serialized = users.toVector();
+    QList<QList<AttributeItem>> serialized = users.toList();
 
     QList<QList<AttributeItem>> expectedAttributes {{
         {ID,          2},
@@ -2095,7 +2095,7 @@ void tst_Model_Serialization::toMap_RelationOnly_HasMany() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
+void tst_Model_Serialization::toList_RelationOnly_HasMany() const
 {
     auto torrent = Torrent::with("torrentFiles")->find(7);
     QVERIFY(torrent);
@@ -2105,7 +2105,7 @@ void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
     torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(torrentFiles.size(), 3);
 
-    QList<QList<AttributeItem>> serialized = torrentFiles.toVector();
+    QList<QList<AttributeItem>> serialized = torrentFiles.toList();
 
     QList<QList<AttributeItem>> expectedAttributes {QList<AttributeItem> {
         {ID,           10},
@@ -2185,7 +2185,7 @@ void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Serialization::toVector_RelationOnly_BelongsToMany() const
+void tst_Model_Serialization::toList_RelationOnly_BelongsToMany() const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
@@ -2194,7 +2194,7 @@ void tst_Model_Serialization::toVector_RelationOnly_BelongsToMany() const
     ModelsCollection<Role *> roles = user->template getRelationValue<Role>("roles");
     QCOMPARE(roles.size(), 3);
 
-    QList<QList<AttributeItem>> serialized = roles.toVector<RoleUser>();
+    QList<QList<AttributeItem>> serialized = roles.toList<RoleUser>();
 
     QList<QList<AttributeItem>> expectedAttributes {QList<AttributeItem> {
         {ID,             1},

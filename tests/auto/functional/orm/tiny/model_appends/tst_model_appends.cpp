@@ -43,27 +43,27 @@ private Q_SLOTS:
     void append_setAppend_getAppend_hasAppend_clearAppends() const;
 
     void toMap_WithAppends() const;
-    void toVector_WithAppends() const;
+    void toList_WithAppends() const;
 
     void toMap_WithAppends_WithVisible() const;
-    void toVector_WithAppends_WithVisible() const;
+    void toList_WithAppends_WithVisible() const;
 
     void toMap_WithAppends_WithHidden() const;
-    void toVector_WithAppends_WithHidden() const;
+    void toList_WithAppends_WithHidden() const;
 
     void toMap_WithAppends_WithVisibleAndHidden() const;
-    void toVector_WithAppends_WithVisibleAndHidden() const;
+    void toList_WithAppends_WithVisibleAndHidden() const;
 
     void toMap_WithAppends_ForExistingAttribute() const;
-    void toVector_WithAppends_ForExistingAttribute() const;
-    void toVector_WithAppends_WithVisible_ForExistingAttribute() const;
-    void toVector_WithAppends_WithHidden_ForExistingAttribute() const;
+    void toList_WithAppends_ForExistingAttribute() const;
+    void toList_WithAppends_WithVisible_ForExistingAttribute() const;
+    void toList_WithAppends_WithHidden_ForExistingAttribute() const;
 
     void toMap_WithAppends_OverrideSerializeDateTime() const;
-    void toVector_WithAppends_OverrideSerializeDateTime() const;
+    void toList_WithAppends_OverrideSerializeDateTime() const;
 
     void toMap_WithAppends_OnCustomPivot() const;
-    void toVector_WithAppends_OnCustomPivot() const;
+    void toList_WithAppends_OnCustomPivot() const;
 
     void toJson_WithAppends_WithVisible() const;
     void toJson_WithAppends_WithHidden() const;
@@ -170,7 +170,7 @@ void tst_Model_Appends::toMap_WithAppends() const
     torrent->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends() const
+void tst_Model_Appends::toList_WithAppends() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -179,7 +179,7 @@ void tst_Model_Appends::toVector_WithAppends() const
     // Prepare
     torrent->append("name_progress");
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 11);
 
     // The order must be the same as returned from the MySQL database
@@ -228,7 +228,7 @@ void tst_Model_Appends::toMap_WithAppends_WithVisible() const
     torrent->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_WithVisible() const
+void tst_Model_Appends::toList_WithAppends_WithVisible() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -238,7 +238,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible() const
     torrent->setVisible({ID, "user_id", "added_on", "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 4);
 
     // The order must be the same as returned from the MySQL database
@@ -285,7 +285,7 @@ void tst_Model_Appends::toMap_WithAppends_WithHidden() const
     torrent->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_WithHidden() const
+void tst_Model_Appends::toList_WithAppends_WithHidden() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -295,7 +295,7 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden() const
     torrent->setHidden({HASH_, NOTE, SIZE_, "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 8);
 
     // The order must be the same as returned from the MySQL database
@@ -343,7 +343,7 @@ void tst_Model_Appends::toMap_WithAppends_WithVisibleAndHidden() const
     torrent->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_WithVisibleAndHidden() const
+void tst_Model_Appends::toList_WithAppends_WithVisibleAndHidden() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -354,7 +354,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisibleAndHidden() const
     torrent->setHidden({"added_on", "name_size"});
     torrent->append({"name_progress", "name_size"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
@@ -397,7 +397,7 @@ void tst_Model_Appends::toMap_WithAppends_ForExistingAttribute() const
     torrentFile->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
+void tst_Model_Appends::toList_WithAppends_ForExistingAttribute() const
 {
     auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
@@ -406,7 +406,7 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
     // Prepare
     torrentFile->append("filepath");
 
-    QList<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toList();
     QCOMPARE(serialized.size(), 9);
 
     QList<AttributeItem> expectedAttributes {
@@ -426,7 +426,7 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
     torrentFile->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() const
+void tst_Model_Appends::toList_WithAppends_WithVisible_ForExistingAttribute() const
 {
     auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
@@ -436,7 +436,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
     torrentFile->setVisible({ID, "torrent_id", "filepath", SIZE_});
     torrentFile->append("filepath");
 
-    QList<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toList();
     QCOMPARE(serialized.size(), 4);
 
     QList<AttributeItem> expectedAttributes {
@@ -452,7 +452,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
     torrentFile->clearAppends();
 }
 
-void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() const
+void tst_Model_Appends::toList_WithAppends_WithHidden_ForExistingAttribute() const
 {
     auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
@@ -462,7 +462,7 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() c
     torrentFile->setHidden({"filepath"});
     torrentFile->append("filepath");
 
-    QList<AttributeItem> serialized = torrentFile->toVector();
+    QList<AttributeItem> serialized = torrentFile->toList();
     QCOMPARE(serialized.size(), 8);
 
     QList<AttributeItem> expectedAttributes {
@@ -513,7 +513,7 @@ void tst_Model_Appends::toMap_WithAppends_OverrideSerializeDateTime() const
 }
 
 void
-tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
+tst_Model_Appends::toList_WithAppends_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -524,7 +524,7 @@ tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
     // Prepare
     datetime.append({"datetime_test", "date_test", "time_test"});
 
-    QList<AttributeItem> serialized = datetime.toVector();
+    QList<AttributeItem> serialized = datetime.toList();
     QCOMPARE(serialized.size(), 6);
 
     /* No casts and u_date are defined for the date and datetime attributes so
@@ -597,7 +597,7 @@ void tst_Model_Appends::toMap_WithAppends_OnCustomPivot() const
     user->clearVisible();
 }
 
-void tst_Model_Appends::toVector_WithAppends_OnCustomPivot() const
+void tst_Model_Appends::toList_WithAppends_OnCustomPivot() const
 {
     auto user = User::with("roles_appends")->find(1);
     QVERIFY(user);
@@ -606,7 +606,7 @@ void tst_Model_Appends::toVector_WithAppends_OnCustomPivot() const
     // Prepare
     user->setVisible({ID, NAME, "roles_appends"});
 
-    QList<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toList();
 
     QList<AttributeItem> expectedAttributes {
         {ID,              1},

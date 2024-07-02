@@ -39,23 +39,23 @@ private Q_SLOTS:
 
     /* Serialization - HidesAttributes */
     void toMap_WithVisible() const;
-    void toVector_WithVisible() const;
+    void toList_WithVisible() const;
 
     void toMap_WithHidden() const;
-    void toVector_WithHidden() const;
+    void toList_WithHidden() const;
 
     void toMap_WithVisibleAndHidden() const;
-    void toVector_WithVisibleAndHidden() const;
+    void toList_WithVisibleAndHidden() const;
 
     void toMap_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const;
-    void toVector_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const;
+    void toList_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const;
     void toMap_WithVisibleAndHidden_WithRelations_HasOne_HasMany_BelongsTo() const;
-    void toVector_WithVisibleAndHidden_WithRelations_HasOne_HasMany_BelongsTo() const;
+    void toList_WithVisibleAndHidden_WithRelations_HasOne_HasMany_BelongsTo() const;
 
     void toMap_WithVisible_WithRelations_BelongsToMany_UserRoles() const;
-    void toVector_WithVisible_WithRelations_BelongsToMany_UserRoles() const;
+    void toList_WithVisible_WithRelations_BelongsToMany_UserRoles() const;
     void toMap_WithHidden_WithRelations_BelongsToMany_UserRoles() const;
-    void toVector_WithHidden_WithRelations_BelongsToMany_UserRoles() const;
+    void toList_WithHidden_WithRelations_BelongsToMany_UserRoles() const;
 
     void toJson_WithVisible() const;
     void toJson_WithHidden() const;
@@ -127,7 +127,7 @@ void tst_Model_HidesAttributes::toMap_WithVisible() const
     torrent->clearVisible();
 }
 
-void tst_Model_HidesAttributes::toVector_WithVisible() const
+void tst_Model_HidesAttributes::toList_WithVisible() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -136,7 +136,7 @@ void tst_Model_HidesAttributes::toVector_WithVisible() const
     // Prepare
     torrent->setVisible({ID, "user_id", "added_on"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 3);
 
     // The order must be the same as returned from the MySQL database
@@ -178,7 +178,7 @@ void tst_Model_HidesAttributes::toMap_WithHidden() const
     torrent->clearHidden();
 }
 
-void tst_Model_HidesAttributes::toVector_WithHidden() const
+void tst_Model_HidesAttributes::toList_WithHidden() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -187,7 +187,7 @@ void tst_Model_HidesAttributes::toVector_WithHidden() const
     // Prepare
     torrent->setHidden({HASH_, NOTE, SIZE_});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 7);
 
     // The order must be the same as returned from the MySQL database
@@ -230,7 +230,7 @@ void tst_Model_HidesAttributes::toMap_WithVisibleAndHidden() const
     torrent->clearHidden();
 }
 
-void tst_Model_HidesAttributes::toVector_WithVisibleAndHidden() const
+void tst_Model_HidesAttributes::toList_WithVisibleAndHidden() const
 {
     auto torrent = Torrent::find(4);
     QVERIFY(torrent);
@@ -240,7 +240,7 @@ void tst_Model_HidesAttributes::toVector_WithVisibleAndHidden() const
     torrent->setVisible({ID, "user_id", "added_on"});
     torrent->setHidden({"added_on"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 2);
 
     // The order must be the same as returned from the MySQL database
@@ -321,7 +321,7 @@ const
 }
 
 void tst_Model_HidesAttributes::
-     toVector_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const
+     toList_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const
 {
     auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
     QVERIFY(torrent);
@@ -330,7 +330,7 @@ void tst_Model_HidesAttributes::
     // Prepare
     torrent->setVisible({ID, "user_id", "torrentPeer", "torrentFiles"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -477,7 +477,7 @@ void tst_Model_HidesAttributes::
 }
 
 void tst_Model_HidesAttributes::
-     toVector_WithVisibleAndHidden_WithRelations_HasOne_HasMany_BelongsTo() const
+     toList_WithVisibleAndHidden_WithRelations_HasOne_HasMany_BelongsTo() const
 {
     auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
     QVERIFY(torrent);
@@ -487,7 +487,7 @@ void tst_Model_HidesAttributes::
     torrent->setVisible({ID, "user_id", NOTE, "torrentPeer", "torrentFiles"});
     torrent->setHidden({NOTE, "torrentFiles"});
 
-    QList<AttributeItem> serialized = torrent->toVector();
+    QList<AttributeItem> serialized = torrent->toList();
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
@@ -587,7 +587,7 @@ void tst_Model_HidesAttributes::
 }
 
 void tst_Model_HidesAttributes::
-     toVector_WithVisible_WithRelations_BelongsToMany_UserRoles() const
+     toList_WithVisible_WithRelations_BelongsToMany_UserRoles() const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
@@ -596,7 +596,7 @@ void tst_Model_HidesAttributes::
     // Prepare
     user->setVisible({ID, NAME, "roles"});
 
-    QList<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toList();
 
     QList<AttributeItem> expectedAttributes {
         {ID,      1},
@@ -664,7 +664,7 @@ tst_Model_HidesAttributes::toMap_WithHidden_WithRelations_BelongsToMany_UserRole
 }
 
 void
-tst_Model_HidesAttributes::toVector_WithHidden_WithRelations_BelongsToMany_UserRoles()
+tst_Model_HidesAttributes::toList_WithHidden_WithRelations_BelongsToMany_UserRoles()
 const
 {
     auto user = User::with("roles")->find(1);
@@ -674,7 +674,7 @@ const
     // Prepare
     user->setHidden({NAME, NOTE, "roles"});
 
-    QList<AttributeItem> serialized = user->toVector();
+    QList<AttributeItem> serialized = user->toList();
 
     QList<AttributeItem> expectedAttributes {
         {ID,          1},

@@ -88,7 +88,7 @@ SqlQuery PostgresSchemaBuilder::getAllTables() const
 {
     auto searchPathList = searchPath();
 
-    // Move to the vector (toVector() uses copy)
+    // Move to the vector (toList() uses copy)
     QList<QString> searchPath;
     searchPath.reserve(searchPathList.size());
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
@@ -102,7 +102,7 @@ SqlQuery PostgresSchemaBuilder::getAllViews() const
 {
     auto searchPathList = searchPath();
 
-    // Move to the vector (toVector() uses copy)
+    // Move to the vector (toList() uses copy)
     QList<QString> searchPath;
     searchPath.reserve(searchPathList.size());
     std::ranges::move(searchPathList, std::back_inserter(searchPath));

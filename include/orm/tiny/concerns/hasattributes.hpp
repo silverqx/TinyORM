@@ -246,7 +246,7 @@ namespace Orm::Tiny::Concerns
         /*! Convert the model's attributes to the map. */
         QVariantMap attributesToMap() const;
         /*! Convert the model's attributes to the vector. */
-        QList<AttributeItem> attributesToVector() const;
+        QList<AttributeItem> attributesToList() const;
 
         /* Serialization - Appends */
         /*! Append accessor attribute to the u_appends set. */
@@ -1353,7 +1353,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QList<AttributeItem>
-    HasAttributes<Derived, AllRelations...>::attributesToVector() const
+    HasAttributes<Derived, AllRelations...>::attributesToList() const
     {
         auto [attributes, attributesHash] = getVectorableAttributes();
 

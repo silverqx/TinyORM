@@ -316,7 +316,7 @@ namespace Orm::Tiny
         QVariantMap toMap() const;
         /*! Convert the model instance to the vector of attributes and relations. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QList<AttributeItem> toVector() const;
+        QList<AttributeItem> toList() const;
 
         /*! Convert the model instance to QJsonObject. */
         inline QJsonObject toJsonObject() const;
@@ -1423,9 +1423,9 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType>
     QList<AttributeItem>
-    Model<Derived, AllRelations...>::toVector() const
+    Model<Derived, AllRelations...>::toList() const
     {
-        auto attributes = this->attributesToVector();
+        auto attributes = this->attributesToList();
 
         attributes << this->template serializeRelations<QList<AttributeItem>,
                                                         PivotType>();

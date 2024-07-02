@@ -1471,7 +1471,7 @@ namespace Concerns
     {
         QVariant relationSerialized;
 
-        /*! Determine whether the toMap() or toVector() was invoked. */
+        /*! Determine whether the toMap() or toList() was invoked. */
         constexpr auto IsMap = std::is_same_v<C, QVariantMap>;
 
         // Many type relationship
@@ -1514,7 +1514,7 @@ namespace Concerns
                 models.template toMapVariantList<PivotType>());
         else
             relationSerialized.setValue(
-                models.template toVectorVariantList<PivotType>());
+                models.template toListVariantList<PivotType>());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1527,7 +1527,7 @@ namespace Concerns
             if constexpr (IsMap)
                 relationSerialized.setValue(model->toMap());
             else
-                relationSerialized.setValue(model->toVector());
+                relationSerialized.setValue(model->toList());
         }
         // A NULL foreign key
         else
