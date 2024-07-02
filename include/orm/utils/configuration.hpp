@@ -81,6 +81,10 @@ namespace Utils
         /*! Throw if the given time zone ianaId is not available. */
         static void
         throwIfBadTimeZoneId(const QByteArray &ianaId, const QString &connection);
+
+        /*! Throw if the given qt_timezone value is deprecated Qt::TimeSpec. */
+        static void
+        throwIfDeprecatedTimeSpec(int typeId, const QString &connection);
     };
 
     /* public */

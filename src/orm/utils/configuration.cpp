@@ -60,6 +60,9 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
         return {QtTimeZoneType::QTimeZone,
                 QVariant::fromValue(
                         QTimeZone(qtTimeZone.value<QTimeZone::Initialization>()))};
+
+    // Throw if the given qt_timezone value is deprecated Qt::TimeSpec
+    throwIfDeprecatedTimeSpec(typeId, connection);
 #else
     if (typeId == QMetaType::fromType<Qt::TimeSpec>().id())
         return {QtTimeZoneType::QtTimeSpec, qtTimeZone.value<Qt::TimeSpec>()};
@@ -310,6 +313,22 @@ void Configuration::throwIfBadTimeZoneId(const QByteArray &ianaId,
                     "The 'qt_timezone' configuration option '%1' for the '%2' "
                     "connection is not available on this system in %3().")
                 .arg(QString::fromUtf8(ianaId), connection, __tiny_func__));
+}
+
+
+void Configuration::throwIfDeprecatedTimeSpec(const int typeId, const QString &connection)
+{
+    if (typeId != QMetaType::fromType<Qt::TimeSpec>().id())
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral(
+                    "Setting the 'Qt::TimeSpec' value as 'Qt::UTC' or "
+                    "'Qt::LocalTime' for the 'qt_timezone' configuration option "
+                    "was deprecated since Qt v6.5.0, please pass "
+                    "the QTimeZone::Initialization like the QTimeZone::UTC "
+                    "for the '%1' connection instead, in %2().")
+                .arg(connection, __tiny_func__));
 }
 
 } // namespace Orm::Utils
