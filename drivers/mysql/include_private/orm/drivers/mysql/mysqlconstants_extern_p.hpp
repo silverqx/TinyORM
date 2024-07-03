@@ -6,8 +6,6 @@
 
 #include <orm/macros/commonnamespace.hpp>
 
-#include "orm/drivers/macros/export.hpp"
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 /*! Namespace contains common chars and strings used in the TinyMySql project. */
@@ -15,19 +13,19 @@ namespace Orm::Drivers::MySql::Constants
 {
 
     // Common chars
-    TINYDRIVERS_EXPORT extern const QChar SEMICOLON;
-    TINYDRIVERS_EXPORT extern const QChar COLON;
-    TINYDRIVERS_EXPORT extern const QChar DASH;
-    TINYDRIVERS_EXPORT extern const QChar EQ_C;
+    extern const QChar SEMICOLON;
+    extern const QChar COLON;
+    extern const QChar DASH;
+    extern const QChar EQ_C;
 
     // Common strings
-    TINYDRIVERS_EXPORT extern const QString EMPTY;
-    TINYDRIVERS_EXPORT extern const QString COMMA;
+    extern const QString EMPTY;
+    extern const QString COMMA;
 
     // Database related
-    TINYDRIVERS_EXPORT extern const QString QMYSQL;
-//    TINYDRIVERS_EXPORT extern const QString QPSQL;
-//    TINYDRIVERS_EXPORT extern const QString QSQLITE;
+    extern const QString QMYSQL;
+//    extern const QString QPSQL;
+//    extern const QString QSQLITE;
 
 } // namespace Orm::Drivers::MySql::Constants
 

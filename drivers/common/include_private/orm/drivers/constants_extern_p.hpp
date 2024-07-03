@@ -6,8 +6,6 @@
 
 #include <orm/macros/commonnamespace.hpp>
 
-#include "orm/drivers/macros/export.hpp"
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 /*! Namespace contains common chars and strings used in the TinyDrivers project. */
@@ -15,22 +13,22 @@ namespace Orm::Drivers::Constants
 {
 
     // Common chars
-    TINYDRIVERS_EXPORT extern const QChar SPACE;
-    TINYDRIVERS_EXPORT extern const QChar DOT;
-    TINYDRIVERS_EXPORT extern const QChar QUOTE;
+    extern const QChar SPACE;
+    extern const QChar DOT;
+    extern const QChar QUOTE;
 
     // Common strings
-    TINYDRIVERS_EXPORT extern const QString NEWLINE;
-    TINYDRIVERS_EXPORT extern const QString COMMA;
-    TINYDRIVERS_EXPORT extern const QString null_;
+    extern const QString NEWLINE;
+    extern const QString COMMA;
+    extern const QString null_;
 
     // Database related
-    TINYDRIVERS_EXPORT extern const QString QMYSQL;
-//    TINYDRIVERS_EXPORT extern const QString QPSQL;
-//    TINYDRIVERS_EXPORT extern const QString QSQLITE;
+    extern const QString QMYSQL;
+//    extern const QString QPSQL;
+//    extern const QString QSQLITE;
 
     // Others
-    TINYDRIVERS_EXPORT extern const QString NotImplemented;
+    extern const QString NotImplemented;
 
 } // namespace Orm::Drivers::Constants
 
