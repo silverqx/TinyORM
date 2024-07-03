@@ -49,7 +49,7 @@ namespace Orm::Drivers::MySql
         /*! Get the low-level MySQL database handle (MYSQL *). */
         QVariant handle() const noexcept final;
         /*! Get the MySQL database driver name. */
-        inline QString driverName() const noexcept final;
+        QString driverName() const noexcept final;
 
         /* Transactions */
         /*! Start a new database transaction. */
