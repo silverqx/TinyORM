@@ -211,10 +211,10 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     )
 
     # Append build type requirements at the end of a generated package version file
-    file(READ "cmake/TinyConfigVersionBuildTypeReq.cmake.in" buildTypeReqTempalate)
+    file(READ "cmake/TinyConfigVersionBuildTypeReq.cmake.in" buildTypeReqTemplate)
     file(APPEND
         "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake.in"
-        "\n${buildTypeReqTempalate}"
+        "\n${buildTypeReqTemplate}"
     )
 
     configure_file(
@@ -309,11 +309,11 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
 
     # Append build type requirements at the end of a generated package version file
     file(READ "cmake/TinyBuildTreeConfigVersionBuildTypeReq.cmake.in"
-        buildTypeReqTempalate
+        buildTypeReqTemplate
     )
     file(APPEND
         "${PROJECT_BINARY_DIR}/${TINY_BUILD_BUILDTREEDIR}/TinyOrmConfigVersion.cmake.in"
-        "\n${buildTypeReqTempalate}"
+        "\n${buildTypeReqTemplate}"
     )
 
     configure_file(
