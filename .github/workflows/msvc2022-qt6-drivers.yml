@@ -36,7 +36,8 @@ jobs:
       TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: win64_msvc2019_64
       TINY_MYSQL_SERVICE: MySQL84
-      TINY_PARALLEL: 10
+      # My system is unresponsive with 10
+      TINY_PARALLEL: 8
 
       # State variables
       TINY_VCPKG_NEEDS_UPGRADE: false
