@@ -127,7 +127,9 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
 }
 #endif
 
-/* CUR drivers finish defaultValue():
+/* CUR drivers finish defaultValue() silverqx
+   Ok, was already fixed in:
+   https://github.com/qt/qtbase/commit/e2e818483fbc6fe04d364378640178ca5f91b2fb
    We will need something like this, also the MYSQL_FIELD.def data member was dropped
    in MySQL v8.3, what means connector C API doesn't provide this default field value,
    also both IS_NULLABLE and COLUMN_DEFAULT must be checked to correctly obtain this
