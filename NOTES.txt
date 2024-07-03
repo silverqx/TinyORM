@@ -1532,7 +1532,7 @@ inline constants:
  - qmake
    - normal behavior is that user can switch between inline and extern constants using the inline_constants/extern_constants qmake CONFIG option
    - default is when no qmake CONFIG option is set and in this case extern constants (extern_constants CONFIG option) is set/enabled
-   - ❗ all below is true for Clang <v18, all problems all fixed in Clang v18
+   - ❗ all below is true for Clang <v18, all problems are fixed in Clang v18
      - I removed all correction logic, only error() messages are thrown on unsupported platforms
      - so the default is extern constants and if user defines extern/inline constants explicitly and the platform doesn't support it error() is thrown, the reason for this was code simplification because everything was fixed and works on latest compilers 🎉
    - after a few compiler releases I will also remove the error messages to further simplify the code
