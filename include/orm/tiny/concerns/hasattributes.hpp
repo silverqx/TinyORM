@@ -2458,9 +2458,11 @@ namespace Orm::Tiny::Concerns
             return QStringLiteral("LongLong");
         case CastType::ULongLong:
             return QStringLiteral("ULongLong");
+
         // QString
         case CastType::QString:
             return QStringLiteral("QString");
+
         // Int 32-bit
         case CastType::Int:
         case CastType::Integer:
@@ -2468,6 +2470,7 @@ namespace Orm::Tiny::Concerns
         case CastType::UInt:
         case CastType::UInteger:
             return QStringLiteral("UInteger");
+
         // QDateTime
         case CastType::QDate:
             return QStringLiteral("QDate");
@@ -2477,15 +2480,18 @@ namespace Orm::Tiny::Concerns
             return QStringLiteral("QTime");
         case CastType::Timestamp:
             return QStringLiteral("Timestamp");
+
         // Bool
         case CastType::Bool:
         case CastType::Boolean:
             return QStringLiteral("Boolean");
+
         // Int 16-bit
         case CastType::Short:
             return QStringLiteral("Short");
         case CastType::UShort:
             return QStringLiteral("UShort");
+
         // Float
         case CastType::Real:
             return QStringLiteral("Real");
@@ -2495,6 +2501,7 @@ namespace Orm::Tiny::Concerns
             return QStringLiteral("Double");
         case CastType::Decimal:
             return QStringLiteral("Decimal");
+
         // Others
         case CastType::QByteArray:
             return QStringLiteral("QByteArray");
