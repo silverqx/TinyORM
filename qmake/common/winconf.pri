@@ -91,7 +91,7 @@ win32-msvc {
 # /bigobj - Clang-cl uses it by default - https://reviews.llvm.org/D12981
 win32-clang-msvc {
     # Must be added manually because msvc-version.conf isn't included for Clang-cl
-    QMAKE_CXXFLAGS *= -Zc:__cplusplus -Zc:strictStrings
+#    QMAKE_CXXFLAGS *= -Zc:__cplusplus -Zc:strictStrings
     # CMake also uses these to disable inlining and optimization but I don't want to have
     # them enabled in qmake Debug builds to have higher diversity to catch possible
     # errors and warnings related to inlining and optimization 😎
@@ -114,6 +114,13 @@ win32-clang-msvc {
 
         QMAKE_CLEAN *= $$pchObjFilepath
         QMAKE_DISTCLEAN *= $$pchObjFilepath
+
+        # This is required with Clang-cl because the compiler can't find PCH without it,
+        # the reason why is this happening is how the PCH are included and how
+        # the clang-cl process #include-s, it uses -FIinclude\pch.h -Yuinclude\pch.h
+        # paths and isn't able to find them, qmake internally makes relative paths
+        # from absolute from the PCH to the current project file.
+        INCLUDEPATH *= $$_PRO_FILE_PWD_
 
         unset(pchObjFilepath)
     }
