@@ -30,7 +30,7 @@ jobs:
       # Settings (constant variables)
       TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: msvc2019_64
-      TINY_LLVM_VERSION: 18.1.7
+      TINY_LLVM_VERSION: 18.1.8
       # Initial build size 1.4G :/
       TINY_CCACHE_MAX_SIZE: 2G
       TINY_MYSQL_SERVICE: MySQL
