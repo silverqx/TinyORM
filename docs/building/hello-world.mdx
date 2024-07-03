@@ -227,7 +227,7 @@ Create `CMakeLists.txt` file with the following content.
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 <CodeBlock className='language-cmake'>
-{`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
+{`cmake_minimum_required(VERSION VERSION 3.22...3.30 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
 # build tree
 list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(pwsh, applicationFolderPath(pwsh))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
@@ -249,7 +249,7 @@ target_link_libraries(HelloWorld
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 <CodeBlock className='language-cmake'>
-{`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
+{`cmake_minimum_required(VERSION VERSION 3.22...3.30 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
 # build tree
 list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(bash, applicationFolderPath(bash))}/TinyORM/TinyORM-builds-cmake/build-debug")\n
@@ -297,7 +297,7 @@ You can use the [`FetchContent`](https://cmake.org/cmake/help/latest/module/Fetc
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 <CodeBlock className='language-cmake'>
-{`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
+{`cmake_minimum_required(VERSION VERSION 3.22...3.30 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -327,7 +327,7 @@ target_link_libraries(HelloWorld
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 <CodeBlock className='language-cmake'>
-{`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
+{`cmake_minimum_required(VERSION VERSION 3.22...3.30 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

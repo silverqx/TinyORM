@@ -5,7 +5,7 @@
 # currently can't use the target_sources(FILE_SET) 😔
 # Minimum version must always correspond to the version that is in the latest Ubuntu LTS
 # TODO use LINKER_TYPE target property when min. version will be CMake v3.29 silverqx
-cmake_minimum_required(VERSION 3.22...3.29 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22...3.30 FATAL_ERROR)
 
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
