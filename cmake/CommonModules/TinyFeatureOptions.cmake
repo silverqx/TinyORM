@@ -33,7 +33,7 @@ endfunction()
 
 include(CMakeDependentOption)
 # Helper function for coupling cmake_dependent_option() and add_feature_info()
-function(feature_option_dependent name description default depends force)
+macro(feature_option_dependent name description default depends force)
 
     string(CONCAT desc
         "${description} (default: ${default}; depends on condition: ${depends})")
@@ -42,7 +42,7 @@ function(feature_option_dependent name description default depends force)
 
     add_feature_info(${name} ${name} "${desc}")
 
-endfunction()
+endmacro()
 
 # Macro to provide a STRING type option dependent on other options.
 # This macro works the same and as the cmake_dependent_option() but it's for the STRING
