@@ -624,7 +624,7 @@ jobs:
       with:
         path: |
           C:/Program Files/LLVM
-        key: llvm-18.1.7
+        key: llvm-${{ env.TINY_LLVM_VERSION }}
 
     - name: Install LLVM and Clang ${{ env.TINY_LLVM_VERSION }}
       uses: KyleMayes/install-llvm-action@v1
