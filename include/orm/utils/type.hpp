@@ -37,7 +37,7 @@ namespace Orm::Utils
 {
 
     /*! Types library class. */
-    class SHAREDLIB_EXPORT Type
+    class TINYORM_EXPORT Type
     {
         Q_DISABLE_COPY_MOVE(Type)
 

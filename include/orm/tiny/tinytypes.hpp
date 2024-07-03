@@ -67,7 +67,7 @@ namespace Types
 
     // TODO pretty print in the debugger silverqx
     /*! Attribute item used in ORM models. */
-    struct SHAREDLIB_EXPORT AttributeItem
+    struct TINYORM_EXPORT AttributeItem
     {
         QString  key;
         QVariant value;
@@ -77,11 +77,11 @@ namespace Types
     };
 
     /*! Equality comparison operator for the AttributeItem. */
-    SHAREDLIB_EXPORT bool
+    TINYORM_EXPORT bool
     operator==(const AttributeItem &left, const AttributeItem &right);
 
     /*! Eager load relation item. */
-    struct SHAREDLIB_EXPORT WithItem
+    struct TINYORM_EXPORT WithItem
     {
         QString name;
         std::function<void(QueryBuilder &)> constraints = nullptr;
@@ -94,7 +94,7 @@ namespace Types
 
     /*! Equality comparison operator for the WithItem. */
     [[maybe_unused]]
-    SHAREDLIB_EXPORT bool operator==(const WithItem &left, const WithItem &right);
+    TINYORM_EXPORT bool operator==(const WithItem &left, const WithItem &right);
 
     /*! Tag for Model::getRelation() family methods to return Related type
         directly ( not container type ). */

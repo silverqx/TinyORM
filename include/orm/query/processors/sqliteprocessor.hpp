@@ -13,7 +13,7 @@ namespace Orm::Query::Processors
 {
 
     /*! SQLite processor, process SQL results. */
-    class SHAREDLIB_EXPORT SQLiteProcessor final : public Processor
+    class TINYORM_EXPORT SQLiteProcessor final : public Processor
     {
         Q_DISABLE_COPY_MOVE(SQLiteProcessor)
 

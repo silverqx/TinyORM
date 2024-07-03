@@ -25,7 +25,7 @@ namespace Concerns
 {
 
     /*! Counts the number of executed queries and the elapsed time of queries. */
-    class SHAREDLIB_EXPORT ExplainQueries
+    class TINYORM_EXPORT ExplainQueries
     {
     public:
         /*! Default constructor. */

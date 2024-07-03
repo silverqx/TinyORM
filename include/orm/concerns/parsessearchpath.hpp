@@ -18,7 +18,7 @@ namespace Orm::Concerns
 {
 
     /*! Parse the PostgreSQL search_path configuration value into the vector. */
-    class SHAREDLIB_EXPORT ParsesSearchPath
+    class TINYORM_EXPORT ParsesSearchPath
     {
         Q_DISABLE_COPY_MOVE(ParsesSearchPath)
 

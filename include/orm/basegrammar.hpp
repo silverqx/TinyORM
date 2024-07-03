@@ -26,7 +26,7 @@ namespace Query
                           std::same_as<T, QList<QVariant>>;
 
     /*! Base class for the database grammar. */
-    class SHAREDLIB_EXPORT BaseGrammar
+    class TINYORM_EXPORT BaseGrammar
     {
         Q_DISABLE_COPY_MOVE(BaseGrammar)
 

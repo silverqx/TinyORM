@@ -14,7 +14,7 @@ namespace Orm::Tiny::Exceptions
 
     /*! Relation mapping not found exception, check whether the relation was defined
         in the u_relations data member, called from Model::validateUserRelation(). */
-    class SHAREDLIB_EXPORT RelationMappingNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT RelationMappingNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Exception message will be generated on the base of this enum struct. */

@@ -21,7 +21,7 @@ namespace Grammars
 {
 
     /*! PostgreSQL schemma grammar. */
-    class SHAREDLIB_EXPORT PostgresSchemaGrammar : public SchemaGrammar
+    class TINYORM_EXPORT PostgresSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY_MOVE(PostgresSchemaGrammar)
 

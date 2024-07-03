@@ -16,7 +16,7 @@ namespace Orm::Tiny::Concerns
 {
 
     /*! Manages mass assignment restrictions for the entire Model class. */
-    class SHAREDLIB_EXPORT GuardedModel
+    class TINYORM_EXPORT GuardedModel
     {
     public:
         /*! Run the given callable while being unguarded. */

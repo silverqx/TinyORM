@@ -20,7 +20,7 @@ namespace Query
 }
 
     /*! Database manager. */
-    class SHAREDLIB_EXPORT DatabaseManager final : public ConnectionResolverInterface
+    class TINYORM_EXPORT DatabaseManager final : public ConnectionResolverInterface
     {
         Q_DISABLE_COPY_MOVE(DatabaseManager)
 

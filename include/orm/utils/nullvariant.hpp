@@ -18,7 +18,7 @@ namespace Orm::Utils
 {
 
     /*! Null QVariant-s library class. */
-    class SHAREDLIB_EXPORT NullVariant
+    class TINYORM_EXPORT NullVariant
     {
         Q_DISABLE_COPY_MOVE(NullVariant)
 

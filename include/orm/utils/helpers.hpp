@@ -36,7 +36,7 @@ namespace Utils
     {};
 
     /*! Helpers library class. */
-    class SHAREDLIB_EXPORT Helpers
+    class TINYORM_EXPORT Helpers
     {
         Q_DISABLE_COPY_MOVE(Helpers)
 

@@ -18,7 +18,7 @@ namespace Grammars
 {
 
     /*! SQLite schemma grammar. */
-    class SHAREDLIB_EXPORT SQLiteSchemaGrammar : public SchemaGrammar
+    class TINYORM_EXPORT SQLiteSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY_MOVE(SQLiteSchemaGrammar)
 

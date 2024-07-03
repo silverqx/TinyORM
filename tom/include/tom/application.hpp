@@ -49,8 +49,8 @@ namespace Concerns
     class Seeder;
 
     /*! Tom application. */
-    class SHAREDLIB_EXPORT Application : public Concerns::InteractsWithIO,
-                                         public Concerns::GuessCommandName
+    class TINYORM_EXPORT Application : public Concerns::InteractsWithIO,
+                                       public Concerns::GuessCommandName
     {
         Q_DISABLE_COPY_MOVE(Application)
 

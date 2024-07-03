@@ -16,7 +16,7 @@ namespace Orm::Utils
 {
 
     /*! Filesystem library class. */
-    class SHAREDLIB_EXPORT Fs
+    class TINYORM_EXPORT Fs
     {
         Q_DISABLE_COPY_MOVE(Fs)
 

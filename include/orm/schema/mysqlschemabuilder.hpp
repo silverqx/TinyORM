@@ -13,7 +13,7 @@ namespace Orm::SchemaNs
 {
 
     /*! MySQL schema builder class. */
-    class SHAREDLIB_EXPORT MySqlSchemaBuilder : public SchemaBuilder
+    class TINYORM_EXPORT MySqlSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY_MOVE(MySqlSchemaBuilder)
 

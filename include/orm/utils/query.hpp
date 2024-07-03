@@ -21,7 +21,7 @@ namespace Orm::Utils
 {
 
     /*! Library class for database query. */
-    class SHAREDLIB_EXPORT Query : public Support::ReplaceBindings
+    class TINYORM_EXPORT Query : public Support::ReplaceBindings
     {
         Q_DISABLE_COPY_MOVE(Query)
 

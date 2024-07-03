@@ -16,7 +16,7 @@ namespace Orm::Utils
 {
 
     /*! String related library class. */
-    class SHAREDLIB_EXPORT String
+    class TINYORM_EXPORT String
     {
         Q_DISABLE_COPY_MOVE(String)
 

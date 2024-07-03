@@ -16,7 +16,7 @@ namespace Orm
 {
 
     /*! Library class that provides information about TinyORM library. */
-    class SHAREDLIB_EXPORT LibraryInfo
+    class TINYORM_EXPORT LibraryInfo
     {
         Q_DISABLE_COPY_MOVE(LibraryInfo)
 

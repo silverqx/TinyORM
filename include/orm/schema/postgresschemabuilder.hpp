@@ -18,8 +18,8 @@ namespace Grammars
 }
 
     /*! PostgreSQL schema builder class. */
-    class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder,
-                                                   protected Concerns::ParsesSearchPath
+    class TINYORM_EXPORT PostgresSchemaBuilder : public SchemaBuilder,
+                                                 protected Concerns::ParsesSearchPath
     {
         Q_DISABLE_COPY_MOVE(PostgresSchemaBuilder)
 

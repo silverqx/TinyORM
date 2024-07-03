@@ -23,7 +23,7 @@ namespace Query::Processors
 {
 
     /*! Base processor class, process SQL results. */
-    class SHAREDLIB_EXPORT Processor
+    class TINYORM_EXPORT Processor
     {
         Q_DISABLE_COPY_MOVE(Processor)
 

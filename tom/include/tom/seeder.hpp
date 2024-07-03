@@ -24,7 +24,7 @@ namespace Concerns
     concept SeederConcept = std::derived_from<T, Seeder>;
 
     /*! Seeders base class. */
-    class SHAREDLIB_EXPORT Seeder
+    class TINYORM_EXPORT Seeder
     {
         Q_DISABLE_COPY_MOVE(Seeder)
 

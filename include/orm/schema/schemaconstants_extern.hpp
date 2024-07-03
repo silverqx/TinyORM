@@ -19,51 +19,51 @@ namespace Constants
 {
 
     // Command names
-    SHAREDLIB_EXPORT extern const QString Create;
-    SHAREDLIB_EXPORT extern const QString Add;
-    SHAREDLIB_EXPORT extern const QString Change;
-    SHAREDLIB_EXPORT extern const QString Rename;
-    SHAREDLIB_EXPORT extern const QString Drop;
-    SHAREDLIB_EXPORT extern const QString DropIfExists;
-    SHAREDLIB_EXPORT extern const QString DropColumn;
-    SHAREDLIB_EXPORT extern const QString RenameColumn;
-    SHAREDLIB_EXPORT extern const QString DropPrimary;
-    SHAREDLIB_EXPORT extern const QString DropUnique;
-    SHAREDLIB_EXPORT extern const QString DropIndex;
-    SHAREDLIB_EXPORT extern const QString DropFullText;
-    SHAREDLIB_EXPORT extern const QString DropSpatialIndex;
-    SHAREDLIB_EXPORT extern const QString DropForeign;
-    SHAREDLIB_EXPORT extern const QString RenameIndex;
+    TINYORM_EXPORT extern const QString Create;
+    TINYORM_EXPORT extern const QString Add;
+    TINYORM_EXPORT extern const QString Change;
+    TINYORM_EXPORT extern const QString Rename;
+    TINYORM_EXPORT extern const QString Drop;
+    TINYORM_EXPORT extern const QString DropIfExists;
+    TINYORM_EXPORT extern const QString DropColumn;
+    TINYORM_EXPORT extern const QString RenameColumn;
+    TINYORM_EXPORT extern const QString DropPrimary;
+    TINYORM_EXPORT extern const QString DropUnique;
+    TINYORM_EXPORT extern const QString DropIndex;
+    TINYORM_EXPORT extern const QString DropFullText;
+    TINYORM_EXPORT extern const QString DropSpatialIndex;
+    TINYORM_EXPORT extern const QString DropForeign;
+    TINYORM_EXPORT extern const QString RenameIndex;
 
     // PostgreSQL specific command
-    SHAREDLIB_EXPORT extern const QString Comment;
+    TINYORM_EXPORT extern const QString Comment;
 
     // MySQL and PostgreSQL specific commands
-    SHAREDLIB_EXPORT extern const QString AutoIncrementStartingValue;
-    SHAREDLIB_EXPORT extern const QString TableComment;
+    TINYORM_EXPORT extern const QString AutoIncrementStartingValue;
+    TINYORM_EXPORT extern const QString TableComment;
 
     // Indexes
-    SHAREDLIB_EXPORT extern const QString Primary;
-    SHAREDLIB_EXPORT extern const QString Unique;
-    SHAREDLIB_EXPORT extern const QString Index;
-    SHAREDLIB_EXPORT extern const QString Fulltext;
-    SHAREDLIB_EXPORT extern const QString SpatialIndex;
-    SHAREDLIB_EXPORT extern const QString Foreign;
+    TINYORM_EXPORT extern const QString Primary;
+    TINYORM_EXPORT extern const QString Unique;
+    TINYORM_EXPORT extern const QString Index;
+    TINYORM_EXPORT extern const QString Fulltext;
+    TINYORM_EXPORT extern const QString SpatialIndex;
+    TINYORM_EXPORT extern const QString Foreign;
 
     // Foreign constraints
-    SHAREDLIB_EXPORT extern const QString Cascade;
-    SHAREDLIB_EXPORT extern const QString Restrict;
-    SHAREDLIB_EXPORT extern const QString SetNull;
+    TINYORM_EXPORT extern const QString Cascade;
+    TINYORM_EXPORT extern const QString Restrict;
+    TINYORM_EXPORT extern const QString SetNull;
 
     // Column types
-    SHAREDLIB_EXPORT extern const QString integer_;
-    SHAREDLIB_EXPORT extern const QString varchar_;
-    SHAREDLIB_EXPORT extern const QString float_;
-    SHAREDLIB_EXPORT extern const QString blob_;
-    SHAREDLIB_EXPORT extern const QString bytea_;
+    TINYORM_EXPORT extern const QString integer_;
+    TINYORM_EXPORT extern const QString varchar_;
+    TINYORM_EXPORT extern const QString float_;
+    TINYORM_EXPORT extern const QString blob_;
+    TINYORM_EXPORT extern const QString bytea_;
 
     // Common strings
-    SHAREDLIB_EXPORT extern const QString TRIM_QUOTES;
+    TINYORM_EXPORT extern const QString TRIM_QUOTES;
 
 } // namespace Constants
 

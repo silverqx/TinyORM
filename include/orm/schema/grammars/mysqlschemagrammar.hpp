@@ -19,7 +19,7 @@ namespace Grammars
 {
 
     /*! MySQL schema grammar. */
-    class SHAREDLIB_EXPORT MySqlSchemaGrammar : public SchemaGrammar
+    class TINYORM_EXPORT MySqlSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY_MOVE(MySqlSchemaGrammar)
 

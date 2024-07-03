@@ -13,7 +13,7 @@ namespace Orm::Query::Concerns
 {
 
     /*! More complex 'Retrieving results' methods that internally build queries. */
-    class SHAREDLIB_EXPORT BuildsQueries // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT BuildsQueries // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Default constructor. */

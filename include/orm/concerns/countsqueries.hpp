@@ -23,7 +23,7 @@ namespace Concerns
 {
 
     /*! Counts the number of executed queries and the elapsed time of queries. */
-    class SHAREDLIB_EXPORT CountsQueries
+    class TINYORM_EXPORT CountsQueries
     {
         Q_DISABLE_COPY_MOVE(CountsQueries)
 

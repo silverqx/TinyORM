@@ -32,7 +32,7 @@ namespace Orm::Query
     // FUTURE querybuilder, paginator silverqx
     // FUTURE querybuilder, index hint silverqx
     /*! Database query builder. */
-    class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
     {
         // To access enforceOrderBy()
         friend Concerns::BuildsQueries;

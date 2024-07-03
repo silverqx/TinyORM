@@ -18,7 +18,7 @@ namespace Concerns
 {
 
     /*! Connection resolver. */
-    class SHAREDLIB_EXPORT HasConnectionResolver
+    class TINYORM_EXPORT HasConnectionResolver
     {
     public:
         /*! Get the connection resolver instance. */

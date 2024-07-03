@@ -18,7 +18,7 @@ namespace Orm::SchemaNs
 
     /*! Reference class to the ColumnDefinition, provides setters with a nice API
         for the database index. */
-    class SHAREDLIB_EXPORT IndexDefinitionReference
+    class TINYORM_EXPORT IndexDefinitionReference
     {
     public:
         /*! Constructor. */

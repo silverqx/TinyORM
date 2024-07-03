@@ -46,7 +46,7 @@ namespace Orm
         reconnecting  to the database, this is handled by the TinyORM library
         internally. The reconnection is handled correctly if a connection loss is
         detected. */
-    class SHAREDLIB_EXPORT DatabaseConnection :
+    class TINYORM_EXPORT DatabaseConnection :
             public Concerns::DetectsLostConnections,
             public Concerns::ManagesTransactions,
             public Concerns::LogsQueries,

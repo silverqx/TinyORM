@@ -16,7 +16,7 @@ namespace Orm::Concerns
 {
 
     /*! Detect lost connection by passed exception message. */
-    class SHAREDLIB_EXPORT DetectsLostConnections
+    class TINYORM_EXPORT DetectsLostConnections
     {
         Q_DISABLE_COPY_MOVE(DetectsLostConnections)
 

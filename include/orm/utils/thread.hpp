@@ -16,7 +16,7 @@ namespace Orm::Utils
 {
 
     /*! Library class for Thread specific code. */
-    class SHAREDLIB_EXPORT Thread
+    class TINYORM_EXPORT Thread
     {
         Q_DISABLE_COPY_MOVE(Thread)
 

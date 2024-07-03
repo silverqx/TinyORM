@@ -40,7 +40,7 @@ namespace Concerns
 {
 
     /*! Set of methods for the console output/input. */
-    class SHAREDLIB_EXPORT InteractsWithIO
+    class TINYORM_EXPORT InteractsWithIO
     {
         Q_DISABLE_COPY_MOVE(InteractsWithIO)
 

@@ -13,7 +13,7 @@ namespace Orm
 {
 
     /*! Facade class for the Schema builder. */
-    class SHAREDLIB_EXPORT Schema final
+    class TINYORM_EXPORT Schema final
     {
         Q_DISABLE_COPY_MOVE(Schema)
 

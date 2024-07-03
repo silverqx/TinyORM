@@ -26,7 +26,7 @@ namespace Types
 {
 
     /*! Wrapper around the QSqlQuery to fix QDateTime time zones. */
-    class SHAREDLIB_EXPORT SqlQuery : public TSqlQuery
+    class TINYORM_EXPORT SqlQuery : public TSqlQuery
     {
         /*! Alias for the QueryGrammar. */
         using QueryGrammar = Query::Grammars::Grammar;

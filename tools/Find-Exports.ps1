@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 
-# Detect SHAREDLIB_EXPORT in header files that don't have a cpp file
+# Detect TINYORM_EXPORT in header files that don't have a cpp file
 
 Set-StrictMode -Version 3.0
 
@@ -27,8 +27,8 @@ foreach ($hppFile in $hppFiles)
         continue
     }
 
-    # Find the SHAREDLIB_EXPORT
-    $containsExport = @(Select-String -Path $hppFile -Pattern 'SHAREDLIB_EXPORT')
+    # Find the TINYORM_EXPORT
+    $containsExport = @(Select-String -Path $hppFile -Pattern 'TINYORM_EXPORT')
     if ($containsExport.Count -eq 0)
     {
         continue

@@ -20,7 +20,7 @@ namespace Utils
 {
 
     /*! Database configuration related library class. */
-    class SHAREDLIB_EXPORT Configuration
+    class TINYORM_EXPORT Configuration
     {
         Q_DISABLE_COPY_MOVE(Configuration)
 

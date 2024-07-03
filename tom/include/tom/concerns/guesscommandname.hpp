@@ -28,7 +28,7 @@ namespace Concerns
 {
 
     /*! Try to guess the command name by the given name (name can be partial). */
-    class SHAREDLIB_EXPORT GuessCommandName
+    class TINYORM_EXPORT GuessCommandName
     {
         Q_DISABLE_COPY_MOVE(GuessCommandName)
 

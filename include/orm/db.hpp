@@ -13,7 +13,7 @@ namespace Orm
 {
 
     /*! Facade class for the DatabaseManager. */
-    class SHAREDLIB_EXPORT DB final
+    class TINYORM_EXPORT DB final
     {
         Q_DISABLE_COPY_MOVE(DB)
 

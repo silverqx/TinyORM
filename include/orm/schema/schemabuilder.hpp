@@ -23,7 +23,7 @@ namespace Grammars
 }
 
     /*! Database schema builder base class. */
-    class SHAREDLIB_EXPORT SchemaBuilder
+    class TINYORM_EXPORT SchemaBuilder
     {
         Q_DISABLE_COPY_MOVE(SchemaBuilder)
 

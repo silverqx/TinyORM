@@ -18,7 +18,7 @@ namespace Orm::SchemaNs
 
     /*! Reference class to the ColumnDefinition provides setters with a nice API using
         terser syntax for the foreign key column. */
-    class SHAREDLIB_EXPORT ForeignIdColumnDefinitionReference :
+    class TINYORM_EXPORT ForeignIdColumnDefinitionReference :
             public ColumnDefinitionReference<ForeignIdColumnDefinitionReference>
     {
     public:

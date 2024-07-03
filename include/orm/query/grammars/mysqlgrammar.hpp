@@ -13,7 +13,7 @@ namespace Orm::Query::Grammars
 {
 
     /*! MySQL grammar. */
-    class SHAREDLIB_EXPORT MySqlGrammar : public Grammar
+    class TINYORM_EXPORT MySqlGrammar : public Grammar
     {
         Q_DISABLE_COPY_MOVE(MySqlGrammar)
 

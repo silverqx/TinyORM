@@ -18,7 +18,7 @@ namespace Orm::Exceptions
 
     /*! TinyORM database query exception. TinyOrm library compiled against the TinyDrivers
         doesn't use this exception class. */
-    class SHAREDLIB_EXPORT QueryError : public SqlError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT QueryError : public SqlError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! const char * constructor. */

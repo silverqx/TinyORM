@@ -19,7 +19,7 @@ namespace Orm::SchemaNs
 
     /*! Reference class to the ColumnDefinition, provides setters with a nice API
         for the foreign key column. */
-    class SHAREDLIB_EXPORT ForeignKeyDefinitionReference
+    class TINYORM_EXPORT ForeignKeyDefinitionReference
     {
     public:
         /*! Constructor. */

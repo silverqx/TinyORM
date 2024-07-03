@@ -16,7 +16,7 @@ namespace Orm::Exceptions
 
     /*! TinyORM SqlError exception, wrapper for the QSqlError. TinyOrm library compiled
         against the TinyDrivers doesn't use this exception class. */
-    class SHAREDLIB_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! const char * constructor. */

@@ -33,7 +33,7 @@ namespace Grammars
     concept CommandDefinitionConcept = std::derived_from<T, CommandDefinition>;
 
     /*! Table blueprint for the schema grammar. */
-    class SHAREDLIB_EXPORT Blueprint
+    class TINYORM_EXPORT Blueprint
     {
         Q_DISABLE_COPY_MOVE(Blueprint)
 

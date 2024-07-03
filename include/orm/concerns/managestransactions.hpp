@@ -31,7 +31,7 @@ namespace Concerns
     // TODO next transaction method with callback silverqx
     // TODO rewrite transactions, look at beginTransaction(), commit(), ... whats up, you will see immediately 😎 silverqx
     /*! Manages database transactions. */
-    class SHAREDLIB_EXPORT ManagesTransactions
+    class TINYORM_EXPORT ManagesTransactions
     {
         Q_DISABLE_COPY_MOVE(ManagesTransactions)
 

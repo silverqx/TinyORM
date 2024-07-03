@@ -13,7 +13,7 @@ namespace Orm
 {
 
     /*! MySQL database connection. */
-    class SHAREDLIB_EXPORT MySqlConnection final : public DatabaseConnection
+    class TINYORM_EXPORT MySqlConnection final : public DatabaseConnection
     {
         Q_DISABLE_COPY_MOVE(MySqlConnection)
 

@@ -13,7 +13,7 @@ namespace Orm::Query::Grammars
 {
 
     /*! PostgreSQL grammar. */
-    class SHAREDLIB_EXPORT PostgresGrammar : public Grammar
+    class TINYORM_EXPORT PostgresGrammar : public Grammar
     {
         Q_DISABLE_COPY_MOVE(PostgresGrammar)
 

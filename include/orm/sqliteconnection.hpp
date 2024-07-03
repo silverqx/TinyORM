@@ -13,7 +13,7 @@ namespace Orm
 {
 
     /*! SQLite database connection. */
-    class SHAREDLIB_EXPORT SQLiteConnection final : public DatabaseConnection
+    class TINYORM_EXPORT SQLiteConnection final : public DatabaseConnection
     {
         Q_DISABLE_COPY_MOVE(SQLiteConnection)
 

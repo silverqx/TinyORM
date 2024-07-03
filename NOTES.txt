@@ -2100,7 +2100,7 @@ namespace Orm
 {
 
     /*! The EntityManager is the central access point to ORM functionality. */
-    class SHAREDLIB_EXPORT EntityManager final
+    class TINYORM_EXPORT EntityManager final
     {
         Q_DISABLE_COPY(EntityManager)
 

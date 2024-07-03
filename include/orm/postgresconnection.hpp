@@ -14,8 +14,8 @@ namespace Orm
 {
 
     /*! PostgreSQL database connection. */
-    class SHAREDLIB_EXPORT PostgresConnection final : public DatabaseConnection,
-                                                      public Concerns::ParsesSearchPath
+    class TINYORM_EXPORT PostgresConnection final : public DatabaseConnection,
+                                                    public Concerns::ParsesSearchPath
     {
         Q_DISABLE_COPY_MOVE(PostgresConnection)
 

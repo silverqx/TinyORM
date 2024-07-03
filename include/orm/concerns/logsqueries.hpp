@@ -27,7 +27,7 @@ namespace Concerns
 {
 
     /*! Logs executed queries to the console. */
-    class SHAREDLIB_EXPORT LogsQueries
+    class TINYORM_EXPORT LogsQueries
     {
         Q_DISABLE_COPY_MOVE(LogsQueries)
 

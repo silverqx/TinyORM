@@ -18,8 +18,8 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM Logic exception. */
-    class SHAREDLIB_EXPORT LogicError : public std::logic_error, // clazy:exclude=copyable-polymorphic
-                                        public OrmError
+    class TINYORM_EXPORT LogicError : public std::logic_error, // clazy:exclude=copyable-polymorphic
+                                      public OrmError
     {
     public:
         /*! const char * constructor. */
