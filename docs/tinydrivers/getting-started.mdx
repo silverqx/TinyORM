@@ -22,7 +22,7 @@ It was designed to drop the `QtSql` dependency while maintaining backward compat
 ##### Features summary
 
  - both, normal and prepared statements are supported
- - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html) (verify_ca, verify_identity) 🔥
+ - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) (verify_ca, verify_identity) 🔥
  - setting many other connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
  - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/)
  - transactions
@@ -52,9 +52,9 @@ Currently, only the `MySQL` database driver is supported and finished.
 
 The following describes the differences between `QMYSQL` and `TinyMySql` drivers.
 
-The `QMYSQL` driver doesn't support setting `MySQL` non-flag [connection options](https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html) like `MYSQL_OPT_RECONNECT` without the value, it needs to be defined with value like `=1` or `=TRUE` (case-sensitive), only real flag options like `CLIENT_INTERACTIVE` can be set without the value and `=` character.
+The `QMYSQL` driver doesn't support setting `MySQL` non-flag [connection options](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) like `MYSQL_OPT_RECONNECT` without the value, it needs to be defined with value like `=1` or `=TRUE` (case-sensitive), only real flag options like `CLIENT_INTERACTIVE` can be set without the value and `=` character.
 
-On the other hand, the `TinyMySql` driver allows setting non-flag [connection options](https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html) options without the value and `=` character, which are considered enabled (ON or TRUE).
+On the other hand, the `TinyMySql` driver allows setting non-flag [connection options](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) options without the value and `=` character, which are considered enabled (ON or TRUE).
 
 ##### Removed features
 
@@ -102,7 +102,7 @@ To control shared and static build use [`static`](building/tinyorm.mdx#qmake-sta
 
 Performance is several milliseconds faster compared to `QtSql` with the `QMYSQL` driver. It was tuned using the `KCacheGrind` to be so. It's ~40ms faster on [`TinyOrmPlayground`](https://github.com/silverqx/TinyOrmPlayground) project with __620__ database queries compiled using `GCC v13.2.1` Debug build on Linux. Similar results can be expected on other platforms but it's not guaranteed.
 
-This means performance is very similar to `QtSql`. There is not much to speed up because `TinyDrivers` code is swift and 90% of the time is spent inside the [`MySQL C API`](https://dev.mysql.com/doc/c-api/8.4/en/) because we always have to wait for the database server, especially when creating database connections using eg. [`mysql_real_connect()`](https://dev.mysql.com/doc/c-api/8.4/en/mysql-real-connect.html) (this function is king among the slowest functions 😎, which is understandable of course).
+This means performance is very similar to `QtSql`. There is not much to speed up because `TinyDrivers` code is swift and 90% of the time is spent inside the [`MySQL C API`](https://dev.mysql.com/doc/c-api/9.0/en/) because we always have to wait for the database server, especially when creating database connections using eg. [`mysql_real_connect()`](https://dev.mysql.com/doc/c-api/9.0/en/mysql-real-connect.html) (this function is king among the slowest functions 😎, which is understandable of course).
 
 ## Internals
 
@@ -112,7 +112,7 @@ This means performance is very similar to `QtSql`. There is not much to speed up
  - SQL API layer
  - Public API layer
 
-The Driver layer is eg. `TinyMySql` library which is responsible for communicating with the underlying database driver (eg. [`MySQL C API`](https://dev.mysql.com/doc/c-api/8.4/en/)).
+The Driver layer is eg. `TinyMySql` library which is responsible for communicating with the underlying database driver (eg. [`MySQL C API`](https://dev.mysql.com/doc/c-api/9.0/en/)).
 
 The SQL API layer is a semi-layer that glues everything up and sits between the Public interface API and the Driver layer.
 

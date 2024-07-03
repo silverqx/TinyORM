@@ -38,7 +38,7 @@ jobs:
       # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
       TINY_PARALLEL_GCC: 3
       TINY_PARALLEL_CLANG_OR_VCPKG: 9
-      TINY_MYSQL_SERVICE: MySQL84
+      TINY_MYSQL_SERVICE: MySQL90
       # Used by the msys2.cmd script and cygpath.exe
       MSYS2_ROOT: C:\msys64
 
