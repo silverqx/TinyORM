@@ -82,6 +82,10 @@ QList<QVariant>
 Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
                                   const QList<UpdateItem> &values)
 {
+    /* The following ignored diagnostic is correct, I could fix this problem with:
+       const auto it = bindings.find(BindingType::JOIN);
+       const auto &joinBindings = it.value;
+       But I want to how at least one example of ignored diagnostic in the code. */
 #if defined(__GNUG__) && !defined(__clang__)
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wdangling-reference"
