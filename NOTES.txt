@@ -2369,7 +2369,7 @@ db.setHostName(qEnvironmentVariable("DB_MYSQL_HOST"));
 db.setDatabaseName(qEnvironmentVariable("DB_MYSQL_DATABASE"));
 db.setUserName(qEnvironmentVariable("DB_MYSQL_USERNAME"));
 db.setPassword(qEnvironmentVariable("DB_MYSQL_PASSWORD"));
-db.setPort(qEnvironmentVariable("DB_MYSQL_PORT").toUInt());
+db.setPort(qEnvironmentVariable("DB_MYSQL_PORT").toInt());
 db.setConnectOptions(QStringLiteral("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3;MYSQL_OPT_SSL_MODE=%4")
                      .arg(qEnvironmentVariable("DB_MYSQL_SSL_CERT"),
                           qEnvironmentVariable("DB_MYSQL_SSL_KEY"),
