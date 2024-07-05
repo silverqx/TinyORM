@@ -270,7 +270,7 @@ jobs:
     # ---
 
     # I don't need to use set(VCPKG_USE_HEAD_VERSION ON) and set HEAD_REF because I'm using
-    # Edit-VcpkgRefAndHash a few steps above to correctly set RED and SHA512.
+    # Edit-VcpkgRefAndHash a few steps above to correctly set REF and SHA512.
 
     - name: 🪡 VcpkgManifest method with the VCPKG_APPLOCAL_DEPS (no install or deployment) 🪡
       run: |
