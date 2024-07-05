@@ -120,7 +120,7 @@ when the build type is equal" OFF
     "CMAKE_EXPORT_PACKAGE_REGISTRY AND NOT TINY_IS_MULTI_CONFIG" OFF
 )
 
-# The condition allows to use both mechanism to control dynamic/static,
+# The condition allows to use both mechanism to control dynamic/static MSVC CRT linkage,
 # the CMAKE_MSVC_RUNTIME_LIBRARY or MSVC_RUNTIME_DYNAMIC
 # Also this isn't allowed with vcpkg as it controls this using triplet (VCPKG_CRT_LINKAGE)
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
