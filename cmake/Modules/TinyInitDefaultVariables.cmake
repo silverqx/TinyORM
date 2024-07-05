@@ -212,16 +212,16 @@ macro(tiny_init_tiny_variables_pre)
     # Auto-detect the CMAKE_TOOLCHAIN_FILE from the VCPKG_ROOT environment variable
     if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Path to toolchain file supplied to cmake.")
+            CACHE STRING "Path to the toolchain file supplied to CMake.")
     endif()
     # GitHub Actions defines the VCPKG_INSTALLATION_ROOT instead of VCPKG_ROOT
     if(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         set(CMAKE_TOOLCHAIN_FILE
             "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Path to toolchain file supplied to cmake.")
+            CACHE STRING "Path to the toolchain file supplied to CMake.")
     endif()
 
-    # Vcpkg CMake integration ignores VCPKG_DEFAULT_TRIPLET env. variable but acceppts
+    # Vcpkg CMake integration ignores VCPKG_DEFAULT_TRIPLET env. variable but accepts
     # the VCPKG_TARGET_TRIPLET command-line option
     if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
         set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING
