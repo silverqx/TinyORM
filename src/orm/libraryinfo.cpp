@@ -64,7 +64,7 @@ QVersionNumber LibraryInfo::version() noexcept
 
 #ifndef TINY_MACRO_BOOL
 /*! Convert the macro BOOL type value passed by the the C macro to the ON/OFF QString. */
-#  define TINY_MACRO_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? ON : OFF
+#  define TINY_MACRO_BOOL(value) TypeUtils::normalizeCMakeBool(TINY_STRINGIFY(value))
 #endif
 
 std::map<QString, QString> LibraryInfo::ormCMacrosMap()

@@ -16,6 +16,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::ASTERISK_C;
 using Orm::Constants::LT_C;
+using Orm::Constants::OFF;
+using Orm::Constants::ON;
 using Orm::Constants::SPACE;
 using Orm::Constants::off;
 
@@ -77,6 +79,12 @@ bool Type::isTrue(const QString &value)
 bool Type::isTrue(const QVariant &value)
 {
     return value.canConvert<QString>() && isTrue(value.value<QString>());
+}
+
+QString Type::normalizeCMakeBool(const QString &value)
+{
+    // Classic bool TRUE/FALSE
+    return isCMakeTrue(value) ? ON : OFF;
 }
 
 bool Type::isCMakeTrue(const QString &value)

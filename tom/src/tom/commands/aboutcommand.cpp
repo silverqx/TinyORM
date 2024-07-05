@@ -299,16 +299,6 @@ QList<SectionItem> AboutCommand::gatherAllAboutInformation() const
     };
 }
 
-#if defined(TINYORM_MSVC_RUNTIME_DYNAMIC) || defined(TINYORM_LTO)
-using Orm::Constants::OFF;
-using Orm::Constants::ON;
-
-#ifndef TINY_MACRO_BOOL
-/*! Convert the macro BOOL type value passed by the the C macro to the ON/OFF QString. */
-#  define TINY_MACRO_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? ON : OFF
-#endif
-#endif // TINYORM_MSVC_RUNTIME_DYNAMIC
-
 QList<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
     return {
@@ -333,7 +323,8 @@ QList<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 // CMake ON/OFF
 // qmake has bad support for ltcg so it's not handled in qmake (don't do it in future)
 #ifdef TINYORM_LTO
-                {sl("Link Time Optimization"), TINY_MACRO_BOOL(TINYORM_LTO)},
+                {sl("Link Time Optimization"),
+                            TypeUtils::normalizeCMakeBool(TINY_STRINGIFY(TINYORM_LTO))},
 #endif
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("MSVC Runtime dynamic"),
