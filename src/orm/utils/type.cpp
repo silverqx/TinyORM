@@ -81,6 +81,25 @@ bool Type::isTrue(const QVariant &value)
     return value.canConvert<QString>() && isTrue(value.value<QString>());
 }
 
+QString Type::normalizeCMakeTriStateBool(const QString &value)
+{
+    static const auto NotFoundSuffix = QStringLiteral("-NOTFOUND");
+    static const auto NotFound       = QStringLiteral("NOTFOUND");
+
+    /* Is NOTFOUND or xyz-NOTFOUND (just/only return it).
+       The NOTFOUND and xyz-NOTFOUND are case-sensitive even if CMake documentation
+       states that the named boolean constants are case-insensitive.
+       We have to take this into account because notfound or xyz-notfound are
+       considered TRUE. */
+    if (value.compare(NotFound, Qt::CaseSensitive) == 0 ||
+        value.endsWith(NotFoundSuffix, Qt::CaseSensitive)
+    )
+        return value;
+
+    // Classic bool TRUE/FALSE
+    return normalizeCMakeBool(value);
+}
+
 QString Type::normalizeCMakeBool(const QString &value)
 {
     // Classic bool TRUE/FALSE

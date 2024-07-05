@@ -71,6 +71,9 @@ namespace Orm::Utils
         static bool isTrue(const QVariant &value);
 
         /*! Resolve/normalize CMake TriState bool value, internally call isCMakeTrue(),
+            so return ON/OFF for Classic bool or NOTFOUND/xyz-NOTFOUND (to uppercase). */
+        static QString normalizeCMakeTriStateBool(const QString &value);
+        /*! Resolve/normalize CMake TriState bool value, internally call isCMakeTrue(),
             so return ON/OFF for the Classic bool. */
         static QString normalizeCMakeBool(const QString &value);
         /*! Determine if a string is the CMake true bool value (1, ON, YES, TRUE, Y, or

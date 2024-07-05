@@ -151,10 +151,11 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 #else
         {sl("TINYORM_USING_PCH"), OFF},
 #endif
-// CMake ON/OFF
+// CMake ON/OFF/NOTFOUND (TriState bool)
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
         {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
-                    TINY_MACRO_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
+                    TypeUtils::normalizeCMakeTriStateBool(
+                        TINY_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))},
 #endif
     };
 }

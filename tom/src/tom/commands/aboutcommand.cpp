@@ -326,11 +326,13 @@ QList<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
                 {sl("Link Time Optimization"),
                             TypeUtils::normalizeCMakeBool(TINY_STRINGIFY(TINYORM_LTO))},
 #endif
+// CMake ON/OFF/NOTFOUND (TriState bool)
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("MSVC Runtime dynamic"),
-                            TINY_MACRO_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
+                            TypeUtils::normalizeCMakeTriStateBool(
+                                TINY_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))},
 #endif
-// Newline needed - QtCreator syntax highlighting bug
+// CMake ON/OFF
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("MSVC Runtime library"),
                             TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
