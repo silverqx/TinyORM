@@ -3483,3 +3483,20 @@ cmake.exe `
 -D _VCPKG_ROOT_DIR=E:/actions-runners/tinyorm/_work/TinyORM/vcpkg `
 -D _VCPKG_INSTALLED_DIR=E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/installed `
 -D VCPKG_MANIFEST_INSTALL=OFF
+
+
+MSVC CRT linkage bug:
+---------------------
+
+debug_heap.cpp __acrt_first_block == header or /MDd vs /MTd
+
+The problem is caused by allocating some resource eg. in one dll/exe and deallocating in another
+dll/exe, because there are more heap managers with /MTd static linkage, every exe/dll has
+its own heap manager and it doesn't know how to free resources if the resource was allocated
+somewhere else.
+
+I didn't know that this can happen and discovered it after whole library is practically finished.
+And because of this all code has to be revisited what is practically impossible and has to be
+fixed or I have to find all places where is this happening.
+
+This bug isn't happening with in Release mode with /MT because asserts are disabled.
