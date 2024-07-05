@@ -626,20 +626,28 @@ GitHub Actions:
 
  - all actions with versions currently used by TinyORM:
 
-   actions/cache@v3
+   - pwsh command to obtain all GitHub actions:
+.\tools\Get-GitHubActions.ps1
+
+   actions/cache@v4
+   actions/cache/restore@v4
+   actions/cache/save@v4
    actions/checkout@v4
-   actions/github-script@v6
    ilammy/msvc-dev-cmd@v1
-   jurplel/install-qt-action@v3
-   KyleMayes/install-llvm-action@v1
+   jurplel/install-qt-action@v4
+   KyleMayes/install-llvm-action@v1 (don't upgrade to @v2 as it needs full download URI)
    lukka/get-cmake@latest
    msys2/setup-msys2@v2
-   mxschmitt/action-tmate@v3
    seanmiddleditch/gha-setup-ninja@master
+
+   Using when needed only:
+
+   mxschmitt/action-tmate@v3
 
    Not using anymore:
 
    Chocobo1/setup-ccache-action@v1
+   actions/github-script@v6
 
  - periodical upgrades:
 
