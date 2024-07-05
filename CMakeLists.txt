@@ -126,7 +126,8 @@ when the build type is equal" OFF
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
 a Debug configuration (-MTd, -MDd)" ON
-    "MSVC AND (NOT TINY_VCPKG OR NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)"
+    "MSVC AND NOT TINY_VCPKG AND NOT DEFINED VCPKG_CRT_LINKAGE AND \
+NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY"
     MSVC_RUNTIME_DYNAMIC-NOTFOUND
 )
 

@@ -46,7 +46,10 @@ DESTINATION is encountered.")
     # strictly needed as on vcpkg the MSVC_RUNTIME_DYNAMIC isn't defined/used but with
     # the TINY_VCPKG is clearly visible whats up.
     # Also see the comment for the MSVC_RUNTIME_DYNAMIC option.
-    if(MSVC AND (NOT TINY_VCPKG OR DEFINED MSVC_RUNTIME_DYNAMIC))
+    if(MSVC AND NOT TINY_VCPKG AND NOT DEFINED VCPKG_CRT_LINKAGE AND
+            DEFINED MSVC_RUNTIME_DYNAMIC AND
+            NOT MSVC_RUNTIME_DYNAMIC STREQUAL "MSVC_RUNTIME_DYNAMIC-NOTFOUND"
+    )
         if(MSVC_RUNTIME_DYNAMIC)
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
         else()
