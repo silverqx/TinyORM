@@ -3500,5 +3500,7 @@ somewhere else.
 I didn't know that this can happen and discovered it after whole library is practically finished.
 And because of this all code has to be revisited what is practically impossible and has to be
 fixed or I have to find all places where is this happening.
+Because of this there is a change that TinyORM will never correctly support /MTd. 🥲 But it's not
+impossible to fix it, it will only cost a lot of effort.
 
 This bug isn't happening with in Release mode with /MT because asserts are disabled.
