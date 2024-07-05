@@ -3490,6 +3490,8 @@ MSVC CRT linkage bug:
 
 debug_heap.cpp __acrt_first_block == header or /MDd vs /MTd
 
+See https://stackoverflow.com/questions/35310117/debug-assertion-failed-expression-acrt-first-block-header
+
 The problem is caused by allocating some resource eg. in one dll/exe and deallocating in another
 dll/exe, because there are more heap managers with /MTd static linkage, every exe/dll has
 its own heap manager and it doesn't know how to free resources if the resource was allocated
