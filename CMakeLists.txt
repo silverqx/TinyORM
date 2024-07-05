@@ -192,7 +192,7 @@ target_optional_compile_definitions(${TinyOrm_target}
 
 target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
-        ADVANCED FEATURE NAME ORM
+        FEATURE NAME ORM
         DEFAULT ON
         DESCRIPTION "Controls the compilation of all ORM-related source code, when this \
 option is disabled, then only the query builder without ORM is compiled"
