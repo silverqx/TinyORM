@@ -589,7 +589,7 @@ jobs:
         arch: x64
 
     - name: Qt ${{ env.TINY_QT_VERSION }} install base components
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
         archives: qtbase
         version: ${{ env.TINY_QT_VERSION }}
