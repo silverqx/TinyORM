@@ -618,20 +618,13 @@ jobs:
         -MySQLServerPath $env:TinyMySQLInstallationPath
         -BuildPath $env:RUNNER_WORKSPACE
 
-    - name: Cache LLVM and Clang
-      id: llvm-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          C:/Program Files/LLVM
-        key: llvm-${{ env.TINY_LLVM_VERSION }}
-
+    # Caching is not currently recommended, it is usually slower than just directly downloading
+    # the LLVM and Clang binaries.
     - name: Install LLVM and Clang ${{ env.TINY_LLVM_VERSION }}
       uses: KyleMayes/install-llvm-action@v1
       with:
         version: ${{ env.TINY_LLVM_VERSION }}
         force-version: true
-        cached: ${{ steps.llvm-cache.outputs.cache-hit }}
 
     - name: Ccache initialize
       id: ccache-initialize-cache
