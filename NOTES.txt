@@ -3512,3 +3512,4 @@ Because of this there is a change that TinyORM will never correctly support /MTd
 impossible to fix it, it will only cost a lot of effort.
 
 This bug isn't happening with in Release mode with /MT because asserts are disabled.
+I also disabled vcpkg staticcrt like supports: !(windows & staticcrt); until this is fixed.
