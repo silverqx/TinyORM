@@ -44,6 +44,7 @@ DOCS=()
 
 src_configure() {
 	local mycmakeargs=(
+		--log-level=DEBUG --log-context
 		-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
 		-D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
 		-D BUILD_TREE_DEPLOY:BOOL=OFF
