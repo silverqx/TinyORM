@@ -27,20 +27,18 @@ REQUIRED_USE="
 "
 
 RDEPEND="
+	>=dev-qt/qtbase-6.7:6[icu]
 	build-drivers? (
-		>=dev-qt/qtbase-6.7:6[icu]
 		mysql? ( dev-db/mysql-connector-c:= )
 	)
-	!build-drivers? (
-		>=dev-qt/qtbase-6.7:6[icu]
-		dev-qt/qtbase:=[mysql,postgres,sqlite]
-	)
+	!build-drivers? ( dev-qt/qtbase:=[mysql,postgres,sqlite] )
 	mysql-ping? ( dev-db/mysql-connector-c:= )
 "
 DEPEND="
 	${RDEPEND}
 	>=dev-cpp/range-v3-0.12.0
-	>=dev-cpp/tabulate-1.5"
+	>=dev-cpp/tabulate-1.5
+"
 
 DOCS=()
 
