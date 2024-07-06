@@ -5,6 +5,8 @@ description: The TinyDrivers library is an underlying SQL database layer for Tin
 keywords: [c++ orm, database, getting started, tinydrivers, sql drivers]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyDrivers: Getting Started
 
 - [Introduction](#introduction)
@@ -14,6 +16,10 @@ keywords: [c++ orm, database, getting started, tinydrivers, sql drivers]
 - [Internals](#internals)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 The `TinyDrivers` library is an underlying SQL database layer for `TinyORM`. It can be used instead of the `QtSql` module, can be <u>__swapped__</u> at compile time, and has __1:1__ API as the `QtSql` module. 😮 Swapping is controlled by the `qmake` and `CMake` build system options.
 

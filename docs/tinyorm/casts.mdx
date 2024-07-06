@@ -5,6 +5,8 @@ description: Attribute casting allows you to transform TinyORM attribute values 
 keywords: [c++ orm, orm, casts, casting, attributes, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyORM: Casting
 
 - [Introduction](#introduction)
@@ -15,6 +17,10 @@ keywords: [c++ orm, orm, casts, casting, attributes, tinyorm]
     - [Query Time Casting](#query-time-casting)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 Attribute casting allows you to transform TinyORM attribute values when you retrieve them on model instances. For example, you may want to convert a `datetime` string that is stored in your database to the `QDateTime` instance when it is accessed via your TinyORM model. Or, you may want to convert a `tinyint` number that is stored in the database to the `bool` when you access it on the TinyORM model.
 

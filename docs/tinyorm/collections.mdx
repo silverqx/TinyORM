@@ -5,6 +5,8 @@ description: The ModelsCollection is specialized container which provides a flue
 keywords: [c++ orm, orm, collections, collection, model, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyORM: Collections
 
 - [Introduction](#introduction)
@@ -12,6 +14,10 @@ keywords: [c++ orm, orm, collections, collection, model, tinyorm]
 - [Available Methods](#available-methods)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 The `Orm::Tiny::Types::ModelsCollection` is specialized container which provides a fluent, convenient wrapper for working with vector of models. All TinyORM methods that return more than one model result, will return instances of the `ModelsCollection` class, including results retrieved via the `get` method or methods that return relationships like the `getRelation` and `getRelationValue`.
 

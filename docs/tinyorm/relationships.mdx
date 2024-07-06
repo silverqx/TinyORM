@@ -5,6 +5,8 @@ description: TinyORM relationships are defined as methods on your TinyORM model 
 keywords: [c++ orm, relationships, relations, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyORM: Relationships
 
 - [Introduction](#introduction)
@@ -31,6 +33,11 @@ keywords: [c++ orm, relationships, relations, tinyorm]
 - [Touching Parent Timestamps](#touching-parent-timestamps)
 
 ## Introduction
+
+<div class="api-stability alert alert--warning">
+    <Link to='/stability#stability-indexes'>__Stability: 1__</Link> - Preview<br/>
+    <small>High memory consumption during compilation using the `GCC` compiler if the number of TinyORM model instantiations with deep __Relationships__ is counting in hundreds or thousands (eg. like TinyORM functional tests). Generated executables are fine and are small. This is not a problem if only a few hundred instantiations are being done. Other compilers like `MSVC` or `Clang` are fine.</small>
+</div>
 
 Database tables are often related to one another. For example, a blog post may have many comments or an order could be related to the user who placed it. TinyORM makes managing and working with these relationships easy, and supports basic relationships:
 

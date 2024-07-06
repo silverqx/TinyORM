@@ -5,6 +5,8 @@ description: Migrations are like version control for your database, allowing you
 keywords: [c++ orm, database, migrations, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 import APITable from '@theme/APITable'
 import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
@@ -45,6 +47,10 @@ import {
     - [Foreign Key Constraints](#foreign-key-constraints)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 Migrations are like version control for your database, allowing your team to define and share the application's database schema definition. If you have ever had to tell a teammate to manually add a column to their local database schema after pulling in your changes from source control, you've faced the problem that database migrations solve.
 

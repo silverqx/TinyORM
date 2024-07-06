@@ -5,6 +5,8 @@ description: TinyORM includes the ability to seed your database with data using 
 keywords: [c++ orm, database, seeder, seeding, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # Database: Seeding
 
 - [Introduction](#introduction)
@@ -13,6 +15,10 @@ keywords: [c++ orm, database, seeder, seeding, tinyorm]
 - [Running Seeders](#running-seeders)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 TinyORM includes the ability to seed your database with data using seed classes. All seed classes should be stored in the `database/seeders` directory. The `DatabaseSeeder` class is considered as the root seeder. From this class, you may use the `call` method to run other seed classes, allowing you to control the seeding order.
 

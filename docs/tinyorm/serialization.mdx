@@ -5,6 +5,8 @@ description: TinyORM models serialization allows you to serialize models and col
 keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serializing relations, serializing collections, converting, toList, toMap]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyORM: Serialization
 
 - [Introduction](#introduction)
@@ -16,6 +18,10 @@ keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serial
 - [Date Serialization](#date-serialization)
 
 ## Introduction
+
+<div class="api-stability alert alert--success">
+    <Link to='/stability#stability-indexes'>__Stability: 2__</Link> - Stable
+</div>
 
 When building APIs using TinyORM, you will often need to convert your models and relationships to vectors, maps, or JSON. TinyORM includes convenient methods for making these conversions, as well as controlling which attributes are included in the serialized representation of your models.
 
