@@ -360,7 +360,7 @@ You may also configure connection options by `options` key as `QVariantHash` or 
 
 You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/9.0/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
 
-The `version` option is relevant only for the MySQL connections and you can save/avoid one database query (select version()) if you provide it manually. On the base of this version will be decided which [session variables](https://github.com/silverqx/TinyORM/blob/main/src/orm/connectors/mysqlconnector.cpp#L154) will be set if strict mode is enabled and whether to use an [alias](https://github.com/silverqx/TinyORM/blob/main/src/orm/query/grammars/mysqlgrammar.cpp#L36) during the `upsert` method call.
+The `version` option is relevant only for the MySQL connections and you can save/avoid one database query (select version()) if you provide it manually. Based on this version will be decided which [session variables](https://github.com/silverqx/TinyORM/blob/main/src/orm/connectors/mysqlconnector.cpp#L154) will be set if strict mode is enabled and whether to use an [alias](https://github.com/silverqx/TinyORM/blob/main/src/orm/query/grammars/mysqlgrammar.cpp#L36) during the `upsert` method call.
 
 Breaking values are as follows; use an upsert alias on the MySQL >=8.0.19 and remove the `NO_AUTO_CREATE_USER` sql mode on the MySQL >=8.0.11 if the strict mode is enabled.
 
