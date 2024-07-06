@@ -39,6 +39,7 @@ import {
 - [Building with CMake](#building-with-cmake)
     - [Configure & Build](#configure-and-build-cmake)
     - [CMake build options](#cmake-build-options)
+    - [CMake build environment variables](#cmake-build-environment-variables)
     - [Consume TinyOrm library](#consume-tinyorm-library-cmake)
 - [Building with qmake](#building-with-qmake)
     - [Install dependencies](#install-dependencies)
@@ -533,6 +534,26 @@ Important `CMake` options.
 | `CMAKE_EXPORT_PACKAGE_REGISTRY`    | `OFF`   | Enable the `export(TinyOrm)` command.<br/>`TinyORM` doesn't set this variable by default. Its initial value is taken from the `TINYORM_EXPORT_PACKAGE_REGISTRY` environment variable if not already defined. |
 | <small>`CMAKE_INTERPROCEDURAL_OPTIMIZATION`</small> | `OFF`   | Enable [Link time code optimization](https://en.wikipedia.org/wiki/Interprocedural_optimization) ([LTO](https://wiki.gentoo.org/wiki/LTO)).<br/><small>Works on all [Supported Compilers](supported-compilers.mdx).</small> |
 | `CMAKE_VERBOSE_MAKEFILE`           | `OFF`   | Enable verbose output from Makefile builds. |
+
+</APITable>
+</div>
+
+### CMake build environment variables
+
+The following are environment variables that are affecting the `TinyORM` CMake build system.
+
+These environment variables have lower priority than CMake `-D` compile definitions and they are used if the `-D` compile definitions are not `DEFINED`.
+
+<div className='apitable-build-environment-variables'>
+<APITable>
+
+| Option Name                       | Description |
+| --------------------------------- | ----------- |
+| `TINYORM_EXPORT_PACKAGE_REGISTRY` | Environment variable for [`CMAKE_EXPORT_PACKAGE_REGISTRY`](tinyorm.mdx#CMAKE_EXPORT_PACKAGE_REGISTRY).<br/><small>Used if: `NOT DEFINED CMAKE_EXPORT_PACKAGE_REGISTRY`</small> |
+| `TINYORM_STRICT_MODE`             | Environment variable for [`STRICT_MODE`](tinyorm.mdx#STRICT_MODE) CMake feature option.<br/>It's passed as the initial value `[value]` for the CMake [`option`](https://cmake.org/cmake/help/latest/command/option.html) command. |
+| `VCPKG_ROOT`                      | Auto-detect the [`CMAKE_TOOLCHAIN_FILE`](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html) from the `VCPKG_ROOT` environment variable.<br/><small>Used if: `NOT DEFINED CMAKE_TOOLCHAIN_FILE`</small> |
+| `VCPKG_INSTALLATION_ROOT`         | Auto-detect the [`CMAKE_TOOLCHAIN_FILE`](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html) from the `VCPKG_INSTALLATION_ROOT` environment variable. The [`VCPKG_INSTALLATION_ROOT`](https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md#environment-variables) environment variable is set on GitHub hosted runners.<br/><small>Used if: `NOT DEFINED CMAKE_TOOLCHAIN_FILE`</small> |
+| `VCPKG_DEFAULT_TRIPLET`           | Default value for the [`VCPKG_TARGET_TRIPLET`](https://learn.microsoft.com/en-us/vcpkg/users/buildsystems/cmake-integration#vcpkg_target_triplet).<br/><small>Used if: `NOT DEFINED VCPKG_TARGET_TRIPLET`</small> |
 
 </APITable>
 </div>
