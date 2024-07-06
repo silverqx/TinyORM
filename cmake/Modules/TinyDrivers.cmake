@@ -74,19 +74,3 @@ libraries which will be loaded at runtime by the ${TinyDrivers_target} shared li
 function.")
 
 endfunction()
-
-# Find package and call target_link_libraries() for MySQL client library
-# By default it uses FindMySQL.cmake module and in vcpkg it uses unofficial-libmysql
-# package config file
-macro(tiny_find_and_link_mysql target)
-
-    # Currently, I don't need to control the PRIVATE (it's PRIVATE in all cases)
-    if(NOT TINY_VCPKG)
-        tiny_find_package(MySQL REQUIRED)
-        target_link_libraries(${target} PRIVATE MySQL::MySQL)
-    else()
-        tiny_find_package(unofficial-libmysql REQUIRED)
-        target_link_libraries(${target} PRIVATE unofficial::libmysql::libmysql)
-    endif()
-
-endmacro()
