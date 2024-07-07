@@ -1525,7 +1525,7 @@ inline constants:
  - cmake
    - normal behavior is that user can switch between inline and extern constants using the INLINE_CONSTANTS cmake option
    - default is to provide/show this INLINE_CONSTANTS cmake option with the default value OFF, so extern constants are enabled by default (Clang <v18 has custom patched logic still)
-   - ❗ all below is true for Clang <v18, all problems all fixed in Clang v18
+   - ❗ all below is true for Clang <v18, all problems were fixed in Clang v18
    - MinGW clang shared build crashes with inline constants
      - so don't show INLINE_CONSTANTS cmake option and value is NOT DEFINED in this case so the default will be used and it's the extern constants
      - related issue: https://github.com/llvm/llvm-project/issues/55938
