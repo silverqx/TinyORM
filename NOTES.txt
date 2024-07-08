@@ -1522,6 +1522,16 @@ KCachegrind legend:
 inline constants:
 -----------------
 
+ - differences between qmake and CMake build system related to inline/extern constants:
+   - only one difference is that CMake build system doesn't allow/show the INLINE_CONSTANTS
+     CMake feature option for shared builds BUILD_SHARED_LIBS=ON even if extern constants work
+     with static linkage with some compilers, I will have to revisit this in the future
+   - qmake allows selecting extern_constants even with CONFIG+=static build (static archive library
+     and/with static linkage)
+   - the reason for this difference is that the qmake build system is supposed to be used
+     in development so is good to have this variability, CMake is for production use so it's
+     logical not to allow this case
+
  - cmake
    - normal behavior is that user can switch between inline and extern constants using the INLINE_CONSTANTS cmake option
    - default is to provide/show this INLINE_CONSTANTS cmake option with the default value OFF, so extern constants are enabled by default (Clang <v18 has custom patched logic still)

@@ -42,11 +42,18 @@ CONFIG(release, debug|release): \
 # TinyORM configuration
 # ---
 
-# Use extern constants by default
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
 !extern_constants: \
-!inline_constants: \
-    CONFIG += extern_constants
+!inline_constants {
+    # Use extern constants by default for shared builds
+    CONFIG(shared, dll|shared|static|staticlib) | \
+    CONFIG(dll, dll|shared|static|staticlib): \
+        CONFIG += extern_constants
+
+    # Archive library build (static linkage)
+    else: \
+        CONFIG += inline_constants
+}
 
 # Platform specific configuration
 # ---

@@ -320,12 +320,12 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
     endif()
 
     # Specifies which global constant types will be used
-    if(INLINE_CONSTANTS)
-        set(tinyExternConstants OFF)
-        message(VERBOSE "Using inline constants")
-    else()
+    if(BUILD_SHARED_LIBS AND NOT INLINE_CONSTANTS)
         set(tinyExternConstants ON)
         message(VERBOSE "Using extern constants")
+    else()
+        set(tinyExternConstants OFF)
+        message(VERBOSE "Using inline constants")
     endif()
     set(TINY_EXTERN_CONSTANTS ${tinyExternConstants} CACHE INTERNAL
         "Determine whether ${TinyOrm_target} library will be built with extern or inline \

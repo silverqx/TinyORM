@@ -9,10 +9,16 @@ TINY_SYSTEM_HEADER
 #if defined(TINYORM_EXTERN_CONSTANTS) && defined(TINYORM_INLINE_CONSTANTS)
 #  error Both TINYORM_EXTERN_CONSTANTS and TINYORM_INLINE_CONSTANTS defined.
 #endif
-/* Enforce extern constants if nothing is defined.
+/* Enforce inline/extern constants if neither is defined:
+    - extern constants for shared builds
+    - inline constants for static builds
    Look at NOTES.txt[inline constants] how this funckin machinery works. 😎 */
 #if !defined(TINYORM_EXTERN_CONSTANTS) && !defined(TINYORM_INLINE_CONSTANTS)
-#  define TINYORM_EXTERN_CONSTANTS
+#  if defined(TINYORM_BUILDING_SHARED) || defined(TINYORM_LINKING_SHARED)
+#    define TINYORM_EXTERN_CONSTANTS
+#  else
+#    define TINYORM_INLINE_CONSTANTS
+#  endif
 #endif
 
 // Check
