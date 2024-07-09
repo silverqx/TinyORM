@@ -2906,6 +2906,20 @@ QLibrary debugging:
  - it will log all debug messages to the console
 
 
+c++ confusions:
+---------------
+
+ - passing non-trivial by value vs const lvalue and rvalue references
+   - Clang Tidy - modernize-pass-by-value check
+   - I tested passing the std::string in 1'000'000 for-loop using all these techniques
+     with these results (MSVC 17.10 shared debug build):
+     - 390ms const lvalue reference
+     - 600ms rvalue reference
+     - 610ms by value
+   - what means using two methods one for lvalue and another for rvalue is still a good
+     idea instead of passing by value everywhere
+
+
 c++ library confusions:
 -----------------------
 
