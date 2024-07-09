@@ -27,6 +27,13 @@ if(TINYORM_BUILD_MYSQL_DRIVER)
     list(APPEND FEATURE_OPTIONS -DBUILD_DRIVERS:BOOL=ON)
 endif()
 
+# To propagate de-vendored requirements because qtbase (QMYSQL) doesn't use unofficial-libmysql
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static" AND NOT TINYORM_MYSQL_PING AND TINYORM_TOM_EXAMPLE AND
+    ("sql-mysql" IN_LIST FEATURES OR TINYORM_BUILD_MYSQL_DRIVER)
+)
+    list(APPEND FEATURE_OPTIONS -DTINY_VCPKG_QT_WITH_MYSQL:BOOL=ON)
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
