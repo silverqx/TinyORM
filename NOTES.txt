@@ -3521,6 +3521,9 @@ against Static version of the run-time library (/MT or /MTd), in this case the a
 To avoid this issue both Qt FW and TinyORM must be linked the same way against MSVCRT run-time
 library.
 
+Practically it means if you want to do static build link against static Qt FW and the same is true
+for DLL shared builds. This is how things work on Windows.
+
 Also, even if the Qt FW will be linked as /MD and TinyORM as /MT (so the Release build) the problem
 still exists and there will be memory leaks, but the assert doesn't kick in so everything will look
 normal and everything will work.
