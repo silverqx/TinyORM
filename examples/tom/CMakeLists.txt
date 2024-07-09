@@ -110,6 +110,7 @@ target_link_libraries(${TomExample_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_targ
 # packages/qtbase_x64-windows-static/share/Qt6Sql/Qt6QMYSQLDriverPluginTargets.cmake
 # QMYSQL driver uses FindMySQL.cmake find module instead of the unofficial-libmysql vcpkg port.
 # The libmysql provided by vcpkg is de-vendored so it doesn't contain OpenSSL, zstd, zlib inside.
+# See: https://github.com/microsoft/vcpkg/issues/38194#issuecomment-2059143576
 if(TINY_VCPKG_QT_WITH_MYSQL)
     tiny_find_and_link_mysql(${TomExample_target})
 endif()

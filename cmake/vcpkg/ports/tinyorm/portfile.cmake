@@ -3,7 +3,7 @@ vcpkg_from_github(
     REPO silverqx/TinyORM
     REF "v${VERSION}"
     SHA512 f82702d712f845624698f799c7f5d2b30b7d2138f6c4c15e7ca50b316254b55b6606f60ce4356d7156b615b636a6b16e2d1923901825759e54ab60499c4f04cd
-    HEAD_REF main
+    HEAD_REF develop
 )
 
 # STL4043 _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING already defined, see:
@@ -28,6 +28,7 @@ if(TINYORM_BUILD_MYSQL_DRIVER)
 endif()
 
 # To propagate de-vendored requirements because qtbase (QMYSQL) doesn't use unofficial-libmysql
+# See: https://github.com/microsoft/vcpkg/issues/38194#issuecomment-2059143576
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static" AND NOT TINYORM_MYSQL_PING AND TINYORM_TOM_EXAMPLE AND
     ("sql-mysql" IN_LIST FEATURES OR TINYORM_BUILD_MYSQL_DRIVER)
 )
