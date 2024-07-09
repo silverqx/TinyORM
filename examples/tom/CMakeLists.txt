@@ -108,7 +108,7 @@ target_link_libraries(${TomExample_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_targ
 # doesn't support compiling libmysql).
 # Source of this problem starts in the QtSql6 QMYSQL driver package config file at:
 # packages/qtbase_x64-windows-static/share/Qt6Sql/Qt6QMYSQLDriverPluginTargets.cmake
-# QMYSQL driver uses FindMySQL.cmake find module instead of the unofficial-libmysql CMake package.
+# QMYSQL driver uses FindMySQL.cmake find module instead of the unofficial-libmysql vcpkg port.
 # The libmysql provided by vcpkg is de-vendored so it doesn't contain OpenSSL, zstd, zlib inside.
 if(TINY_VCPKG AND NOT BUILD_DRIVERS AND NOT BUILD_SHARED_LIBS)
     tiny_find_and_link_mysql(${TomExample_target})
