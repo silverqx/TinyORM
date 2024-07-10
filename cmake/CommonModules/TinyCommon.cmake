@@ -35,6 +35,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # inlined symbols. It of course works with shared DLL builds but fails with static/-md
     # triplets (builds). It's a good idea to use the same setting for this like qtbase
     # has anyway.
+    # See: https://bugreports.qt.io/browse/QTBUG-127070
     if(NOT TINY_VCPKG)
         target_compile_definitions(${target} INTERFACE
             QT_DISABLE_DEPRECATED_UP_TO=0x060900
