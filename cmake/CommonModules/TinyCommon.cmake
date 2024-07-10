@@ -35,7 +35,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # shared DLL builds but fails with static/-md triplets (builds). It's a good idea to use
     # the same setting for this like qtbase has anyway.
     if(NOT TINY_VCPKG)
-        target_compile_definitions(${target} INTERFACE QT_DISABLE_DEPRECATED_UP_TO=0x060900)
+        target_compile_definitions(${target} INTERFACE
+            QT_DISABLE_DEPRECATED_UP_TO=0x060900
+        )
     endif()
 
     target_compile_definitions(${target}
