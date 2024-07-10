@@ -3118,6 +3118,25 @@ Previous BAD definition I tried in include/exclude:
           name: Release
 
 
+TinyORM confusions:
+-------------------
+
+ - DatabaseConnection::run() and QList<QVariant> &&bindings with
+   NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved):
+   - I revisited this a few time and it always confuse me later
+     ❗So in the future don't revisit it fourth time because it's correct ❗
+   - QList<QVariant> &&bindings is correct it can't be anything else (eg. forward reference
+     with QList<QVariant> concept) because I modify bindings in-place inside
+     the prepareBindings() and also, bindings can't be moved inside prepareBindings()!!
+   - also, const auto & = prepareBindings() returns const auto & because these prepared
+     bindings can't be further moved down because of the try-catch block as we need
+     access to them in try and also in the catch block
+   - this QList<QVariant> &&bindings parameter could technically be
+     QList<QVariant> bindings, but it's a private API and I know that I'm passing it as
+     rvalue reference only so &&bindings better describes whats up at the cost of NOLINT()
+     Clang Tidy suppression
+
+
 tools/deploy.ps1:
 -----------------
 

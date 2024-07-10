@@ -518,6 +518,7 @@ namespace Orm
 
     /* protected */
 
+    // See NOTES.txt[DatabaseConnection::run() and QList<QVariant> &&bindings]
     template<typename Return>
     Return
     DatabaseConnection::run(
