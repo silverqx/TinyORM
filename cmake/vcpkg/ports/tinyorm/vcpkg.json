@@ -37,6 +37,9 @@
         "libmysql"
       ]
     },
+    "debug": {
+      "description": "Set CMake --log-level to DEBUG and enable --log-context"
+    },
     "disable-thread-local": {
       "description": "Remove all thread_local storage duration specifiers (disables multi-threading support)"
     },
