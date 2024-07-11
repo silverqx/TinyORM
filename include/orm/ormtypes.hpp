@@ -218,34 +218,52 @@ namespace Query
 
         /*! Factory method to create QtTimeZoneConfig as QTimeZone::UTC instance. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-        inline static QtTimeZoneConfig utc() noexcept
+        inline static QtTimeZoneConfig utc() noexcept;
 #else
-        inline static QtTimeZoneConfig utc()
+        inline static QtTimeZoneConfig utc();
 #endif
-        {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-            return {QtTimeZoneType::QTimeZone,
-                    QVariant::fromValue(QTimeZone(QTimeZone::UTC))};
-#else
-            return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
-#endif
-        }
 
         /*! Factory method to create QtTimeZoneConfig as QTimeZone::LocalTime instance. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-        inline static QtTimeZoneConfig localTime() noexcept
+        inline static QtTimeZoneConfig localTime() noexcept;
 #else
-        inline static QtTimeZoneConfig localTime()
+        inline static QtTimeZoneConfig localTime();
 #endif
-        {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-            return {QtTimeZoneType::QTimeZone,
-                    QVariant::fromValue(QTimeZone(QTimeZone::LocalTime))};
-#else
-            return {QtTimeZoneType::QtTimeSpec, Qt::LocalTime};
-#endif
-        }
     };
+
+    /* QtTimeZoneConfig */
+
+    /* public */
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    QtTimeZoneConfig QtTimeZoneConfig::utc()
+    noexcept(std::is_nothrow_copy_constructible_v<QTimeZone>)
+#else
+    QtTimeZoneConfig QtTimeZoneConfig::utc()
+#endif
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        return {QtTimeZoneType::QTimeZone,
+                QVariant::fromValue(QTimeZone(QTimeZone::UTC))};
+#else
+        return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
+#endif
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    QtTimeZoneConfig QtTimeZoneConfig::localTime()
+    noexcept(std::is_nothrow_copy_constructible_v<QTimeZone>)
+#else
+    QtTimeZoneConfig QtTimeZoneConfig::localTime()
+#endif
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        return {QtTimeZoneType::QTimeZone,
+                QVariant::fromValue(QTimeZone(QTimeZone::LocalTime))};
+#else
+        return {QtTimeZoneType::QtTimeSpec, Qt::LocalTime};
+#endif
+    }
 
 } // namespace Orm
 
