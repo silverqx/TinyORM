@@ -280,7 +280,7 @@ SqlRecord MySqlResult::record() const
     mysql_field_seek(mysqlRes, currentCursor);
 
     // Populate field values for the given record
-    populateFielValuesFor(record);
+    populateFieldValuesFor(record);
 
     return record;
 }
