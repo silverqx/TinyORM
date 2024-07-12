@@ -57,7 +57,7 @@ private Q_SLOTS:
 
     void select_Aggregate_Count() const;
 
-    void select_Testing_recordCached() const;
+    void select_recordCached() const;
 
     void select_BoundLessValues() const;
     void select_BoundMoreValues() const;
@@ -360,7 +360,7 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
     QCOMPARE(users.value("aggregate").value<quint64>(), 2);
 }
 
-void tst_SqlQuery_Prepared::select_Testing_recordCached() const
+void tst_SqlQuery_Prepared::select_recordCached() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
