@@ -14,7 +14,6 @@ using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 using Orm::Drivers::MySql::Constants::COLON;
 using Orm::Drivers::MySql::Constants::DASH;
 
-
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 
 namespace Orm::Drivers::MySql
