@@ -198,7 +198,7 @@ void SqlResult::clearBoundValues()
 
 /* Result sets */
 
-void SqlResult::populateFieldValuesFor(SqlRecord &record) const
+void SqlResult::populateFieldValues(SqlRecord &record) const
 {
     // Nothing to do, not positioned on a valid record/row
     if (!isValid())
