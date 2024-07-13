@@ -2905,6 +2905,20 @@ QLibrary debugging:
  - set: QT_DEBUG_PLUGINS=1
  - it will log all debug messages to the console
 
+QString converting constructors performance with 1'000'000 loop:
+
+ -  20ms - u"xxx"_s
+ - 700ms - "xxx"_L1
+ - 380ms - QChar('x')
+ - 410ms - QChar('x'_L1)
+ - 390ms - u'x', 'x', QLatin1Char('x'), 'x'_L1
+ - even instantiation using u""_s is faster than QChar()
+
+QStringList::join() vs QString::repeated() then chop/ped():
+
+ - 2240ms - QStringList(5, u"?"_s).join(u", "_s)
+ -  640ms - u"?, "_s.repeated(5).chopped(2)
+
 
 c++ confusions:
 ---------------
