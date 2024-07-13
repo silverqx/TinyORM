@@ -18,7 +18,7 @@ namespace Orm::Drivers::MySql
     class TINYDRIVERS_EXPORT MySqlDriver final : public SqlDriver
     {
         Q_DISABLE_COPY_MOVE(MySqlDriver)
-        Q_DECLARE_PRIVATE(MySqlDriver)
+        Q_DECLARE_PRIVATE(MySqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         /* To access MySqlDriver::d_func() through the MySqlResultPrivate::drv_d_func(),
            what means that the MySqlResultPrivate will have access

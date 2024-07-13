@@ -19,7 +19,7 @@ namespace Orm::Drivers::MySql
     class TINYDRIVERS_EXPORT MySqlResult final : public SqlResult
     {
         Q_DISABLE_COPY_MOVE(MySqlResult)
-        Q_DECLARE_PRIVATE(MySqlResult)
+        Q_DECLARE_PRIVATE(MySqlResult) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
     public:
         /*! Constructor. */
