@@ -13,13 +13,13 @@
 library.
 #endif
 
-#include "orm/constants.hpp"
-#include "orm/utils/type.hpp"
-
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlquery.hpp"
+
+#include "orm/constants.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 #include "macros.hpp"
