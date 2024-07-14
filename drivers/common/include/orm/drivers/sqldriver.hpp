@@ -162,12 +162,13 @@ namespace Orm::Drivers
         /* Others */
         /*! Get the maximum identifier length for the current driver. */
         virtual int maximumIdentifierLength(IdentifierType type) const noexcept;
-        /*! Determine whether the given identifier is escaped/quoted. */
-        virtual bool isIdentifierEscaped(const QString &identifier,
-                                         IdentifierType type) const;
         /*! Strip delimiters/quotes from the given identifier. */
         virtual QString stripDelimiters(const QString &identifier,
                                         IdentifierType type) const;
+
+        /*! Determine whether the given identifier is escaped/quoted. */
+        virtual bool isIdentifierEscaped(const QString &identifier,
+                                         IdentifierType type) const;
 
         /*! Factory method to create an empty database result. */
         virtual std::unique_ptr<SqlResult>

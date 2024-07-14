@@ -86,16 +86,6 @@ int SqlDriver::maximumIdentifierLength(
     return std::numeric_limits<int>::max();
 }
 
-/* The following two methods are named wrong, but I can't rename them because
-   they are public and virtual. 🤔 */
-bool SqlDriver::isIdentifierEscaped(const QString &identifier,
-                                    const IdentifierType /*unused*/) const
-{
-    return identifier.size() > 2 &&
-           identifier.startsWith(QUOTE) &&
-           identifier.endsWith(QUOTE);
-}
-
 QString
 SqlDriver::stripDelimiters(const QString &identifier, const IdentifierType type) const
 {
@@ -104,6 +94,16 @@ SqlDriver::stripDelimiters(const QString &identifier, const IdentifierType type)
         return identifier;
 
     return identifier.sliced(1).chopped(1);
+}
+
+/* The following two methods are named wrong, but I can't rename them because
+   they are public and virtual. 🤔 */
+bool SqlDriver::isIdentifierEscaped(const QString &identifier,
+                                    const IdentifierType /*unused*/) const
+{
+    return identifier.size() > 2 &&
+           identifier.startsWith(QUOTE) &&
+           identifier.endsWith(QUOTE);
 }
 
 /* protected */
