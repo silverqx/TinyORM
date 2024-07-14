@@ -32,6 +32,7 @@ using Orm::Drivers::Exceptions::QueryError;
 using Orm::Drivers::SqlQuery;
 
 using enum Orm::Drivers::CursorPosition;
+using enum Orm::Drivers::NumericalPrecisionPolicy;
 
 using Orm::Utils::NullVariant;
 
@@ -42,9 +43,6 @@ using TestUtils::Databases;
 class tst_SqlQuery_Prepared : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
-
-    /*! Expose the NumericalPrecisionPolicy enum. */
-    using enum Orm::Drivers::NumericalPrecisionPolicy;
 
 private Q_SLOTS:
     void initTestCase() const;
