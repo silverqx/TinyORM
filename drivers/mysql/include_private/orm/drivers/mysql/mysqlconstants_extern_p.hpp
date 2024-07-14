@@ -17,6 +17,7 @@ namespace Orm::Drivers::MySql::Constants
     extern const QChar COLON;
     extern const QChar DASH;
     extern const QChar EQ_C;
+    extern const QChar BACKTICK;
 
     // Common strings
     extern const QString EMPTY;

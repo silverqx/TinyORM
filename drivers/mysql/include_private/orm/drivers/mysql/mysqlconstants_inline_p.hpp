@@ -17,6 +17,7 @@ namespace Orm::Drivers::MySql::Constants
     inline const QChar COLON     = QLatin1Char(':');
     inline const QChar DASH      = QLatin1Char('-');
     inline const QChar EQ_C      = QLatin1Char('=');
+    inline const QChar BACKTICK  = QLatin1Char('`');
 
     // Common strings
     inline const QString EMPTY   = QLatin1String("");

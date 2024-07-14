@@ -14,6 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
+using Orm::Drivers::MySql::Constants::BACKTICK;
 using Orm::Drivers::MySql::Constants::QMYSQL;
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
@@ -193,8 +194,8 @@ bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
                                       const IdentifierType /*unused*/) const
 {
     return identifier.size() > 2 &&
-           identifier.startsWith('`'_L1) &&
-           identifier.endsWith('`'_L1);
+           identifier.startsWith(BACKTICK) &&
+           identifier.endsWith(BACKTICK);
 }
 
 std::unique_ptr<SqlResult>
