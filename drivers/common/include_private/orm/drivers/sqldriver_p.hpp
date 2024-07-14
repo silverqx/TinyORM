@@ -42,11 +42,11 @@ namespace Orm::Drivers
 
     /* public */
 
-    SqlDriverPrivate::~SqlDriverPrivate() = default;
-
     SqlDriverPrivate::SqlDriverPrivate(const SqlDriver::DbmsType type) noexcept
         : dbmsType(type)
     {}
+
+    SqlDriverPrivate::~SqlDriverPrivate() = default;
 
 } // namespace Orm::Drivers
 
