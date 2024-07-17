@@ -180,7 +180,7 @@ QString BaseGrammar::wrapValue(QString value) const
 QString BaseGrammar::wrapSegments(QStringList segments) const
 {
     const auto size = segments.size();
-    // eg table_name.column is qualified
+    // eg. table_name.column is qualified
     const auto isQualifiedSegment = size > 1;
 
     for (auto i = 0; i < size; ++i)
