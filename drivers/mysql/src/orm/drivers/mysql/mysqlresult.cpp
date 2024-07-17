@@ -1,7 +1,5 @@
 #include "orm/drivers/mysql/mysqlresult.hpp"
 
-#include <QDateTime>
-
 #include "orm/drivers/exceptions/queryerror.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
