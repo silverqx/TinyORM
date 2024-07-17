@@ -74,9 +74,9 @@ namespace Orm::Drivers
         /*! Determine whether a field is SQL nullable (NULL in the table definition). */
         bool isNullColumn(const QString &name) const;
 
-        /*! Determine whether the field at the given index is NULL. */
+        /*! Determine whether the field at the given index is NULL (QVariant value). */
         bool isNull(size_type index) const;
-        /*! Determine whether the field with the given field name is NULL. */
+        /*! Determine if the field with the given field name is NULL (QVariant value). */
         bool isNull(const QString &name) const;
 
         /*! Set the value of the field at the given index to NULL. */

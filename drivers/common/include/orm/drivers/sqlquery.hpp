@@ -143,9 +143,9 @@ namespace Orm::Drivers
         template<typename T>
         T value(const QString &name) const;
 
-        /*! Determine whether the field at the given index is NULL. */
+        /*! Determine whether the field at the given index is NULL (QVariant value). */
         bool isNull(size_type index) const;
-        /*! Determine whether the field with the given field name is NULL. */
+        /*! Determine if the field with the given field name is NULL (QVariant value). */
         bool isNull(const QString &name) const;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be

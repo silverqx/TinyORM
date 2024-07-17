@@ -155,7 +155,7 @@ namespace Orm::Drivers
 
         /*! Get the field value at the given index in the current record. */
         virtual QVariant data(size_type index) const = 0;
-        /*! Determine whether the field at the given index is NULL. */
+        /*! Determine whether the field at the given index is NULL (QVariant value). */
         virtual bool isNull(size_type index) const = 0;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be

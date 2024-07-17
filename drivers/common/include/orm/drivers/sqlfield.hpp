@@ -106,12 +106,12 @@ namespace Orm::Drivers
 
         /*! Determine whether a field is required (!NULL in the table definition). */
         inline bool isRequired() const noexcept;
-        /*! Set the required field status. */
+        /*! Set the required field status (!/NULL in the table definition). */
         inline void setRequired(bool required) noexcept;
 
-        /*! Determine whether a field is required. */
+        /*! Determine whether a field is required (!/NULL in the table definition). */
         inline RequiredStatus requiredStatus() const noexcept;
-        /*! Set the required field status. */
+        /*! Set the required field status (!/NULL in the table definition). */
         inline void setRequiredStatus(RequiredStatus required) noexcept;
 
         /*! Get the field length. */
@@ -163,7 +163,7 @@ namespace Orm::Drivers
         QVariant m_defaultValue;
         /*! Qt metatype. */
         QMetaType m_metaType;
-        /*! Determine whether a field is required during INSERT statements. */
+        /*! Determine whether a field is required (during INSERT statements). */
         SqlField::RequiredStatus m_requiredStatus = SqlField::Unknown;
         /*! Field length. */
         size_type m_length = -1;
