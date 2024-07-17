@@ -101,7 +101,10 @@ namespace Orm::Drivers
         /*! Set the field QVariant value metatype (for invalid values only). */
         void setMetaType(QMetaType metaType);
 
-        /*! Determine whether a field is required. */
+        /*! Determine whether a field is SQL nullable (NULL in the table definition). */
+        inline bool isNullColumn() const noexcept;
+
+        /*! Determine whether a field is required (!NULL in the table definition). */
         inline bool isRequired() const noexcept;
         /*! Set the required field status. */
         inline void setRequired(bool required) noexcept;
@@ -249,6 +252,12 @@ namespace Orm::Drivers
     QMetaType SqlField::metaType() const noexcept
     {
         return m_metaType;
+    }
+
+    bool SqlField::isNullColumn() const noexcept
+    {
+        // Very confusing, I can't do anything about it to have compatible API 😔
+        return m_requiredStatus == Optional;
     }
 
     bool SqlField::isRequired() const noexcept

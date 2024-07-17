@@ -66,6 +66,11 @@ namespace Orm::Drivers
         /*! Set the value of the field with the field name to the given value. */
         void setValue(const QString &name, QVariant &&value);
 
+        /*! Determine whether a field is SQL nullable (NULL in the table definition). */
+        bool isNullColumn(size_type index) const;
+        /*! Determine whether a field is SQL nullable (NULL in the table definition). */
+        bool isNullColumn(const QString &name) const;
+
         /*! Determine whether the field at the given index is NULL. */
         bool isNull(size_type index) const;
         /*! Determine whether the field with the given field name is NULL. */

@@ -93,6 +93,19 @@ void SqlRecord::setValue(const QString &name, QVariant &&value)
     setValue(indexOf(name), std::move(value));
 }
 
+bool SqlRecord::isNullColumn(const size_type index) const
+{
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
+    throwIfNotContains(index);
+
+    return m_fields[index].isNullColumn();
+}
+
+bool SqlRecord::isNullColumn(const QString &name) const
+{
+    return isNullColumn(indexOf(name));
+}
+
 bool SqlRecord::isNull(const size_type index) const
 {
     // Throw the OutOfRangeError exception if the record doesn't contain an index
