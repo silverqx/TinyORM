@@ -58,8 +58,6 @@ namespace Orm::Drivers::MySql
         /* Data members */
         /*! MYSQL handler. */
         MYSQL *mysql = nullptr;
-        /*! The currently selected default database name. */
-        QString databaseName;
 
     private:
         /* open() */

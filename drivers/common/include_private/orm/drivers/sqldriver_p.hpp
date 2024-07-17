@@ -38,6 +38,9 @@ namespace Orm::Drivers
         bool isOpen = false;
         /*! The current database connection name (used in exceptions and logs). */
         QString connectionName;
+
+        /*! The currently selected default database name. */
+        QString databaseName;
     };
 
     /* public */
