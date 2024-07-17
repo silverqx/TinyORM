@@ -41,6 +41,9 @@ namespace Orm::Drivers
         /*! Swap the SqlRecord. */
         inline void swap(SqlRecord &other) noexcept;
 
+        /*! Get all field names. */
+        QStringList fieldNames() const;
+
         /*! Get the field name at the given index. */
         QString fieldName(size_type index) const;
         /*! Get the index of the given field name (-1 if it can't be found). */

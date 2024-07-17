@@ -17,6 +17,17 @@ namespace Orm::Drivers
 
 /* public */
 
+QStringList SqlRecord::fieldNames() const
+{
+    QStringList result;
+    result.reserve(m_fields.size());
+
+    for (const auto &field : m_fields)
+        result << field.name();
+
+    return result;
+}
+
 QString SqlRecord::fieldName(const size_type index) const
 {
     return m_fields.value(index).name();
