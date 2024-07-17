@@ -193,7 +193,9 @@ bool MySqlDriver::rollbackTransaction()
 bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
                                       const IdentifierType /*unused*/) const
 {
-    return identifier.size() > 2 &&
+    // NOTE API different, we are considering an empty identifier silverqx
+    // An empty identifier like `` must also be considered as escaped
+    return identifier.size() >= 2 &&
            identifier.startsWith(BACKTICK) &&
            identifier.endsWith(BACKTICK);
 }
