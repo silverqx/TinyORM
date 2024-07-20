@@ -45,6 +45,12 @@ QString SqlDriver::connectionName() const noexcept
     return d->connectionName;
 }
 
+QString SqlDriver::databaseName() const noexcept
+{
+    Q_D(const SqlDriver);
+    return d->databaseName;
+}
+
 SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
 {
     Q_D(const SqlDriver);

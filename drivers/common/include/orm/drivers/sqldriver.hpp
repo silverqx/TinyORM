@@ -130,6 +130,8 @@ namespace Orm::Drivers
 
         /*! Get the current connection name. */
         QString connectionName() const noexcept;
+        /*! Get the currently selected default database name. */
+        QString databaseName() const noexcept;
 
         /*! Get the current database driver type. */
         DbmsType dbmsType() const noexcept;
