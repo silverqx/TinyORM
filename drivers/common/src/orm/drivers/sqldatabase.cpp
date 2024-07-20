@@ -146,7 +146,7 @@ bool SqlDatabase::isValid() const noexcept
     /* The SqlDatabase connection can be invalid when the SqlDatabase local copy is
        created and the removeDatabase() -> invalidateConnection() -> d.reset() method is
        called while this local copy is still in scope (this is the only case).
-       Creating an invalid SqlDatabase instance manually by an user isn't possible because
+       Creating an invalid SqlDatabase instance manually by a user isn't possible because
        the default constructor is private. */
     return d->isDriverValid();
 }

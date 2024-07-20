@@ -67,14 +67,14 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, qint64)> &callback
 }
 
 /* This is trash as the QSqlQuery is passed to the callback, I need to pass something
-   like std::map<std::pair<int, QString>, QVariant> so an user can modify it and return */
+   like std::map<std::pair<int, QString>, QVariant> so a user can modify it and return */
 //QList<TSqlQuery>
 //BuildsQueries::chunkMap(const std::function<void(TSqlQuery &)> &callback, const qint64 count)
 //{
 //    /* This method is weird, it should return one merged collection with all rows, but
 //       it's impossible to merge more QSqlQuery-ies into the one QSqlQuery, so I have
 //       decided to return the vector of these QSqlQueries.
-//       It's not completely useless, only one difference will be that an user will have
+//       It's not completely useless, only one difference will be that a user will have
 //       to loop over all QSqlQuery-ies, instead of one big QSqlQuery.
 //       Another confusing thing is that map-related algorithms are moving a value into
 //       the callback (not non-const reference like here) and returning a new mapped value,
@@ -122,7 +122,7 @@ bool BuildsQueries::chunkById(
             break;
 
         /* Obtain the lastId before the results is passed to the user's callback because
-           an user can leave the results (SqlQuery) in the invalid/changed state. */
+           a user can leave the results (SqlQuery) in the invalid/changed state. */
         results.last();
         lastId = results.value(aliasName);
         // Restore a cursor position

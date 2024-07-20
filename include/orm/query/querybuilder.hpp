@@ -1012,7 +1012,7 @@ namespace Orm::Query
             return {std::move(query), R {}};
 
         /* Return invalid SqlQuery if a record was not found. Don't return
-           the SqlQuery() as an user can still obtain some info from the invalid
+           the SqlQuery() as a user can still obtain some info from the invalid
            SqlQuery. */
 
         // Optionally invoke the callback

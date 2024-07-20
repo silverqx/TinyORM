@@ -1799,7 +1799,7 @@ namespace Orm::Tiny
            attributes because there is nothing to increment/decrement, and filling extras
            also makes no sense. */
         if (!exists) {
-            /* This makes it much safer because an user must explicitly select this
+            /* This makes it much safer because a user must explicitly select this
                behavior using the all parameter. */
             if (!all)
                 return {-1, getConnection().getQtQuery()};

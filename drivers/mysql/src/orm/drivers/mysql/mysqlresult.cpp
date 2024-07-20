@@ -507,7 +507,7 @@ void MySqlResult::detachFromResultSet() noexcept
 
     // Don't log warnings here to leave this method noexcept
 
-    /* An user still be able to access recordCached() if the cache was populated because
+    /* A user still be able to access recordCached() if the cache was populated because
        of this don't call the d->recordCache.reset() here. */
 
     if (d->preparedQuery)

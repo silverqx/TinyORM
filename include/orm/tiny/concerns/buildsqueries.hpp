@@ -229,7 +229,7 @@ namespace Concerns
                 break;
 
             /* Obtain the lastId before the results is passed to the user's callback
-               because an user can leave the results in the invalid/changed state. */
+               because a user can leave the results in the invalid/changed state. */
             lastId = models.constLast().getAttribute(aliasName);
 
             /* And this check can also be made before a callback invocation, it saves

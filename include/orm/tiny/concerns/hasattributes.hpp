@@ -2132,7 +2132,7 @@ namespace Orm::Tiny::Concerns
     /* u_dates vs u_casts vs serializeDate/Time()
        If an attribute is in the u_dates and isn't in the u_casts it will be serialized
        using the serializeDatetime(). If it is in the u_casts then it will be serialized
-       using the serializeDateOrDateTimeOrTime(). These two methods allow an user to
+       using the serializeDateOrDateTimeOrTime(). These two methods allow a user to
        override them in the model class.
        If it is defined as the CustomQDate/Time in the u_casts then
        the serializeDateOrDateTimeOrTime() will not be used/called and the custom format

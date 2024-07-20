@@ -92,7 +92,7 @@ fspath MakeCommand::guessPathForMakeByPwd(
        from the make:model and the pwd is inside the default models path
        (TINYTOM_MODELS_DIR), in this case the guessed path will be ../migrations or
        ../seeders. The areParentPathsEqual() condition restricts this special case
-       because an user can set up absolutely different paths for migrations/seeders. */
+       because a user can set up absolutely different paths for migrations/seeders. */
     if (defaultModelsPath &&
         pwdStr.endsWith(QString::fromStdString(defaultModelsPath->get().string())) &&
         areParentPathsEqual(defaultPathList, *defaultModelsPath)

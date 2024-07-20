@@ -57,7 +57,7 @@ SqlQuery Builder::findOr(const QVariant &id, const QList<Column> &columns,
         std::invoke(callback);
 
     /* Return invalid SqlQuery if a record was not found. Don't return the SqlQuery()
-       as an user can still obtain some info from the invalid SqlQuery. */
+       as a user can still obtain some info from the invalid SqlQuery. */
     return query;
 }
 
