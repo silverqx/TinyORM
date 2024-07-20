@@ -148,6 +148,7 @@ private Q_SLOTS:
 
     void defaultCast_string() const;
     void defaultCast_text() const;
+    void defaultCast_mediumtext() const;
 
     void defaultCast_timestamp() const;
     void defaultCast_datetime() const;
@@ -992,6 +993,19 @@ void tst_CastAttributes::defaultCast_text() const
 
     QCOMPARE(typeId, QMetaType::QString);
     QCOMPARE(attribute.value<QString>(), sl("text text"));
+}
+
+void tst_CastAttributes::defaultCast_mediumtext() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = model(connection);
+
+    auto attribute = type.getAttribute("medium_text");
+    auto typeId = attribute.typeId();
+
+    QCOMPARE(typeId, QMetaType::QString);
+    QCOMPARE(attribute.value<QString>(), sl("mediumtext text"));
 }
 
 void tst_CastAttributes::defaultCast_timestamp() const
