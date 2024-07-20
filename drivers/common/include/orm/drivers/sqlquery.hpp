@@ -22,10 +22,22 @@ namespace Orm::Drivers
     class SqlRecord;
     class SqlResult;
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+namespace MySql
+{
+    class MySqlDriver;
+}
+#endif
+
     /*! SqlQuery class executes, navigates, and retrieves data from SQL statements. */
     class TINYDRIVERS_EXPORT SqlQuery
     {
         Q_DISABLE_COPY(SqlQuery)
+
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+        // To access the recordAllColumns()
+        friend MySql::MySqlDriver;
+#endif
 
         /*! Alias for the NotNull. */
         template<typename T>
@@ -179,6 +191,11 @@ namespace Orm::Drivers
         void throwIfEmptyQueryString(const QString &query);
 
         /* Result sets */
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+        /*! Get a SqlRecord containing the field information for the current query. */
+        SqlRecord recordAllColumns(bool withDefaultValues = true) const;
+#endif
+
         /*! Normal seek. */
         bool seekArbitrary(size_type index, size_type &actualIdx) noexcept;
         /*! Relative seek. */

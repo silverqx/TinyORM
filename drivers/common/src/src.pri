@@ -7,6 +7,7 @@ build_loadable_drivers: \
     sourcesList += $$PWD/orm/drivers/utils/fs_p.cpp
 
 sourcesList += \
+    $$PWD/orm/drivers/concerns/selectsallcolumnswithlimit0.cpp \
     $$PWD/orm/drivers/dummysqlerror.cpp \
     $$PWD/orm/drivers/exceptions/logicerror.cpp \
     $$PWD/orm/drivers/exceptions/queryerror.cpp \

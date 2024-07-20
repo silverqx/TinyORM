@@ -8,6 +8,8 @@
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
+#include "orm/drivers/sqlquery.hpp"
+#include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -244,6 +246,19 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
                  "for '%1' MySQL database connection in %2()."_s
                 .arg(d->connectionName, __tiny_func__));
     }
+}
+
+SqlRecord
+MySqlDriver::record(const QString &table, const std::weak_ptr<SqlDriver> &driver) const
+{
+    return selectAllColumnsWithLimit0(table, driver).record(false);
+}
+
+SqlRecord
+MySqlDriver::recordWithDefaultValues(const QString &table,
+                                     const std::weak_ptr<SqlDriver> &driver) const
+{
+    return selectAllColumnsWithLimit0(table, driver).recordAllColumns(true);
 }
 
 } // namespace Orm::Drivers::MySql

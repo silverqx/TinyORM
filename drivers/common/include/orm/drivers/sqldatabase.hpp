@@ -16,6 +16,7 @@ namespace Orm::Drivers
 
     class DummySqlError;
     class SqlDatabasePrivate;
+    class SqlRecord;
 
     /*! Database connection. */
     class TINYDRIVERS_EXPORT SqlDatabase : public SqlDatabaseManager // clazy:exclude=rule-of-three
@@ -139,6 +140,10 @@ namespace Orm::Drivers
         bool commit();
         /*! Rollback the active database transaction. */
         bool rollback();
+
+        /* Others */
+        /*! Get a SqlRecord containing the field information for the given table. */
+        SqlRecord record(const QString &table, bool withDefaultValues = true) const;
 
     private:
         /*! Set the connection name. */

@@ -9,6 +9,7 @@
 #include "orm/drivers/dummysqlerror.hpp"
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/sqldriver.hpp"
+#include "orm/drivers/sqlrecord.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -335,6 +336,31 @@ bool SqlDatabase::rollback()
     // Nothing to do, no transactions support
     else T_UNLIKELY
         return false; // Don't throw exception here to help avoid #ifdef-s in user's code
+}
+
+/* Others */
+
+/* Don't implement the recardCached() methods here because we would have to cache them
+   by the table name, that wouldn't be a problem, but problem is that there are no good
+   code points where these caches can be invalidated (the correct way would be to detect
+   the DML queries if they are manipulating cached table columns, and that is currently
+   impossible), so the user will have to manage it himself. */
+
+SqlRecord SqlDatabase::record(const QString &table, const bool withDefaultValues) const
+{
+    /* Will provide information about all fields such as length, precision,
+       SQL column types, auto-incrementing, field values, ..., and optionally
+       the Default Column Values.
+       The difference between this method and the SqlQuery/SqlResult::record() is that
+       the later is populated during looping over the SqlResult so for the particular
+       row and the SqlField will also contain the field value. Also, it will only contain
+       field information for the select-ed columns.
+       This method will contain field information for ALL columns for the given table,
+       but of course without the field values. */
+    if (withDefaultValues)
+        return d->driver().recordWithDefaultValues(table, d->sqldriver);
+
+    return d->driver().record(table, d->sqldriver);
 }
 
 /* private */

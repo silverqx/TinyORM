@@ -73,6 +73,14 @@ namespace Orm::Drivers::MySql
         /*! Factory method to create an empty MySQL result. */
         std::unique_ptr<SqlResult>
         createResult(const std::weak_ptr<SqlDriver> &driver) const final;
+
+        /*! Get a SqlRecord containing the field information for the given table. */
+        SqlRecord record(const QString &table,
+                         const std::weak_ptr<SqlDriver> &driver) const final;
+        /*! Get a SqlRecord containing the field information for the given table. */
+        SqlRecord
+        recordWithDefaultValues(const QString &table,
+                                const std::weak_ptr<SqlDriver> &driver) const final;
     };
 
     /* public */

@@ -31,6 +31,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     set(headers)
 
     list(APPEND headers
+        concerns/selectsallcolumnswithlimit0.hpp
         driverstypes.hpp
         dummysqlerror.hpp
         exceptions/driverserror.hpp
@@ -66,6 +67,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     endif()
 
     list(APPEND sources
+        concerns/selectsallcolumnswithlimit0.cpp
         dummysqlerror.cpp
         exceptions/logicerror.cpp
         exceptions/queryerror.cpp

@@ -376,6 +376,18 @@ function createTables(string $connection): void
         $table->foreign('role_id')->references('id')->on('roles')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
+
+    $schema->create('empty_with_default_values', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('user_id')->nullable();
+        $table->unsignedBigInteger('size')->default('0');
+        $table->decimal('decimal')->default('100.12')->nullable();
+        $table->dateTime('added_on')->useCurrent();
+        $table->string('note')->nullable();
+
+        $table->foreign('user_id')->references('id')->on('users')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
 }
 
 /**

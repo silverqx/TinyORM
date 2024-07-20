@@ -1,6 +1,7 @@
 INCLUDEPATH *= $$PWD
 
 headersList = \
+    $$PWD/orm/drivers/concerns/selectsallcolumnswithlimit0.hpp \
     $$PWD/orm/drivers/driverstypes.hpp \
     $$PWD/orm/drivers/dummysqlerror.hpp \
     $$PWD/orm/drivers/exceptions/driverserror.hpp \

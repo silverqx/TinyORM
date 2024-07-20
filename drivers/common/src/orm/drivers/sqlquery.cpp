@@ -509,6 +509,21 @@ void SqlQuery::throwIfEmptyQueryString(const QString &query)
 
 /* Result sets */
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+SqlRecord SqlQuery::recordAllColumns(const bool withDefaultValues) const
+{
+    throwIfNoResultSet();
+
+    /* Will provide information about all fields such as length, precision,
+       SQL column types, auto-incrementing, field values, ..., and optionally
+       the Default Column Values. */
+    if (withDefaultValues)
+        return m_sqlResult->recordWithDefaultValues(true);
+
+    return m_sqlResult->record();
+}
+#endif
+
 bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx) noexcept
 {
     // Nothing to do

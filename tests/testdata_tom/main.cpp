@@ -23,6 +23,7 @@
 #include "migrations/2022_05_11_171700_create_torrent_states_table.hpp"
 #include "migrations/2022_05_11_171800_create_state_torrent_table.hpp"
 #include "migrations/2022_05_11_171900_create_role_tag_table.hpp"
+#include "migrations/2022_05_11_172000_create_empty_with_default_values_table.hpp"
 
 #include "seeders/databaseseeder.hpp"
 
@@ -68,7 +69,8 @@ int main(int argc, char *argv[])
                             CreateAlbumImagesTable,
                             CreateTorrentStatesTable,
                             CreateStateTorrentTable,
-                            CreateRoleTagTable>()
+                            CreateRoleTagTable,
+                            CreateEmptyWithDefaultValuesTable>()
                 .seeders<DatabaseSeeder>()
                 // Fire it up 🔥🚀✨
                 .run();

@@ -9,10 +9,8 @@ TINY_SYSTEM_HEADER
 
 #include <thread>
 
-#include <orm/macros/commonnamespace.hpp>
-
+#include "orm/drivers/concerns/selectsallcolumnswithlimit0.hpp"
 #include "orm/drivers/driverstypes.hpp"
-#include "orm/drivers/macros/export.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -21,10 +19,11 @@ namespace Orm::Drivers
 
     class DummySqlError;
     class SqlDriverPrivate;
+    class SqlRecord;
     class SqlResult;
 
     /*! Database driver abstract class. */
-    class TINYDRIVERS_EXPORT SqlDriver
+    class TINYDRIVERS_EXPORT SqlDriver : public Concerns::SelectsAllColumnsWithLimit0
     {
         Q_DISABLE_COPY_MOVE(SqlDriver)
         Q_DECLARE_PRIVATE(SqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -101,7 +100,7 @@ namespace Orm::Drivers
         };
 
         /*! Pure virtual destructor. */
-        virtual ~SqlDriver() = 0;
+        ~SqlDriver() override = 0;
 
         /*! Open the database connection using the given connection values. */
         virtual bool
@@ -178,6 +177,14 @@ namespace Orm::Drivers
         /*! Factory method to create an empty database result. */
         virtual std::unique_ptr<SqlResult>
         createResult(const std::weak_ptr<SqlDriver> &driver) const = 0;
+
+        /*! Get a SqlRecord containing the field information for the given table. */
+        virtual SqlRecord
+        record(const QString &table, const std::weak_ptr<SqlDriver> &driver) const = 0;
+        /*! Get a SqlRecord containing the field information for the given table. */
+        virtual SqlRecord
+        recordWithDefaultValues(const QString &table,
+                                const std::weak_ptr<SqlDriver> &driver) const = 0;
 
     protected:
         /* Setters */
