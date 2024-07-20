@@ -8,6 +8,7 @@ else: \
     headersList += $$PWD/orm/drivers/mysql/mysqlconstants_inline_p.hpp
 
 headersList += \
+    $$PWD/orm/drivers/mysql/concerns/populatesfielddefaultvalues_p.hpp \
     $$PWD/orm/drivers/mysql/macros/includemysqlh_p.hpp \
     $$PWD/orm/drivers/mysql/mysqlconstants_p.hpp \
     $$PWD/orm/drivers/mysql/mysqldriver_p.hpp \

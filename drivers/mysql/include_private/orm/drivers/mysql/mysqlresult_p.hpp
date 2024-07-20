@@ -3,6 +3,7 @@
 #define ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
 
 #include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
+#include "orm/drivers/mysql/concerns/populatesfielddefaultvalues_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/mysql/mysqltypes_p.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
@@ -22,7 +23,8 @@ namespace Orm::Drivers::MySql
 {
 
     /*! MySqlResult private implementation. */
-    class MySqlResultPrivate : public SqlResultPrivate
+    class MySqlResultPrivate : public SqlResultPrivate,
+                               public Concerns::PopulatesFieldDefaultValuesPrivate
     {
         Q_DISABLE_COPY_MOVE(MySqlResultPrivate)
 

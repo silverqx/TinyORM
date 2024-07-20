@@ -136,6 +136,12 @@ namespace Orm::Drivers
         virtual SqlRecord record() const = 0;
         /*! Get a SqlRecord containing the field information for the current query. */
         virtual const SqlRecord &recordCached() const = 0;
+
+        /*! Get a SqlRecord containing the field information for the current query. */
+        virtual SqlRecord recordWithDefaultValues(bool allColumns) const = 0;
+        /*! Get a SqlRecord containing the field information for the current query. */
+        virtual const SqlRecord &recordWithDefaultValuesCached() const = 0;
+
         /*! Populate field values for the given record. */
         void populateFieldValues(SqlRecord &record) const;
 

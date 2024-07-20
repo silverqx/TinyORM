@@ -104,6 +104,19 @@ void SqlRecord::setValue(const QString &name, QVariant &&value)
     setValue(indexOf(name), std::move(value));
 }
 
+QVariant SqlRecord::defaultValue(const size_type index) const
+{
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
+    throwIfNotContains(index);
+
+    return m_fields[index].defaultValue();
+}
+
+QVariant SqlRecord::defaultValue(const QString &name) const
+{
+    return defaultValue(indexOf(name));
+}
+
 bool SqlRecord::isNullColumn(const size_type index) const
 {
     // Throw the OutOfRangeError exception if the record doesn't contain an index
@@ -233,6 +246,18 @@ SqlRecord::getFieldNameSegments(const QStringView name) noexcept
             .tableName = name.first(dotIndex),
             .fieldName = name.sliced(dotIndex + 1)};
 }
+
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+SqlField &SqlRecord::fieldInternal(const size_type index)
+{
+    return m_fields[index];
+}
+
+SqlField &SqlRecord::fieldInternal(const QString &name)
+{
+    return fieldInternal(indexOf(name));
+}
+#endif
 
 } // namespace Orm::Drivers
 

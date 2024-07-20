@@ -11,10 +11,21 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Drivers
 {
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+namespace MySql::Concerns
+{
+    class PopulatesFieldDefaultValuesPrivate;
+}
+#endif
 
     /*! The SqlRecord represents a database row. */
     class TINYDRIVERS_EXPORT SqlRecord
     {
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+        // To access the fieldInternal() (from the private implementation)
+        friend MySql::Concerns::PopulatesFieldDefaultValuesPrivate;
+#endif
+
     public:
         /* Container related */
         /*! Alias for the SqlRecord size type. */
@@ -68,6 +79,11 @@ namespace Orm::Drivers
         void setValue(const QString &name, const QVariant &value);
         /*! Set the value of the field with the field name to the given value. */
         void setValue(const QString &name, QVariant &&value);
+
+        /*! Get the field default value at the given index. */
+        QVariant defaultValue(size_type index) const;
+        /*! Get the field default value by field name (from table definition). */
+        QVariant defaultValue(const QString &name) const;
 
         /*! Determine whether a field is SQL nullable (NULL in the table definition). */
         bool isNullColumn(size_type index) const;
@@ -137,6 +153,13 @@ namespace Orm::Drivers
         /*! Get individual segments from the aliased field identifier
             (column alias (select expression)). */
         static FieldSegmentsType getFieldNameSegments(QStringView name) noexcept;
+
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+        /*! Get the field at the given index. */
+        SqlField &fieldInternal(size_type index);
+        /*! Get the field by field name. */
+        SqlField &fieldInternal(const QString &name);
+#endif
 
         /* Data members */
         /*! Record fields. */

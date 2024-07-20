@@ -290,8 +290,31 @@ const SqlRecord &MySqlResult::recordCached() const
 {
     Q_D(const MySqlResult);
 
-    return d->recordCache ? *d->recordCache
-                          : d->recordCache.put(record(), false);
+    return d->recordCache ? *d->recordCache // Cache hit
+                          : d->recordCache.put(record(), false); // Cache miss
+}
+
+SqlRecord MySqlResult::recordWithDefaultValues(const bool allColumns) const
+{
+    Q_D(const MySqlResult);
+
+    return d->populateFieldDefaultValues(record(), allColumns);
+}
+
+const SqlRecord &MySqlResult::recordWithDefaultValuesCached() const
+{
+    Q_D(const MySqlResult);
+
+    // Cache miss
+    if (!d->recordCache)
+        return d->recordCache.put(d->populateFieldDefaultValues(record()), true);
+
+    // Nothing to do, cache hit and already has Default Column Values
+    if (d->recordCache.hasDefaultValues)
+        return *d->recordCache;
+
+    // Cache hit, but Default Column Values are missing, so re-/populate
+    return d->recordCache.put(d->populateFieldDefaultValues(*d->recordCache), true);
 }
 
 QVariant MySqlResult::lastInsertId() const

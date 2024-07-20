@@ -116,9 +116,9 @@ namespace Orm::Drivers
 
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */
-        SqlRecord record() const;
+        SqlRecord record(bool withDefaultValues = true) const;
         /*! Get a SqlRecord containing the field information for the current query. */
-        const SqlRecord &recordCached() const;
+        const SqlRecord &recordCached(bool withDefaultValues = true) const;
 
         /*! Retrieve the next record and position the cursor on it. */
         bool next();

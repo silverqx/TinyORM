@@ -47,6 +47,11 @@ namespace Orm::Drivers::MySql
         /*! Get a SqlRecord containing the field information for the current query. */
         const SqlRecord &recordCached() const final;
 
+        /*! Get a SqlRecord containing the field information for the current query. */
+        SqlRecord recordWithDefaultValues(bool allColumns) const final;
+        /*! Get a SqlRecord containing the field information for the current query. */
+        const SqlRecord &recordWithDefaultValuesCached() const final;
+
         /*! Get the ID of the most recent inserted row. */
         QVariant lastInsertId() const final;
 

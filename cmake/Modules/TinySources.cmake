@@ -116,6 +116,7 @@ function(tinymysqldriver_sources out_headers_private out_headers out_sources)
     endif()
 
     list(APPEND headers_private
+        concerns/populatesfielddefaultvalues_p.hpp
         macros/includemysqlh_p.hpp
         mysqlconstants_p.hpp
         mysqldriver_p.hpp
@@ -145,6 +146,7 @@ function(tinymysqldriver_sources out_headers_private out_headers out_sources)
     endif()
 
     list(APPEND sources
+        concerns/populatesfielddefaultvalues_p.cpp
         mysqldriver.cpp
         mysqldriver_p.cpp
         mysqlresult.cpp

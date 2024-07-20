@@ -243,16 +243,22 @@ QList<QVariant> SqlQuery::boundValues() const
 
 /* Result sets */
 
-SqlRecord SqlQuery::record() const
+/* I would normally use false as the default value for the withDefaultValues parameter,
+   but I must use true to be API compatible with Qt. 😔 */
+SqlRecord SqlQuery::record(const bool withDefaultValues) const
 {
     throwIfNoResultSet();
 
     /* Will provide information about all fields such as length, precision,
-       SQL column type, auto-incrementing, ..., and also the field value. */
+       SQL column types, auto-incrementing, field values, ..., and optionally
+       the Default Column Values. */
+    if (withDefaultValues)
+        return m_sqlResult->recordWithDefaultValues(false);
+
     return m_sqlResult->record();
 }
 
-const SqlRecord &SqlQuery::recordCached() const
+const SqlRecord &SqlQuery::recordCached(const bool withDefaultValues) const
 {
     throwIfNoResultSet();
 
@@ -260,6 +266,9 @@ const SqlRecord &SqlQuery::recordCached() const
        of the record again and again. Cache is invalidated during seek(), fetchXyz()
        operations or if executing a new query on the same instance or re-executing
        query. */
+    if (withDefaultValues)
+        return m_sqlResult->recordWithDefaultValuesCached();
+
     return m_sqlResult->recordCached();
 }
 

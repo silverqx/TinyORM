@@ -24,12 +24,15 @@ using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
+using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::Drivers::Exceptions::LogicError;
 using Orm::Drivers::Exceptions::QueryError;
 using Orm::Drivers::SqlQuery;
+using Orm::Drivers::SqlRecord;
 
 using enum Orm::Drivers::CursorPosition;
 using enum Orm::Drivers::NumericalPrecisionPolicy;
@@ -55,7 +58,8 @@ private Q_SLOTS:
 
     void select_Aggregate_Count() const;
 
-    void select_recordCached() const;
+    void select_recordCached_WithDefaultValues() const;
+    void select_recordCached_WithoutDefaultValues() const;
 
     void select_BoundLessValues() const;
     void select_BoundMoreValues() const;
@@ -358,66 +362,475 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
     QCOMPARE(users.value("aggregate").value<quint64>(), 2);
 }
 
-void tst_SqlQuery_Prepared::select_recordCached() const
+// This is an overkill, but it tests everything, I think I have a lot of free time 😁😅
+void tst_SqlQuery_Prepared::select_recordCached_WithDefaultValues() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    auto users = createQuery(connection);
+    auto torrents = createQuery(connection);
 
-    const auto query = u"select id, name, is_banned, note from users order by id"_s;
-    auto ok = users.prepare(query);
+    static const QString
+    query = u"select id, user_id, name, size, progress, added_on, note "
+             "from torrents "
+             "where id between ? and ? "
+             "order by id"_s;
+
+    auto ok = torrents.prepare(query);
     QVERIFY(ok);
+
+    torrents.addBindValue(2);
+    torrents.addBindValue(4);
 
     // Test bound values
-    QVERIFY(users.boundValues().isEmpty());
+    const auto boundValues = torrents.boundValues();
+    QCOMPARE(boundValues.size(), 2);
+    QCOMPARE(boundValues, QVariantList({2, 4}));
 
-    ok = users.exec();
+    ok = torrents.exec();
 
     QVERIFY(ok);
-    QVERIFY(users.isActive());
-    QVERIFY(users.isSelect());
-    QVERIFY(!users.isValid());
-    QCOMPARE(users.at(), BeforeFirstRow);
-    const auto querySize = users.size();
-    QCOMPARE(querySize, 5);
+    QVERIFY(torrents.isActive());
+    QVERIFY(torrents.isSelect());
+    QVERIFY(!torrents.isValid());
+    QCOMPARE(torrents.at(), BeforeFirstRow);
+    const auto querySize = torrents.size();
+    QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
-    QCOMPARE(users.numRowsAffected(), 5);
-    QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
-    QCOMPARE(users.executedQuery(), query);
-    QCOMPARE(users.lastInsertId(), QVariant());
+    QCOMPARE(torrents.numRowsAffected(), 3);
+    QCOMPARE(torrents.numericalPrecisionPolicy(), LowPrecisionDouble);
+    QCOMPARE(torrents.executedQuery(), query);
+    QCOMPARE(torrents.lastInsertId(), QVariant());
 
+    // Populate values to compare
     // Verify the result
-    QList<QList<QVariant>> expected {
-        {1, "andrej", 0, NullVariant::QString()},
-        {2, "silver", 0, NullVariant::QString()},
-        {3, "peter", 1, u"no torrents no roles"_s},
-        {4, "jack", 0, u"test SoftDeletes"_s},
-        {5, "obiwan", 1, u"test SoftDeletes"_s},
+    // Field values related
+    QList<QList<QVariant>> expectedValues {
+        {2, 1, u"test2"_s, 12, 200,
+         QDateTime({2020, 8, 2}, {20, 11, 10}, QTimeZone::UTC), NullVariant::QString()},
+        {3, 1, u"test3"_s, 13, 300,
+         QDateTime({2020, 8, 3}, {20, 11, 10}, QTimeZone::UTC), NullVariant::QString()},
+        {4, 1, u"test4"_s, 14, 400,
+         QDateTime({2020, 8, 4}, {20, 11, 10}, QTimeZone::UTC),
+         u"after update revert updated_at"_s}
     };
-    QList<QList<QVariant>> actual;
-    actual.reserve(querySize);
+    QList<QList<QVariant>> actualValues;
+    actualValues.reserve(querySize);
 
-    QList<bool> expectedNull {true, true, false, false, false};
-    QList<bool> actualNull;
-    actualNull.reserve(querySize);
+    // Actual NULL values (QVariant)
+    QList<QList<bool>> expectedNullValues {
+        {false, false, false, false, false, false, true},
+        {false, false, false, false, false, false, true},
+        {false, false, false, false, false, false, false},
+    };
+    QList<QList<bool>> actualNullValues;
+    actualNullValues.reserve(querySize);
 
-    while (users.next()) {
-        QVERIFY(users.isValid());
-        actualNull << users.isNull(NOTE);
-        // Number of fields
-        const auto &record = users.recordCached();
-        QCOMPARE(record.count(), 4);
-        QVERIFY(record.contains(ID));
-        QVERIFY(record.contains(NAME));
+    // Column definitions related
+    static const QString Torrents(u"torrents"_s);
+    static const QStringList fieldNames({
+        ID, "user_id", NAME, SIZE_, Progress, "added_on", NOTE,
+    });
+    static const auto fieldsCount = fieldNames.size();
 
-        actual << QList<QVariant>({users.value(ID).value<quint64>(),
-                                   users.value(NAME).value<QString>(),
-                                   users.value("is_banned").value<QString>(),
-                                   users.value(NOTE).value<QString>()});
+    QList<bool> expectedAutoIncrements {true, false, false, false, false, false, false};
+    QList<bool> actualAutoIncrements;
+    actualAutoIncrements.reserve(fieldsCount);
+
+    // NULL in the table definition (not the QVariant value itself)
+    QList<bool> expectedNullColumns {false, true, false, false, false, false, true};
+    QList<bool> actualNullColumns;
+    actualNullColumns.reserve(fieldsCount);
+
+    QList<QMetaType> expectedMetaTypes { // clazy:exclude=missing-typeinfo
+        QMetaType::fromType<quint64>(), QMetaType::fromType<quint64>(),
+        QMetaType::fromType<QString>(), QMetaType::fromType<quint64>(),
+        QMetaType::fromType<ushort>(),  QMetaType::fromType<QDateTime>(),
+        QMetaType::fromType<QString>(),
+    };
+    QList<QMetaType> actualMetaTypes; // clazy:exclude=missing-typeinfo
+    actualMetaTypes.reserve(fieldsCount);
+
+    static const auto BIGINT = u"BIGINT"_s;
+    QList<QString> expectedSqlTypeNames {
+        BIGINT, BIGINT, "VARCHAR", BIGINT, "SMALLINT", "DATETIME", "VARCHAR",
+    };
+    QList<QString> actualSqlTypeNames;
+    actualSqlTypeNames.reserve(fieldsCount);
+
+    QList<qint64> expectedLengths {20, 20, 1020, 20, 5, 19, 1020};
+    QList<qint64> actualLengths;
+    actualLengths.reserve(fieldsCount);
+
+    QList<qint64> expectedPrecisions {0, 0, 0, 0, 0, 0, 0};
+    QList<qint64> actualPrecisions;
+    actualPrecisions.reserve(fieldsCount);
+
+    QList<QVariant> expectedDefaultValues = std::invoke([&connection]() -> QList<QVariant>
+    {
+        static const auto NULL_ = u"NULL"_s;
+        static const auto Zero  = u"0"_s;
+
+        /* MySQL and MariaDB have different values in the COLUMN_DEFAULT column:
+           MySQL: NULL, "CURRENT_TIMESTAMP"
+           MariaDB: "NULL", "current_timestamp()"
+           MariaDB has string "NULL" in COLUMN_DEFAULT column if IS_NULLABLE="YES",
+           MySQL uses normal SQL NULL and you must check the IS_NULLABLE column
+           to find out if a column is nullable.
+           Also, MySQL returns QByteArray because it has set the BINARY attribute
+           on the COLUMN_DEFAULT column because it uses the utf8mb3_bin collation,
+           the flags=144 (BLOB_FLAG, BINARY_FLAG). I spent a lot of time on this to
+           find out. 🤔
+           MariaDB uses the utf8mb3_general_ci so it returns the QString,
+           flags=4112 (BLOB_FLAG, NO_DEFAULT_VALUE_FLAG). */
+        if (connection == Databases::MYSQL_DRIVERS)
+            return {NullVariant::QByteArray(), NullVariant::QByteArray(),
+                    NullVariant::QByteArray(), Zero.toUtf8(), Zero.toUtf8(),
+                    u"CURRENT_TIMESTAMP"_s.toUtf8(), NullVariant::QByteArray()};
+
+        if (connection == Databases::MARIADB_DRIVERS)
+            return {NullVariant::QString(), NULL_, NullVariant::QString(), Zero, Zero,
+                    u"current_timestamp()"_s, NULL_};
+
+        Q_UNREACHABLE();
+    });
+    QList<QVariant> actualDefaultValues;
+    actualDefaultValues.reserve(fieldsCount);
+
+    while (torrents.next()) {
+        QVERIFY(torrents.isValid());
+        // Number of fields                        // Don't uncomment to test the default argument
+        const auto &record = torrents.recordCached(/*true*/);
+        const auto recordCount = record.count();
+        QCOMPARE(recordCount, 7);
+
+        /* All cached SqlRecord-s must return the same memory address, the second
+           recordCached(false) WITHOUT the Default Column Values also returns
+           a memory address of the same SqlRecord instance because Default Column Values
+           were already populated and there is no reason dropping this instance and
+           re-populate it without Default Column Values, or to clear these Default Column
+           Values. 🤔😁 */
+        QCOMPARE(std::addressof(torrents.recordCached(true)), std::addressof(record));
+        QCOMPARE(std::addressof(torrents.recordCached(false)), std::addressof(record));
+
+        // Column definitions related
+        QCOMPARE(record.fieldNames(), fieldNames);
+        for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
+            const auto field = record.field(i);
+            QVERIFY(field.isValid());
+            QCOMPARE(field.tableName(), Torrents);
+
+            actualAutoIncrements << field.isAutoIncrement();
+            actualNullColumns    << field.isNullColumn();
+            actualMetaTypes      << field.metaType();
+            actualSqlTypeNames   << field.sqlTypeName();
+            actualLengths        << field.length();
+            actualPrecisions     << field.precision();
+            actualDefaultValues  << field.defaultValue();
+        }
+
+        QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
+        QCOMPARE(actualNullColumns, expectedNullColumns);
+        QCOMPARE(actualMetaTypes, expectedMetaTypes);
+        QCOMPARE(actualSqlTypeNames, expectedSqlTypeNames);
+        QCOMPARE(actualLengths, expectedLengths);
+        QCOMPARE(actualPrecisions, expectedPrecisions);
+        QCOMPARE(actualDefaultValues, expectedDefaultValues);
+
+        // Clear before the next loop
+        actualAutoIncrements.clear();
+        actualNullColumns.clear();
+        actualMetaTypes.clear();
+        actualSqlTypeNames.clear();
+        actualLengths.clear();
+        actualPrecisions.clear();
+        actualDefaultValues.clear();
+
+        // Field values related
+        actualValues << QList<QVariant>({torrents.value(ID).value<quint64>(),
+                                         torrents.value("user_id").value<quint64>(),
+                                         torrents.value(NAME).value<QString>(),
+                                         torrents.value(SIZE_).value<quint64>(),
+                                         torrents.value(Progress).value<uint>(),
+                                         torrents.value("added_on").value<QDateTime>(),
+                                         torrents.value(NOTE).value<QString>()});
+        actualNullValues << QList<bool>({torrents.isNull(ID),
+                                         torrents.isNull("user_id"),
+                                         torrents.isNull(NAME),
+                                         torrents.isNull(SIZE_),
+                                         torrents.isNull(Progress),
+                                         torrents.isNull("added_on"),
+                                         torrents.isNull(NOTE)});
     }
-    QCOMPARE(actual, expected);
-    QCOMPARE(actualNull, expectedNull);
-    QCOMPARE(users.at(), AfterLastRow);
+
+    // Verify what left (all at once)
+    QCOMPARE(actualValues, expectedValues);
+    QCOMPARE(actualNullValues, expectedNullValues);
+    QCOMPARE(torrents.at(), AfterLastRow);
+}
+
+void tst_SqlQuery_Prepared::select_recordCached_WithoutDefaultValues() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto torrents = createQuery(connection);
+
+    static const QString
+    query = u"select id, user_id, name, size, progress, added_on, note "
+             "from torrents "
+             "where id between ? and ? "
+             "order by id"_s;
+
+    auto ok = torrents.prepare(query);
+    QVERIFY(ok);
+
+    torrents.addBindValue(2);
+    torrents.addBindValue(4);
+
+    // Test bound values
+    const auto boundValues = torrents.boundValues();
+    QCOMPARE(boundValues.size(), 2);
+    QCOMPARE(boundValues, QVariantList({2, 4}));
+
+    ok = torrents.exec();
+
+    QVERIFY(ok);
+    QVERIFY(torrents.isActive());
+    QVERIFY(torrents.isSelect());
+    QVERIFY(!torrents.isValid());
+    QCOMPARE(torrents.at(), BeforeFirstRow);
+    const auto querySize = torrents.size();
+    QCOMPARE(querySize, 3);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(torrents.numRowsAffected(), 3);
+    QCOMPARE(torrents.numericalPrecisionPolicy(), LowPrecisionDouble);
+    QCOMPARE(torrents.executedQuery(), query);
+    QCOMPARE(torrents.lastInsertId(), QVariant());
+
+    // Populate values to compare
+    // Verify the result
+    // Field values related
+    QList<QList<QVariant>> expectedValues {
+        {2, 1, u"test2"_s, 12, 200,
+         QDateTime({2020, 8, 2}, {20, 11, 10}, QTimeZone::UTC), NullVariant::QString()},
+        {3, 1, u"test3"_s, 13, 300,
+         QDateTime({2020, 8, 3}, {20, 11, 10}, QTimeZone::UTC), NullVariant::QString()},
+        {4, 1, u"test4"_s, 14, 400,
+         QDateTime({2020, 8, 4}, {20, 11, 10}, QTimeZone::UTC),
+         u"after update revert updated_at"_s}
+    };
+    QList<QList<QVariant>> actualValues;
+    actualValues.reserve(querySize);
+    // After re-populated Default Column Values
+    QList<QList<QVariant>> actualValues2;
+    actualValues2.reserve(querySize);
+
+    // Actual NULL values (QVariant)
+    QList<QList<bool>> expectedNullValues {
+        {false, false, false, false, false, false, true},
+        {false, false, false, false, false, false, true},
+        {false, false, false, false, false, false, false},
+    };
+    QList<QList<bool>> actualNullValues;
+    actualNullValues.reserve(querySize);
+    // After re-populated Default Column Values
+    QList<QList<bool>> actualNullValues2;
+    actualNullValues2.reserve(querySize);
+
+    // Column definitions related
+    static const QString Torrents(u"torrents"_s);
+    static const QStringList fieldNames({
+        ID, "user_id", NAME, SIZE_, Progress, "added_on", NOTE,
+    });
+    static const auto fieldsCount = fieldNames.size();
+
+    QList<bool> expectedAutoIncrements {true, false, false, false, false, false, false};
+    QList<bool> actualAutoIncrements;
+    actualAutoIncrements.reserve(fieldsCount);
+
+    // NULL in the table definition (not the QVariant value itself)
+    QList<bool> expectedNullColumns {false, true, false, false, false, false, true};
+    QList<bool> actualNullColumns;
+    actualNullColumns.reserve(fieldsCount);
+
+    QList<QMetaType> expectedMetaTypes { // clazy:exclude=missing-typeinfo
+        QMetaType::fromType<quint64>(), QMetaType::fromType<quint64>(),
+        QMetaType::fromType<QString>(), QMetaType::fromType<quint64>(),
+        QMetaType::fromType<ushort>(),  QMetaType::fromType<QDateTime>(),
+        QMetaType::fromType<QString>(),
+    };
+    QList<QMetaType> actualMetaTypes; // clazy:exclude=missing-typeinfo
+    actualMetaTypes.reserve(fieldsCount);
+
+    static const auto BIGINT = u"BIGINT"_s;
+    QList<QString> expectedSqlTypeNames {
+        BIGINT, BIGINT, "VARCHAR", BIGINT, "SMALLINT", "DATETIME", "VARCHAR",
+    };
+    QList<QString> actualSqlTypeNames;
+    actualSqlTypeNames.reserve(fieldsCount);
+
+    QList<qint64> expectedLengths {20, 20, 1020, 20, 5, 19, 1020};
+    QList<qint64> actualLengths;
+    actualLengths.reserve(fieldsCount);
+
+    QList<qint64> expectedPrecisions {0, 0, 0, 0, 0, 0, 0};
+    QList<qint64> actualPrecisions;
+    actualPrecisions.reserve(fieldsCount);
+
+    QList<QVariant> expectedDefaultValues = std::invoke([&connection]() -> QList<QVariant>
+    {
+        static const auto NULL_ = u"NULL"_s;
+        static const auto Zero  = u"0"_s;
+
+        /* MySQL and MariaDB have different values in the COLUMN_DEFAULT column:
+           MySQL: NULL, "CURRENT_TIMESTAMP"
+           MariaDB: "NULL", "current_timestamp()"
+           MariaDB has string "NULL" in COLUMN_DEFAULT column if IS_NULLABLE="YES",
+           MySQL uses normal SQL NULL and you must check the IS_NULLABLE column
+           to find out if a column is nullable.
+           Also, MySQL returns QByteArray because it has set the BINARY attribute
+           on the COLUMN_DEFAULT column because it uses the utf8mb3_bin collation,
+           the flags=144 (BLOB_FLAG, BINARY_FLAG). I spent a lot of time on this to
+           find out. 🤔
+           MariaDB uses the utf8mb3_general_ci so it returns the QString,
+           flags=4112 (BLOB_FLAG, NO_DEFAULT_VALUE_FLAG). */
+        if (connection == Databases::MYSQL_DRIVERS)
+            return {NullVariant::QByteArray(), NullVariant::QByteArray(),
+                    NullVariant::QByteArray(), Zero.toUtf8(), Zero.toUtf8(),
+                    u"CURRENT_TIMESTAMP"_s.toUtf8(), NullVariant::QByteArray()};
+
+        if (connection == Databases::MARIADB_DRIVERS)
+            return {NullVariant::QString(), NULL_, NullVariant::QString(), Zero, Zero,
+                    u"current_timestamp()"_s, NULL_};
+
+        Q_UNREACHABLE();
+    });
+    QList<QVariant> actualDefaultValues;
+    actualDefaultValues.reserve(fieldsCount);
+
+    while (torrents.next()) {
+        QVERIFY(torrents.isValid());
+        // Number of fields
+        const auto &record = torrents.recordCached(false);
+        const auto recordCount = record.count();
+        QCOMPARE(recordCount, 7);
+
+        /* All cached SqlRecord-s must return the same memory address, see also note
+           in the previous test method. */
+        QCOMPARE(std::addressof(torrents.recordCached(false)), std::addressof(record));
+
+        // Column definitions related
+        QCOMPARE(record.fieldNames(), fieldNames);
+        for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
+            const auto field = record.field(i);
+            QVERIFY(field.isValid());
+            QCOMPARE(field.tableName(), Torrents);
+
+            actualAutoIncrements << field.isAutoIncrement();
+            actualNullColumns    << field.isNullColumn();
+            actualMetaTypes      << field.metaType();
+            actualSqlTypeNames   << field.sqlTypeName();
+            actualLengths        << field.length();
+            actualPrecisions     << field.precision();
+            // All Default Column Values must be QVariant(Invalid)
+            QVERIFY(!field.defaultValue().isValid());
+        }
+
+        QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
+        QCOMPARE(actualNullColumns, expectedNullColumns);
+        QCOMPARE(actualMetaTypes, expectedMetaTypes);
+        QCOMPARE(actualSqlTypeNames, expectedSqlTypeNames);
+        QCOMPARE(actualLengths, expectedLengths);
+        QCOMPARE(actualPrecisions, expectedPrecisions);
+
+        // Clear before the next loop
+        actualAutoIncrements.clear();
+        actualNullColumns.clear();
+        actualMetaTypes.clear();
+        actualSqlTypeNames.clear();
+        actualLengths.clear();
+        actualPrecisions.clear();
+
+        // Field values related
+        actualValues << QList<QVariant>({torrents.value(ID).value<quint64>(),
+                                         torrents.value("user_id").value<quint64>(),
+                                         torrents.value(NAME).value<QString>(),
+                                         torrents.value(SIZE_).value<quint64>(),
+                                         torrents.value(Progress).value<uint>(),
+                                         torrents.value("added_on").value<QDateTime>(),
+                                         torrents.value(NOTE).value<QString>()});
+        actualNullValues << QList<bool>({torrents.isNull(ID),
+                                         torrents.isNull("user_id"),
+                                         torrents.isNull(NAME),
+                                         torrents.isNull(SIZE_),
+                                         torrents.isNull(Progress),
+                                         torrents.isNull("added_on"),
+                                         torrents.isNull(NOTE)});
+
+        /* Re-populate the Default Column Values on the cached SqlRecord, it of course
+           must be done after all the previous tests as the last thing to test it
+           correctly. */
+        QCOMPARE(std::addressof(torrents.recordCached(true)), std::addressof(record));
+
+        /* Verify re-populated Default Column Values, OK I reinvoke the same test logic
+           again as everything should stay the same, to correctly test it. */
+
+        // Column definitions related
+        QCOMPARE(record.fieldNames(), fieldNames);
+        for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
+            const auto field = record.field(i);
+            QVERIFY(field.isValid());
+            QCOMPARE(field.tableName(), Torrents);
+
+            actualAutoIncrements << field.isAutoIncrement();
+            actualNullColumns    << field.isNullColumn();
+            actualMetaTypes      << field.metaType();
+            actualSqlTypeNames   << field.sqlTypeName();
+            actualLengths        << field.length();
+            actualPrecisions     << field.precision();
+            actualDefaultValues  << field.defaultValue();
+        }
+
+        QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
+        QCOMPARE(actualNullColumns, expectedNullColumns);
+        QCOMPARE(actualMetaTypes, expectedMetaTypes);
+        QCOMPARE(actualSqlTypeNames, expectedSqlTypeNames);
+        QCOMPARE(actualLengths, expectedLengths);
+        QCOMPARE(actualPrecisions, expectedPrecisions);
+        // This is the actual test
+        QCOMPARE(actualDefaultValues, expectedDefaultValues);
+
+        // Clear before the next loop
+        actualAutoIncrements.clear();
+        actualNullColumns.clear();
+        actualMetaTypes.clear();
+        actualSqlTypeNames.clear();
+        actualLengths.clear();
+        actualPrecisions.clear();
+        actualDefaultValues.clear();
+
+        // Field values related
+        actualValues2 << QList<QVariant>({torrents.value(ID).value<quint64>(),
+                                          torrents.value("user_id").value<quint64>(),
+                                          torrents.value(NAME).value<QString>(),
+                                          torrents.value(SIZE_).value<quint64>(),
+                                          torrents.value(Progress).value<uint>(),
+                                          torrents.value("added_on").value<QDateTime>(),
+                                          torrents.value(NOTE).value<QString>()});
+        actualNullValues2 << QList<bool>({torrents.isNull(ID),
+                                          torrents.isNull("user_id"),
+                                          torrents.isNull(NAME),
+                                          torrents.isNull(SIZE_),
+                                          torrents.isNull(Progress),
+                                          torrents.isNull("added_on"),
+                                          torrents.isNull(NOTE)});
+    }
+
+    // Verify what left (all at once)
+    QCOMPARE(actualValues, expectedValues);
+    QCOMPARE(actualValues2, expectedValues);
+    QCOMPARE(actualNullValues, expectedNullValues);
+    QCOMPARE(actualNullValues2, expectedNullValues);
+    QCOMPARE(torrents.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Prepared::select_BoundLessValues() const
