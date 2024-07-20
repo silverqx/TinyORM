@@ -2933,6 +2933,17 @@ c++ confusions:
    - what means using two methods one for lvalue and another for rvalue is still a good
      idea instead of passing by value everywhere
 
+ - structured binding
+   - returning rvalue from a function
+     - you can also use return {..., std::move(s2)} to move eg. QString
+     - use const auto [s1, s2] = f1() and tag data member mutable to further move down,
+       std::move(s2) after binding to data member finished, s1 will be const
+struct T1
+{
+    QString s1;
+    mutable QString s2;
+};
+
 
 c++ library confusions:
 -----------------------
