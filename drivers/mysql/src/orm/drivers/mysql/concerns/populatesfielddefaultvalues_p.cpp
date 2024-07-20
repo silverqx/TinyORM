@@ -17,7 +17,7 @@ namespace Orm::Drivers::MySql::Concerns
 {
 
 /* By extracting this method to own Concern, the SqlQuery and SqlResult dependency
-   for MySqlResultPrivate was dropped. These classes are requried to make a database query
+   for MySqlResultPrivate was dropped. These classes are required to make a database query
    and the MySqlResultPrivate class doesn't need them to function properly, in short,
    they have nothing to do there. 😮🕺 */
 
