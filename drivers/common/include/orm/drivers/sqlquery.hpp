@@ -210,6 +210,8 @@ namespace Orm::Drivers
 
     /* public */
 
+    /* Result sets */
+
     template<typename T>
     T SqlQuery::value(const size_type index) const
     {
