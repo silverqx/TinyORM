@@ -263,8 +263,8 @@ const SqlRecord &SqlQuery::recordCached(const bool withDefaultValues) const
     throwIfNoResultSet();
 
     /* The record will be cached for better performance, it avoids materialization
-       of the record again and again. Cache is invalidated during seek(), fetchXyz()
-       operations or if executing a new query on the same instance or re-executing
+       of the record again and again. Cache is invalidated during seek(), fetch/Xyz()
+       operations, or if executing a new query on the same instance or re-executing
        query. */
     if (withDefaultValues)
         return m_sqlResult->recordWithDefaultValuesCached();
