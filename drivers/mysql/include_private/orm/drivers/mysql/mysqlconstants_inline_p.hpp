@@ -13,6 +13,7 @@ namespace Orm::Drivers::MySql::Constants
 {
 
     // Common chars
+    inline const QChar DOT       = QLatin1Char('.');
     inline const QChar SEMICOLON = QLatin1Char(';');
     inline const QChar COLON     = QLatin1Char(':');
     inline const QChar DASH      = QLatin1Char('-');

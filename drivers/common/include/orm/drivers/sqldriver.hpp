@@ -166,6 +166,9 @@ namespace Orm::Drivers
         virtual QString stripDelimiters(const QString &identifier,
                                         IdentifierType type) const;
 
+        /*! Returns the identifier escaped according to the database rules. */
+        virtual QString escapeIdentifier(const QString &identifier,
+                                         IdentifierType type) const = 0;
         /*! Determine whether the given identifier is escaped/quoted. */
         virtual bool isIdentifierEscaped(const QString &identifier,
                                          IdentifierType type) const;

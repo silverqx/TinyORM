@@ -13,6 +13,7 @@ namespace Orm::Drivers::MySql::Constants
 {
 
     // Common chars
+    extern const QChar DOT;
     extern const QChar SEMICOLON;
     extern const QChar COLON;
     extern const QChar DASH;

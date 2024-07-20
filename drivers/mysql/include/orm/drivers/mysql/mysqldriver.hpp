@@ -62,6 +62,10 @@ namespace Orm::Drivers::MySql
         /* Others */
         /*! Get the maximum identifier length for the current driver. */
         inline int maximumIdentifierLength(IdentifierType type) const noexcept final;
+
+        /*! Returns the identifier escaped according to the database rules. */
+        QString escapeIdentifier(const QString &identifier,
+                                 IdentifierType type) const final;
         /*! Determine whether the given MySQL identifier is escaped. */
         bool isIdentifierEscaped(const QString &identifier,
                                  IdentifierType type) const final;

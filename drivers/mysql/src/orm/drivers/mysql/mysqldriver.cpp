@@ -15,6 +15,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Drivers::MySql::Constants::BACKTICK;
+using Orm::Drivers::MySql::Constants::DOT;
 using Orm::Drivers::MySql::Constants::QMYSQL;
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
@@ -189,6 +190,25 @@ bool MySqlDriver::rollbackTransaction()
 }
 
 /* Others */
+
+QString MySqlDriver::escapeIdentifier(const QString &identifier,
+                                      const IdentifierType type) const
+{
+    // It should have the same implementation as BaseGrammar::wrap()
+    // NOTE API different, we are also escaping an empty identifier and we checking * silverqx
+    // Nothing to do, already escaped or * column shorthand used
+    if ((type == FieldName && identifier == '*'_L1) ||
+        isIdentifierEscaped(identifier, type)
+    )
+        return identifier;
+
+    auto result = identifier;
+
+    result.replace(BACKTICK, u"``"_s);
+    result.replace(DOT, u"`.`"_s);
+
+    return BACKTICK % result % BACKTICK;
+}
 
 bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
                                       const IdentifierType /*unused*/) const
