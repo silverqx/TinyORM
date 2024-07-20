@@ -17,7 +17,7 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
