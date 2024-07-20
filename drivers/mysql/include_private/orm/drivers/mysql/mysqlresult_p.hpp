@@ -5,8 +5,8 @@
 #include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/mysql/mysqltypes_p.hpp"
-#include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
+#include "orm/drivers/support/sqlrecordcache_p.hpp"
 
 /* All the in vs out bindings/data-related comments and identifier names related
    to the results or prepared bindings are described from the MySQL server perspective and
@@ -120,8 +120,8 @@ namespace Orm::Drivers::MySql
         /*! Is the current result set for the prepared statement? */
         bool preparedQuery = false;
 
-        /*! Cache for the record() method. */
-        mutable std::optional<SqlRecord> recordCache = std::nullopt;
+        /*! Cache for the record/WithDefaultValuesCached() method. */
+        mutable Support::SqlRecordCachePrivate recordCache;
 
     private:
         /* Prepared queries */

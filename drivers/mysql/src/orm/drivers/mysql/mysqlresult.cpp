@@ -145,7 +145,7 @@ bool MySqlResult::exec()
                  "to the SqlQuery::exec(QString) for normal statements, for '%1' MySQL "
                  "database connection in %2()."_s.arg(d->connectionName, __tiny_func__));
 
-    d->recordCache.reset();
+    d->recordCache.clear();
 
     /* Prepared queries don't use metadata the same way as normal queries,
        it's always RESULTSET_METADATA_NONE. */
@@ -292,7 +292,8 @@ const SqlRecord &MySqlResult::recordCached() const
 {
     Q_D(const MySqlResult);
 
-    return d->recordCache ? *d->recordCache : *(d->recordCache = record());
+    return d->recordCache ? *d->recordCache
+                          : d->recordCache.put(record(), false);
 }
 
 QVariant MySqlResult::lastInsertId() const
@@ -337,7 +338,7 @@ bool MySqlResult::fetch(const size_type index)
     if (at() == index)
         return true;
 
-    d->recordCache.reset();
+    d->recordCache.clear();
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
@@ -396,7 +397,7 @@ bool MySqlResult::fetchNext()
     if (size() == 0)
         return false;
 
-    d->recordCache.reset();
+    d->recordCache.clear();
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
@@ -501,7 +502,7 @@ void MySqlResult::cleanupForNormal()
 {
     Q_D(MySqlResult);
 
-    d->recordCache.reset();
+    d->recordCache.clear();
 
     // Normal queries
     mysqlFreeResults();
@@ -514,7 +515,7 @@ void MySqlResult::cleanupForPrepared()
 {
     Q_D(MySqlResult);
 
-    d->recordCache.reset();
+    d->recordCache.clear();
 
     // Prepared queries
     // d->meta != nullptr check is inside as the first thing

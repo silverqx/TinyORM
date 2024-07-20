@@ -18,6 +18,7 @@ headersList += \
     $$PWD/orm/drivers/sqlresult_p.hpp \
     $$PWD/orm/drivers/support/connectionshash_p.hpp \
     $$PWD/orm/drivers/support/sqldriverfactory_p.hpp \
+    $$PWD/orm/drivers/support/sqlrecordcache_p.hpp \
     $$PWD/orm/drivers/utils/type_p.hpp \
 
 HEADERS += $$sorted(headersList)
