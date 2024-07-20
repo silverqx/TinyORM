@@ -202,12 +202,12 @@ QString MySqlDriver::escapeIdentifier(const QString &identifier,
     )
         return identifier;
 
-    auto result = identifier;
+    auto escapedIdentifier = identifier;
 
-    result.replace(BACKTICK, u"``"_s);
-    result.replace(DOT, u"`.`"_s);
+    escapedIdentifier.replace(BACKTICK, u"``"_s);
+    escapedIdentifier.replace(DOT, u"`.`"_s);
 
-    return BACKTICK % result % BACKTICK;
+    return BACKTICK % escapedIdentifier % BACKTICK;
 }
 
 bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
