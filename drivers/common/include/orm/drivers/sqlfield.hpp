@@ -117,7 +117,7 @@ namespace Orm::Drivers
         /*! Get the field length. */
         inline qint64 length() const noexcept;
         /*! Set the field length. */
-        inline void setLength(size_type fieldLength) noexcept;
+        inline void setLength(size_type length) noexcept;
 
         /*! Get the field precision. */
         inline qint64 precision() const noexcept;
@@ -285,9 +285,9 @@ namespace Orm::Drivers
         return m_length;
     }
 
-    void SqlField::setLength(const size_type fieldLength) noexcept
+    void SqlField::setLength(const size_type length) noexcept
     {
-        m_length = fieldLength;
+        m_length = length;
     }
 
     qint64 SqlField::precision() const noexcept
