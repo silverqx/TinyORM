@@ -53,8 +53,9 @@ unset(tinyRcIncludepath)
 
 # Use TinyORM's library precompiled headers (PCH)
 # ---
-
-include($$TINYORM_SOURCE_TREE/include/pch.pri)
+# Don't use PCH here because qmake doesn't support reuse of already compiled PCH, what
+# means PCH-s are compiled for each test case, which is much slower ~10s.
+# I would have to manage the PCH compilation flags myself to make PCH reuse possible.
 
 # Default rules for deployment
 # ---
