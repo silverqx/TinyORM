@@ -32,7 +32,7 @@ namespace Orm::Concerns
         static bool isSearchPathEmpty(const QStringList &searchPath);
 
     protected:
-        /*! Default constructor. */
+        /*! Protected Default constructor. */
         ParsesSearchPath() = default;
 
         /*! Parse the PostgreSQL search_path configuration value into the vector. */

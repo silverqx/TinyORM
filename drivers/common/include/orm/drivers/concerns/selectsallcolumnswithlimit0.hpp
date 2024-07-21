@@ -32,7 +32,7 @@ namespace Concerns
         inline virtual ~SelectsAllColumnsWithLimit0() = 0;
 
     protected:
-        /*! Default constructor. */
+        /*! Protected Default constructor. */
         SelectsAllColumnsWithLimit0() = default;
 
         /* Others */

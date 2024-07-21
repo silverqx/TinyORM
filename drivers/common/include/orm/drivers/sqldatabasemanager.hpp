@@ -23,7 +23,7 @@ namespace Orm::Drivers
     class TINYDRIVERS_EXPORT SqlDatabaseManager
     {
     protected:
-        /*! Default constructor. */
+        /*! Protected Default constructor. */
         SqlDatabaseManager() = default;
 
     public:

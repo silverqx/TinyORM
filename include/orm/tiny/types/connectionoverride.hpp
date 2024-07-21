@@ -22,7 +22,7 @@ namespace Types
     {
         Q_DISABLE_COPY_MOVE(ConnectionOverride)
 
-        /*! Deleted default constructor. */
+        /*! Deleted Default constructor. */
         ConnectionOverride() = delete;
         /*! Deleted destructor. */
         ~ConnectionOverride() = delete;

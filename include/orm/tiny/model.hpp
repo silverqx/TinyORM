@@ -117,7 +117,7 @@ namespace Orm::Tiny
         using Relation = Relations::Relation<Model, Related>;
 
         /* Constructors */
-        /*! Create a new TinyORM model instance, default constructor. */
+        /*! Create a new TinyORM model instance, Default constructor. */
         Model();
         /*! Default destructor. */
         ~Model() = default;
