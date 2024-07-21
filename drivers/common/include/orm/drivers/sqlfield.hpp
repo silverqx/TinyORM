@@ -85,9 +85,9 @@ namespace Orm::Drivers
         /*! Get the table name a field belongs to. */
         inline QString tableName() const noexcept;
         /*! Set the table name for the current field. */
-        inline void setTableName(const QString &tableName) noexcept;
+        inline void setTableName(const QString &table) noexcept;
         /*! Set the table name for the current field. */
-        inline void setTableName(QString &&tableName) noexcept;
+        inline void setTableName(QString &&table) noexcept;
 
         /*! Get the field default value. */
         inline QVariant defaultValue() const;
