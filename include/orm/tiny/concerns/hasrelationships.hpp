@@ -984,7 +984,7 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToRelation() const
     {
-        static const QString relation = guessBelongsToRelationInternal<Related>();
+        static const auto relation = guessBelongsToRelationInternal<Related>();
 
         /* validateUserRelation() method call can not be cached, has to be called
            every time, to correctly inform the user about invalid relation name. */
@@ -1000,8 +1000,8 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
-        static const QString relation = TMPL_PLURAL
-                                        .arg(guessBelongsToRelationInternal<Related>());
+        static const auto relation = TMPL_PLURAL
+                                     .arg(guessBelongsToRelationInternal<Related>());
 
         /* validateUserRelation() method call can not be cached, has to be called
            every time, to correctly inform the user about invalid relation name. */

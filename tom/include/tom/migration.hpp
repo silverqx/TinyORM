@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
     the filepath part). */
 #define T_MIGRATION                                                                 \
     /*! Filename of the migration file. */                                          \
-    inline static const QString FileName = []                                       \
+    inline static const auto FileName = []                                          \
     {                                                                               \
         return QString::fromStdString(                                              \
                     std::filesystem::path(__FILE__).stem().string());               \

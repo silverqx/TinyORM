@@ -23,9 +23,9 @@ namespace Orm
 
 namespace Constants
 {
-    inline const QString Attached = QStringLiteral("attached");
-    inline const QString Detached = QStringLiteral("detached");
-    inline const QString Updated_ = QStringLiteral("updated");
+    inline const auto Attached = QStringLiteral("attached");
+    inline const auto Detached = QStringLiteral("detached");
+    inline const auto Updated_ = QStringLiteral("updated");
 } // namespace Constants
 
 namespace Tiny
