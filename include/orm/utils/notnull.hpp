@@ -7,11 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 
-#include <algorithm>    // for forward
-#include <cstddef>      // for ptrdiff_t, nullptr_t, size_t
-#include <memory>       // for shared_ptr, unique_ptr
-#include <system_error> // for hash
-#include <type_traits>  // for enable_if_t, is_convertible, is_assignable
+#include <exception>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
