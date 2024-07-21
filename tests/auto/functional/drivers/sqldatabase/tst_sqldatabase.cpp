@@ -60,7 +60,7 @@ void tst_SqlDatabase::table_record_WithDefaultValues() const
 
     static const auto EmptyWithDefaultValues = u"empty_with_default_values"_s;
 
-    const auto db = SqlDatabase::database(connection);
+    const auto db = Databases::driversConnection(connection);
     QVERIFY(db.isValid());
     QVERIFY(db.isOpen());
     QVERIFY(!db.isOpenError());
@@ -179,7 +179,7 @@ void tst_SqlDatabase::table_record_WithoutDefaultValues() const
 
     static const auto EmptyWithDefaultValues = u"empty_with_default_values"_s;
 
-    const auto db = SqlDatabase::database(connection);
+    const auto db = Databases::driversConnection(connection);
     QVERIFY(db.isValid());
     QVERIFY(db.isOpen());
     QVERIFY(!db.isOpenError());
