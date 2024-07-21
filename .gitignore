@@ -73,6 +73,7 @@ Thumbs.db
 
 # Visual Studio Code
 .vscode/
+build/
 
 # Binaries
 *.dll
