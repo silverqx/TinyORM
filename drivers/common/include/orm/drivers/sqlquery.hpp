@@ -127,9 +127,9 @@ namespace MySql
         QList<QVariant> boundValues() const;
 
         /* Result sets */
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         SqlRecord record(bool withDefaultValues = true) const;
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         const SqlRecord &recordCached(bool withDefaultValues = true) const;
 
         /*! Retrieve the next record and position the cursor on it. */
@@ -192,7 +192,7 @@ namespace MySql
 
         /* Result sets */
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         SqlRecord recordAllColumns(bool withDefaultValues = true) const;
 #endif
 

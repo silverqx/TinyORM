@@ -42,14 +42,14 @@ namespace Orm::Drivers::MySql
         bool exec() final;
 
         /* Result sets */
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         SqlRecord record() const final;
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         const SqlRecord &recordCached() const final;
 
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         SqlRecord recordWithDefaultValues(bool allColumns) const final;
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         const SqlRecord &recordWithDefaultValuesCached() const final;
 
         /*! Get the ID of the most recent inserted row. */

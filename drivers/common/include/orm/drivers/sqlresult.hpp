@@ -132,14 +132,14 @@ namespace Orm::Drivers
         constexpr BindingSyntax bindingSyntax() const noexcept;
 
         /* Result sets */
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         virtual SqlRecord record() const = 0;
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         virtual const SqlRecord &recordCached() const = 0;
 
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         virtual SqlRecord recordWithDefaultValues(bool allColumns) const = 0;
-        /*! Get a SqlRecord containing the field information for the current query. */
+        /*! Get a SqlRecord containing the field information for the current row. */
         virtual const SqlRecord &recordWithDefaultValuesCached() const = 0;
 
         /*! Populate field values for the given record. */
