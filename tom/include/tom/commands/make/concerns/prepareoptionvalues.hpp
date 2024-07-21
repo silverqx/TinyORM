@@ -26,12 +26,13 @@ namespace Concerns
         Q_DISABLE_COPY_MOVE(PrepareOptionValues)
 
     public:
-        /*! Default constructor. */
-        PrepareOptionValues() = default;
         /*! Pure virtual destructor. */
         inline virtual ~PrepareOptionValues() = 0;
 
     protected:
+        /*! Protected Default constructor. */
+        PrepareOptionValues() = default;
+
         /*! Prepare foreign key option values for the ModelCreator. */
         ForeignKeys foreignKeyValues();
 

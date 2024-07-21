@@ -29,7 +29,7 @@ namespace Support
 
     /*! Create a new model class. */
     class ModelCommand : public MakeCommand,
-                         protected Concerns::PrepareOptionValues
+                         public Concerns::PrepareOptionValues
     {
         Q_DISABLE_COPY_MOVE(ModelCommand)
 
