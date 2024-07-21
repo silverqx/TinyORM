@@ -2,7 +2,7 @@
 #ifndef ORM_DRIVERS_MYSQL_MYSQLTYPES_P_HPP
 #define ORM_DRIVERS_MYSQL_MYSQLTYPES_P_HPP
 
-#include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
+#include "orm/drivers/mysql/macros/includemysqlh_p.hpp" // IWYU pragma: export
 
 /* MySQL >=8.0.1 removed the my_bool typedef while MariaDB kept it, so it's still needed
    for MariaDB because my_bool == char and compilation fails with the bool type.
