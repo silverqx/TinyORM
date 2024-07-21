@@ -65,7 +65,6 @@ jobs:
     - name: CMake and Ninja install latest versions
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: "~3.29.6"
         useLocalCache: true
         useCloudCache: false
 
