@@ -54,7 +54,7 @@ function(tiny_init_driver_types)
         else()
             message(FATAL_ERROR "Unsupported value '${DRIVERS_TYPE}' for \
 the DRIVERS_TYPE CMake option for ${TinyDrivers_target} library, allowed values are \
-Shared, Static, or Loadable (case-insensitive).")
+Shared, Static, or Loadable (case-insensitive), in ${CMAKE_CURRENT_FUNCTION}().")
         endif()
 
         message(VERBOSE "Building ${TinyDrivers_target} ${driversTypeLower} library")

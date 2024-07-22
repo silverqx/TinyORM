@@ -51,7 +51,7 @@ function, in ${CMAKE_CURRENT_FUNCTION}()")
 
     # This should never happen :/
     if(NOT qtVersion MATCHES "${regexpVersion}")
-        message(FATAL_ERROR "Parsing of the 'qmake -query QT_VERSION' failed, \
+        message(FATAL_ERROR "Parsing of the 'qmake -query QT_VERSION' failed \
 in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 

@@ -204,8 +204,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
     string(REGEX MATCHALL "${regex}" match "${versionFileContent}")
 
     if(NOT match)
-        message(FATAL_ERROR
-            "Could not detect project version number from ${versionHeader}")
+        message(FATAL_ERROR "Could not detect project version number \
+from ${versionHeader} in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     message(DEBUG "Matched version string - ${match}")
