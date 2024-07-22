@@ -9,7 +9,7 @@
 # If the QT_QMAKE_EXECUTABLE command can't be executed or it returns a non-zero exit code
 # then continue a normal execution and leave the decision logic up to the find_package()
 # function.
-function(tiny_satisfied_minimum_required_qt_version out_variable)
+function(tiny_satisfies_minimum_required_qt_version out_variable)
 
     # Nothing to do, Qt version was already populated (cache hit)
     if(DEFINED TINY_QT_VERSION AND NOT TINY_QT_VERSION STREQUAL "")
@@ -124,7 +124,7 @@ upgrade Clang compiler")
 
     # Minimum required Qt version (minReqQtVersion)
     set(satisfiedMinReqQtVersion)
-    tiny_satisfied_minimum_required_qt_version(satisfiedMinReqQtVersion)
+    tiny_satisfies_minimum_required_qt_version(satisfiedMinReqQtVersion)
 
     if(NOT satisfiedMinReqQtVersion)
         # Should never happend that the TINY_QT_VERSION is undefined or empty
