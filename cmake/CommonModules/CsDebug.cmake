@@ -55,8 +55,8 @@ function(cs_print_target_properties target)
 
     message(STATUS "Target properties for '${target}':")
 
-    # Don't use the TINY_BUILD_TYPE_UPPER here as this function can be used in contexts where
-    # the TINY_BUILD_TYPE_UPPER isn't available.
+    # Don't use the TINY_BUILD_TYPE_UPPER here as this function can be used in contexts
+    # where the TINY_BUILD_TYPE_UPPER isn't available
     string(TOUPPER "${CMAKE_BUILD_TYPE}" cmakeBuildTypeUpper)
 
     foreach(property ${CMAKE_PROPERTY_LIST})
