@@ -57,7 +57,7 @@ in ${CMAKE_CURRENT_FUNCTION}().")
 
     set(TINY_QT_VERSION "${CMAKE_MATCH_0}" CACHE INTERNAL
         "Qt version used to determine whether a minimum required Qt version was \
-satisfied.")
+satisfied (also used by tiny_configure_test_pch()).")
 
     if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion)
         set(${out_variable} TRUE PARENT_SCOPE)
