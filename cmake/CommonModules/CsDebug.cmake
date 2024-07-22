@@ -50,7 +50,7 @@ endif()
 function(cs_print_target_properties target)
 
     if(NOT TARGET ${target})
-      message(FATAL_ERROR "There is no target named: ${target}")
+        message(FATAL_ERROR "There is no target named: ${target}")
     endif()
 
     message(STATUS "Target properties for '${target}':")
@@ -68,6 +68,7 @@ function(cs_print_target_properties target)
         endif()
 
         get_property(was_set TARGET ${target} PROPERTY ${property} SET)
+
         if(was_set)
             get_target_property(value ${target} ${property})
             message("${property} = ${value}")
