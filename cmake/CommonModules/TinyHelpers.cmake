@@ -110,7 +110,7 @@ function(target_optional_compile_definitions target scope)
     )
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
@@ -181,7 +181,7 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
     cmake_parse_arguments(PARSE_ARGV 5 TINY "" "${oneValueArgs}" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
@@ -600,7 +600,7 @@ function(tiny_set_compatible_interface_string target)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "" "" "${multiValueArgs}")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 

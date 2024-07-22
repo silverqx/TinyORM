@@ -8,7 +8,7 @@ function(tiny_common target)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "${oneValueArgs}" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
