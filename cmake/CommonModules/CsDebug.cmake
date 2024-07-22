@@ -62,8 +62,9 @@ function(cs_print_target_properties target)
     foreach(property ${CMAKE_PROPERTY_LIST})
         string(REPLACE "<CONFIG>" "${cmakeBuildTypeUpper}" property ${property})
 
-        if(property STREQUAL "LOCATION" OR property MATCHES "^LOCATION_"
-                OR property MATCHES "_LOCATION$")
+        if(property STREQUAL "LOCATION" OR property MATCHES "^LOCATION_" OR
+                property MATCHES "_LOCATION$"
+        )
             continue()
         endif()
 

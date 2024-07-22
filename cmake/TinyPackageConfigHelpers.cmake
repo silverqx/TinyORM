@@ -141,9 +141,9 @@ function(tiny_build_type_requirements_install_tree
 
         # Match Debug builds types for MSVC (linking debug against release
         # (or vice-versa) cause crashes)
-        elseif(MSVC AND ((cmakeBuildTypeLower STREQUAL "debug"
-                AND NOT "debug" IN_LIST cvfTargetConfigurations)
-                OR (NOT cmakeBuildTypeLower STREQUAL "debug" AND cvfIsDebugOnly))
+        elseif(MSVC AND ((cmakeBuildTypeLower STREQUAL "debug" AND
+                NOT "debug" IN_LIST cvfTargetConfigurations) OR
+                (NOT cmakeBuildTypeLower STREQUAL "debug" AND cvfIsDebugOnly))
         )
             # Obtain target configurations in printable format
             tiny_printable_configurations(tinyPrintableConfigurations
@@ -208,12 +208,12 @@ function(tiny_build_type_requirements_build_tree
         # (or vice-versa) cause crashes)
         # Or if matching equal build tree was enabled and builds types don't match then
         # also tag as unsuitable (this is Build tree specific)
-        elseif((cvf_match_buildtree
-                AND NOT cmakeBuildTypeLower STREQUAL cvfConfigBuildTypeLower)
-                OR (MSVC AND ((cmakeBuildTypeLower STREQUAL "debug"
-                    AND NOT cvfConfigBuildTypeLower STREQUAL "debug")
-                    OR (NOT cmakeBuildTypeLower STREQUAL "debug"
-                        AND cvfConfigBuildTypeLower STREQUAL "debug")))
+        elseif((cvf_match_buildtree AND
+                NOT cmakeBuildTypeLower STREQUAL cvfConfigBuildTypeLower) OR
+                (MSVC AND ((cmakeBuildTypeLower STREQUAL "debug" AND
+                    NOT cvfConfigBuildTypeLower STREQUAL "debug") OR
+                    (NOT cmakeBuildTypeLower STREQUAL "debug" AND
+                        cvfConfigBuildTypeLower STREQUAL "debug")))
         )
             set(${out_package_version}
                 "${${out_package_version}} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"
