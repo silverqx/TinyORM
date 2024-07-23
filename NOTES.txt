@@ -1277,6 +1277,13 @@ CMake confusions:
       also cross-platform or cross-shell so it knows which OS or shell is used and will escape
       correctly
 
+- MSVC vs CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"
+  - they are not the same, MSVC is also set for clang-cl with MSVC
+  - clang-cl with MSVC matches:
+MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
+  - so if(MSVC) matches both or all MSVC-like compilers
+  - ❗but if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") matches the cl.exe MSVC compiler only
+
 
 TinyORM CMake build:
 --------------------
