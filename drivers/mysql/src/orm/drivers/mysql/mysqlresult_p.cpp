@@ -98,8 +98,11 @@ bool MySqlResultPrivate::bindResultValues()
         if (isBlobType(fieldInfo->type)) {
             /* The size of a blob-field is available as soon as
                the mysql_stmt_store_result() is called, it's after
-               the mysql_stmt_exec() in MySqlResult::exec(). */
-            resultBind.buffer_length = field.fieldValueSize = 0UL;
+               the mysql_stmt_exec() in MySqlResult::exec().
+               Also, it can't be zero because of the assert(param->buffer_length != 0);
+               in mysql_stmt_bind_result() -> setup_one_fetch_function(), these assert-s
+               of course kick-in in Debug builds only. */
+            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length;
             hasBlobs = true;
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
@@ -273,12 +276,19 @@ void MySqlResultPrivate::bindResultBlobs()
        if (!isBlobType(resultBind.buffer_type) || meta == nullptr || fieldInfo == nullptr)
            continue;
 
-       // Update the buffer length to the BLOB max. length in the current result set
-       resultBind.buffer_length = fieldInfo->max_length;
+       /* Update the buffer length to the BLOB max. length in the current result set,
+          also, it can't be 0, so use the fieldInfo->length because of
+          the assert(param->buffer_length != 0);
+          in mysql_stmt_bind_result() -> setup_one_fetch_function(), these assert-s
+          of course kick-in in Debug builds only. */
+       resultBind.buffer_length = fieldInfo->max_length > 0 ? fieldInfo->max_length
+                                                            : fieldInfo->length;
+
+       // CUR drivers test huge BLOB-s >1MB and use the workaround from PDO, need to test because of truncation and how to download it in chunks, see: https://github.com/php/php-src/blob/php-8.3.9/ext/pdo_mysql/mysql_statement.c#L223 silverqx
 
        /* Create a new BLOB result buffer using a new BLOB length.
           The previous BLOB buffer will be auto-freed as it's a smart pointer. */
-       resultField.fieldValue = std::make_unique<char[]>(fieldInfo->max_length); // NOLINT(modernize-avoid-c-arrays)
+       resultField.fieldValue = std::make_unique<char[]>(resultBind.buffer_length); // NOLINT(modernize-avoid-c-arrays)
        resultBind.buffer = static_cast<void *>(resultField.fieldValue.get());
    }
 }
