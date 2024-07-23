@@ -1433,6 +1433,10 @@ You don't need to update/increment the "port-version" in vcpkg.json file.
 To use head in vcpkg manifest mode define set(VCPKG_USE_HEAD_VERSION ON) before vcpkg_from_github()
 Source: https://github.com/microsoft/vcpkg/pull/16613#issuecomment-799801106
 
+There also exists set(_VCPKG_EDITABLE ON), I never tried it but as described in the post it
+rebuilds all other ports.
+Source: https://github.com/microsoft/vcpkg/issues/16874#issuecomment-1785909868
+
 Commands for this new workflow:
 --
 svcpkg_tinyorm_port_qt6_testing.ps1
