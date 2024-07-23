@@ -160,7 +160,7 @@ bool MySqlResult::exec()
 
     /* Reset a prepared statement on the client and server side to the state after
        the prepare (resets the statement on the server, unbuffered result sets, and
-       clear current errors). */
+       clears the current errors). */
     if (mysql_stmt_reset(d->stmt))
         throw Exceptions::QueryError(
                 d->connectionName,
