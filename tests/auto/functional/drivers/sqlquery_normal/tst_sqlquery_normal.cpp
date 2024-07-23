@@ -472,8 +472,8 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
 
     while (torrents.next()) {
         QVERIFY(torrents.isValid());
-        // Number of fields                        // Don't uncomment to test defaults
-        const auto &record = torrents.recordCached(/*true*/);
+        // Number of fields
+        const auto &record = torrents.recordCached(true);
         const auto recordCount = record.count();
         QCOMPARE(recordCount, 7);
 
@@ -672,8 +672,8 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
 
     while (torrents.next()) {
         QVERIFY(torrents.isValid());
-        // Number of fields
-        const auto &record = torrents.recordCached(false);
+        // Number of fields                        // Don't uncomment to test the default argument
+        const auto &record = torrents.recordCached(/*false*/);
         const auto recordCount = record.count();
         QCOMPARE(recordCount, 7);
 
