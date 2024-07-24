@@ -103,6 +103,7 @@ bool MySqlResultPrivate::bindResultValues()
                in mysql_stmt_bind_result() -> setup_one_fetch_function(), these assert-s
                of course kick-in in Debug builds only. */
             resultBind.buffer_length = field.fieldValueSize = fieldInfo->length;
+            Q_ASSERT(resultBind.buffer_length);
             hasBlobs = true;
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
