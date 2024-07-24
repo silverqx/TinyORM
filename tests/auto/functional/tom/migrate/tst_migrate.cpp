@@ -224,7 +224,8 @@ void tst_Migrate::cleanupTestCase() const
 
         // Reset the migrations table
         {
-            const auto exitCode = invokeCommand(connection, MigrateUninstall);
+            const auto exitCode = invokeCommand(connection, MigrateUninstall,
+                                                {"--reset"});
 
             QVERIFY(exitCode == EXIT_SUCCESS);
         }
