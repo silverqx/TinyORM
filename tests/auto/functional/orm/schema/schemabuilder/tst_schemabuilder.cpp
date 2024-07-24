@@ -217,7 +217,7 @@ void tst_SchemaBuilder::getAllTables() const
 
     const auto tablesActual = getAllTablesFor(connection);
 
-    const QSet<QString> tablesExpected {
+    QSet<QString> tablesExpected {
         "albums", "album_images", "datetimes", "empty_with_default_values",
         "file_property_properties", "migrations", "roles", "role_tag", "role_user",
         "settings", "state_torrent", "tag_properties", "tag_torrent", "torrents",
@@ -225,6 +225,13 @@ void tst_SchemaBuilder::getAllTables() const
         "torrent_previewable_file_properties", "torrent_states", "torrent_tags", "types",
         "users", "user_phones",
     };
+
+    // Avoid to failing if the tom migrations are migrated
+    const std::initializer_list<QString> il {
+        "migrations_example", "phones", "posts", "properties",
+    };
+    if (tablesActual.contains(il))
+        tablesExpected += il;
 
     QCOMPARE(tablesActual, tablesExpected);
 }
