@@ -77,9 +77,11 @@ private:
     /*! Prepare arguments and invoke runCommand(). */
     [[nodiscard]] static int
     invokeCommand(const QString &connection, const QString &name,
-                  const std::vector<const char *> &arguments = {});
+                  const std::vector<const char *> &arguments = {},
+                  const QString &migrationTable = MigrationsTable);
     /*! Create a tom application instance and invoke the given command. */
-    static int runCommand(int &argc, const std::vector<const char *> &argv);
+    static int runCommand(int &argc, const std::vector<const char *> &argv,
+                          const QString &migrationTable);
 
     /*! Invoke the status command to obtain results. */
     inline static int invokeTestStatusCommand(const QString &connection);
@@ -96,8 +98,10 @@ private:
     /*! Throw if the environment is production because it needs confirmation. */
     static void throwIfWrongEnvironment(const char *environmentEnvName);
 
-    /*! Migrations table name. */
+    /*! Migrations table name (used by this test case). */
     inline static const auto MigrationsTable = sl("migrations_unit_testing");
+    /*! Migrations table name (to cleanup the tom example migrations only). */
+    inline static const auto MigrationsTomTable = sl("migrations_example");
 
     /*! Created database connections (needed by the cleanupTestCase()). */
     QStringList m_connections;
@@ -766,7 +770,8 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 /* private */
 
 int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
-                               const std::vector<const char *> &arguments)
+                               const std::vector<const char *> &arguments,
+                               const QString &migrationTable)
 {
     static const auto connectionTmpl = sl("--database=%1");
 
@@ -791,10 +796,11 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
 
     int argc = static_cast<int>(argv.size());
 
-    return runCommand(argc, argv);
+    return runCommand(argc, argv, migrationTable);
 }
 
-int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv)
+int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv,
+                            const QString &migrationTable)
 {
     // Current environment variable name
     const auto *const environmentEnvName = "TOM_TESTS_ENV";
@@ -806,7 +812,7 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv)
         // env. should be always local or development
         return TomApplication(argc, const_cast<char **>(argv.data()),
                               Databases::managerShared(), environmentEnvName,
-                              MigrationsTable)
+                              migrationTable)
                 .migrations<CreatePostsTable,
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
@@ -855,18 +861,37 @@ void tst_Migrate::prepareDatabase() const
                              .getSchemaBuilder();
 
         // Create the migrations table if needed
-        if (!schema.hasTable(MigrationsTable)) {
-            auto exitCode = invokeCommand(connection, MigrateInstall);
+        {
+            if (!schema.hasTable(MigrationsTable)) {
+                auto exitCode = invokeCommand(connection, MigrateInstall);
 
-            QVERIFY(exitCode == EXIT_SUCCESS);
+                QVERIFY(exitCode == EXIT_SUCCESS);
+            }
 
-            continue;
+            // Reset the migrations table (created by this test case)
+            else {
+                auto exitCode = invokeCommand(connection, MigrateReset);
+
+                QVERIFY(exitCode == EXIT_SUCCESS);
+            }
         }
 
-        // Reset the migrations table
-        auto exitCode = invokeCommand(connection, MigrateReset);
+        // Remove the migrations from the tom example application to avoid tests failing
+        {
+            // Nothing to do, migration repository isn't installed
+            if (!schema.hasTable(MigrationsTomTable))
+                continue;
 
-        QVERIFY(exitCode == EXIT_SUCCESS);
+            // Drop all tables and uninstall the migration repository
+            {
+                auto exitCode = invokeCommand(connection, MigrateUninstall, {"--reset"},
+                                              MigrationsTomTable);
+
+                QVERIFY(exitCode == EXIT_SUCCESS);
+            }
+
+            QVERIFY(!schema.hasTable(MigrationsTomTable));
+        }
     }
 }
 
