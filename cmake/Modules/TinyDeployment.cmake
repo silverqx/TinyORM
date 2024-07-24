@@ -33,6 +33,9 @@ function(tiny_install_tinyorm)
     # TinyMySql library (MODULE, loaded at runtime)
     # The MODULE libraries are installed to the bin/ folder on Linux and
     # they don't have namelink-s
+    # Also, they don't need the ${CommonConfig_target} as it's the loadable module and
+    # propagating the CommonConfig doesn't make sense? I don't remember exactly why
+    # it doesn't contain this TARGET, but I hope I didn't forget to add it
     if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
         install(
             TARGETS ${TinyMySql_target}
