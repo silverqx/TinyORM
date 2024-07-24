@@ -110,6 +110,7 @@ bool MySqlResultPrivate::bindResultValues()
 
         else if (MySqlUtils::isInteger(field.metaType.id()))
             resultBind.buffer_length = field.fieldValueSize = 8UL;
+
         else {
             resultBind.buffer_type = MYSQL_TYPE_STRING;
             /* Revisited, no need to add +1 byte for the NULL character, the QString will
