@@ -218,7 +218,7 @@ void tst_Migrate::cleanupTestCase() const
         const auto &schema = Databases::manager().connection(connection)
                              .getSchemaBuilder();
 
-        // Nothing do cleanup, the migration repository was already uninstalled
+        // Nothing to cleanup, the migration repository was already uninstalled
         if (!schema.hasTable(MigrationsTable))
             return;
 
