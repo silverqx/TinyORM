@@ -21,7 +21,7 @@
 #  include <QDebug>
 #endif
 
-#ifndef TINYORM_USING_TINYDRIVERS
+#ifdef TINYORM_USING_QTSQLDRIVERS
 #  include <QtSql/QSqlError>
 #  include <QtSql/QSqlQuery>
 #  include <QtSql/QSqlRecord>
