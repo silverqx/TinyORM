@@ -119,13 +119,17 @@ function(tiny_install_tinyorm)
             TYPE INCLUDE
             FILES_MATCHING PATTERN "*.hpp"
         )
-    endif()
-    # TinyMySql
-    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-        install(DIRECTORY "drivers/mysql/include/orm"
-            TYPE INCLUDE
-            FILES_MATCHING PATTERN "*.hpp"
-        )
+
+        # Always install specific SQL Drivers' header files, it doesn't matter if
+        # they are built as shared, static, or loadable drivers
+
+        # TinyMySql
+        if(BUILD_MYSQL_DRIVER)
+            install(DIRECTORY "drivers/mysql/include/orm"
+                TYPE INCLUDE
+                FILES_MATCHING PATTERN "*.hpp"
+            )
+        endif()
     endif()
 
     # Install all other files
