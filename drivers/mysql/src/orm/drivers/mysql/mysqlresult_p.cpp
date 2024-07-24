@@ -114,12 +114,15 @@ bool MySqlResultPrivate::bindResultValues()
 
         else {
             resultBind.buffer_type = MYSQL_TYPE_STRING;
-            /* Revisited, no need to add +1 byte for the NULL character, the QString will
-               be constructed from these data based on the current size and it creates
-               a copy of these data and adds the NULL character at the end.
-               Also, MySQL server doesn't add a NULL character at the end.
-               Eg. PHP PDO doesn't add +1 during strings fetching. */
-            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length;
+            /* Revisited 2 times, no need to add +1 byte for the NULL character,
+               the QString will be constructed from these data based on the current size
+               and it creates a copy of these data and adds the NULL character at the end.
+               But, this is new, the mysql_stmt_bind_result() ->
+               setup_one_fetch_function() -> fetch_result_str() appends the '\0'
+               at the end of the buffer is the buffer is long enough.
+               So, add +1 for this NULL character. Also, this buffer will never be 0
+               it always will have min. length 1. */
+            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1UL;
         }
 
         // The following two lines only bind data members using pointers (no real values)
@@ -129,7 +132,7 @@ bool MySqlResultPrivate::bindResultValues()
 
         /* Prepare the output/result buffer (it has nothing to do with prepared bindings),
            No need to add +1 for the terminating null character. See the note a few lines
-           above. */
+           above for String types and for other types +1 isn't needed. */
         field.fieldValue = resultBind.buffer_length > 0UL
                            ? std::make_unique<char[]>(resultBind.buffer_length) // NOLINT(modernize-avoid-c-arrays)
                            : nullptr;
