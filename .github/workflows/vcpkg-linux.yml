@@ -416,6 +416,14 @@ jobs:
       run: |
         ccache --zero-stats
 
+    # Temporary workaround until the FetchContent UPDATE_DISCONNECTED bugs will be fixed
+    # See: https://discourse.cmake.org/t/fetchcontent-declare-update-disconnected-and-vcpkg/11312
+    - name: HelloWorld remove build and install trees (FetchContent method)
+      working-directory: ${{ env.RUNNER_WORKSPACE }}
+      run: >-
+        rm --force --recursive ./HelloWorld-builds-cmake/build-fetchcontent-gcc-*
+        rm --force --recursive ./HelloWorld-FetchContent-Install
+
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
     - name: HelloWorld cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld
