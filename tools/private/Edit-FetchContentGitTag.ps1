@@ -44,6 +44,8 @@ $fileContentReplaced = $fileContent -creplace $regex, "`${before}$GitTag"
 # Save to the file
 ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $cmakeListsPath -NoNewline
 
+Write-Progress "  GIT_TAG was updated to $GitTag in $CMakeLists"
+
 <#
  .Synopsis
   Update the FetchContent GIT_TAG in the given CMakeLists.txt
