@@ -143,6 +143,7 @@ bool MySqlResult::exec()
                  "to the SqlQuery::exec(QString) for normal statements, for '%1' MySQL "
                  "database connection in %2()."_s.arg(d->connectionName, __tiny_func__));
 
+    // Don't remove as the same already prepared query can be also re-executed!
     d->recordCache.clear();
 
     /* Prepared queries don't use metadata the same way as normal queries,
