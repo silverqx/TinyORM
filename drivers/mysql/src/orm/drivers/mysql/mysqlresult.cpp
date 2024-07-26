@@ -227,6 +227,7 @@ bool MySqlResult::exec()
                     .arg(__tiny_func__),
                     MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
+        // CUR drivers mysql try the mysql_stmt_fetch() with a 0-length buffer instead of the STMT_ATTR_UPDATE_MAX_LENGTH to populate the max_length; also read a comments around to orientate silverqx
         if (d->hasBlobs) {
             d->bindResultBlobs();
 
