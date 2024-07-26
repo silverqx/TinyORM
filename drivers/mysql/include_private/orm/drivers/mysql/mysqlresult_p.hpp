@@ -131,9 +131,6 @@ namespace Orm::Drivers::MySql
         static bool wasAllFieldsFetched(uint fieldsCount, uint lastIndex,
                                         QLatin1StringView method);
 
-        /*! Allocate memory for prepared bindings that will be sent to the database. */
-        static void allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds, // NOLINT(modernize-avoid-c-arrays)
-                                              std::size_t count) noexcept;
         /*! Reserve all vectors for prepared bindings buffer data. */
         void reserveVectorsForBindings(
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,

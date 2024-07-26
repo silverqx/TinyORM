@@ -62,6 +62,12 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
 
 /* Prepared queries */
 
+/* All these modernize-avoid-c-arrays suppressions are correct as we only need to allocate
+   buffers on the heap, nothing else, we don't need access, modify, iterate over, or
+   anything else, just simple buffers and C arrays are perfect for this.
+   The std::array can't be used here as we don't know the size and std::vector is too
+   much. */
+
 bool MySqlResultPrivate::bindResultValues()
 {
     // Obtain the Result Set metadata (nothing to do if no metadata)
@@ -80,8 +86,9 @@ bool MySqlResultPrivate::bindResultValues()
     /* Prepared queries don't use metadata the same way as normal queries,
        it's always RESULTSET_METADATA_NONE. */
 
-    // Allocate memory for result sets that will be obtained from the database
-    allocateMemoryForBindings(resultBinds, fieldsCount);
+    /* Allocate memory for result sets that will be obtained from the database,
+       memset() to 0-s isn't needed, std::make_unique<> 0 initializes it. */
+    resultBinds = std::make_unique<MYSQL_BIND[]>(fieldsCount); // NOLINT(modernize-avoid-c-arrays)
 
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
@@ -184,9 +191,10 @@ void MySqlResultPrivate::bindPreparedBindings(
 {
     // Reserve all vectors for prepared bindings buffer data
     reserveVectorsForBindings(nullVector, stringVector, timeVector);
-    // Allocate memory for prepared bindings that will be sent to the database
-    allocateMemoryForBindings(preparedBinds,
-                              static_cast<std::size_t>(boundValues.size()));
+    /* Allocate memory for prepared bindings that will be sent to the database,
+       memset() to 0-s isn't needed, std::make_unique<> 0 initializes it. */
+    preparedBinds = std::make_unique<MYSQL_BIND[]>( // NOLINT(modernize-avoid-c-arrays)
+                        static_cast<std::size_t>(boundValues.size()));
 
     /*! Alias for bound values size type. */
     using BoundValuesSizeType = decltype (boundValues)::size_type;
@@ -417,20 +425,6 @@ bool MySqlResultPrivate::wasAllFieldsFetched(
                .arg(lastIndex).arg(method);
 
     return false;
-}
-
-/* All these modernize-avoid-c-arrays suppressions are correct as we only need to allocate
-   buffers on the heap, nothing else, we don't need access, modify, iterate over, or
-   anything else, just simple buffers and C arrays are perfect for this.
-   The std::array can't be used here as we don't know the size and std::vector is too
-   much. */
-
-void MySqlResultPrivate::allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds, // NOLINT(modernize-avoid-c-arrays)
-                                                   const std::size_t count) noexcept
-{
-    binds = std::make_unique<MYSQL_BIND[]>(count); // NOLINT(modernize-avoid-c-arrays)
-    // Zero the memory storage
-    memset(binds.get(), 0, sizeof (MYSQL_BIND) * count);
 }
 
 void MySqlResultPrivate::reserveVectorsForBindings(
