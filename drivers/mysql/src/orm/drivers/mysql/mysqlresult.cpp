@@ -527,6 +527,13 @@ void MySqlResult::cleanupForNormal()
 {
     Q_D(MySqlResult);
 
+    /* Helps to avoid cleanup on the newly created instance, it's only false on the newly
+       created instance. */
+    if (!d->needsCleanup) {
+        d->needsCleanup = true;
+        return;
+    }
+
     d->recordCache.clear();
 
     // Normal queries
@@ -539,6 +546,13 @@ void MySqlResult::cleanupForNormal()
 void MySqlResult::cleanupForPrepared()
 {
     Q_D(MySqlResult);
+
+    /* Helps to avoid cleanup on the newly created instance, it's only false on the newly
+       created instance. */
+    if (!d->needsCleanup) {
+        d->needsCleanup = true;
+        return;
+    }
 
     d->recordCache.clear();
 

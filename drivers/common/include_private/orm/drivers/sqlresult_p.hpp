@@ -64,6 +64,9 @@ namespace Orm::Drivers
         bool isActive = false;
         /*! Is this result from the SELECT statement? */
         bool isSelect = false;
+        /*! Determine if the instance needs cleanup before executing the query. It's
+            always true after the first query is executed. */
+        bool needsCleanup = false;
     };
 
 } // namespace Orm::Drivers
