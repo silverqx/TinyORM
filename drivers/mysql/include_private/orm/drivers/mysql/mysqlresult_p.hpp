@@ -73,7 +73,7 @@ namespace Orm::Drivers::MySql
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
                 QList<MYSQL_TIME> &timeVector);
 
-        /*! Bind result set BLOB values. */
+        /*! Bind result set BLOB values (based on the newly fetched max_length). */
         void bindResultBlobs();
 
         /* Result sets */

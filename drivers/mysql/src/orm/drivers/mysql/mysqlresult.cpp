@@ -219,7 +219,9 @@ bool MySqlResult::exec()
             mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &updateMaxLength);
         }
 
-        // Buffer the complete result set on the client (it will be prepared for fetching)
+        /* Buffer a complete result set on the client (it will be prepared for fetching).
+           It internally updates the MYSQL_FIELD->max_length, it calls
+           the stmt_update_metadata() if the STMT_ATTR_UPDATE_MAX_LENGTH was set. */
         if (mysql_stmt_store_result(d->stmt) != 0)
             throw Exceptions::QueryError(
                     d->connectionName,
@@ -229,14 +231,15 @@ bool MySqlResult::exec()
 
         // CUR drivers mysql try the mysql_stmt_fetch() with a 0-length buffer instead of the STMT_ATTR_UPDATE_MAX_LENGTH to populate the max_length; also read a comments around to orientate silverqx
         if (d->hasBlobs) {
+            // Bind result set BLOB values (based on the newly fetched max_length)
             d->bindResultBlobs();
 
             /* Re-bind output columns in the result set to data and length buffers.
-               The mysql_stmt_bind_result() must be called twice, it can't be avoided as
-               we are storing whole result set. I still think this can be avoided using
-               the mysql_stmt_fetch_column() and setting the buffer_length to 0, it then
-               returns the real size but this should be called during obtaining the BLOB
-               field inside the value() method. */
+               The mysql_stmt_bind_result() must be called twice, it can't be avoided
+               when the STMT_ATTR_UPDATE_MAX_LENGTH to updated the max_length is used.
+               But there exists a better method for this which is able to obtain
+               the max_length for particular column only using the mysql_stmt_fetch()
+               with a 0-length buffer. */
             if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
                 throw Exceptions::QueryError(
                         d->connectionName,
