@@ -297,7 +297,11 @@ void MySqlResultPrivate::bindResultBlobs()
        resultBind.buffer_length = fieldInfo->max_length > 0 ? fieldInfo->max_length
                                                             : fieldInfo->length;
 
-       // CUR drivers test huge BLOB-s >1MB and use the workaround from PDO, need to test because of truncation and how to download it in chunks, see: https://github.com/php/php-src/blob/php-8.3.9/ext/pdo_mysql/mysql_statement.c#L223 silverqx
+       /* I have tested the LONGBLOB with 402MB mkv video file, I saved it into the DB
+          and then obtained it back and the SHA256 hash was the same (no data corruption).
+          No further patching of the huge BLOB-s is needed, the only thing that must be
+          done before sending/receiving a huge BLOB-s like this is to set
+          the max_allowed_packet. */
 
        /* Create a new BLOB result buffer using a new BLOB length.
           The previous BLOB buffer will be auto-freed as it's a smart pointer. */
