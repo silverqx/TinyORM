@@ -65,6 +65,9 @@ private Q_SLOTS:
 
     void whereBetween() const;
 
+    void insert_select_diacritic() const;
+    void insert_select_emoji() const;
+
     /* where dates */
     void whereDate_QDate();
     void whereDate_QDateTime();
@@ -526,6 +529,90 @@ void tst_QueryBuilder::whereBetween() const
         actualIds << result.value("id").value<quint64>();
 
     QCOMPARE(actualIds, expectedIds);
+}
+
+void tst_QueryBuilder::insert_select_diacritic() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    // UTF-8 1 and 2 byte characters
+    static const auto value = sl("ěščřžýáíéúůôäľĺŕéó");
+
+    {
+        auto builder = createQuery(connection);
+
+        auto query = builder->from("settings")
+                      .insert({{"name", "t1"}, {"value", value}});
+
+        QVERIFY(query);
+        QCOMPARE(query->numRowsAffected(), 1);
+        QVERIFY(query->isActive());
+        QVERIFY(!query->isSelect());
+        QVERIFY(!query->isValid());
+    }
+
+    // Verify
+    {
+        auto builder = createQuery(connection);
+
+        auto query = builder->from("settings").first();
+
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(query.isValid());
+        QCOMPARE(query.value("value").toString(), value);
+    }
+
+    // Restore
+    {
+        auto builder = createQuery(connection);
+
+        builder->from("settings").truncate();
+
+        QCOMPARE(builder->from("settings").count(), 0);
+    }
+}
+
+void tst_QueryBuilder::insert_select_emoji() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    // UTF-8 3 and 4 byte characters
+    static const auto value = sl("🕺😁🤔😮😅👍😊❗🔥😭😞😔");
+
+    {
+        auto builder = createQuery(connection);
+
+        auto query = builder->from("settings")
+                      .insert({{"name", "t1"}, {"value", value}});
+
+        QVERIFY(query);
+        QCOMPARE(query->numRowsAffected(), 1);
+        QVERIFY(query->isActive());
+        QVERIFY(!query->isSelect());
+        QVERIFY(!query->isValid());
+    }
+
+    // Verify
+    {
+        auto builder = createQuery(connection);
+
+        auto query = builder->from("settings").first();
+
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(query.isValid());
+        QCOMPARE(query.value("value").toString(), value);
+    }
+
+    // Restore
+    {
+        auto builder = createQuery(connection);
+
+        builder->from("settings").truncate();
+
+        QCOMPARE(builder->from("settings").count(), 0);
+    }
 }
 
 /* where dates */
