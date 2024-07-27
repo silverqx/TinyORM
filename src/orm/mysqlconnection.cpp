@@ -29,6 +29,7 @@ disable the TINYORM_MYSQL_PING preprocessor directive.
 #include "orm/schema/mysqlschemabuilder.hpp"
 #include "orm/utils/configuration.hpp"
 
+// Revisited, correct (comes from the TINY_INCLUDE_TQueryError)
 #ifdef TINYORM_USING_TINYDRIVERS
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
