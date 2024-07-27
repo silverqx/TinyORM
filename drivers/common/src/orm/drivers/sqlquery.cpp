@@ -654,18 +654,14 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult()
 
 std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection)
 {
-    // Nothing to do
-    if (!connection.isValid())
-        throw Exceptions::InvalidArgumentError(
+    if (connection.isValid())
+        // Ownership of a shared_ptr and unique_ptr()
+        return connection.driverWeak().lock()->createResult();
+
+    throw Exceptions::InvalidArgumentError(
                 u"The default database connection isn't available or the given '%1' "
                  "database connection isn't valid in %2()."_s
                 .arg(connection.connectionName(), __tiny_func__));
-
-    // This const_cast<> is needed because of the SqlQuery constructor (to have same API)
-    const auto driver = const_cast<SqlDatabase &>(connection).driverWeak(); // NOLINT(cppcoreguidelines-pro-type-const-cast)
-
-    // Ownership of a unique_ptr()
-    return driver.lock()->createResult(driver);
 }
 
 } // namespace Orm::Drivers
