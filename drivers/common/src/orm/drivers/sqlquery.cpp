@@ -444,11 +444,8 @@ QVariant SqlQuery::lastInsertId() const
 
 void SqlQuery::clear()
 {
-    // Ownership of a weak_ptr()
-    const auto driver = driverWeakInternal();
-
                      // Get a new empty SqlResult instance
-    *this = SqlQuery(driver.lock()->createResult(driver));
+    *this = SqlQuery(driverWeak().lock()->createResult());
 }
 
 void SqlQuery::finish() noexcept
@@ -466,18 +463,6 @@ void SqlQuery::finish() noexcept
 
 /* Getters / Setters */
 
-/* Leave the non-const driverWeak() private, it's correct, it's not needed anywhere and
-   is for special cases only. */
-
-std::weak_ptr<SqlDriver> SqlQuery::driverWeakInternal() noexcept
-{
-    /* This must be the std::weak_ptr() because when the connection is removed from
-       the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
-       is invalidated (using the std::shared_ptr::reset()).
-       This means we don't want to keep the SqlDriver alive after removeDatabase(). */
-    return m_sqlResult->driver();
-}
-
 QString SqlQuery::connectionName() const noexcept
 {
     return m_sqlResult->connectionName();
@@ -488,7 +473,7 @@ QString SqlQuery::connectionName() const noexcept
 void SqlQuery::throwIfNoDatabaseConnection()
 {
     // Nothing to do
-    if (this->driverWeakInternal().lock()->isOpen())
+    if (driverWeak().lock()->isOpen())
         return;
 
     throw Exceptions::LogicError(
