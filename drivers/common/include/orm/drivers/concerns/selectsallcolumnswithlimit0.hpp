@@ -37,9 +37,7 @@ namespace Concerns
 
         /* Others */
         /*! Select all columns in the given table with LIMIT 0 (used by record()). */
-        SqlQuery
-        selectAllColumnsWithLimit0(const QString &table,
-                                   const std::weak_ptr<SqlDriver> &driver) const;
+        SqlQuery selectAllColumnsWithLimit0(const QString &table) const;
 
     private:
         /* Others */

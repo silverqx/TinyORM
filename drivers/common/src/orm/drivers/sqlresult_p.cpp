@@ -15,9 +15,7 @@ namespace Orm::Drivers
 SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexcept
     : sqldriver(driver)
 {
-    /* The sqldriver must always be valid during construction, I'm leaving this check
-       here even there is another check in the MySqlDriver::createResult() because
-       the MySqlResult can still be instantiated manually. */
+    // The sqldriver must always be valid/alive during instantiation
     Q_ASSERT(!sqldriver.expired());
 
     // Ownership of the shared_ptr()

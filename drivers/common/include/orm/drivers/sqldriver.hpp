@@ -175,16 +175,12 @@ namespace Orm::Drivers
                                          IdentifierType type) const;
 
         /*! Factory method to create an empty database result. */
-        virtual std::unique_ptr<SqlResult>
-        createResult(const std::weak_ptr<SqlDriver> &driver) const = 0;
+        virtual std::unique_ptr<SqlResult> createResult() const = 0;
 
         /*! Get a SqlRecord containing the field information for the given table. */
-        virtual SqlRecord
-        record(const QString &table, const std::weak_ptr<SqlDriver> &driver) const = 0;
+        virtual SqlRecord record(const QString &table) const = 0;
         /*! Get a SqlRecord containing the field information for the given table. */
-        virtual SqlRecord
-        recordWithDefaultValues(const QString &table,
-                                const std::weak_ptr<SqlDriver> &driver) const = 0;
+        virtual SqlRecord recordWithDefaultValues(const QString &table) const = 0;
 
     protected:
         /* Setters */

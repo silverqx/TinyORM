@@ -19,12 +19,11 @@ namespace Orm::Drivers::Concerns
 /* public */
 
 SqlQuery
-SelectsAllColumnsWithLimit0::selectAllColumnsWithLimit0(
-        const QString &table, const std::weak_ptr<SqlDriver> &driver) const
+SelectsAllColumnsWithLimit0::selectAllColumnsWithLimit0(const QString &table) const
 {
     const auto &sqlDriver = this->sqlDriver();
 
-    SqlQuery query(sqlDriver.createResult(driver));
+    SqlQuery query(sqlDriver.createResult());
 
     /* Don't check if a table exists in the currently selected database because
        it doesn't make sense, leave the defaults on the database server.

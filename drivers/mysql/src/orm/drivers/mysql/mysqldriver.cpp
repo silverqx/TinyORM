@@ -1,8 +1,6 @@
 #include "orm/drivers/mysql/mysqldriver.hpp"
 
-#include <orm/macros/likely.hpp>
-
-#include "orm/drivers/exceptions/invalidargumenterror.hpp"
+#include "orm/drivers/exceptions/logicerror.hpp"
 #include "orm/drivers/exceptions/sqltransactionerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
@@ -223,42 +221,24 @@ bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
            identifier.endsWith(BACKTICK);
 }
 
-std::unique_ptr<SqlResult>
-MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
+std::unique_ptr<SqlResult> MySqlDriver::createResult() const
 {
-    if (const auto driverShared = driver.lock(); driverShared) T_LIKELY
-        /* We need to upcast here, there is no other way, it also has to be
-           std::weak_ptr(), it can't be done better. This upcast is kind of check,
-           we can't pass down the SqlDriver to the MySqlResult.
-           Even if it would be the shared_ptr<SqlDriver> we had to upcast the same way.
-           Revisited, also, all driver data members like host, port, username, ..., and
-           also connectionName will be still the same, it only creates an empty result
-           set. I'm noting this because of SqlQuery::clear() as it was confusing that
-           all these data members stay unchanged, but it's correct. */
-        return std::make_unique<MySqlResult>(
-                    std::dynamic_pointer_cast<MySqlDriver>(driverShared));
-
-    else T_UNLIKELY {
-        Q_D(const MySqlDriver);
-
-        throw Exceptions::InvalidArgumentError(
-                u"The 'driver' argument can't be nullptr, it can't be expired, "
-                 "for '%1' MySQL database connection in %2()."_s
-                .arg(d->connectionName, __tiny_func__));
-    }
+    /* We must use the const_cast<> as the weak_from_this() return type is controlled
+       by the current method const-nes, what means it's only our implementation detail
+       as we can't control this. Also, it's better to have the same const-nes as
+       in the QtSql. */
+    return std::make_unique<MySqlResult>(
+                const_cast<MySqlDriver &>(*this).weak_from_this()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 }
 
-SqlRecord
-MySqlDriver::record(const QString &table, const std::weak_ptr<SqlDriver> &driver) const
+SqlRecord MySqlDriver::record(const QString &table) const
 {
-    return selectAllColumnsWithLimit0(table, driver).record(false);
+    return selectAllColumnsWithLimit0(table).record(false);
 }
 
-SqlRecord
-MySqlDriver::recordWithDefaultValues(const QString &table,
-                                     const std::weak_ptr<SqlDriver> &driver) const
+SqlRecord MySqlDriver::recordWithDefaultValues(const QString &table) const
 {
-    return selectAllColumnsWithLimit0(table, driver).recordAllColumns(true);
+    return selectAllColumnsWithLimit0(table).recordAllColumns(true);
 }
 
 } // namespace Orm::Drivers::MySql

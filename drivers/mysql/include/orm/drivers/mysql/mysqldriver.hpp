@@ -15,7 +15,9 @@ namespace Orm::Drivers::MySql
     class MySqlDriverPrivate;
 
     /*! MySQL database driver. */
-    class TINYDRIVERS_EXPORT MySqlDriver final : public SqlDriver
+    class TINYDRIVERS_EXPORT MySqlDriver final :
+            public SqlDriver,
+            public std::enable_shared_from_this<MySqlDriver>
     {
         Q_DISABLE_COPY_MOVE(MySqlDriver)
         Q_DECLARE_PRIVATE(MySqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -71,16 +73,12 @@ namespace Orm::Drivers::MySql
                                  IdentifierType type) const final;
 
         /*! Factory method to create an empty MySQL result. */
-        std::unique_ptr<SqlResult>
-        createResult(const std::weak_ptr<SqlDriver> &driver) const final;
+        std::unique_ptr<SqlResult> createResult() const final;
 
         /*! Get a SqlRecord containing the field information for the given table. */
-        SqlRecord record(const QString &table,
-                         const std::weak_ptr<SqlDriver> &driver) const final;
+        SqlRecord record(const QString &table) const final;
         /*! Get a SqlRecord containing the field information for the given table. */
-        SqlRecord
-        recordWithDefaultValues(const QString &table,
-                                const std::weak_ptr<SqlDriver> &driver) const final;
+        SqlRecord recordWithDefaultValues(const QString &table) const final;
     };
 
     /* public */

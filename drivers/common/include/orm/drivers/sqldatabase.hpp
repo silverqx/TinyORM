@@ -125,8 +125,6 @@ namespace Orm::Drivers
         const SqlDriver *driver() const noexcept;
         /*! Get the SQL database driver used to access the database connection (const). */
         std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
-        /*! Get the SQL database driver used to access the database connection. */
-        std::weak_ptr<SqlDriver> driverWeak() noexcept;
 
         /*! Determine if the same thread check during the database() call is enabled. */
         static bool isThreadCheckEnabled() noexcept;

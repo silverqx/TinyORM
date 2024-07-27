@@ -284,18 +284,6 @@ std::weak_ptr<const SqlDriver> SqlDatabase::driverWeak() const noexcept
     return d->sqldriver;
 }
 
-/* The reason why the driverWeak() non-const method is exposed only here and isn't also
-   exposed in the Drivers::SqlQuery/SqlResult is to be able to instantiate the SqlQuery
-   manually like this:
-const auto driver = SqlDatabase::database(Databases::MYSQL).driverWeak();
-SqlQuery query(driver.lock()->createResult(driver));
-*/
-
-std::weak_ptr<SqlDriver> SqlDatabase::driverWeak() noexcept
-{
-    return d->sqldriver;
-}
-
 bool SqlDatabase::isThreadCheckEnabled() noexcept
 {
     return SqlDatabasePrivate::checkSameThread();
@@ -358,9 +346,9 @@ SqlRecord SqlDatabase::record(const QString &table, const bool withDefaultValues
        This method will contain field information for ALL columns for the given table,
        but of course without the field values. */
     if (withDefaultValues)
-        return d->driver().recordWithDefaultValues(table, d->sqldriver);
+        return d->driver().recordWithDefaultValues(table);
 
-    return d->driver().record(table, d->sqldriver);
+    return d->driver().record(table);
 }
 
 /* private */

@@ -38,7 +38,7 @@ void PopulatesFieldDefaultValuesPrivate::populateFieldDefaultValuesInternal(
     // Ownership of the shared_ptr()
     const auto driver = sqldriver.lock();
 
-    SqlQuery sqlQuery(driver->createResult(sqldriver));
+    SqlQuery sqlQuery(driver->createResult());
 
     // Prepare the query string and field names based on the allColumns
     const auto [queryString, fieldNames] = prepareQueryStringAndFieldNames(
