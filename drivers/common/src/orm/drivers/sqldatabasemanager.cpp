@@ -2,7 +2,7 @@
 
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase_p.hpp"
-#include "orm/drivers/support/connectionshash_p.hpp"
+#include "orm/drivers/support/connectionshash_p.hpp" // IWYU pragma: keep
 #include "orm/drivers/utils/type_p.hpp"
 
 #ifdef TINYDRIVERS_MYSQL_DRIVER
