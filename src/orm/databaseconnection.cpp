@@ -438,10 +438,7 @@ const TSqlDriver *DatabaseConnection::driver()
 #ifdef TINYORM_USING_TINYDRIVERS
 std::weak_ptr<const TSqlDriver> DatabaseConnection::driverWeak()
 {
-    // To select the driverWeak() const overload
-    const auto connection = getQtConnection();
-
-    return connection.driverWeak();
+    return getQtConnection().driverWeak();
 }
 #endif
 
