@@ -113,7 +113,7 @@ SqlQuery::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision) 
 
 const SqlDriver *SqlQuery::driver() const noexcept
 {
-    /* I must provide this raw pointer method to have compatible API with QtSql and that
+    /* I must provide this raw pointer method to have a compatible API with QtSql so that
        users can avoid #ifdef-s in their code. There is no way to remove this method. */
     return m_sqlResult->driver().lock().get();
 }
