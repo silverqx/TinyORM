@@ -8,7 +8,6 @@ TINY_SYSTEM_HEADER
 #include <QtCore/qcontainerfwd.h>
 
 #include <concepts>
-#include <memory>
 
 #include "orm/macros/commonnamespace.hpp"
 
