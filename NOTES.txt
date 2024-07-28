@@ -2414,6 +2414,36 @@ else {
 }
 
 
+TinyDrivers SqlDriver smart pointers:
+-------------------------------------
+
+The SqlDriver is confusion because is cached on more places. The SqlDriver is instantiated
+for every new connection, would be possible to use one SqlDriver for all connections
+to the same database (as it doesn't hold any special state, is only set of methods),
+the first code worked like that, but I had crashes with loadable MySQL DLL because of this.
+
+SqlDatabase creates one instance of the SqlDatabasePrivate (this instance is shared across
+all SqlDatabase instances) and during creating of this instance is also the SqlDriver
+instantiated and passed down to the SqlDatabasePrivate.
+
+Then this SqlDriver is passed to the SqlResult instance which caches it as the weak_ptr<SqlDriver>,
+SqlResult is instantiated for every query re-execution (during SqlQuery database queries).
+
+The SqlDatabasePrivate is the main instance that holds the std::shared_ptr<SqlDriver> sqldriver,
+when this instance is destroyed then the counter should drop down to 0 and the SqlDriver will be
+destroyed as well. All other instances are weak_ptr<SqlDriver>, one is in the SqlResultPrivate and
+the second one in the SqlDriver derived class eg. MySqlDriver inside
+the std::enable_shared_from_this<MySqlDriver> base class (this base class helps to avoid passing
+the weak_ptr<SqlDriver> all around to the methods).
+
+The SqlDriver can be destroyed in one way only using the SqlDatabase::removeDatabase() method,
+it internally calls the SqlDatabasePrivate::invalidateDatabase() which closes the database
+connection (eg. using the mysql_close()) resets the shared_ptr<SqlDriver> (shared_ptr<::reset()),
+which means all the SqlDatabase connection copies and all SqlQuery-ies stop working.
+
+This is all about how this is designed.
+
+
 MySQL C connector - invoked functions:
 --------------------------------------
 
