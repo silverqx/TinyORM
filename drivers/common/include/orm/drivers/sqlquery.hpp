@@ -162,8 +162,8 @@ namespace MySql
 
         /*! Determine whether the current result contains any rows/records. */
         bool isEmpty() const;
-        /*! Get the size of the result (number of rows returned), -1 if the size can't be
-            determined (database must support reporting about query size). */
+        /*! Get the size of the result (number of rows returned), SqlDrivers doesn't
+            return -1, it throws (database must support reporting about query size). */
         size_type size() const;
 
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
