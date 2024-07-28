@@ -8,13 +8,13 @@ TINY_SYSTEM_HEADER
 #include <stack>
 
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
-#include "orm/tiny/support/stores/belongstomanyrelatedtablestore.hpp"
-#include "orm/tiny/support/stores/eagerrelationstore.hpp"
-#include "orm/tiny/support/stores/lazyrelationstore.hpp"
-#include "orm/tiny/support/stores/pushrelationstore.hpp"
+#include "orm/tiny/support/stores/belongstomanyrelatedtablestore.hpp" // IWYU pragma: keep
+#include "orm/tiny/support/stores/eagerrelationstore.hpp" // IWYU pragma: keep
+#include "orm/tiny/support/stores/lazyrelationstore.hpp" // IWYU pragma: keep
+#include "orm/tiny/support/stores/pushrelationstore.hpp" // IWYU pragma: keep
 #include "orm/tiny/support/stores/queriesrelationshipsstore.hpp"
-#include "orm/tiny/support/stores/serializerelationstore.hpp"
-#include "orm/tiny/support/stores/touchownersrelationstore.hpp"
+#include "orm/tiny/support/stores/serializerelationstore.hpp" // IWYU pragma: keep
+#include "orm/tiny/support/stores/touchownersrelationstore.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
