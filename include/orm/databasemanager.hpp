@@ -67,8 +67,8 @@ namespace Query
 
         /*! Get a new query builder instance for the connection. */
         std::shared_ptr<QueryBuilder> query(const QString &connection = "");
-        /*! Get a new QSqlQuery instance for the connection. */
-        TSqlQuery qtQuery(const QString &connection = "");
+        /*! Get a new Q/SqlQuery instance for the connection. */
+        TSqlQuery sqlQuery(const QString &connection = "");
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -393,9 +393,9 @@ namespace Query
         std::shared_ptr<DatabaseConnection>
         configure(std::shared_ptr<DatabaseConnection> &&connection) const;
 
-        /*! Refresh an underlying QSqlDatabase connection resolver on a given
+        /*! Refresh an underlying Q/SqlDatabase connection resolver on a given
             TinyORM connection. */
-        DatabaseConnection &refreshQtConnection(const QString &connection);
+        DatabaseConnection &refreshSqlConnection(const QString &connection);
 
         /*! Throw an exception if DatabaseManager instance already exists. */
         static void checkInstance();

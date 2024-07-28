@@ -2864,7 +2864,7 @@ tst_PostgreSQL_QDateTime::createQuery() const
 
 TSqlQuery tst_PostgreSQL_QDateTime::createQtQuery() const
 {
-    return DB::qtQuery(m_connection);
+    return DB::sqlQuery(m_connection);
 }
 
 /* QDateTime with/without timezone */

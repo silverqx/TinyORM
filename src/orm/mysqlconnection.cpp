@@ -172,7 +172,7 @@ void MySqlConnection::setConfigVersion(const QString &value)
 bool MySqlConnection::pingDatabase()
 {
 #ifdef TINYORM_MYSQL_PING
-    auto qtConnection = getQtConnection();
+    auto qtConnection = getSqlConnection();
 
     const auto getDriverHandle = [&qtConnection = std::as_const(qtConnection)]()
                                  -> QVariant

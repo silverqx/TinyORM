@@ -1805,7 +1805,7 @@ tst_SQLite_QDateTime::createQuery() const
 
 TSqlQuery tst_SQLite_QDateTime::createQtQuery() const
 {
-    return DB::qtQuery(m_connection);
+    return DB::sqlQuery(m_connection);
 }
 
 /* QDateTime with/without timezone */

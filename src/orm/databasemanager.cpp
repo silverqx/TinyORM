@@ -117,9 +117,9 @@ DatabaseManager::query(const QString &connection)
     return this->connection(connection).query();
 }
 
-TSqlQuery DatabaseManager::qtQuery(const QString &connection)
+TSqlQuery DatabaseManager::sqlQuery(const QString &connection)
 {
-    return this->connection(connection).getQtQuery();
+    return this->connection(connection).getSqlQuery();
 }
 
 SqlQuery
@@ -392,7 +392,7 @@ DatabaseConnection &DatabaseManager::reconnect(const QString &name)
     if (!m_connections->contains(name_))
         return connection(name_);
 
-    return refreshQtConnection(name_);
+    return refreshSqlConnection(name_);
 }
 
 void DatabaseManager::disconnect(const QString &name) const
@@ -958,7 +958,7 @@ DatabaseManager::configure(std::shared_ptr<DatabaseConnection> &&connection) con
 }
 
 DatabaseConnection &
-DatabaseManager::refreshQtConnection(const QString &connection)
+DatabaseManager::refreshSqlConnection(const QString &connection)
 {
     const auto &connectionName = parseConnectionName(connection);
 
@@ -967,8 +967,8 @@ DatabaseManager::refreshQtConnection(const QString &connection)
        will be again resolved/connected lazily. */
     auto fresh = configure(makeConnection(connectionName));
 
-    return (*m_connections)[connectionName]->setQtConnectionResolver(
-                fresh->getQtConnectionResolver());
+    return (*m_connections)[connectionName]->setSqlConnectionResolver(
+                fresh->getSqlConnectionResolver());
 }
 
 void DatabaseManager::checkInstance()

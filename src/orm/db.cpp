@@ -51,9 +51,9 @@ DB::query(const QString &connection)
     return manager().connection(connection).query();
 }
 
-TSqlQuery DB::qtQuery(const QString &connection)
+TSqlQuery DB::sqlQuery(const QString &connection)
 {
-    return manager().connection(connection).getQtQuery();
+    return manager().connection(connection).getSqlQuery();
 }
 
 SqlQuery

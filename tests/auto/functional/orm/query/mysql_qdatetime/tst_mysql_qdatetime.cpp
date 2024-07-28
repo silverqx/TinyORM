@@ -3036,7 +3036,7 @@ tst_MySql_QDateTime::createQuery(const QString &connection)
 
 TSqlQuery tst_MySql_QDateTime::createQtQuery(const QString &connection)
 {
-    return DB::qtQuery(connection);
+    return DB::sqlQuery(connection);
 }
 
 /* QDateTime with/without timezone */

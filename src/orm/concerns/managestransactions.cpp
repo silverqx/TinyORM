@@ -78,7 +78,7 @@ bool ManagesTransactions::beginTransaction()
         runBeginTransaction(connection);
 #elif defined(TINYORM_USING_TINYDRIVERS)
         if (!connection.pretending())
-            connection.getQtConnection().transaction();
+            connection.getSqlConnection().transaction();
 #endif
     } catch (const SqlTransactionError &e) {
         tryAgainIfCausedByLostConnectionStart(connection, std::current_exception(),
@@ -119,7 +119,7 @@ bool ManagesTransactions::commit()
         runCommit(connection);
 #elif defined(TINYORM_USING_TINYDRIVERS)
         if (!connection.pretending())
-            connection.getRawQtConnection().commit();
+            connection.getRawSqlConnection().commit();
 #endif
     } catch (const SqlTransactionError &e) {
         tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
@@ -160,7 +160,7 @@ bool ManagesTransactions::rollBack()
         runRollBack(connection);
 #elif defined(TINYORM_USING_TINYDRIVERS)
         if (!connection.pretending())
-            connection.getRawQtConnection().rollback();
+            connection.getRawSqlConnection().rollback();
 #endif
     } catch (const SqlTransactionError &e) {
         tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
@@ -205,7 +205,7 @@ bool ManagesTransactions::savepoint(const QString &id)
         runCommonSavepointQuery(connection, queryString, *SavepointFunction);
 #elif defined(TINYORM_USING_TINYDRIVERS)
         if (!connection.pretending())
-            connection.getQtQuery().exec(queryString);
+            connection.getSqlQuery().exec(queryString);
 #endif
     } catch (const SqlTransactionError &e) {
         tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
@@ -251,7 +251,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
         runCommonSavepointQuery(connection, queryString, *RollbackToSavepointFunction);
 #elif defined(TINYORM_USING_TINYDRIVERS)
         if (!connection.pretending())
-            connection.getQtQuery().exec(queryString);
+            connection.getSqlQuery().exec(queryString);
 #endif
     } catch (const SqlTransactionError &e) {
         tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
@@ -287,7 +287,7 @@ ManagesTransactions::setSavepointNamespace(const QString &savepointNamespace)
 #ifdef TINYORM_USING_QTSQLDRIVERS
 void ManagesTransactions::runBeginTransaction(DatabaseConnection &connection)
 {
-    auto qtConnection = connection.getQtConnection();
+    auto qtConnection = connection.getSqlConnection();
 
     // Nothing to do
     if (connection.pretending() || qtConnection.transaction())
@@ -299,7 +299,7 @@ void ManagesTransactions::runBeginTransaction(DatabaseConnection &connection)
 
 void ManagesTransactions::runCommit(DatabaseConnection &connection)
 {
-    auto qtConnection = connection.getRawQtConnection();
+    auto qtConnection = connection.getRawSqlConnection();
 
     // Nothing to do
     if (connection.pretending() || qtConnection.commit())
@@ -310,7 +310,7 @@ void ManagesTransactions::runCommit(DatabaseConnection &connection)
 
 void ManagesTransactions::runRollBack(DatabaseConnection &connection)
 {
-    auto qtConnection = connection.getRawQtConnection();
+    auto qtConnection = connection.getRawSqlConnection();
 
     // Nothing to do
     if (connection.pretending() || qtConnection.rollback())
@@ -323,13 +323,13 @@ void ManagesTransactions::runCommonSavepointQuery(
         DatabaseConnection &connection, const QString &queryString,
         const QString &functionName)
 {
-    auto qtQuery = connection.getQtQuery();
+    auto sqlQuery = connection.getSqlQuery();
 
     // Nothing to do
-    if (connection.pretending() || qtQuery.exec(queryString))
+    if (connection.pretending() || sqlQuery.exec(queryString))
         return;
 
-    throwSqlTransactionError(functionName, qtQuery);
+    throwSqlTransactionError(functionName, sqlQuery);
 }
 
 void ManagesTransactions::throwSqlTransactionError(
@@ -342,13 +342,13 @@ void ManagesTransactions::throwSqlTransactionError(
 }
 
 void ManagesTransactions::throwSqlTransactionError(const QString &functionName,
-                                                   const QSqlQuery &qtQuery)
+                                                   const QSqlQuery &sqlQuery)
 {
-    auto executedQuery = qtQuery.executedQuery();
+    auto executedQuery = sqlQuery.executedQuery();
     if (executedQuery.isEmpty())
-        executedQuery = qtQuery.lastQuery();
+        executedQuery = sqlQuery.lastQuery();
 
-    throwSqlTransactionError(functionName, executedQuery, qtQuery.lastError());
+    throwSqlTransactionError(functionName, executedQuery, sqlQuery.lastError());
 }
 #endif
 
@@ -379,7 +379,7 @@ void ManagesTransactions::tryAgainIfCausedByLostConnectionStart(
 
     connection.reconnect();
 
-    connection.getQtConnection().transaction();
+    connection.getSqlConnection().transaction();
 }
 
 void ManagesTransactions::tryAgainIfCausedByLostConnectionCommon(

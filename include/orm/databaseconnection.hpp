@@ -144,19 +144,19 @@ namespace Orm
         SqlQuery unprepared(const QString &queryString);
 
         /* Obtain connection instance */
-        /*! Get underlying database connection (QSqlDatabase). */
-        TSqlDatabase getQtConnection();
+        /*! Get underlying database connection (Q/SqlDatabase). */
+        TSqlDatabase getSqlConnection();
         /*! Get underlying database connection without executing any reconnect logic. */
-        TSqlDatabase getRawQtConnection() const;
+        TSqlDatabase getRawSqlConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
         inline const std::function<Connectors::ConnectionName()> &
-        getQtConnectionResolver() const noexcept;
+        getSqlConnectionResolver() const noexcept;
         /*! Set the connection resolver for an underlying database connection. */
-        DatabaseConnection &setQtConnectionResolver(
+        DatabaseConnection &setSqlConnectionResolver(
                 const std::function<Connectors::ConnectionName()> &resolver);
 
-        /*! Get a new QSqlQuery instance for the current connection. */
-        TSqlQuery getQtQuery();
+        /*! Get a new Q/SqlQuery instance for the current connection. */
+        TSqlQuery getSqlQuery();
 
         /*! Prepare the query bindings for execution. */
         QList<QVariant> &prepareBindings(QList<QVariant> &bindings) const;
@@ -320,8 +320,8 @@ namespace Orm
     private:
         /*! Prepare an SQL statement and return the query object. */
         TSqlQuery prepareQuery(const QString &queryString);
-        /*! Get a new QSqlQuery instance for the pretend for the current connection. */
-        inline TSqlQuery getQtQueryForPretend();
+        /*! Get a new Q/SqlQuery instance for the pretend for the current connection. */
+        inline TSqlQuery getSqlQueryForPretend();
 
         /*! Prepare the QDateTime query binding for execution. */
         QDateTime prepareBinding(const QDateTime &binding) const;
@@ -418,14 +418,14 @@ namespace Orm
     /* Obtain connection instance */
 
     const std::function<Connectors::ConnectionName()> &
-    DatabaseConnection::getQtConnectionResolver() const noexcept
+    DatabaseConnection::getSqlConnectionResolver() const noexcept
     {
         return m_qtConnectionResolver;
     }
 
     bool DatabaseConnection::isOpen()
     {
-        return m_qtConnection && getQtConnection().isOpen();
+        return m_qtConnection && getSqlConnection().isOpen();
     }
 
     void DatabaseConnection::connectEagerly()
@@ -433,7 +433,7 @@ namespace Orm
         reconnectIfMissingConnection();
 
         // This opens a physical database connection
-        std::ignore = getQtConnection();
+        std::ignore = getSqlConnection();
     }
 
     const QueryGrammar &DatabaseConnection::getQueryGrammar() const noexcept
@@ -587,9 +587,9 @@ namespace Orm
 
     /* private */
 
-    TSqlQuery DatabaseConnection::getQtQueryForPretend()
+    TSqlQuery DatabaseConnection::getSqlQueryForPretend()
     {
-        return getQtQuery();
+        return getSqlQuery();
     }
 
     template<typename Return>

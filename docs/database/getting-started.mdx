@@ -847,16 +847,16 @@ If your application needs to use multiple connections, you may access each conne
 auto query = DB::connection("mysql_test").select(...);
 ```
 
-You may access the raw underlying `QSqlQuery` instance of a connection using the `getQtQuery` method on a connection instance:
+You may access the raw underlying `QSqlQuery` instance of a connection using the `getSqlQuery` method on a connection instance:
 
 ```cpp
-auto query = DB::connection().getQtQuery();
+auto query = DB::connection().getSqlQuery();
 ```
 
-Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
+Or you can use the shortcut method `sqlQuery` provided by the `DB` facade:
 
 ```cpp
-auto query = DB::qtQuery();
+auto query = DB::sqlQuery();
 ```
 
 ## Database Transactions

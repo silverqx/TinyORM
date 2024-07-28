@@ -102,7 +102,7 @@ DatabaseConnection::select(const QString &queryString, QList<QVariant> bindings)
                            -> TSqlQuery
     {
         if (m_pretending)
-            return getQtQueryForPretend();
+            return getSqlQueryForPretend();
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -171,7 +171,7 @@ DatabaseConnection::statement(const QString &queryString, QList<QVariant> bindin
                            -> TSqlQuery
     {
         if (m_pretending)
-            return getQtQueryForPretend();
+            return getSqlQueryForPretend();
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -220,7 +220,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
                -> std::tuple<int, TSqlQuery>
     {
         if (m_pretending)
-            return {-1, getQtQueryForPretend()};
+            return {-1, getSqlQueryForPretend()};
 
         // Prepare QSqlQuery
         auto query = prepareQuery(queryString_);
@@ -264,10 +264,10 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
                            -> TSqlQuery
     {
         if (m_pretending)
-            return getQtQueryForPretend();
+            return getSqlQueryForPretend();
 
         // Prepare unprepared QSqlQuery 🙂
-        auto query = getQtQuery();
+        auto query = getSqlQuery();
 
         if (query.exec(queryString_)) {
             // Query statements counter
@@ -298,7 +298,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 
 /* Obtain connection instance */
 
-TSqlDatabase DatabaseConnection::getQtConnection()
+TSqlDatabase DatabaseConnection::getSqlConnection()
 {
     if (!m_qtConnection) {
         // This should never happen 🤔
@@ -319,7 +319,7 @@ TSqlDatabase DatabaseConnection::getQtConnection()
     return TSqlDatabase::database(*m_qtConnection, true);
 }
 
-TSqlDatabase DatabaseConnection::getRawQtConnection() const
+TSqlDatabase DatabaseConnection::getRawSqlConnection() const
 {
     if (!m_qtConnection)
         throw Exceptions::RuntimeError(
@@ -330,7 +330,7 @@ TSqlDatabase DatabaseConnection::getRawQtConnection() const
 }
 
 DatabaseConnection &
-DatabaseConnection::setQtConnectionResolver(
+DatabaseConnection::setSqlConnectionResolver(
         const std::function<Connectors::ConnectionName()> &resolver)
 {
     /* Reset transaction and savepoints as the underlying connection will be
@@ -354,9 +354,9 @@ DatabaseConnection::setQtConnectionResolver(
     return *this;
 }
 
-TSqlQuery DatabaseConnection::getQtQuery()
+TSqlQuery DatabaseConnection::getSqlQuery()
 {
-    return TSqlQuery(getQtConnection());
+    return TSqlQuery(getSqlConnection());
 }
 
 QList<QVariant> &
@@ -432,13 +432,13 @@ bool DatabaseConnection::pingDatabase()
 
 const TSqlDriver *DatabaseConnection::driver()
 {
-    return getQtConnection().driver();
+    return getSqlConnection().driver();
 }
 
 #ifdef TINYORM_USING_TINYDRIVERS
 std::weak_ptr<const TSqlDriver> DatabaseConnection::driverWeak()
 {
-    return getQtConnection().driverWeak();
+    return getSqlConnection().driverWeak();
 }
 #endif
 
@@ -483,7 +483,7 @@ void DatabaseConnection::disconnect()
        from QSqlDatabase connection repository, so it can be reused, it's
        better for performance.
        Revisited, it's ok and will not cause any leaks or dangling connection. */
-    getRawQtConnection().close();
+    getRawSqlConnection().close();
 
     m_qtConnection.reset();
     m_qtConnectionResolver = nullptr;
@@ -532,7 +532,7 @@ bool DatabaseConnection::hasConfig(const QString &option) const
 
 QString DatabaseConnection::driverName()
 {
-    return getQtConnection().driverName();
+    return getSqlConnection().driverName();
 }
 
 /*! Printable driver name hash type. */
@@ -639,7 +639,7 @@ void DatabaseConnection::useDefaultPostProcessor()
 TSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
 {
     // Prepare query string
-    auto query = getQtQuery();
+    auto query = getSqlQuery();
 
     // TODO solve setForwardOnly() in DatabaseConnection class, again this problem 🤔 silverqx
 //    query.setForwardOnly(m_forwardOnly);

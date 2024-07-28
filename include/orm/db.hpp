@@ -62,8 +62,8 @@ namespace Orm
 
         /*! Get a new query builder instance for the connection. */
         static std::shared_ptr<QueryBuilder> query(const QString &connection = "");
-        /*! Get a new QSqlQuery instance for the connection. */
-        static TSqlQuery qtQuery(const QString &connection = "");
+        /*! Get a new Q/SqlQuery instance for the connection. */
+        static TSqlQuery sqlQuery(const QString &connection = "");
 
         /*! Run a select statement against the database. */
         static SqlQuery

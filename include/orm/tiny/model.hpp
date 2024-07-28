@@ -1802,7 +1802,7 @@ namespace Orm::Tiny
             /* This makes it much safer because a user must explicitly select this
                behavior using the all parameter. */
             if (!all)
-                return {-1, getConnection().getQtQuery()};
+                return {-1, getConnection().getSqlQuery()};
 
             return invokeIncrementOrDecrement(*builder, column, amount, extra, method,
                                               all);
