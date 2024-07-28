@@ -18,6 +18,7 @@ namespace Orm::Drivers
 {
 
     class SqlDriver;
+    class SqlQuery;
     class SqlRecord;
     class SqlResultPrivate;
 
@@ -28,7 +29,7 @@ namespace Orm::Drivers
         Q_DECLARE_PRIVATE(SqlResult) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         // To access practically everything, all logic is defined in the SqlResult
-        friend class SqlQuery;
+        friend SqlQuery;
 
     protected:
         /*! Constructor. */

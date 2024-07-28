@@ -18,6 +18,7 @@ namespace Orm::Drivers
 {
 
     class DummySqlError;
+    class SqlDatabase;
     class SqlDriverPrivate;
     class SqlRecord;
     class SqlResult;
@@ -29,7 +30,7 @@ namespace Orm::Drivers
         Q_DECLARE_PRIVATE(SqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         // To access the setConnectionName()
-        friend class SqlDatabase;
+        friend SqlDatabase;
 
     protected:
         /*! Protected constructor. */

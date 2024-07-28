@@ -13,6 +13,7 @@ namespace Orm::Drivers::MySql
 {
 
     class MySqlDriverPrivate;
+    class MySqlResultPrivate;
 
     /*! MySQL database driver. */
     class TINYDRIVERS_EXPORT MySqlDriver final :
@@ -25,7 +26,7 @@ namespace Orm::Drivers::MySql
         /* To access MySqlDriver::d_func() through the MySqlResultPrivate::drv_d_func(),
            what means that the MySqlResultPrivate will have access
            to the MySqlDriverPrivate. */
-        friend class MySqlResultPrivate;
+        friend MySqlResultPrivate;
 
     public:
         /*! Default constructor. */

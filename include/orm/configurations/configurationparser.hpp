@@ -23,7 +23,7 @@ namespace Orm::Configurations
         Q_DISABLE_COPY_MOVE(ConfigurationParser)
 
         // To access config()
-        friend class ConfigurationOptionsParser;
+        friend ConfigurationOptionsParser;
 
     public:
         /*! Default constructor. */

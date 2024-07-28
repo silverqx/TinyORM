@@ -63,7 +63,7 @@ namespace Orm
            https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++ */
 #ifdef TINYORM_MYSQL_PING
         // To access logConnected()/logDisconnected() methods
-        friend class MySqlConnection;
+        friend MySqlConnection;
 #endif
 
         /*! Alias for the QueryError exception. */

@@ -22,13 +22,15 @@ class DatabaseConnection;
 namespace Concerns
 {
 
+    class ManagesTransactions;
+
     /*! Counts the number of executed queries and the elapsed time of queries. */
     class TINYORM_EXPORT CountsQueries
     {
         Q_DISABLE_COPY_MOVE(CountsQueries)
 
         // To access hitTransactionalCounters() method
-        friend class ManagesTransactions;
+        friend ManagesTransactions;
 
     public:
         /*! Default constructor. */

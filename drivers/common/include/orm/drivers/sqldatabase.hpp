@@ -24,7 +24,7 @@ namespace Orm::Drivers
         // To access the private constructors and d smart pointer (private impl.)
         friend SqlDatabaseManager;
         // To access the d smart pointer (private implementation)
-        friend class SqlDatabasePrivate;
+        friend SqlDatabasePrivate;
 
         /*! Alias for the NotNull. */
         template<typename T>
