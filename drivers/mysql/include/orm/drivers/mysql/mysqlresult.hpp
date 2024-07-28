@@ -69,6 +69,8 @@ namespace Orm::Drivers::MySql
         /*! Determine whether the field at the given index is NULL. */
         bool isNull(size_type index) const final;
 
+        /*! Determine whether the current result contains any rows/records. */
+        inline bool isEmpty() const noexcept final;
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined. */
         size_type size() const noexcept final;
@@ -106,6 +108,13 @@ namespace Orm::Drivers::MySql
         /*! Main cleanup/free method for normal and prepared statements (common logic). */
         void cleanupForBoth();
     };
+
+    /* public */
+
+    bool MySqlResult::isEmpty() const noexcept
+    {
+        return size() <= 0;
+    }
 
 } // namespace Orm::Drivers::MySql
 

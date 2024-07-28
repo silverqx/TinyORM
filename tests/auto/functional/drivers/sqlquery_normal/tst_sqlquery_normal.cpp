@@ -126,6 +126,7 @@ void tst_SqlQuery_Normal::select_All() const
     QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
+    QVERIFY(!users.isEmpty());
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(users.numRowsAffected(), 5);
     QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
@@ -177,6 +178,7 @@ void tst_SqlQuery_Normal::select_EmptyResultSet() const
     QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 0);
+    QVERIFY(users.isEmpty());
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(users.numRowsAffected(), 0);
     QCOMPARE(users.executedQuery(), query);
@@ -212,6 +214,7 @@ void tst_SqlQuery_Normal::select_FetchingSameResultSet() const
     QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
+    QVERIFY(!users.isEmpty());
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(users.numRowsAffected(), 3);
     QCOMPARE(users.executedQuery(), query);

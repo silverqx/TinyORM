@@ -390,17 +390,17 @@ bool SqlQuery::isNull(const QString &name) const
     throwNoFieldName(name);
 }
 
+bool SqlQuery::isEmpty() const
+{
+    throwIfNoQuerySizeReporting();
+    throwIfNoResultSet();
+
+    return m_sqlResult->isEmpty();
+}
+
 SqlQuery::size_type SqlQuery::size() const
 {
-    // Nothing to do
-    if (const auto driver = driverWeak().lock();
-        !driver->hasFeature(SqlDriver::QuerySize)
-    )
-        throw Exceptions::LogicError(
-                u"The '%1' database driver doesn't support query size reporting, "
-                 "for '%2' database connection in %3()."_s
-                .arg(driver->driverName(), connectionName(), __tiny_func__));
-
+    throwIfNoQuerySizeReporting();
     throwIfNoResultSet();
 
     return m_sqlResult->size();
@@ -640,6 +640,20 @@ void SqlQuery::throwNoFieldName(const QString &name) const
                 u"The field name '%1' doesn't exist or was not fetched for the current "
                  "result set for '%2' database connection in %3()."_s
                 .arg(name, connectionName(), __tiny_func__));
+}
+
+void SqlQuery::throwIfNoQuerySizeReporting() const
+{
+    const auto driver = driverWeak().lock();
+
+    // Nothing to do
+    if (driver->hasFeature(SqlDriver::QuerySize))
+        return;
+
+    throw Exceptions::LogicError(
+                u"The '%1' database driver doesn't support query size reporting, "
+                 "for '%2' database connection in %3()."_s
+                .arg(driver->driverName(), connectionName(), __tiny_func__));
 }
 
 /* Constructors */

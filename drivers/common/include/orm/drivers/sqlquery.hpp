@@ -160,9 +160,12 @@ namespace MySql
         /*! Determine if the field with the given field name is NULL (QVariant value). */
         bool isNull(const QString &name) const;
 
+        /*! Determine whether the current result contains any rows/records. */
+        bool isEmpty() const;
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query size). */
         size_type size() const;
+
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() const;
@@ -208,6 +211,8 @@ namespace MySql
         void throwIfNoValidResultSet() const;
         /*! Throw an exception if the field name doesn't exist or was not fetched. */
         [[noreturn]] void throwNoFieldName(const QString &name) const;
+        /*! Throw an exception if database doesn't support reporting about query size. */
+        void throwIfNoQuerySizeReporting() const;
 
         /* Constructors */
         /*! Initialize implementation-dependent query result set for the default

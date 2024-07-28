@@ -164,6 +164,8 @@ namespace Orm::Drivers
         /*! Determine whether the field at the given index is NULL (QVariant value). */
         virtual bool isNull(size_type index) const = 0;
 
+        /*! Determine whether the current result contains any rows/records. */
+        virtual bool isEmpty() const noexcept = 0;
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query size). */
         virtual size_type size() const noexcept = 0;
