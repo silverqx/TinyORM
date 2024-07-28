@@ -2449,26 +2449,27 @@ MySQL C connector - invoked functions:
 
 Note about invoked mysql_xyz() function during normal and prepared queries.
 
+The call below doesn't have to fit perfectly because of refactors, but I will not update it
+to make it perfectly match, this is enough. It's only overview how things internally works.
+
 Common for both normal and prepared queries
 --
 
  - creating connection - MySqlDriver::open()
 
 MySqlDriverPrivate::MYSQL *mysql = nullptr
-mysql_library_init(0, nullptr, nullptr)
 mysql = mysql_init(nullptr)
 mysql_options()
+mysql_set_character_set(mysql, characterSetName)
 mysql_real_connect()
-mysql_set_character_set(d->mysql, cs->csname)
-mysql_select_db(d->mysql, db.toUtf8().constData())
-// check if this client and server version of MySQL/MariaDB support prepared statements
+mysql_set_character_set(mysql, characterSetName)
+mysql_select_db(mysql, database.toUtf8().constData())
+// check if this client and server version of MySQL/MariaDB supports prepared statements
 checkPreparedQueries(MYSQL *mysql)
   mysql_stmt_init(mysql)
   mysql_stmt_prepare()
   mysql_stmt_param_count()
-#if QT_CONFIG(thread)
-  mysql_thread_init();
-#endif
+  // mysql_thread_init() is called automatically by mysql_init()
 
  - before, everything is cleared and reset
 
