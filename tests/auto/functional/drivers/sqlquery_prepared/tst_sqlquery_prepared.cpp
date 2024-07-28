@@ -82,6 +82,8 @@ private Q_SLOTS:
 
     void insert_update_delete() const;
 
+    void clear() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
@@ -2434,6 +2436,88 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         // Check also this, must stay the same
         QVERIFY(users.isActive());
         QVERIFY(users.isSelect());
+    }
+}
+
+void tst_SqlQuery_Prepared::clear() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto users = createQuery(connection);
+
+    // First do a prepared select query
+    {
+        const auto query = u"select id, name from users where id <= ? order by id"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(4);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {4});
+
+        ok = users.exec();
+
+        // Check everything what can be checked for this basic query (default configuration)
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 4);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), 4);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        // Verify the result
+        QList<IdAndCustomType<QString>> expected {
+            {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
+        };
+        QList<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (users.next()) {
+            QVERIFY(users.isValid());
+            QVERIFY(!users.isNull(0));
+            QVERIFY(!users.isNull(1));
+            QVERIFY(!users.isNull(ID));
+            QVERIFY(!users.isNull(NAME));
+            // Number of fields
+            const auto &record = users.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(users.value(ID).value<quint64>(),
+                               users.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(users.at(), AfterLastRow);
+    }
+
+    // Verify SqlQuery::clear()
+    {
+        users.clear();
+
+        // Comparing SqlQuery-ies isn't possible so I have to check all possible manually
+
+        QVERIFY(!users.isActive());
+        QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.isEmpty());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.numRowsAffected());
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), QString());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.lastInsertId());
+
+        QVERIFY(users.boundValues().isEmpty());
     }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
