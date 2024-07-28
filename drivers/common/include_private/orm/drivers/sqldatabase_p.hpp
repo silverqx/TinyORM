@@ -87,10 +87,8 @@ namespace Support
         static void throwIfNoConnection(const QString &connection);
 
         /* Data members */
-        /* It's shared_ptr because of the SqlDatabase::driverWeak(),
-           see the SqlQuery::driverWeak() for more details. */
-        /*! Database driver instance. */
-        std::shared_ptr<SqlDriver> sqldriver;
+        /*! Database driver instance, the main instance. */
+        std::shared_ptr<SqlDriver> sqldriver; // Don't make it weak_ptr<>
 
         /* The sqldriver instance also has the same driverName and connectionName data
            members but we need to make local copies here because sqldriver can be
