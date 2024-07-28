@@ -1382,13 +1382,13 @@ const QString &tst_Model_QDateTime::utcTimezoneString(const QString &connection)
 bool
 tst_Model_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
-    auto qtQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
-                              connection);
+    auto sqlQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
+                               connection);
 
-    if (!qtQuery.first())
+    if (!sqlQuery.first())
         return true;
 
-    const auto tzTableRows = qtQuery.value(0);
+    const auto tzTableRows = sqlQuery.value(0);
 
     // If 0 then TZ tables are empty
     return tzTableRows.value<quint64>() == 0;
@@ -1432,11 +1432,11 @@ void tst_Model_QDateTime::setTimezone(
         const QString &timeZone, Orm::QtTimeZoneConfig &&qtTimeZone,
         const QString &connection)
 {
-    const auto qtQuery = DB::unprepared(
-                             getSetTimezoneQueryString(connection).arg(timeZone),
-                             connection);
+    const auto sqlQuery = DB::unprepared(
+                              getSetTimezoneQueryString(connection).arg(timeZone),
+                              connection);
 
-    QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+    QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
 
     DB::setQtTimeZone(std::move(qtTimeZone), connection);
 }

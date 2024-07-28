@@ -229,43 +229,43 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -303,43 +303,43 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -376,42 +376,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-28 13:14:15"));
+        sqlQuery.addBindValue(QString("2022-08-28 13:14:15"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -449,43 +449,43 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -523,43 +523,43 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -596,43 +596,43 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-29 13:14:15"));
+        sqlQuery.addBindValue(QString("2022-08-29 13:14:15"));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -673,43 +673,43 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -748,43 +748,43 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -822,42 +822,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-28 13:14:15"));
+        sqlQuery.addBindValue(QString("2022-08-28 13:14:15"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -896,43 +896,43 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -971,43 +971,43 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
+        sqlQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
 
         // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -1045,42 +1045,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-29 13:14:15"));
+        sqlQuery.addBindValue(QString("2022-08-29 13:14:15"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value(*timestamp);
+        const auto timestampDbVariant = sqlQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -1619,42 +1619,42 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QDate(2022, 8, 28));
+        sqlQuery.addBindValue(QDate(2022, 8, 28));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1677,42 +1677,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-28"));
+        sqlQuery.addBindValue(QString("2022-08-28"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1739,42 +1739,42 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QDate(2022, 8, 28));
+        sqlQuery.addBindValue(QDate(2022, 8, 28));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1799,42 +1799,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QString("2022-08-28"));
+        sqlQuery.addBindValue(QString("2022-08-28"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1998,42 +1998,42 @@ void tst_MySql_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() c
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(QTime(17, 2, 59));
+        sqlQuery.addBindValue(QTime(17, 2, 59));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
@@ -2058,42 +2058,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(QString("17:02:59"));
+        sqlQuery.addBindValue(QString("17:02:59"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
@@ -2122,42 +2122,42 @@ void tst_MySql_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() 
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(QTime(17, 2, 59));
+        sqlQuery.addBindValue(QTime(17, 2, 59));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
@@ -2184,42 +2184,42 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(QString("17:02:59"));
+        sqlQuery.addBindValue(QString("17:02:59"));
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
@@ -2393,42 +2393,42 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QDateTime());
+        sqlQuery.addBindValue(NullVariant::QDateTime());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
@@ -2456,42 +2456,42 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QDate());
+        sqlQuery.addBindValue(NullVariant::QDate());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
@@ -2514,42 +2514,42 @@ void tst_MySql_QDateTime::insert_Qt_QTime_Null_TimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QTime());
+        sqlQuery.addBindValue(NullVariant::QTime());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
@@ -2576,42 +2576,42 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QDateTime());
+        sqlQuery.addBindValue(NullVariant::QDateTime());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value(*datetime);
+        const auto datetimeDbVariant = sqlQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
@@ -2641,42 +2641,42 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QDate());
+        sqlQuery.addBindValue(NullVariant::QDate());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value(*date);
+        const auto dateDbVariant = sqlQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
@@ -2701,42 +2701,42 @@ void tst_MySql_QDateTime::insert_Qt_QTime_Null_TimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare("insert into `datetimes` (`time`) values (?)"));
+        QVERIFY(sqlQuery.prepare("insert into `datetimes` (`time`) values (?)"));
 
-        qtQuery.addBindValue(NullVariant::QTime());
+        sqlQuery.addBindValue(NullVariant::QTime());
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
-        QCOMPARE(qtQuery.numRowsAffected(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.numRowsAffected(), 1);
 
-        lastId = qtQuery.lastInsertId().value<quint64>();
+        lastId = sqlQuery.lastInsertId().value<quint64>();
         QVERIFY(lastId != 0);
     }
 
     // Verify
     {
-        auto qtQuery = createSqlQuery(connection);
+        auto sqlQuery = createSqlQuery(connection);
 
-        QVERIFY(qtQuery.prepare(
+        QVERIFY(sqlQuery.prepare(
                     "select `id`, `time` from `datetimes` where `id` = ?"));
 
-        qtQuery.addBindValue(lastId);
+        sqlQuery.addBindValue(lastId);
 
-        QVERIFY(qtQuery.exec());
+        QVERIFY(sqlQuery.exec());
 
-        QVERIFY(!qtQuery.lastError().isValid());
-        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
-        QCOMPARE(qtQuery.size(), 1);
+        QVERIFY(!sqlQuery.lastError().isValid());
+        QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && sqlQuery.isSelect());
+        QCOMPARE(sqlQuery.size(), 1);
 
-        QVERIFY(qtQuery.first());
+        QVERIFY(sqlQuery.first());
 
-        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+        QCOMPARE(sqlQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timeDbVariant = qtQuery.value(*time_);
+        const auto timeDbVariant = sqlQuery.value(*time_);
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
@@ -3060,10 +3060,10 @@ void tst_MySql_QDateTime::setDontConvertTimezone(const QString &connection)
 void tst_MySql_QDateTime::setTimezone(const QString &connection, const QString &timeZone,
                                       Orm::QtTimeZoneConfig &&qtTimeZone)
 {
-    const auto qtQuery = DB::unprepared(sl("set time_zone=\"%1\";").arg(timeZone),
+    const auto sqlQuery = DB::unprepared(sl("set time_zone=\"%1\";").arg(timeZone),
                                         connection);
 
-    QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+    QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
 
     DB::connection(connection).setQtTimeZone(std::move(qtTimeZone));
 }
@@ -3078,13 +3078,13 @@ const QString &tst_MySql_QDateTime::utcTimezoneString(const QString &connection)
 bool
 tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
-    auto qtQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
+    auto sqlQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
                               connection);
 
-    if (!qtQuery.first())
+    if (!sqlQuery.first())
         return true;
 
-    const auto tzTableRows = qtQuery.value(0);
+    const auto tzTableRows = sqlQuery.value(0);
 
     // If 0 then TZ tables are empty
     return tzTableRows.value<quint64>() == 0;
