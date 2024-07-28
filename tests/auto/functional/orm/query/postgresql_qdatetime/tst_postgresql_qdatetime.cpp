@@ -140,7 +140,7 @@ private:
     /*! Create a QueryBuilder instance for the given connection. */
     [[nodiscard]] inline std::shared_ptr<QueryBuilder> createQuery() const;
     /*! Create a raw QSqlQuery instance for the given connection. */
-    [[nodiscard]] inline TSqlQuery createQtQuery() const;
+    [[nodiscard]] inline TSqlQuery createSqlQuery() const;
 
     /* QDateTime with/without timezone */
     /*! Set the PostgreSQL timezone session variable to the UTC value. */
@@ -200,7 +200,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -218,7 +218,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -270,7 +270,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -290,7 +290,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -340,7 +340,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() co
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -359,7 +359,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() co
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -410,7 +410,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -429,7 +429,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -480,7 +480,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -500,7 +500,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -550,7 +550,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() c
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -569,7 +569,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() c
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -623,7 +623,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -641,7 +641,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -694,7 +694,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -714,7 +714,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -765,7 +765,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() c
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -784,7 +784,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() c
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -836,7 +836,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -855,7 +855,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -907,7 +907,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -927,7 +927,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -978,7 +978,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() 
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -997,7 +997,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() 
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -1518,7 +1518,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1536,7 +1536,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1574,7 +1574,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1592,7 +1592,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1635,7 +1635,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1653,7 +1653,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1693,7 +1693,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1711,7 +1711,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1883,7 +1883,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() c
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -1901,7 +1901,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() c
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -1939,7 +1939,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -1957,7 +1957,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -2000,7 +2000,7 @@ insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -2018,7 +2018,7 @@ insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -2058,7 +2058,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -2076,7 +2076,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -2248,7 +2248,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -2266,7 +2266,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -2309,7 +2309,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() con
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -2327,7 +2327,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() con
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -2365,7 +2365,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_UtcOnServer() con
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -2383,7 +2383,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_UtcOnServer() con
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -2426,7 +2426,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -2444,7 +2444,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -2489,7 +2489,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() co
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -2507,7 +2507,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() co
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -2547,7 +2547,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_0200OnServer() co
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -2565,7 +2565,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_0200OnServer() co
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -2862,7 +2862,7 @@ tst_PostgreSQL_QDateTime::createQuery() const
     return DB::query(m_connection);
 }
 
-TSqlQuery tst_PostgreSQL_QDateTime::createQtQuery() const
+TSqlQuery tst_PostgreSQL_QDateTime::createSqlQuery() const
 {
     return DB::sqlQuery(m_connection);
 }

@@ -133,7 +133,7 @@ private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] inline std::shared_ptr<QueryBuilder> createQuery() const;
     /*! Create a raw QSqlQuery instance for the given connection. */
-    [[nodiscard]] inline TSqlQuery createQtQuery() const;
+    [[nodiscard]] inline TSqlQuery createSqlQuery() const;
 
     /* QDateTime with/without timezone */
     /*! Restore the database after a QDateTime-related test. */
@@ -193,7 +193,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -211,7 +211,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -257,7 +257,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -277,7 +277,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -319,7 +319,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -337,7 +337,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -380,7 +380,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -400,7 +400,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -444,7 +444,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -464,7 +464,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -506,7 +506,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
@@ -524,7 +524,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "timestamp" from "datetimes" where "id" = ?)"));
@@ -996,7 +996,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1014,7 +1014,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1051,7 +1051,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1069,7 +1069,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1234,7 +1234,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -1252,7 +1252,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -1289,7 +1289,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -1307,7 +1307,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -1479,7 +1479,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
@@ -1497,7 +1497,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "datetime" from "datetimes" where "id" = ?)"));
@@ -1540,7 +1540,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
@@ -1558,7 +1558,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "date" from "datetimes" where "id" = ?)"));
@@ -1596,7 +1596,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_Null_TimeColumn() const
 
     // Insert
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
 
@@ -1614,7 +1614,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_Null_TimeColumn() const
 
     // Verify
     {
-        auto qtQuery = createQtQuery();
+        auto qtQuery = createSqlQuery();
 
         QVERIFY(qtQuery.prepare(
                     R"(select "id", "time" from "datetimes" where "id" = ?)"));
@@ -1803,7 +1803,7 @@ tst_SQLite_QDateTime::createQuery() const
     return DB::query(m_connection);
 }
 
-TSqlQuery tst_SQLite_QDateTime::createQtQuery() const
+TSqlQuery tst_SQLite_QDateTime::createSqlQuery() const
 {
     return DB::sqlQuery(m_connection);
 }
