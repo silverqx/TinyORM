@@ -163,23 +163,23 @@ namespace Support::Stores
 
         switch (storeType) {
         case RelationStoreType::EAGER:
-            static_cast<EagerRelationStore<Derived> *>(this)->visited(method);
+            static_cast<EagerRelationStore<Derived> &>(*this).visited(method);
             break;
 
         case RelationStoreType::EAGER_POINTERS:
-            static_cast<EagerRelationStore<Derived *> *>(this)->visited(method);
+            static_cast<EagerRelationStore<Derived *> &>(*this).visited(method);
             break;
 
         case RelationStoreType::TOUCH_OWNERS:
-            static_cast<TouchOwnersRelationStore *>(this)->visited(method);
+            static_cast<TouchOwnersRelationStore &>(*this).visited(method);
             break;
 
         case RelationStoreType::PUSH:
-            static_cast<PushRelationStore *>(this)->visited(method);
+            static_cast<PushRelationStore &>(*this).visited(method);
             break;
 
         case RelationStoreType::BELONGSTOMANY_RELATED_TABLE:
-            static_cast<BelongsToManyRelatedTableStore *>(this)->visited(method);
+            static_cast<BelongsToManyRelatedTableStore &>(*this).visited(method);
             break;
 
         case RelationStoreType::LAZY_RESULTS:
@@ -194,27 +194,28 @@ namespace Support::Stores
 
             switch (storeType) {
             case RelationStoreType::LAZY_RESULTS:
-                static_cast<LazyRelationStore<Related> *>(this)->visited(method);
+                static_cast<LazyRelationStore<Related> &>(*this).visited(method);
                 break;
 
             case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
             case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
-                static_cast<QueriesRelationshipsStore<void> *>(this)
-                        ->template visited<Related>(method);
+                static_cast<QueriesRelationshipsStore<void> &>(*this)
+                        .template visited<Related>(method);
                 break;
 
             case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
-                static_cast<QueriesRelationshipsStore<Related> *>(this)
-                        ->template visited<Related>(method);
+                static_cast<QueriesRelationshipsStore<Related> &>(*this)
+                        .template visited<Related>(method);
                 break;
 
             case RelationStoreType::RELATION_TO_MAP:
-                static_cast<SerializeRelationStore<QVariantMap> *>(this)->visited(method);
+                static_cast<SerializeRelationStore<QVariantMap> &>(*this)
+                        .visited(method);
                 break;
 
             case RelationStoreType::RELATION_TO_VECTOR:
-                static_cast<SerializeRelationStore<QList<AttributeItem>> *>(this)
-                        ->visited(method);
+                static_cast<SerializeRelationStore<QList<AttributeItem>> &>(*this)
+                        .visited(method);
                 break;
 
             default:
