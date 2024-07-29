@@ -23,9 +23,9 @@ namespace Orm::Drivers::Support
         constexpr explicit operator bool() const noexcept;
 
         /*! Retrieve a SqlRecord from the cache. */
-        constexpr SqlRecord &get() noexcept;
+        constexpr SqlRecord &get();
         /*! Retrieve a SqlRecord from the cache, const version. */
-        constexpr const SqlRecord &get() const noexcept;
+        constexpr const SqlRecord &get() const;
 
         /*! Retrieve a SqlRecord from the cache. */
         constexpr SqlRecord &operator*() noexcept;
@@ -53,12 +53,12 @@ namespace Orm::Drivers::Support
         return cache.has_value();
     }
 
-    constexpr SqlRecord &SqlRecordCachePrivate::get() noexcept
+    constexpr SqlRecord &SqlRecordCachePrivate::get()
     {
         return cache.value();
     }
 
-    constexpr const SqlRecord &SqlRecordCachePrivate::get() const noexcept
+    constexpr const SqlRecord &SqlRecordCachePrivate::get() const
     {
         return cache.value();
     }
