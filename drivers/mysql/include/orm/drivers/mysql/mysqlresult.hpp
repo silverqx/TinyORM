@@ -23,7 +23,7 @@ namespace Orm::Drivers::MySql
 
     public:
         /*! Constructor. */
-        explicit MySqlResult(const std::weak_ptr<MySqlDriver> &driver);
+        explicit MySqlResult(const std::weak_ptr<SqlDriver> &driver);
         /*! Virtual destructor. */
         ~MySqlResult() noexcept final;
 

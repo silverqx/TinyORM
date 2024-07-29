@@ -29,6 +29,10 @@ MySqlDriver::MySqlDriver()
     : SqlDriver(std::make_unique<MySqlDriverPrivate>())
 {}
 
+/* Can' be inline because of the TinyMySql loadable module, to destroy the MySqlDriver
+   instance from the same DLL where it was initially instantiated. */
+MySqlDriver::~MySqlDriver() = default;
+
 bool MySqlDriver::open(
         const QString &database, const QString &username, const QString &password,
         const QString &host, const int port, const QString &options)
@@ -226,7 +230,8 @@ std::unique_ptr<SqlResult> MySqlDriver::createResult() const
     /* We must use the const_cast<> as the weak_from_this() return type is controlled
        by the current method const-nes, what means it's only our implementation detail
        that we have to use the const_cast<> as we can't control this. Also, it's better
-       to have the same const-nes for the createResult() as defined in the QtSql. */
+       to have the same const-nes for the createResult() as defined in the QtSql.
+       See NOTES.txt[std::enable_shared_from_this<SqlDriver>] for more info. */
     return std::make_unique<MySqlResult>(
                 const_cast<MySqlDriver &>(*this).weak_from_this()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 }

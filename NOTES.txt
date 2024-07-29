@@ -2444,6 +2444,53 @@ which means all the SqlDatabase connection copies and all SqlQuery-ies stop work
 This is all about how this is designed.
 
 
+std::weak_ptr<SqlDriver> - SqlDriver vs MySqlDriver
+---------------------------------------------------
+tags: std::enable_shared_from_this<SqlDriver>
+---
+
+The std::enable_shared_from_this<SqlDriver> must be defined as the base class on the SqlDriver
+class because the SqlDriver * is returned from the SqlDriver *TinyDriverInstance() in the main.cpp.
+The reason why it's so or like this is
+the - return std::shared_ptr<SqlDriver>(std::invoke(createDriverMemFn))
+in the std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::createSqlDriverLoadable()
+in the sqldriverfactory_p.cpp to be able to correctly populate
+the std::enable_shared_from_this<SqlDriver>::_Wptr.
+
+If the std::enable_shared_from_this<MySqlDriver> is used and defined as the base class
+on the MySqlDriver class, then the
+return std::shared_ptr<SqlDriver>(std::invoke(createDriverMemFn)) will not initialize
+the std::enable_shared_from_this<MySqlDriver>::_Wptr correctly because of
+the _Can_enable_shared<_Ux> constexpr check
+in the template <class _Ux> void shared_ptr<_Ux>::_Set_ptr_rep_and_enable_shared(),
+which means the std::is_convertible_v<_Yty *, _Yty::_Esft_type *> aka
+std::is_convertible_v<SqlDriver *, std::enable_shared_from_this<MySqlDriver> *> will be false.
+
+I spent almost whole day on this trying solve it as I wanted to define it on the MySqlDriver and
+also wanted to pass the result of the const_cast<MySqlDriver &>(*this).weak_from_this()
+in MySqlDriver::createResult() as the std::weak_ptr<MySqlDriver> instead of
+the std::weak_ptr<SqlDriver>, but IT'S NOT possible.
+
+Because of that also the Q_ASSERT(std::dynamic_pointer_cast<MySqlDriver>(driver.lock()));
+check exists in the MySqlResult::MySqlResult() constructor and also this constructor
+has the std::weak_ptr<SqlDriver> parameter instead of the std::weak_ptr<MySqlDriver>.
+I wanted to have it std::weak_ptr<MySqlDriver> to check the type at compile time, but again
+IT'S NOT possible.
+
+Summary: All of this is not possible because we must return std::shared_ptr<SqlDriver>()
+in the SqlDriverFactoryPrivate::createSqlDriverLoadable() as the SqlDriverFactoryPrivate
+doesn't have access to the TinyMySql LOADABLE DLL library what means TinyDrivers doesn't
+and can't link against the TinyMySql LOADABLE DLL library, so it knows nothing about
+the MySqlDriver type! It only can load it at runtime using LoadLibrary()/dlopen() and will
+have access to the SqlDriver interface through a pointer. 😮😮😮😰
+
+Also, the MySqlDriver::~MySqlDriver() can' be inline because of the TinyMySql loadable module,
+to destroy the MySqlDriver instance from the same DLL where it was initially instantiated.
+It would also work as the inline method, but it could make problems if eg. TinyDrivers DLL
+and TinyMySql DLL would be compiled with different compiler versions, or in some edge cases
+when the memory manager would be different for both DLL libraries.
+
+
 MySQL C connector - invoked functions:
 --------------------------------------
 

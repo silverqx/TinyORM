@@ -24,7 +24,8 @@ namespace Orm::Drivers
     class SqlResult;
 
     /*! Database driver abstract class. */
-    class TINYDRIVERS_EXPORT SqlDriver : public Concerns::SelectsAllColumnsWithLimit0
+    class TINYDRIVERS_EXPORT SqlDriver : public Concerns::SelectsAllColumnsWithLimit0,
+                                         public std::enable_shared_from_this<SqlDriver> // See NOTES.txt[std::enable_shared_from_this<SqlDriver>]
     {
         Q_DISABLE_COPY_MOVE(SqlDriver)
         Q_DECLARE_PRIVATE(SqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)

@@ -237,6 +237,7 @@ SqlDriverFactoryPrivate::createSqlDriverLoadable(const QString &driverBasenameRa
     // This should never happen :/, it's checked earlier in loadSqlDriverCommon()
     Q_ASSERT(createDriverMemFn);
 
+    // See NOTES.txt[std::enable_shared_from_this<SqlDriver>] for more info
     return std::shared_ptr<SqlDriver>(std::invoke(createDriverMemFn));
 }
 

@@ -20,9 +20,13 @@ namespace Orm::Drivers::MySql
 
 /* public */
 
-MySqlResult::MySqlResult(const std::weak_ptr<MySqlDriver> &driver)
+MySqlResult::MySqlResult(const std::weak_ptr<SqlDriver> &driver)
     : SqlResult(std::make_unique<MySqlResultPrivate>(driver))
-{}
+{
+    /* Check an empty shared_ptr<> using the std::shared_ptr<T>::operator bool().
+       See NOTES.txt[std::enable_shared_from_this<SqlDriver>] for more info. */
+    Q_ASSERT(std::dynamic_pointer_cast<MySqlDriver>(driver.lock()));
+}
 
 MySqlResult::~MySqlResult() noexcept
 {

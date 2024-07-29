@@ -16,9 +16,7 @@ namespace Orm::Drivers::MySql
     class MySqlResultPrivate;
 
     /*! MySQL database driver. */
-    class TINYDRIVERS_EXPORT MySqlDriver final :
-            public SqlDriver,
-            public std::enable_shared_from_this<MySqlDriver>
+    class TINYDRIVERS_EXPORT MySqlDriver final : public SqlDriver
     {
         Q_DISABLE_COPY_MOVE(MySqlDriver)
         Q_DECLARE_PRIVATE(MySqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -32,7 +30,7 @@ namespace Orm::Drivers::MySql
         /*! Default constructor. */
         MySqlDriver();
         /*! Virtual destructor. */
-        ~MySqlDriver() final = default;
+        ~MySqlDriver() final;
 
         /*! Open the database connection using the given values. */
         bool open(const QString &database, const QString &username,
