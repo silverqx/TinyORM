@@ -53,6 +53,7 @@ namespace Orm::Drivers::Support
 {
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+// FUTURE drivers I think the std::function_ref<> would/will be perfect for this, but it's since C++26 silverqx
 /*! SQL loadable drivers' factory methods hash type. */
 using DriverLoadedHashType = std::unordered_map<QString, std::function<SqlDriver *()>>;
 /*! SQL loadable drivers' factory methods hash (used to check if driver is loaded too). */
