@@ -52,7 +52,7 @@ void PopulatesFieldDefaultValuesPrivate::populateFieldDefaultValuesInternal(
     // Table name from the field 0 is guaranteed
     sqlQuery.addBindValue(record.field(0).tableName());
     // Bind all field names
-    if (!allColumns)
+    if (!allColumns && fieldNames) // fieldNames check to suppress Clang Tidy
         for (const auto &fieldName : *fieldNames)
             sqlQuery.addBindValue(fieldName); // Don't move because QVariant(fieldName)
 
