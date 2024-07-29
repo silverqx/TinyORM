@@ -397,7 +397,7 @@ namespace Orm::Tiny
         /* If we actually found models we will also eager load any relationships that
            have been specified as needing to be eager loaded, which will solve the
            n+1 query issue for the developers to avoid running a lot of queries. */
-        if (models.size() > 0)
+        if (!models.isEmpty())
             /* 'models' are passed down as the reference and relations are set on models
                at the end of the call tree, no need to return models. */
             eagerLoadRelations(models);

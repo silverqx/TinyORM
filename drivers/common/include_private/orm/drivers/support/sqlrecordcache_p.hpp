@@ -55,12 +55,12 @@ namespace Orm::Drivers::Support
 
     constexpr SqlRecord &SqlRecordCachePrivate::get() noexcept
     {
-        return *cache;
+        return cache.value();
     }
 
     constexpr const SqlRecord &SqlRecordCachePrivate::get() const noexcept
     {
-        return *cache;
+        return cache.value();
     }
 
     constexpr SqlRecord &SqlRecordCachePrivate::operator*() noexcept

@@ -27,7 +27,6 @@ using Orm::DB;
 using Orm::Exceptions::MultipleColumnsSelectedError;
 using Orm::MySqlConnection;
 using Orm::QtTimeZoneConfig;
-using Orm::QtTimeZoneType;
 
 using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;

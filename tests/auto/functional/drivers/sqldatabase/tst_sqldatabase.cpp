@@ -15,7 +15,6 @@ using Orm::Constants::ID;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 
-using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlRecord;
 
 using Orm::Utils::NullVariant;
