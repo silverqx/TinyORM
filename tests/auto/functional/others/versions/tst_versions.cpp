@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QStringBuilder>
 #include <QTest>
 
 #if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
