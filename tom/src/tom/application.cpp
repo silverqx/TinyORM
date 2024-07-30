@@ -451,7 +451,9 @@ void Application::printFullVersions() const
     note(QStringLiteral("tom "), false);
     info(TINYTOM_VERSION_STR);
 
-    for (const auto &[subsectionName, abouts] : createVersionsSubsection()) {
+    for (const auto versionsSubsection = createVersionsSubsection();
+         const auto &[subsectionName, abouts] : versionsSubsection
+    ) {
         // Subsection name is optional
         if (subsectionName) {
             newLine();

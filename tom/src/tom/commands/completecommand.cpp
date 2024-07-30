@@ -543,7 +543,7 @@ int CompleteCommand::printGuessedLongOptions(
         if (option.hidden())
             continue;
 
-        for (const auto &optionName : optionNames)
+        for (const auto &optionName : std::as_const(optionNames))
             if (optionName.size() > 1 &&
                 (printAll || optionName.startsWith(wordToGuess))
             ) {

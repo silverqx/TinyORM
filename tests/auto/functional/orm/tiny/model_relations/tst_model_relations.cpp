@@ -2767,7 +2767,7 @@ void tst_Model_Relations::upsert() const
         QList<QList<QVariant>> result;
         result.reserve(tagPropertiesSize);
 
-        for (const auto &tagProperty : tagProperties)
+        for (const auto &tagProperty : std::as_const(tagProperties))
             result.append({tagProperty.getAttribute("color"),
                            tagProperty.getAttribute("position"),
                            tagProperty.getAttribute("tag_id")});

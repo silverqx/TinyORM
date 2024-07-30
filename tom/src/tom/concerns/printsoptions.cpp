@@ -55,7 +55,7 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
 {
     QStringList options;
 
-    for (auto names = option.names();
+    for (const auto names = option.names();
          const auto &name : names
     )
         // Short option

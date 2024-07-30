@@ -514,7 +514,7 @@ void tst_Model::all() const
         {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
         {5, "test5"}, {6, "test6"}, {7, "test7"},
     };
-    for (const auto &torrent : torrents) {
+    for (const auto &torrent : std::as_const(torrents)) {
         const auto torrentId = torrent[ID].value<quint64>();
 
         QVERIFY(expectedIdNames.contains(torrentId));
@@ -600,7 +600,7 @@ void tst_Model::where() const
         QCOMPARE(torrents.size(), 5);
 
         const QList<QVariant> expectedIds {3, 4, 5, 6, 7};
-        for (const auto &torrent : torrents)
+        for (const auto &torrent : std::as_const(torrents))
             QVERIFY(expectedIds.contains(torrent.getKey()));
     }
 }
@@ -651,7 +651,7 @@ void tst_Model::where_WithVector() const
         const std::unordered_map<quint64, QString> expectedIdNames {
             {3, "test3"}, {4, "test4"}, {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
-        for (const auto &torrent : torrents) {
+        for (const auto &torrent : std::as_const(torrents)) {
             const auto torrentId = torrent[ID].value<quint64>();
 
             QVERIFY(expectedIdNames.contains(torrentId));
@@ -676,7 +676,7 @@ void tst_Model::where_WithVector_Condition() const
         QCOMPARE(torrents.size(), 2);
 
         const QList<QVariant> expectedIds {3, 4};
-        for (const auto &torrent : torrents)
+        for (const auto &torrent : std::as_const(torrents))
             QVERIFY(expectedIds.contains(torrent[ID]));
     }
     {
@@ -850,7 +850,7 @@ void tst_Model::findMany() const
 
     const std::unordered_set<quint64> expectedIds {2, 3, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent[ID].template value<quint64>()));
 }
 
@@ -1608,7 +1608,7 @@ void tst_Model::upsert() const
         QList<QList<QVariant>> result;
         result.reserve(tagPropertiesSize);
 
-        for (const auto &tagProperty : tagProperties)
+        for (const auto &tagProperty : std::as_const(tagProperties))
             result.append({tagProperty.getAttribute("color"),
                            tagProperty.getAttribute("position"),
                            tagProperty.getAttribute("tag_id")});

@@ -140,7 +140,7 @@ void tst_SoftDeletes::withoutTrashed_Default() const
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
-    for (const auto &user : users)
+    for (const auto &user : std::as_const(users))
         actualIds << user.getKeyCasted();
 
     QCOMPARE(actualIds, expectedIds);
@@ -157,7 +157,7 @@ void tst_SoftDeletes::withoutTrashed_Explicit() const
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
-    for (const auto &user : users)
+    for (const auto &user : std::as_const(users))
         actualIds << user.getKeyCasted();
 
     QCOMPARE(actualIds, expectedIds);
@@ -174,7 +174,7 @@ void tst_SoftDeletes::withTrashed() const
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(5));
 
-    for (const auto &user : users)
+    for (const auto &user : std::as_const(users))
         actualIds << user.getKeyCasted();
 
     QCOMPARE(actualIds, expectedIds);
@@ -191,7 +191,7 @@ void tst_SoftDeletes::withTrashed_False() const
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
-    for (const auto &user : users)
+    for (const auto &user : std::as_const(users))
         actualIds << user.getKeyCasted();
 
     QCOMPARE(actualIds, expectedIds);
@@ -208,7 +208,7 @@ void tst_SoftDeletes::onlyTrashed() const
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
-    for (const auto &user : users)
+    for (const auto &user : std::as_const(users))
         actualIds << user.getKeyCasted();
 
     QCOMPARE(actualIds, expectedIds);
@@ -341,7 +341,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -377,7 +377,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
             QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
@@ -415,7 +415,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
             QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
@@ -460,7 +460,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -554,7 +554,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -590,7 +590,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
             QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
@@ -635,7 +635,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -753,7 +753,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
             QList<quint64> actualIds;
             actualIds.reserve(expectedIds.size());
 
-            for (const auto &user : users) {
+            for (const auto &user : std::as_const(users)) {
                 QVERIFY(user.exists);
                 QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
                 QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
@@ -792,7 +792,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
             QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
@@ -837,7 +837,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -934,7 +934,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -970,7 +970,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
             QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
@@ -1015,7 +1015,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),
@@ -1128,7 +1128,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
             QList<quint64> actualIds;
             actualIds.reserve(expectedIds.size());
 
-            for (const auto &user : users) {
+            for (const auto &user : std::as_const(users)) {
                 QVERIFY(user.exists);
                 QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
                 QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
@@ -1167,7 +1167,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         QList<quint64> actualIds;
         actualIds.reserve(expectedIds.size());
 
-        for (const auto &user : users) {
+        for (const auto &user : std::as_const(users)) {
             QVERIFY(user.exists);
             QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
             QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
@@ -1212,7 +1212,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         QList<UserType> actualValues;
         actualValues.reserve(expectedValues.size());
 
-        for (const auto &user : users)
+        for (const auto &user : std::as_const(users))
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
                                  user.getAttribute<QDateTime>(UPDATED_AT),

@@ -2800,7 +2800,7 @@ void tst_Collection_Relations::fresh_QString() const
 
     ModelsCollection<AlbumImage *>::size_type index = 0;
 
-    for (const auto &image : imagesFresh) {
+    for (const auto &image : std::as_const(imagesFresh)) {
         QVERIFY(image.exists);
         // The images here is correct
         QVERIFY(&images[index] != &image);
@@ -2858,7 +2858,7 @@ void tst_Collection_Relations::fresh_EmptyRelations() const
 
     ModelsCollection<AlbumImage *>::size_type index = 0;
 
-    for (const auto &image : imagesFresh) {
+    for (const auto &image : std::as_const(imagesFresh)) {
         QVERIFY(image.exists);
         // The images here is correct
         QVERIFY(&images[index] != &image);

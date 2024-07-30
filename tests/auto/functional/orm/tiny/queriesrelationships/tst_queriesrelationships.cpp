@@ -81,7 +81,7 @@ void tst_QueriesRelationships::has_Basic_QString_OnHasMany() const
 
     const QList<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -107,7 +107,7 @@ void tst_QueriesRelationships::has_Basic_UniquePtr_OnHasMany() const
 
     const QList<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -122,7 +122,7 @@ void tst_QueriesRelationships::has_Basic_MethodPointer_OnHasMany() const
 
     const QList<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -137,7 +137,7 @@ void tst_QueriesRelationships::has_Count_QString_OnHasMany() const
 
     const QList<QVariant> expectedIds {2, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -164,7 +164,7 @@ void tst_QueriesRelationships::has_Count_UniquePtr_OnHasMany() const
 
     const QList<QVariant> expectedIds {2, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -179,7 +179,7 @@ void tst_QueriesRelationships::has_Count_MethodPointer_OnHasMany() const
 
     const QList<QVariant> expectedIds {2, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -199,7 +199,7 @@ void tst_QueriesRelationships::whereHas_Basic_QString_QueryBuilder_OnHasMany() c
 
     const QList<QVariant> expectedIds {2, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -221,7 +221,7 @@ void tst_QueriesRelationships::whereHas_Basic_QString_TinyBuilder_OnHasMany() co
 
     const QList<QVariant> expectedIds {2, 5, 7};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -241,7 +241,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_QueryBuilder_OnHasMany() c
 
     const QList<QVariant> expectedIds {2, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -263,7 +263,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_TinyBuilder_OnHasMany() co
 
     const QList<QVariant> expectedIds {2, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -285,7 +285,7 @@ void tst_QueriesRelationships::whereHas_Count_MethodPointer_TinyBuilder_OnHasMan
 
     const QList<QVariant> expectedIds {2, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -301,7 +301,7 @@ void tst_QueriesRelationships::hasNested_Basic_OnHasMany() const
 
     const QList<QVariant> expectedIds {2, 3, 4, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -317,7 +317,7 @@ void tst_QueriesRelationships::hasNested_Count_OnHasMany() const
 
     const QList<QVariant> expectedIds {3, 5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 
@@ -340,7 +340,7 @@ void tst_QueriesRelationships::hasNested_Count_TinyBuilder_OnHasMany() const
 
     const QList<QVariant> expectedIds {5};
 
-    for (const auto &torrent : torrents)
+    for (const auto &torrent : std::as_const(torrents))
         QVERIFY(expectedIds.contains(torrent.getKey()));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
