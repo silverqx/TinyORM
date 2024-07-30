@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #include "orm/databasemanager.hpp"
 #include "orm/postgresconnection.hpp"

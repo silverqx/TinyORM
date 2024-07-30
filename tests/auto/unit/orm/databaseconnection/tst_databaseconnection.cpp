@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlRecord

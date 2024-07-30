@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 #  include <qt_windows.h>

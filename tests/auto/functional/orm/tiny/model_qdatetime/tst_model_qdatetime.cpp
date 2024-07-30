@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #ifdef TINYDRIVERS_MYSQL_DRIVER
 #  include "orm/drivers/mysql/version.hpp"

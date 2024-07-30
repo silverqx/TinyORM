@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #ifdef TINYORM_USING_TINYDRIVERS
 #  include "orm/exceptions/runtimeerror.hpp"

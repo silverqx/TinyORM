@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #include "orm/drivers/exceptions/logicerror.hpp"
 #include "orm/drivers/sqlquery.hpp"

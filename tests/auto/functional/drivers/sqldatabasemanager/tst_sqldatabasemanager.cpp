@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 /* We need to include MySQL or MariaDB mysql.h to find out whether we are linking against
    the MySQL or MariaDB client library, metadata-related unit tests need this to work

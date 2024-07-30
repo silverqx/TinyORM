@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <QtTest>
+#include <QTest>
 
 #include "orm/db.hpp"
 #include "orm/exceptions/logicerror.hpp"
