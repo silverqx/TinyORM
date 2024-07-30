@@ -55,22 +55,22 @@ namespace Orm::Drivers::Support
 
     constexpr SqlRecord &SqlRecordCachePrivate::get()
     {
-        return cache.value();
+        return cache.value(); // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr const SqlRecord &SqlRecordCachePrivate::get() const
     {
-        return cache.value();
+        return cache.value(); // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr SqlRecord &SqlRecordCachePrivate::operator*() noexcept
     {
-        return *cache;
+        return *cache; // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr const SqlRecord &SqlRecordCachePrivate::operator*() const noexcept
     {
-        return *cache;
+        return *cache; // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr SqlRecord &
