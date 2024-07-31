@@ -5,10 +5,6 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QVariant>
-
-#include <tabulate/table.hpp>
-
 #ifdef TINYTOM_TESTS_CODE
 #  include <orm/macros/threadlocal.hpp>
 #endif
