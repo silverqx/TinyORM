@@ -3250,6 +3250,21 @@ TinyORM confusions:
      rvalue reference only so &&bindings better describes whats up at the cost of NOLINT()
      Clang Tidy suppression
 
+ - NotNull
+   - get() and operator->() returns by value if the T is is_trivially_copy_constructible_v<> and
+     sizeof (T) is less then 2 * sizeof (void *) (<16 bytes on x64 platforms)
+   - operator*() also dereferences the underlying type eg. std::shared_ptr<>
+   - ❗be very careful with the operator T() as it always returns a copy even if the get() method
+     returns the reference
+     - this is true if passing the NotNull<> instance directly to some method without calling
+       the get() method on this instance eg. xyz where xyz is eg.: NotNot<X> xyz; AND the method
+       has the const T & or T & parameter (in this case this converting operator kicks in)
+     - the same is also true for return values like const T & or T &
+     - ❗so be very careful if passing NotNull<> instance directly without calling the get()
+       method or the operator*() on it
+     - I examined all these cases with the NotNull<std::shared_ptr<Xyz>> which is normally returned
+       as a reference type
+
 
 tools/deploy.ps1:
 -----------------
