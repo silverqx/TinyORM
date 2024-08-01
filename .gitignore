@@ -70,6 +70,8 @@ Thumbs.db
 
 # Jetbrains generated files
 .idea/
+# CLion
+cmake-build-*/
 
 # Visual Studio Code
 .vscode/
