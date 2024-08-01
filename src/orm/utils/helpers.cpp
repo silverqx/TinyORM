@@ -83,6 +83,7 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
             typeId == QMetaType::fromType<QTimeZone::Initialization>().id()
         )
             return datetime.toTimeZone(timezoneValue.value<QTimeZone::Initialization>());
+
         else if (typeId == QMetaType::fromType<QTimeZone>().id())
 #endif
             return datetime.toTimeZone(timezoneValue.value<QTimeZone>());

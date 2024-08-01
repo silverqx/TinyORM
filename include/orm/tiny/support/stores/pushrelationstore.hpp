@@ -20,6 +20,7 @@ namespace Orm::Tiny::Support::Stores
 
         // To access result(), setResult(), and models()
         friend Concerns::HasRelationships<Derived, AllRelations...>;
+
         /*! Alias for the NotNull. */
         template<typename T>
         using NotNull = Orm::Utils::NotNull<T>;
