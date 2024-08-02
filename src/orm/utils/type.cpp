@@ -147,8 +147,8 @@ namespace
                         "A memory allocation failure occurred in abi::__cxa_demangle().");
         case -2:
             throw RuntimeError(
-                        "mangled_name argument for abi::__cxa_demangle() is not a valid "
-                        "name under the C++ ABI mangling rules.");
+                        "The mangled_name argument for abi::__cxa_demangle() is not "
+                        "a valid name under the C++ ABI mangling rules.");
         case -3:
             throw RuntimeError(
                         "One of the arguments for abi::__cxa_demangle() is invalid.");
