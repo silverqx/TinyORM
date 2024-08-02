@@ -418,11 +418,11 @@ QString Application::getCommandName(const QString &name, const CommandNotFound n
             showCommandsList(EXIT_FAILURE);
 
         T_UNLIKELY
-        case ShowErrorWall: {
+        case ShowErrorWall:
             errorWall(QStringLiteral("Command '%1' is not defined.").arg(name));
 
             exitApplication(EXIT_FAILURE);
-        }
+
         default:
             Q_UNREACHABLE();
         }
