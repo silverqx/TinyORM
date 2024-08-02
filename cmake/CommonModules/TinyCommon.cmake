@@ -157,8 +157,13 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 /Zc:preprocessor
                 /external:anglebrackets /external:W0
                 # Enable and check it from time to time
-#                /external:templates-
+                # /external:templates-
                 /wd4702
+                # Enable only when needed to invoke the MSVC Analyzer
+                # Also, add external libraries on the CAExcludePath environment variables as
+                # the /analyze:external- doesn't work in all cases (for me)
+                # /analyze
+                # /analyze:external-
             )
 
             # TODO cmake this will not work with clang-cl problem is that CMAKE_CXX_SIMULATE_VERSION reports only short version like 19.40, so I can't fix it easily silverqx
