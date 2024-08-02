@@ -69,7 +69,7 @@ namespace Private
                                           : groupSeparatorDiv.quot;
     }
 
-    /*! Format the given integer number (insert group seperator before every 3th
+    /*! Format the given integer number (insert group separator before every 3th
         number). */
     template<IngeralNoBoolChar T>
     QString formatNumber(const T integer, QChar groupSeparator = Constants::SQUOTE)
@@ -99,7 +99,7 @@ namespace Private
         for (auto itNumber = number.crbegin(); itNumber != number.crend();
              ++itNumber, ++groupIndex
         ) {
-            /* Preprend group separator before every 3th number, the hasSign check
+            /* Prepend group separator before every 3th number, the hasSign check
                prevents case like this: -'123'456. */
             if (groupIndex == groupWidth &&
                 (!hasSign || (hasSign && itNumber != itNumberPenultimate))
