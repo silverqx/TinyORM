@@ -88,6 +88,7 @@ namespace Private
             return m_ptr;
         }
 
+        /*! Converting operator to the T (use carefully as it always returns a copy!). */
         constexpr operator T() const { return get(); } // NOLINT(google-explicit-constructor)
         constexpr decltype (auto) operator->() const { return get(); }
         constexpr decltype (auto) operator*() const { return *get(); }
@@ -181,17 +182,15 @@ namespace Private
 
 TINYORM_END_COMMON_NAMESPACE
 
-namespace std
+/*! The std::hash partial specialization for the Orm::Utils::NotNull<T>. */
+template<typename T>
+struct std::hash<Orm::Utils::NotNull<T>>
 {
-    template<typename T>
-    struct hash<Orm::Utils::NotNull<T>>
+    /*! Generate hash for the given Orm::Utils::NotNull<T>. */
+    std::size_t operator()(const Orm::Utils::NotNull<T> &value) const
     {
-        std::size_t operator()(const Orm::Utils::NotNull<T> &value) const
-        {
-            return hash<T>()(value.get());
-        }
-    };
-
-} // namespace std
+        return std::hash<T>()(value.get());
+    }
+};
 
 #endif // ORM_UTILS_NOTNULL_HPP

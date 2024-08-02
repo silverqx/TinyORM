@@ -88,6 +88,7 @@ namespace Private
             return m_ptr;
         }
 
+        /*! Converting operator to the T (use carefully as it always returns a copy!). */
         constexpr operator T() const { return get(); } // NOLINT(google-explicit-constructor)
         constexpr decltype (auto) operator->() const { return get(); }
         constexpr decltype (auto) operator*() const { return *get(); }
@@ -116,9 +117,7 @@ namespace Private
     template<typename T>
     auto makeNotNull(T &&t) noexcept
     {
-        using NotNullType = std::remove_cv_t<std::remove_reference_t<T>>;
-
-        return NotNull<NotNullType>(std::forward<T>(t));
+        return NotNull<std::remove_cvref_t<T>>(std::forward<T>(t));
     }
 
     template<typename T, typename U>
@@ -180,6 +179,17 @@ namespace Private
     NotNull<T> operator+(std::ptrdiff_t, const NotNull<T> &) = delete;
 
 } // namespace Orm::Drivers::Utils
+
+/*! The std::hash partial specialization for the Orm::Drivers::Utils::NotNull<T>. */
+template<typename T>
+struct std::hash<Orm::Drivers::Utils::NotNull<T>>
+{
+    /*! Generate hash for the given Orm::Drivers::Utils::NotNull<T>. */
+    std::size_t operator()(const Orm::Drivers::Utils::NotNull<T> &value) const
+    {
+        return std::hash<T>()(value.get());
+    }
+};
 
 TINYORM_END_COMMON_NAMESPACE
 
