@@ -1682,7 +1682,7 @@ namespace Orm::Tiny::Concerns
            asDate, and asTimestamp methods. */
         Q_ASSERT_X(!value.isNull(),
                    "HasAttributes::asDateTime",
-                   "null values must be handled outside of the asDateTime, asDate, "
+                   "Null values must be handled outside of the asDateTime, asDate, "
                    "and asTimestamp methods.");
 
         /* If this value is already a QDateTime instance, we shall just return it as is.
