@@ -4,6 +4,10 @@
 
 #include "tom/commands/make/modelcommand.hpp"
 
+#ifndef TINYTOM_DEBUG
+#  include "tom/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Tom::Constants::belongs_to;
@@ -123,7 +127,12 @@ void PrepareForeignKeyValues::insertEmptyForeignKeyValue()
         m_preparedValues.belongsToMany.emplace_back();
 #endif
     else
+#ifndef TINYTOM_DEBUG
+        throw Exceptions::RuntimeError(
+                    QStringLiteral("Unexpected value for m_currentRelation."));
+#else
         Q_UNREACHABLE();
+#endif
 }
 
 void PrepareForeignKeyValues::insertForeignKeyValue()
@@ -144,7 +153,12 @@ void PrepareForeignKeyValues::insertForeignKeyValue()
         insertForeignKeyValueBtm();
 
     else
+#ifndef TINYTOM_DEBUG
+        throw Exceptions::RuntimeError(
+                    QStringLiteral("Unexpected value for m_currentRelation."));
+#else
         Q_UNREACHABLE();
+#endif
 }
 
 void PrepareForeignKeyValues::insertForeignKeyValueBtm()

@@ -1425,12 +1425,19 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
 
     for (const auto property : properties)
         switch (property) { // NOLINT(hicpp-multiway-paths-covered)
+        T_LIKELY
         case PropertyType::COLUMNS:
             copy.m_columns.clear();
             break;
 
+        T_UNLIKELY
         default:
+#ifndef TINYORM_DEBUG
+            throw Exceptions::RuntimeError(
+                        QStringLiteral("Unexpected value for enum struct PropertyType."));
+#else
             Q_UNREACHABLE();
+#endif
         }
 
     return copy;
@@ -1443,12 +1450,19 @@ Builder Builder::cloneWithoutBindings(
 
     for (const auto bindingType : except)
         switch (bindingType) { // NOLINT(hicpp-multiway-paths-covered)
+        T_LIKELY
         case BindingType::SELECT:
             copy.m_bindings[BindingType::SELECT].clear();
             break;
 
+        T_UNLIKELY
         default:
+#ifndef TINYORM_DEBUG
+            throw Exceptions::RuntimeError(
+                        QStringLiteral("Unexpected value for enum struct BindingType."));
+#else
             Q_UNREACHABLE();
+#endif
         }
 
     return copy;

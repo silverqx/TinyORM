@@ -1,6 +1,8 @@
 #include "orm/query/grammars/sqlitegrammar.hpp"
 
-#include "orm/query/querybuilder.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/query/querybuilder.hpp" // IWYU pragma: keep
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -239,7 +241,9 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
                 .arg(type, wrap(where.column));
 
     default:
-        Q_UNREACHABLE();
+        throw Exceptions::InvalidArgumentError(
+                    QStringLiteral("Wrong value for enum struct WhereType in %1().")
+                    .arg(__tiny_func__));
     }
 }
 

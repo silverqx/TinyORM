@@ -379,7 +379,7 @@ DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
         case QMetaType::QDate:
             // QDate doesn't have a time zone
             binding = binding.value<QDate>().toString(Qt::ISODate);
-            break;
+            continue;
 
         /* We need to transform all instances of QDateTime into the actual date string.
            Each query grammar maintains its own date string format so we'll just ask
@@ -388,7 +388,7 @@ DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
             // Convert to the time zone provided through the qt_timezone config. option
             binding = prepareBinding(binding.value<QDateTime>())
                       .toString(m_queryGrammar->getDateFormat());
-            break;
+            continue;
 
         /* We need to transform all instances of QTime into the actual time string.
            Each query grammar maintains its own time string format so we'll just ask
@@ -396,7 +396,7 @@ DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
         case QMetaType::QTime:
             // QTime doesn't have a time zone
             binding = binding.value<QTime>().toString(m_queryGrammar->getTimeFormat());
-            break;
+            continue;
 
         /* I have decided to not handle the QMetaType::Bool here, little info:
            - Qt's QMYSQL driver handles bool values internally, it doesn't matter if you
@@ -406,8 +406,8 @@ DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
            - Qt's QSQLITE driver calls toInt() on the QVariant(bool):
              sqlite3_bind_int(d->stmt, i + 1, value.toInt()); */
 
-        default:
-            break; // Don't use the Q_UNREACHABLE()
+        default: // Defined to avoid Clang Tidy warning
+            continue; // Don't use the Q_UNREACHABLE()
         }
     }
 

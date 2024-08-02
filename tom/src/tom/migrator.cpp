@@ -401,9 +401,15 @@ void Migrator::migrateByMethod(const Migration &migration, const MigrateMethod m
 
     case MigrateMethod::Down:
         return migration.down(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
-    }
 
-    Q_UNREACHABLE();
+    default:
+#ifndef TINYTOM_DEBUG
+        throw Exceptions::RuntimeError(
+                    QStringLiteral("Unexpected value for enum struct MigrateMethod."));
+#else
+        Q_UNREACHABLE();
+#endif
+    }
 }
 
 /* Validate migrations */

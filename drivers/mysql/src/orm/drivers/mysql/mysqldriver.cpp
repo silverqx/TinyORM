@@ -126,10 +126,12 @@ bool MySqlDriver::hasFeature(const DriverFeature feature) const
         return false;
 
     default:
+#ifndef TINYDRIVERS_DEBUG
+        throw Exceptions::RuntimeError(u"Unexpected value for enum DriverFeature."_s);
+#else
         Q_UNREACHABLE();
+#endif
     }
-
-    return false;
 }
 
 QVariant MySqlDriver::handle() const noexcept

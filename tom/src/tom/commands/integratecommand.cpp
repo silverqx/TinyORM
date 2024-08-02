@@ -100,8 +100,6 @@ int IntegrateCommand::run()
     }
 
     throwIfUnknownShell(shellArg);
-
-    Q_UNREACHABLE();
 }
 
 /* protected */

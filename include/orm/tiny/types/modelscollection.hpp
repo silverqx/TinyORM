@@ -2256,6 +2256,7 @@ namespace Types
             if (comparison == GE)
                 return retrieved >= value;
 
+            // The comparison value is checked above and it throws there
             Q_UNREACHABLE();
         };
     }

@@ -424,7 +424,12 @@ QString Application::getCommandName(const QString &name, const CommandNotFound n
             exitApplication(EXIT_FAILURE);
 
         default:
+#ifndef TINYTOM_DEBUG
+            throw Exceptions::RuntimeError(
+                        sl("Unexpected value for enum struct CommandNotFound."));
+#else
             Q_UNREACHABLE();
+#endif
         }
 
     return commandName;

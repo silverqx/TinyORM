@@ -2047,8 +2047,11 @@ namespace Orm::Tiny::Concerns
             return convertAttribute(QMetaType(QMetaType::QByteArray));
 
         default:
+            // Don't throw here, just return invalid QVariant for Release builds
             Q_UNREACHABLE();
         }
+
+        return {};
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2508,6 +2511,8 @@ namespace Orm::Tiny::Concerns
         default:
             Q_UNREACHABLE();
         }
+
+        return QStringLiteral("<Unknown>");
     }
 
     /* Serialization */
@@ -2751,7 +2756,7 @@ namespace Orm::Tiny::Concerns
             return std::invoke(attribute.get<CallbackWithAttributes>(),
                                convertVectorToModelAttributes(m_attributes));
 
-        Q_UNREACHABLE();
+        Q_UNREACHABLE(); // Correct, std::variant<> can't hold anything else
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

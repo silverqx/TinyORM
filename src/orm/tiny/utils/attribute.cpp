@@ -219,6 +219,7 @@ void Attribute::fixQtNullVariantBug(QVariantList &attributesList) // NOLINT(misc
                 *reinterpret_cast<QVariantMap *>(attributes.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         else T_UNLIKELY
+            // Don't throw here, just continue normally for Release builds
             Q_UNREACHABLE();
 }
 

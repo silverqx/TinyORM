@@ -400,9 +400,10 @@ namespace Orm::Tiny::Concerns
         default:
             Q_UNREACHABLE();
         }
-#else
-        Q_UNREACHABLE();
 #endif
+
+        // This method is used in Debug builds only
+        return {};
     }
 
     /* Static cast this to a child's instance type (CRTP) */

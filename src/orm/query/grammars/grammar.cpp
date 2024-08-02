@@ -353,7 +353,12 @@ QString Grammar::compileHaving(const HavingConditionItem &having) const
 
     T_UNLIKELY
     default:
+#ifndef TINYORM_DEBUG
+        throw Exceptions::RuntimeError(
+                    QStringLiteral("Unexpected value for enum struct HavingType."));
+#else
         Q_UNREACHABLE();
+#endif
     }
 }
 

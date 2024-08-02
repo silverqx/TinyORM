@@ -70,6 +70,10 @@ bool Helpers::isStandardDateFormat(const QString &value)
     return (daySize == 1 || daySize == 2) && StringUtils::isNumber(day);
 }
 
+/* Don't throw in the next two methods as the qt_timezone value or value passed
+   to the DatabaseConnection::setQtTimeZone() has already been validated
+   in ConfigUtils::prepareQtTimeZone(), it throws there if a value is invalid. */
+
 QDateTime
 Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &timezone)
 {
@@ -89,8 +93,8 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
             return datetime.toTimeZone(timezoneValue.value<QTimeZone>());
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         else {
-            Q_UNREACHABLE();
-            break; // Avoid the C26819 warning
+            Q_UNREACHABLE(); // See note above
+            break; // Avoid the C26819 warning (MSVC)
         }
 #endif
 
@@ -106,9 +110,14 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
 
     T_UNLIKELY
     default:
-        Q_UNREACHABLE();
+        Q_UNREACHABLE(); // See note above
     }
-}
+
+    /* Don't throw here as the qt_timezone value or value passed
+       to the DatabaseConnection::setQtTimeZone() has already been validated
+       in the ConfigUtils::prepareQtTimeZone(), it throws there if a value is invalid. */
+    return datetime;
+ }
 
 QDateTime &
 Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
@@ -128,7 +137,7 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
             datetime.setTimeZone(timezoneValue.value<QTimeZone>());
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         else
-            Q_UNREACHABLE();
+            Q_UNREACHABLE(); // See note above
 #endif
         break;
 
@@ -146,7 +155,7 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
 
     T_UNLIKELY
     default:
-        Q_UNREACHABLE();
+        Q_UNREACHABLE(); // See note above
     }
 
     return datetime;

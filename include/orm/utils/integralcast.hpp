@@ -51,7 +51,8 @@ namespace Private
         else if constexpr (std::is_same_v<T, char>)
             return "char";
         else
-            Q_UNREACHABLE();
+            // This should never happen :/
+            static_assert (false, "Invalid C template argument.");
     }
 
     /*! Compute number group separators count for reserve for formatNumber() function. */
@@ -170,7 +171,9 @@ namespace Private
             return value >= 0 && value <= std::numeric_limits<T>::max();
 
         else
-            Q_UNREACHABLE();
+            // This should never happen :/
+            static_assert (false,
+                    "Unhandled code branch in the Private::InRange<T, V>().");
     }
 } // namespace Private
 

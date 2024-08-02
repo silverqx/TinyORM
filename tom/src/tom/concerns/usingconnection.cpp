@@ -136,6 +136,8 @@ int UsingConnection::runCallback(const F &callback, const QString &name)
         return std::invoke(callback);
 
     else
+        /* Don't throw here as the concept backs up the F template argument, so
+           it's checked at compile time even for Release builds. */
         Q_UNREACHABLE();
 
     return EXIT_FAILURE;

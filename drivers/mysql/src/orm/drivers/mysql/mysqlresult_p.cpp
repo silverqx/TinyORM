@@ -7,6 +7,10 @@
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 
+#ifndef TINYDRIVERS_DEBUG
+#  include "orm/drivers/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
@@ -325,7 +329,14 @@ MySqlResultPrivate::errorMessageForStmtFetch(const int status) noexcept
     if (status == MYSQL_DATA_TRUNCATED)
         return u"Data truncated during fetching data in %1()."_s;
 
+    /* All return codes from the mysql_stmt_fetch() should be handled above.
+       Also, don't throw here as the message below is for an exception. */
+#ifndef TINYDRIVERS_DEBUG
+    return u"Unexpected status code '%1' returned from the mysql_stmt_fetch() in %2()."_s
+            .arg(status).arg(u"%1"_s);
+#else
     Q_UNREACHABLE();
+#endif
 }
 
 QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index) const
@@ -688,7 +699,12 @@ QVariant MySqlResultPrivate::toDoubleFromString(const QString &value) const
         return value;
 
     default:
+#ifndef TINYDRIVERS_DEBUG
+        throw Exceptions::RuntimeError(
+                    u"Unexpected value for enum struct NumericalPrecisionPolicy."_s);
+#else
         Q_UNREACHABLE();
+#endif
     }
 }
 
@@ -742,18 +758,19 @@ MySqlResultPrivate::createQVariant(const int typeId, QString &&value) const
     case QMetaType::Double:
         return toDoubleFromString(value);
 
+    default:
+        return value;
+
     /* The QMetaType::QTime is never reached because the MYSQL_TYPE_TIME is mapped
        to the QString. So moved down as the last case statement. QByteArray is always
        handled earlier. */
     case QMetaType::QByteArray:
     case QMetaType::QTime:
         Q_UNREACHABLE();
-
-    default:
-        return value;
+        break;
     }
 
-    Q_UNREACHABLE();
+    return value;
 }
 
 QVariant

@@ -122,7 +122,11 @@ namespace Support::Stores
             return RelationStoreType::RELATION_TO_VECTOR;
 
         else
-            Q_UNREACHABLE();
+            Q_UNREACHABLE(); // Ok as the C template argument is checked by concept
+
+            // FUTURE static_assert doesn't work here (in else block) and it should, find out why silverqx
+            // This should never happen :/
+            // static_assert (false, "Invalid C template argument.");
     }
 
 } // namespace Support::Stores

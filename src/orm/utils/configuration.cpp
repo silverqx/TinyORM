@@ -96,7 +96,10 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
         return {QtTimeZoneType::OffsetFromUtc, qtTimeZone.value<int>()};
 
     default:
-        Q_UNREACHABLE();
+        throw Exceptions::LogicError(
+                    QStringLiteral("Unsupported 'qt_timezone' value "
+                                   "for '%1' database connection in %2().")
+                    .arg(connection, __tiny_func__));
     }
 }
 

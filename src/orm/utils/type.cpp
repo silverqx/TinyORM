@@ -152,8 +152,12 @@ namespace
         case -3:
             throw RuntimeError(
                         "One of the arguments for abi::__cxa_demangle() is invalid.");
+
         default:
-            Q_UNREACHABLE();
+            throw RuntimeError(
+                        QStringLiteral("Unexpected status code '%1' returned "
+                                       "from abi::__cxa_demangle().")
+                        .arg(status));
         }
     }
 } // namespace

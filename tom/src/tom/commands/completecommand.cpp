@@ -16,6 +16,10 @@
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
 
+#ifndef TINYTOM_DEBUG
+#  include "tom/exceptions/runtimeerror.hpp"
+#endif
+
 #ifndef sl
 /*! Alias for the QStringLiteral(). */
 #  define sl(str) QStringLiteral(str)
@@ -670,7 +674,12 @@ bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType 
     if (type == SHORT)
         return isShort;
 
+#ifndef TINYTOM_DEBUG
+    throw Exceptions::RuntimeError(
+                sl("Unexpected value for enum struct OptionType."));
+#else
     Q_UNREACHABLE();
+#endif
 }
 
 bool CompleteCommand::isLongOptionWithArrayValue(const QString &wordArg)

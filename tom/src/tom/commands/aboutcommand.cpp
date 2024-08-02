@@ -123,7 +123,7 @@ void AboutCommand::displayDetail(const QList<SectionItem> &sections) const
                 printAboutItemsDetail(std::get<std::map<QString, AboutValue>>(abouts));
 
             else
-                Q_UNREACHABLE();
+                Q_UNREACHABLE(); // Correct, std::variant<> can't hold anything else
         }
     }
 }
@@ -158,7 +158,7 @@ void AboutCommand::displayJson(const QList<SectionItem> &sections)
                                       std::get<std::map<QString, AboutValue>>(abouts),
                                       subsectionName, sectionNamePrepared);
             else
-                Q_UNREACHABLE();
+                Q_UNREACHABLE(); // Correct, std::variant<> can't hold anything else
 
             /* Nothing to do, subsection name is the std::nullopt so the jsonAboutItems
                were directly appended to the parent jsonSubsections. */

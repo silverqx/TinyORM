@@ -406,6 +406,9 @@ SqlDriverFactoryPrivate::sqlDriverPathFromBuildSystem() const
 //         return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_SQLITE_PATH));
 // #endif
 
+    /* The driverName is already validated in make() and throws there, but the most
+       important thing is the if (driverName == QXYZ), they must match here and
+       in the make(), then this unreachable is OK. */
     Q_UNREACHABLE();
 }
 
