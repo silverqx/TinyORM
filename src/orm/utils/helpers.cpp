@@ -88,8 +88,10 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
 #endif
             return datetime.toTimeZone(timezoneValue.value<QTimeZone>());
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-        else
+        else {
             Q_UNREACHABLE();
+            break; // Avoid the C26819 warning
+        }
 #endif
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
