@@ -12,6 +12,7 @@
 #include "tom/config.hpp" // IWYU pragma: keep
 
 #include "tom/commands/stubs/integratestubs.hpp"
+#include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 
 #ifndef sl
@@ -511,7 +512,7 @@ void IntegrateCommand::throwUnknownShell(const QString &shellArg)
 #endif
     };
 
-    throw Exceptions::RuntimeError(
+    throw Exceptions::InvalidArgumentError(
                 QStringLiteral("Unknown shell name '%1' (allowed values: %2).")
                 .arg(shellArg, allowedShells.join(COMMA)));
 }
