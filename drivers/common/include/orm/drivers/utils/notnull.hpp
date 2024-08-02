@@ -7,7 +7,11 @@ TINY_SYSTEM_HEADER
 
 #include <orm/macros/commonnamespace.hpp>
 
-#include <exception>
+#ifdef TINYDRIVERS_DEBUG
+#  include <type_traits>
+#else
+#  include <exception>
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -58,15 +62,25 @@ namespace Private
         constexpr NotNull(U &&u) // NOLINT(google-explicit-constructor)
             : m_ptr(std::forward<U>(u))
         {
+#ifdef TINYDRIVERS_DEBUG
+            Q_ASSERT_X(m_ptr != nullptr, "Drivers::NotNull",
+                       "NotNull pointer can't be nullptr.");
+#else
             if (m_ptr == nullptr)
                 std::terminate();
+#endif
         }
 
         constexpr NotNull(T u) requires (!std::is_same_v<std::nullptr_t, T>) // NOLINT(google-explicit-constructor)
             : m_ptr(std::move(u))
         {
+#ifdef TINYDRIVERS_DEBUG
+            Q_ASSERT_X(m_ptr != nullptr, "Drivers::NotNull",
+                       "NotNull pointer can't be nullptr.");
+#else
             if (m_ptr == nullptr)
                 std::terminate();
+#endif
         }
 
         template<std::convertible_to<T> U>
