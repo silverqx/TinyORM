@@ -16,7 +16,7 @@ namespace Private
 {
     /*! Concept for integral type excluding the bool and char types. */
     template<typename T>
-    concept IngeralNoBoolChar = std::integral<T> &&
+    concept IntegralNoBoolChar = std::integral<T> &&
                                 !std::same_as<T, bool> && !std::same_as<T, char>;
 
     /*! Get integral type name as a string. */
@@ -71,7 +71,7 @@ namespace Private
 
     /*! Format the given integer number (insert group separator before every 3th
         number). */
-    template<IngeralNoBoolChar T>
+    template<IntegralNoBoolChar T>
     QString formatNumber(const T integer, QChar groupSeparator = Constants::SQUOTE)
     {
         constexpr static QString::size_type groupWidth = 3;
@@ -114,7 +114,7 @@ namespace Private
     }
 
     /*! Determine whether the given value is in the T type range (min/max). */
-    template<IngeralNoBoolChar T, IngeralNoBoolChar V>
+    template<IntegralNoBoolChar T, IntegralNoBoolChar V>
     bool InRange(const V value) noexcept
     {
         /* This method must mirror or follow steps in Usual arithmetic conversions -
@@ -175,7 +175,7 @@ namespace Private
 } // namespace Private
 
 /*! Cast the given integral value to the T type with range checks, throw if failed. */
-template<Private::IngeralNoBoolChar T, Private::IngeralNoBoolChar V>
+template<Private::IntegralNoBoolChar T, Private::IntegralNoBoolChar V>
 auto IntegralCast(const V value)
 {
     if (Private::InRange<T>(value))
