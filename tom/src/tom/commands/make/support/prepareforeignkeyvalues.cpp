@@ -122,7 +122,6 @@ void PrepareForeignKeyValues::insertEmptyForeignKeyValue()
 #else
         m_preparedValues.belongsToMany.emplace_back();
 #endif
-
     else
         Q_UNREACHABLE();
 }
@@ -143,6 +142,7 @@ void PrepareForeignKeyValues::insertForeignKeyValue()
     }
     else if (m_currentRelation == belongs_to_many)
         insertForeignKeyValueBtm();
+
     else
         Q_UNREACHABLE();
 }
