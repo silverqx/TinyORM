@@ -9,6 +9,8 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+guidelines = 90, 100, 110 1px solid 636363, 120 1px solid 715a5a
+guidelines_style = 1px solid 3f3f3f
 
 [*.{md,mdx}]
 trim_trailing_whitespace = false
