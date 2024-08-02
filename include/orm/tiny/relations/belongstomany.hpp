@@ -723,7 +723,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::touch() const
     {
-        const auto &related = this->m_related;
+        const auto &related = this->m_related.get();
 
         const auto &key = related->getKeyName();
 

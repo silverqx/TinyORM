@@ -190,7 +190,7 @@ namespace Relations
         /*! The parent model instance. */
         NotNull<Model *> m_parent;
         /*! The related model instance. */
-        std::shared_ptr<Related> m_related;
+        NotNull<std::shared_ptr<Related>> m_related;
         /*! The key name of the related model. */
         QString m_relatedKey;
         // TODO next would be good to use TinyBuilder alias instead of Builder silverqx
