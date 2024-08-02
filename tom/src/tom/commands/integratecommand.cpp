@@ -501,7 +501,7 @@ QStringList IntegrateCommand::getCompletionFilepaths()
 
 void IntegrateCommand::throwUnknownShell(const QString &shellArg)
 {
-    const QStringList allowedShells {
+    static const QStringList allowedShells {
 #if defined(__linux__) || defined(__MINGW32__)
         ShBash,
 #endif
