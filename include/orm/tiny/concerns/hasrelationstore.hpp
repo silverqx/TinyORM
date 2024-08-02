@@ -389,8 +389,8 @@ namespace Orm::Tiny::Concerns
                 QStringLiteral(
                     "You can not %1 the %2 model in the middle of any relation store "
                     "operation.");
-
-        static const auto className = TypeUtils::classPureBasename<Derived>();
+        // Don't make it static
+        const auto className = TypeUtils::classPureBasename<Derived>();
 
         switch (type) {
         case CopyMoveTemplateType::COPY:
