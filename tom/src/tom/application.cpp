@@ -399,7 +399,7 @@ QString Application::getCommandName()
     return getCommandName(arguments.constFirst(), ShowCommandsList);
 }
 
-QString Application::getCommandName(const QString &name, CommandNotFound notFound)
+QString Application::getCommandName(const QString &name, const CommandNotFound notFound)
 {
     // Try to find a full command name to avoid the guess logic
     if (auto name_ = name.toLower();
