@@ -215,10 +215,9 @@ bool MySqlConnection::pingDatabase()
             return true;
         }
 
+        // Connection is alive
         if (ping == 0)
             return true;
-        if (ping != 0)
-            return false;
 
         qWarning("Unknown behavior during mysql_ping(), this should never happen :/"); // NOLINT(cppcoreguidelines-pro-type-vararg)
         return false;
