@@ -263,14 +263,28 @@ namespace Concerns
     {
         m_ansi = true;
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 26815)
+#endif
         return *this;
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
     }
 
     InteractsWithIO &InteractsWithIO::disableAnsi()
     {
         m_ansi = false;
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 26815)
+#endif
         return *this;
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
     }
 
     InteractsWithIO &InteractsWithIO::autodetectAnsi()

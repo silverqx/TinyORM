@@ -35,7 +35,14 @@ SQLiteConnection &SQLiteConnection::setReturnQDateTime(const bool value)
 {
     m_returnQDateTime = value;
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 26815)
+#endif
     return *this;
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
 }
 
 /* protected */
