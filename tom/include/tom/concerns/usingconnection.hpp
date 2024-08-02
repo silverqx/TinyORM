@@ -108,6 +108,10 @@ namespace Concerns
                 std::optional<std::reference_wrapper<MigrationRepository>> repository,
                 const F &callback);
 
+        /*! Execute the given callback and return the exit code. */
+        template<UsingConnectionCallback F>
+        static int runCallback(const F &callback, const QString &name);
+
         /*! Set the default connection name. */
         void setConnection(
                 const QString &name, std::optional<bool> debugSql,

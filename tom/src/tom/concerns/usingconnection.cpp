@@ -116,20 +116,29 @@ int UsingConnection::usingConnectionInternal(
     if (!isSameConnection)
         setConnection(name, debugSql, repository);
 
-    int exitCode = EXIT_FAILURE;
-
-    // Support for both callback types, with and without a connection name parameter
-    if constexpr (std::is_same_v<F, std::function<int(const QString &)>>)
-        exitCode = std::invoke(callback, name);
-    else if constexpr (std::is_same_v<F, std::function<int()>>)
-        exitCode = std::invoke(callback);
-    else
-        Q_UNREACHABLE();
+    // Execute the given callback and return the exit code
+    const auto exitCode = runCallback(callback, name);
 
     if (!isSameConnection)
         setConnection(previousConnection, previousDebugSql, repository, true);
 
     return exitCode;
+}
+
+template<UsingConnectionCallback F>
+int UsingConnection::runCallback(const F &callback, const QString &name)
+{
+    // Support for both callback types, with and without a connection name parameter
+    if constexpr (std::is_same_v<F, std::function<int(const QString &)>>)
+        return std::invoke(callback, name);
+
+    else if constexpr (std::is_same_v<F, std::function<int()>>)
+        return std::invoke(callback);
+
+    else
+        Q_UNREACHABLE();
+
+    return EXIT_FAILURE;
 }
 
 void UsingConnection::setConnection(
