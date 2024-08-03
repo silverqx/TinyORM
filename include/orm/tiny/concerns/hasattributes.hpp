@@ -521,8 +521,9 @@ namespace Orm::Tiny::Concerns
         removeSerializableHiddenAttributes(QVariantMap &&attributes,
                                            const std::set<QString> &hidden);
         /*! Get an attributes vector without hidden attributes. */
+        template<typename T> requires AttributesContainerConcept<T> // requires is needed to select the correct overload
         static QList<AttributeItem>
-        removeSerializableHiddenAttributes(QList<AttributeItem> &&attributes,
+        removeSerializableHiddenAttributes(T &&attributes,
                                            const std::set<QString> &hidden);
 
         /* Serialization - Appends */
@@ -2198,8 +2199,10 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return {};
 
+        const auto isVisibleEmpty = visible.empty();
+
         // Nothing to do, the visible and hidden attributes are not defined
-        if (visible.empty() && hidden.empty()) {
+        if (isVisibleEmpty && hidden.empty()) {
             if constexpr (std::is_same_v<C, QVariantMap>)
                 return AttributeUtils::convertVectorToMap(attributes);
 
@@ -2209,6 +2212,20 @@ namespace Orm::Tiny::Concerns
         }
 
         // Pass the visible and hidden down to avoid obtaining these references twice
+
+        // Compute the hidden attributes only (to serialize) as the visible set is empty
+        // No need to compute the visible attributes (also allows forwarding reference)
+        if (isVisibleEmpty) {
+            if constexpr (std::is_same_v<C, QVariantMap>)
+                return removeSerializableHiddenAttributes(
+                            AttributeUtils::convertVectorToMap(attributes), hidden);
+
+            // QList<AttributeItem>
+            else
+                return removeSerializableHiddenAttributes(attributes, hidden);
+        }
+
+        // Compute both visible and also hidden attributes to serialize
         return removeSerializableHiddenAttributes(
                     getSerializableVisibleAttributes<C>(attributes, visible, appends),
                     hidden);
@@ -2633,16 +2650,6 @@ namespace Orm::Tiny::Concerns
             const QList<AttributeItem> &attributes, const std::set<QString> &visible,
             const std::set<QString> &appends)
     {
-        // Nothing to do
-        if (visible.empty()) {
-            if constexpr (std::is_same_v<C, QVariantMap>)
-                return AttributeUtils::convertVectorToMap(attributes);
-
-            // QList<AttributeItem>
-            else
-                return attributes;
-        }
-
         // Get visible attributes only
         /* Compute visible keys on attributes map/vector, the intersection is needed
            to compute only keys that really exists. */
@@ -2699,13 +2706,14 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T> requires AttributesContainerConcept<T>
     QList<AttributeItem>
     HasAttributes<Derived, AllRelations...>::removeSerializableHiddenAttributes(
-            QList<AttributeItem> &&attributes, const std::set<QString> &hidden)
+            T &&attributes, const std::set<QString> &hidden)
     {
         // Nothing to do
         if (hidden.empty())
-            return std::move(attributes);
+            return std::forward<T>(attributes);
 
         /* Remove hidden attributes, from the vector container returned by
            the getSerializableVisibleAttributes()! */
@@ -2718,9 +2726,17 @@ namespace Orm::Tiny::Concerns
         QList<AttributeItem> serializableAttributes;
         serializableAttributes.reserve(attributes.size());
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 26800)
+#endif
         for (auto &&[key, value] : attributes)
             if (!hiddenKeys.contains(key))
-                serializableAttributes.emplaceBack(std::move(key), std::move(value));
+                serializableAttributes.emplaceBack(std::forward<decltype (key)>(key),
+                                                   std::forward<decltype (value)>(value));
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
 
         return serializableAttributes;
     }

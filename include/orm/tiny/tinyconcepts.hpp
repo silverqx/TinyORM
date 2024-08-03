@@ -52,6 +52,10 @@ namespace Orm::Tiny
 
     struct AttributeItem;
 
+    /*! Concept for Attributes vector container. */
+    template<typename C>
+    concept AttributesContainerConcept = std::convertible_to<C, QList<AttributeItem>>;
+
     /*! Concept to check the container for serialized model attributes. */
     template<typename C>
     concept SerializedAttributes = std::same_as<C, QVariantMap> ||
