@@ -1071,7 +1071,7 @@ namespace Concerns
         if (isVisibleEmpty)
             return removeSerializableHiddenRelations(relations, hidden);
 
-        // Pass the visible and hidden down to avoid double obtaining
+        // Pass the visible and hidden down to avoid obtaining these references twice
         return removeSerializableHiddenRelations(
                     getSerializableVisibleRelations(relations, visible),
                     hidden);

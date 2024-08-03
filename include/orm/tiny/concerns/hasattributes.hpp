@@ -2208,7 +2208,7 @@ namespace Orm::Tiny::Concerns
                 return attributes;
         }
 
-        // Pass the visible and hidden down to avoid double obtaining
+        // Pass the visible and hidden down to avoid obtaining these references twice
         return removeSerializableHiddenAttributes(
                     getSerializableVisibleAttributes<C>(attributes, visible, appends),
                     hidden);
@@ -2331,7 +2331,7 @@ namespace Orm::Tiny::Concerns
         if (visible.empty() && hidden.empty())
             return appends;
 
-        // Pass the visible and hidden down to avoid double obtaining
+        // Pass the visible and hidden down to avoid obtaining these references twice
         return removeSerializableHiddenAppends(
                     getSerializableVisibleAppends(appends, visible),
                     hidden);
