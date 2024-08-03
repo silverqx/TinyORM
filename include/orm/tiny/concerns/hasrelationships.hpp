@@ -301,6 +301,7 @@ namespace Concerns
 
         /*! Create lazy store and obtain a relationship from defined method. */
         template<typename Related, typename Result>
+        requires (!std::is_reference_v<Result>)
         Result getRelationshipFromMethodWithVisitor(const QString &relation) const;
 
         /*! Throw exception if correct getRelation/Value() method was not used, to avoid
@@ -1153,7 +1154,7 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, typename Result>
+    template<typename Related, typename Result> requires (!std::is_reference_v<Result>)
     Result
     HasRelationships<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
             const QString &relation) const
