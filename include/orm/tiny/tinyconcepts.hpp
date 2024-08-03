@@ -58,6 +58,8 @@ namespace Orm::Tiny
                                    std::same_as<C, QList<AttributeItem>>;
 
     /* Others */
+
+    /*! Concept to check if the given type has the reserve() method (Qt or std). */
     template<typename C>
     concept HasReserveMethod = requires(C c)
     {
