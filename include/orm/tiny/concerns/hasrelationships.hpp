@@ -1164,7 +1164,8 @@ namespace Concerns
         // Save model/s to the store to avoid passing variables to the visitor
         this->template createLazyStore<Related>().visit(relation);
 
-        // Obtain the result, related model/s
+        /* Obtain the result, related model/s (can't be a reference as the store is
+           destroyed on the next line, so I have to make a copy). */
         const auto lazyResult = this->template lazyStore<Related>().result();
 
         // Releases the ownership and destroy the top relation store on the stack
