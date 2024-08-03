@@ -2632,7 +2632,7 @@ namespace Orm::Tiny::Concerns
 
         for (const auto &[key, value] : attributes)
             // Skip the keys that are in the u_appends, they will be added later
-            if (visibleKeys.contains(key) &&  !appends.contains(key)) {
+            if (visibleKeys.contains(key) && !appends.contains(key)) {
                 if constexpr (std::is_same_v<C, QVariantMap>)
                     serializableAttributes.insert(key, value);
 
