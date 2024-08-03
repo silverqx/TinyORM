@@ -2170,6 +2170,10 @@ namespace Orm::Tiny::Concerns
         auto attributes = getSerializableAttributes<QList<AttributeItem>>(
                               getAttributes(), visible, hidden, appends);
 
+        // Nothing to do
+        if (attributes.empty())
+            return {};
+
         /* We need to remove attributes that have the same names as u_appends, to avoid
            having two attributes with the same name. This logic is only needed
            for the vectorable attributes, the mappable attributes, of course, don't need
@@ -2190,6 +2194,10 @@ namespace Orm::Tiny::Concerns
             const QList<AttributeItem> &attributes, const std::set<QString> &visible,
             const std::set<QString> &hidden, const std::set<QString> &appends)
     {
+        // Nothing to do
+        if (attributes.empty())
+            return {};
+
         // Nothing to do, the visible and hidden attributes are not defined
         if (visible.empty() && hidden.empty()) {
             if constexpr (std::is_same_v<C, QVariantMap>)
@@ -2210,6 +2218,10 @@ namespace Orm::Tiny::Concerns
     void HasAttributes<Derived, AllRelations...>::addDateAttributesToMap(
             QVariantMap &attributes) const
     {
+        // Nothing to do
+        if (attributes.empty())
+            return;
+
         for (auto &&key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
@@ -2233,6 +2245,10 @@ namespace Orm::Tiny::Concerns
             QList<AttributeItem> &attributes,
             const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
+        // Nothing to do
+        if (attributes.empty())
+            return;
+
         for (auto &&key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
@@ -2255,6 +2271,10 @@ namespace Orm::Tiny::Concerns
     void HasAttributes<Derived, AllRelations...>::addCastAttributesToMap(
             QVariantMap &attributes) const
     {
+        // Nothing to do
+        if (attributes.empty())
+            return;
+
         for (auto &&[key, castItem] : getCasts()) {
             // Nothing to do, this attribute is not set
             if (!attributes.contains(key))
@@ -2275,6 +2295,10 @@ namespace Orm::Tiny::Concerns
             QList<AttributeItem> &attributes,
             const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
+        // Nothing to do
+        if (attributes.empty())
+            return;
+
         for (auto &&[key, castItem] : getCasts()) {
             // Nothing to do, this attribute is not set
             if (!attributesHash.contains(key))
