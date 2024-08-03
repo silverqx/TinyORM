@@ -1176,7 +1176,15 @@ namespace Concerns
         checkRelationType<Result, Related>(lazyResult, relation,
                                            QStringLiteral("getRelationValue"));
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 26816)
+#endif
+        // We are returning a copy here, MSVC C26816 is the false positive
         return std::get<Result>(lazyResult);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
