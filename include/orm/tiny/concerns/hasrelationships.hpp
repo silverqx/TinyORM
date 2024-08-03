@@ -36,21 +36,21 @@ namespace Concerns
     {
         /* Using starts in the BaseRelationStore::visit() and is used to access private
            visited methods. */
-        friend Concerns::HasRelationStore<Derived, AllRelations...>;
+        friend class Concerns::HasRelationStore<Derived, AllRelations...>;
         // To access private queriesRelationshipsWithVisitor()
-        friend Concerns::QueriesRelationships<Derived>;
+        friend class Concerns::QueriesRelationships<Derived>;
         // To access XyzVisitor()-s, replaceRelations() and few other private methods
-        friend Model<Derived, AllRelations...>;
+        friend class Model<Derived, AllRelations...>;
         // To access private pushVisited()
-        friend Support::Stores::PushRelationStore<Derived, AllRelations...>;
+        friend class Support::Stores::PushRelationStore<Derived, AllRelations...>;
         // To access private touchOwnersVisited()
-        friend Support::Stores::TouchOwnersRelationStore<Derived, AllRelations...>;
+        friend class Support::Stores::TouchOwnersRelationStore<Derived, AllRelations...>;
         // To access private serializeRelationVisited()
         template<SerializedAttributes C, typename Derived_,
                  AllRelationsConcept ...AllRelations_>
         friend class Support::Stores::SerializeRelationStore;
         // To access eagerLoadRelationWithVisitor()
-        friend TinyBuilder<Derived>;
+        friend class Tiny::Builder<Derived>;
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
