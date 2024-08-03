@@ -29,6 +29,14 @@ namespace Relations
 namespace Concerns
 {
 
+// Clang 18 crashes with this concept, requires doesn't work all well
+#ifndef __clang__
+    /*! RelationsContainer<AllRelations...> container concept. */
+    template<typename C, typename ...AllRelations>
+    concept RelationsContainerConcept =
+            std::convertible_to<C, RelationsContainer<AllRelations...>>;
+#endif
+
     /*! Model relationships. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationships : // NOLINT(bugprone-exception-escape, misc-no-recursion)
@@ -401,10 +409,13 @@ namespace Concerns
                 const std::set<QString> &visible);
 
         /*! Get a relations map without hidden relation attributes. */
+#ifdef __clang__
+        template<typename T>
+#else
+        template<RelationsContainerConcept<AllRelations...> T>
+#endif
         static RelationsContainer<AllRelations...>
-        removeSerializableHiddenRelations(
-                RelationsContainer<AllRelations...> &&relations,
-                const std::set<QString> &hidden);
+        removeSerializableHiddenRelations(T &&relations, const std::set<QString> &hidden);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -1050,9 +1061,15 @@ namespace Concerns
         const auto &visible   = basemodel.getUserVisible();
         const auto &hidden    = basemodel.getUserHidden();
 
+        const auto isVisibleEmpty = visible.empty();
+
         // Nothing to do, the visible and hidden attributes are not defined
-        if (visible.empty() && hidden.empty())
+        if (isVisibleEmpty && hidden.empty())
             return relations;
+
+        // No need to compute the visible relations (also allows forwarding reference)
+        if (isVisibleEmpty)
+            return removeSerializableHiddenRelations(relations, hidden);
 
         // Pass the visible and hidden down to avoid double obtaining
         return removeSerializableHiddenRelations(
@@ -1564,10 +1581,6 @@ namespace Concerns
             const RelationsContainer<AllRelations...> &relations,
             const std::set<QString> &visible)
     {
-        // Nothing to do
-        if (visible.empty())
-            return relations;
-
         // Get visible relations only
         /* Compute visible keys on relations map, the intersection is needed to compute
            only keys that really exists. */
@@ -1588,14 +1601,18 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef __clang__
+    template<typename T>
+#else
+    template<RelationsContainerConcept<AllRelations...> T>
+#endif
     RelationsContainer<AllRelations...>
     HasRelationships<Derived, AllRelations...>::removeSerializableHiddenRelations(
-            RelationsContainer<AllRelations...> &&relations,
-            const std::set<QString> &hidden)
+            T &&relations, const std::set<QString> &hidden)
     {
         // Nothing to do
         if (hidden.empty())
-            return std::move(relations);
+            return std::forward<T>(relations);
 
         /* Remove hidden relations, from the map container returned by
            the getSerializableVisibleRelations()! */
@@ -1612,7 +1629,8 @@ namespace Concerns
 
         for (auto &&[key, value] : relations)
             if (!hiddenKeys.contains(key))
-                serializableRelations.emplace(std::move(key), std::move(value)); // try_emplace() not needed
+                serializableRelations.emplace(std::forward<decltype (key)>(key),
+                                              std::forward<decltype (value)>(value)); // try_emplace() not needed
 
         return serializableRelations;
     }
