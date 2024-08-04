@@ -52,7 +52,8 @@ namespace Private
             return "char";
         else
             // This should never happen :/
-            static_assert (false, "Invalid C template argument.");
+            static_assert (false,
+                    "Unhandled code branch in the Private::IntegralTypeName<T>().");
     }
 
     /*! Compute number group separators count for reserve for formatNumber() function. */
