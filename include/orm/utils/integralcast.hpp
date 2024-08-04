@@ -20,7 +20,7 @@ namespace Private
                                 !std::same_as<T, bool> && !std::same_as<T, char>;
 
     /*! Get integral type name as a string. */
-    template<std::integral T>
+    template<std::integral T> requires (!std::is_reference_v<T>)
     constexpr const char *IntegralTypeName() noexcept
     {
         // Sorted by most used types
@@ -103,7 +103,7 @@ namespace Private
 
     /*! Format the given integer number (insert group separator before every 3th
         number). */
-    template<IntegralNoBoolChar T>
+    template<IntegralNoBoolChar T> requires (!std::is_reference_v<T>)
     QString formatNumber(const T integer, QChar groupSeparator = Constants::SQUOTE)
     {
         constexpr static QString::size_type groupWidth = 3;
@@ -147,6 +147,7 @@ namespace Private
 
     /*! Determine whether the given value is in the T type range (min/max). */
     template<IntegralNoBoolChar T, IntegralNoBoolChar V>
+    requires (!std::is_reference_v<T> && !std::is_reference_v<V>)
     bool InRange(const V value) noexcept
     {
         /* This method must mirror or follow steps in Usual arithmetic conversions -
@@ -210,6 +211,7 @@ namespace Private
 
 /*! Cast the given integral value to the T type with range checks, throw if failed. */
 template<Private::IntegralNoBoolChar T, Private::IntegralNoBoolChar V>
+requires (!std::is_reference_v<T> && !std::is_reference_v<V>)
 auto IntegralCast(const V value)
 {
     if (Private::InRange<T>(value))
