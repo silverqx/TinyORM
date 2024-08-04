@@ -37,6 +37,36 @@ namespace Private
         else if constexpr (std::is_same_v<T, bool>)
             return "bool";
 
+        // Platform dependent long int type (LP64, LLP64, ILP32, and LP32)
+        else if constexpr (std::is_same_v<T, long int>) {
+
+            if constexpr (sizeof (T) == 4)
+                return "int32 (long)";
+            else if constexpr (sizeof (T) == 8)
+                return "int64 (long)";
+            else if constexpr (sizeof (T) == 2)
+                return "int16 (long)";
+            else
+                // This should never happen :/
+                static_assert (false,
+                        "Unhandled code branch in the Private::IntegralTypeName<T>() "
+                        "(long).");
+        }
+        else if constexpr (std::is_same_v<T, unsigned long int>) {
+
+            if constexpr (sizeof (T) == 4)
+                return "uint32 (ulong)";
+            else if constexpr (sizeof (T) == 8)
+                return "uint64 (ulong)";
+            else if constexpr (sizeof (T) == 2)
+                return "uint16 (ulong)";
+            else
+                // This should never happen :/
+                static_assert (false,
+                        "Unhandled code branch in the Private::IntegralTypeName<T>() "
+                        "(ulong).");
+        }
+
         else if constexpr (std::is_same_v<T, qint16>)
             return "int16";
         else if constexpr (std::is_same_v<T, quint16>)
