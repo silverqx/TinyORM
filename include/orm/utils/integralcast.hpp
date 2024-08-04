@@ -21,7 +21,7 @@ namespace Private
 
     /*! Get integral type name as a string. */
     template<std::integral T> requires (!std::is_reference_v<T>)
-    constexpr const char *IntegralTypeName() noexcept
+    consteval const char *IntegralTypeName() noexcept
     {
         // Sorted by most used types
         if constexpr (std::is_same_v<T, quint64>)
@@ -172,7 +172,7 @@ namespace Private
     /*! Determine whether the given value is in the T type range (min/max). */
     template<IntegralNoBoolChar T, IntegralNoBoolChar V>
     requires (!std::is_reference_v<T> && !std::is_reference_v<V>)
-    bool InRange(const V value) noexcept
+    constexpr bool InRange(const V value) noexcept
     {
         /* This method must mirror or follow steps in Usual arithmetic conversions -
            Stage 5 as accurate as possible.
