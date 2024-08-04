@@ -46,11 +46,19 @@ namespace Private
                 return "int64 (long)";
             else if constexpr (sizeof (T) == 2)
                 return "int16 (long)";
+
+#if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
+            else {
+                Q_UNREACHABLE(); // Don't throw here, this must be handled/solved during development
+                return "<unknown> (long)";
+            }
+#else
             else
                 // This should never happen :/
                 static_assert (false,
                         "Unhandled code branch in the Private::IntegralTypeName<T>() "
                         "(long).");
+#endif
         }
         else if constexpr (std::is_same_v<T, unsigned long int>) {
 
@@ -60,11 +68,19 @@ namespace Private
                 return "uint64 (ulong)";
             else if constexpr (sizeof (T) == 2)
                 return "uint16 (ulong)";
+
+#if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
+            else {
+                Q_UNREACHABLE(); // Don't throw here, this must be handled/solved during development
+                return "<unknown> (ulong)";
+            }
+#else
             else
                 // This should never happen :/
                 static_assert (false,
                         "Unhandled code branch in the Private::IntegralTypeName<T>() "
                         "(ulong).");
+#endif
         }
 
         else if constexpr (std::is_same_v<T, qint16>)
@@ -80,10 +96,18 @@ namespace Private
            unsigned char, but is always a distinct type. */
         else if constexpr (std::is_same_v<T, char>)
             return "char";
+
+#if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
+        else {
+            Q_UNREACHABLE(); // Don't throw here, this must be handled/solved during development
+            return "<unknown>";
+        }
+#else
         else
             // This should never happen :/
             static_assert (false,
                     "Unhandled code branch in the Private::IntegralTypeName<T>().");
+#endif
     }
 
     /*! Compute number group separators count for reserve for formatNumber() function. */
@@ -202,10 +226,17 @@ namespace Private
                    // Comparing any type with 0 is always safe
             return value >= 0 && value <= std::numeric_limits<T>::max();
 
+#if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE < 13
+        else {
+            Q_UNREACHABLE(); // Don't throw here, this must be handled/solved during development
+            return false;
+        }
+#else
         else
             // This should never happen :/
             static_assert (false,
                     "Unhandled code branch in the Private::InRange<T, V>().");
+#endif
     }
 } // namespace Private
 
