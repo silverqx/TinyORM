@@ -778,7 +778,11 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).restore();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
-        QCOMPARE(affected, static_cast<int>(0));
+        /* Longstanding bug, OK, the problem was here, sometimes can happen that
+           the restore() method call above isn't fast enough and this restore also
+           updates the updated_at column, so even if the deleted_at column isn't updated
+           as it's NULL (static_cast<int>(0)), so the updated_at column is updated. */
+        QVERIFY(affected == static_cast<int>(0) || affected == static_cast<int>(2));
     }
 
     // Validate user records in the database after the restore
