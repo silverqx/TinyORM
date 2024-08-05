@@ -2206,8 +2206,7 @@ namespace Orm::Tiny::Concerns
             if constexpr (std::is_same_v<C, QVariantMap>)
                 return AttributeUtils::convertVectorToMap(attributes);
 
-            // QList<AttributeItem>
-            else
+            else // QList<AttributeItem>
                 return attributes;
         }
 
@@ -2220,8 +2219,7 @@ namespace Orm::Tiny::Concerns
                 return removeSerializableHiddenAttributes(
                             AttributeUtils::convertVectorToMap(attributes), hidden);
 
-            // QList<AttributeItem>
-            else
+            else // QList<AttributeItem>
                 return removeSerializableHiddenAttributes(attributes, hidden);
         }
 
@@ -2667,8 +2665,7 @@ namespace Orm::Tiny::Concerns
                 if constexpr (std::is_same_v<C, QVariantMap>)
                     serializableAttributes.insert(key, value);
 
-                // QList<AttributeItem>
-                else
+                else // QList<AttributeItem>
                     serializableAttributes.emplaceBack(key, value);
             }
 

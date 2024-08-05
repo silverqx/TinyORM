@@ -1561,8 +1561,7 @@ namespace Concerns
             else
                 relationSerialized.setValue(model->toList());
         }
-        // A NULL foreign key
-        else
+        else // A NULL foreign key
             relationSerialized.setValue(nullptr);
     }
 
