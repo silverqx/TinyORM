@@ -38,7 +38,7 @@ namespace Private
             return "bool";
 
         // Platform dependent long int type (LP64, LLP64, ILP32, and LP32)
-        else if constexpr (std::is_same_v<T, long int>) {
+        else if constexpr (std::is_same_v<T, long int>) { // NOLINT(google-runtime-int)
 
             if constexpr (sizeof (T) == 4)
                 return "int32 (long)";
@@ -60,7 +60,7 @@ namespace Private
                         "(long).");
 #endif
         }
-        else if constexpr (std::is_same_v<T, unsigned long int>) {
+        else if constexpr (std::is_same_v<T, unsigned long int>) { // NOLINT(google-runtime-int)
 
             if constexpr (sizeof (T) == 4)
                 return "uint32 (ulong)";
