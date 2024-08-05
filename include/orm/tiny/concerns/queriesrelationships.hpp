@@ -84,11 +84,11 @@ namespace Private
     {
         // Used by QueriesRelationships::hasInternalVisited()
         template<typename T>
-        friend class QueriesRelationships;
+        friend class QueriesRelationships; // Can't use full specialization as we need it for Related models
 
         // To access private hasInternalVisited()
         template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
-        friend class Support::Stores::QueriesRelationshipsStore;
+        friend class Support::Stores::QueriesRelationshipsStore; // Can't use full specialization
 
         /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;

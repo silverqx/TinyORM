@@ -56,7 +56,7 @@ namespace Concerns
         // To access private serializeRelationVisited()
         template<SerializedAttributes C, typename Derived_,
                  AllRelationsConcept ...AllRelations_>
-        friend class Support::Stores::SerializeRelationStore;
+        friend class Support::Stores::SerializeRelationStore; // Partial specialization doens't work with friend
         // To access eagerLoadRelationWithVisitor()
         friend class Tiny::Builder<Derived>;
 
