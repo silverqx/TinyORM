@@ -2654,7 +2654,7 @@ void tst_Collection_Relations::fresh_QList_WithItem() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
-    for (auto *const image : imagesInit) {
+    for (auto *const image : std::as_const(imagesInit)) {
         QVERIFY(image->getRelations().empty());
 
         const auto nameRef = (*image)[NAME];
@@ -2718,7 +2718,7 @@ void tst_Collection_Relations::fresh_WithSelectConstraint() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
-    for (auto *const image : imagesInit) {
+    for (auto *const image : std::as_const(imagesInit)) {
         QVERIFY(image->getRelations().empty());
 
         const auto nameRef = (*image)[NAME];
@@ -2779,7 +2779,7 @@ void tst_Collection_Relations::fresh_QString() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
-    for (auto *const image : imagesInit) {
+    for (auto *const image : std::as_const(imagesInit)) {
         QVERIFY(image->getRelations().empty());
 
         const auto nameRef = (*image)[NAME];
@@ -2837,7 +2837,7 @@ void tst_Collection_Relations::fresh_EmptyRelations() const
     ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
-    for (auto *const image : imagesInit) {
+    for (auto *const image : std::as_const(imagesInit)) {
         QVERIFY(image->getRelations().empty());
 
         const auto nameRef = (*image)[NAME];
