@@ -38,8 +38,7 @@ namespace Orm::Tiny
         // Used by TinyBuilderProxies::where/latest/oldest/update()
         friend BuilderProxies<Model>;
         // To access enforceOrderBy(), and defaultKeyName()
-        template<ModelConcept T>
-        friend class Concerns::BuildsQueries;
+        friend class Concerns::BuildsQueries<Model>;
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
