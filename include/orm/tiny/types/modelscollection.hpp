@@ -2302,7 +2302,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     void ModelsCollection<Model>::throwIfInvalidWhereOperator(const QString &comparison)
     {
-        const std::unordered_set<QString> allowedOperators {
+        static const std::unordered_set<QString> allowedOperators {
             EQ, LT, GT, LE, GE, NE, NE_,
         };
 
