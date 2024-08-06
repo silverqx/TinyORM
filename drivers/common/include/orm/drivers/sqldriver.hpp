@@ -48,7 +48,7 @@ namespace Orm::Drivers
             BatchOperations,
             /*! Supports BLOB-s fields (Binary Large Objects). */
             BLOB,
-            /*! Supports cancelling a running query (unused, for API compatibility). */
+            /*! Supports canceling a running query (unused, for API compatibility). */
             CancelQuery,
             /*! Supports database event notifications (unused, for API compatibility). */
             EventNotifications,
