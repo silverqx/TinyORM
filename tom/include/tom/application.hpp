@@ -179,12 +179,8 @@ namespace Concerns
             /*! Show a command not defined error wall. */
             ShowErrorWall,
         };
-        /*! Show all commands list using the list command. */
-        constexpr static CommandNotFound
-        ShowCommandsList = CommandNotFound::ShowCommandsList;
-        /*! Show a command not defined error wall. */
-        constexpr static CommandNotFound
-        ShowErrorWall    = CommandNotFound::ShowErrorWall;
+        /*! Expose the CommandNotFound enum. */
+        using enum CommandNotFound;
 
         /*! Get the command name including the guess command name logic. */
         QString getCommandName(const QString &name, CommandNotFound notFound);

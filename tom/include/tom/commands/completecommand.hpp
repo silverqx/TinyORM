@@ -81,18 +81,20 @@ namespace Tom::Commands
         getCommandOptionsSignature(const std::optional<QString> &command) const;
 
         /*! Option type (long/short). */
-        enum struct OptionType : qint8
+        enum struct OptionType : quint8
         {
-            UNDEFINED = -1,
+            /*! Consider both long and short option arguments. */
+            ANY,
+            /*! Long option argument. */
             LONG,
+            /*! Short option argument. */
             SHORT,
         };
-        constexpr static auto UNDEFINED = OptionType::UNDEFINED;
-        constexpr static auto LONG      = OptionType::LONG;
-        constexpr static auto SHORT     = OptionType::SHORT;
+        /*! Expose the OptionType enum. */
+        using enum OptionType;
 
         /*! Determine whether the given word is an option argument. */
-        static bool isOptionArgument(const QString &wordArg, OptionType type = UNDEFINED);
+        static bool isOptionArgument(const QString &wordArg, OptionType type = ANY);
         /*! Determine whether the given word is a long option argument. */
         inline static bool isLongOption(const QString &wordArg);
         /*! Determine whether the given word is a short option argument. */

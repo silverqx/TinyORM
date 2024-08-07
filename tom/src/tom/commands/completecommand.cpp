@@ -666,7 +666,8 @@ bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType 
     const auto isLong = wordArg.startsWith(DoubleDash);
     const auto isShort = isLong ? false : wordArg.startsWith(DASH);
 
-    if (type == UNDEFINED)
+    // Consider both long and short option arguments
+    if (type == ANY)
         return isLong || isShort;
 
     if (type == LONG)

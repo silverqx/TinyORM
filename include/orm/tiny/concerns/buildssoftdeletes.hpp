@@ -77,17 +77,13 @@ namespace Concerns
         /*! Restore all trashed models (call update on deleted_at column, set to null). */
         std::tuple<int, TSqlQuery> restore();
 
-        /*! Alias for the WithoutTrashed constraint. */
-        constexpr static auto WithoutTrashed = TrashedType::WITHOUT_TRASHED;
-        /*! Alias for the WithTrashed constraint. */
-        constexpr static auto WithTrashed = TrashedType::WITH_TRASHED;
-        /*! Alias for the OnlyTrashed constraint. */
-        constexpr static auto OnlyTrashed = TrashedType::ONLY_TRASHED;
-
         /*! Get the currently applied soft deletes constraint on the TinyBuilder. */
         inline TrashedType currentSoftDeletes() const noexcept;
 
     protected:
+        /*! Expose the TrashedType enum. */
+        using enum TrashedType;
+
         /*! Get the "deleted at" column for the builder (fully qualified if joins
             are defined). */
         QString getDeletedAtColumn(Builder<Model> &builder) const;
@@ -96,7 +92,7 @@ namespace Concerns
         Builder<Model> &applySoftDeletes();
 
         /*! Stores the currently applied soft deletes constraint on the TinyBuilder. */
-        TrashedType m_trashed = WithoutTrashed;
+        TrashedType m_trashed = WITHOUT_TRASHED;
         /*! Is the default soft deletes constraint on the TinyBuilder enabled? */
         bool m_withSoftDeletes = false;
 
@@ -162,7 +158,7 @@ namespace Concerns
     Builder<Model> &
     BuildsSoftDeletes<Model, T>::withoutTrashed()
     {
-        m_trashed = WithoutTrashed;
+        m_trashed = WITHOUT_TRASHED;
 
         /* Disable the default soft deletes constraint on the TinyBuilder because
            manually overridden and we are applying another whereNull clause here. */
@@ -182,7 +178,7 @@ namespace Concerns
         if (!withTrashed)
             return withoutTrashed();
 
-        m_trashed = WithTrashed;
+        m_trashed = WITH_TRASHED;
 
         // Disable the default soft deletes constraint on the TinyBuilder (withoutTrashed)
         disableSoftDeletes();
@@ -194,7 +190,7 @@ namespace Concerns
     Builder<Model> &
     BuildsSoftDeletes<Model, T>::onlyTrashed()
     {
-        m_trashed = OnlyTrashed;
+        m_trashed = ONLY_TRASHED;
 
         /* Disable the default soft deletes constraint on the TinyBuilder because
            manually overridden and we are applying another whereNotNull clause here. */

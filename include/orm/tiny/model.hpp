@@ -423,13 +423,17 @@ namespace Orm::Tiny
         /*! Method to call in the incrementOrDecrement(). */
         enum struct IncrementOrDecrement : quint8
         {
+            /*! Call the increment() method. */
             INCREMENT,
+            /*! Call the decrement() method. */
             DECREMENT,
         };
         /*! Call the increment() method. */
         constexpr static auto Increment = IncrementOrDecrement::INCREMENT;
         /*! Call the decrement() method. */
         constexpr static auto Decrement = IncrementOrDecrement::DECREMENT;
+        /* Don't use using enum here as it can't name dependent type.
+           See: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1099r5.html */
 
         /*! Run the increment or decrement method on the model. */
         template<typename T> requires std::is_arithmetic_v<T>

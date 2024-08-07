@@ -78,22 +78,19 @@ namespace Concerns
         /*! Verbosity levels. */
         enum struct Verbosity : quint8
         {
+            /*! Quiet verbosity. */
             Quiet       = 0x0001,
+            /*! Normal verbosity (default). */
             Normal      = 0x0002,
+            /*! Verbose verbosity. */
             Verbose     = 0x0004,
+            /*! Very verbose verbosity. */
             VeryVerbose = 0x0008,
+            /*! Debug verbosity. */
             Debug       = 0x0010,
         };
-        /*! Quiet verbosity. */
-        constexpr static Verbosity Quiet       = Verbosity::Quiet;
-        /*! Normal verbosity (default). */
-        constexpr static Verbosity Normal      = Verbosity::Normal;
-        /*! Verbose verbosity. */
-        constexpr static Verbosity Verbose     = Verbosity::Verbose;
-        /*! Very verbose verbosity. */
-        constexpr static Verbosity VeryVerbose = Verbosity::VeryVerbose;
-        /*! Debug verbosity. */
-        constexpr static Verbosity Debug       = Verbosity::Debug;
+        /*! Expose the Verbosity enum. */
+        using enum Verbosity;
 
         /*! Write a string as standard output. */
         const InteractsWithIO &line(const QString &string, bool newline = true,
