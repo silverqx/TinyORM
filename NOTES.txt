@@ -1029,6 +1029,34 @@ CLAZY_IGNORE_DIRS=C:[\\/]+(Qt|Program Files|Program Files \(x86\))[\\/].*
 CLAZY_HEADER_FILTER=[\\/]+(drivers|examples|orm|tests|tom)[\\/]+.+\.(h|hpp)$
 
 
+Build own Clazy Standalone:
+---------------------------
+tags: clazy
+--
+
+Special LLVM is needed that has clang.lib, LLVM releases doesn't provide it, last I found it at:
+https://github.com/KDABLabs/llvm-project/releases
+https://invent.kde.org/sdk/clazy/-/issues/12
+
+Clazy README.md for Windows:
+https://github.com/KDE/clazy?tab=readme-ov-file#windows
+
+Isn't that easy to build LLVM with clang.lib, it doesn't compile and fails 50 TU before the end 🫤🤔
+
+Add-folderOnPath.ps1 -Path o:\Code\c\clazy\llvm-18.1.7-msvc2022\bin
+vcvars64.ps1
+
+cmake.exe --log-level=DEBUG --log-context `
+-S O:\Code\c\clazy\clazy `
+-B O:\Code\c\clazy\clazy-builds\Release `
+-G Ninja `
+-D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe `
+-D CMAKE_BUILD_TYPE:STRING=Release `
+-D CMAKE_INSTALL_PREFIX:PATH='O:\Code\c\clazy\_install\clazy\Release' `
+-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
+-D CLANG_LIBRARY_IMPORT:FILEPATH='O:\Code\c\clazy\llvm-18.1.7-msvc2022\lib\clang.lib'
+
+
 pwsh autocomeplete:
 -------------------
 For a fast lookup for debugging.
