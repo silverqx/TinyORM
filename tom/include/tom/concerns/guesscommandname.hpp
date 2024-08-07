@@ -57,8 +57,8 @@ namespace Concerns
         /*! Print the error wall with ambiguous commands. */
         [[noreturn]] void
         printAmbiguousCommands(
-                    const QString &commandName,
-                    const std::vector<std::shared_ptr<Command>> &commands) const;
+                const QString &commandName,
+                const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
         /*! Try to guess all command names by the given name (name can be partial). */
