@@ -119,7 +119,9 @@ namespace Orm::Tiny::Concerns
         /*! Type of the template message to generate. */
         enum struct CopyMoveTemplateType : quint8
         {
+            /*! Tags copy constructor and assignment operator. */
             COPY,
+            /*! Tags move constructor and assignment operator. */
             MOVE,
         };
         /*! Template message for the Q_ASSERT_X() check in copy/move constructors. */

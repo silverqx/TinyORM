@@ -66,16 +66,27 @@ namespace Support::Stores
     /*! Type of data saved in the relation store. */
     enum struct RelationStoreType : quint8
     {
+        /*! The store for loading eager relations. */
         EAGER,
+        /*! The store for loading eager relations (collection of pointers). */
         EAGER_POINTERS,
+        /*! The store for the Model push() method. */
         PUSH,
+        /*! The store for touching owner's timestamps. */
         TOUCH_OWNERS,
+        /*! The store for the lazy loading. */
         LAZY_RESULTS,
+        /*! The store to obtain the related table name for BelongsToMany relation. */
         BELONGSTOMANY_RELATED_TABLE,
+        /*! Save arguments needed to build a query for last relation in hasNested(). */
         QUERIES_RELATIONSHIPS_QUERY,
+        /*! Save arguments needed to build a query for last relation in hasNested(). */
         QUERIES_RELATIONSHIPS_TINY,
+        /*! Save arguments needed to build a query for last relation in hasNested(). */
         QUERIES_RELATIONSHIPS_TINY_NESTED,
+        /*! The store for serializing relationship (QVariantMap). */
         RELATION_TO_MAP,
+        /*! The store for serializing relationship (QList<AttributeItem>). */
         RELATION_TO_VECTOR,
     };
 

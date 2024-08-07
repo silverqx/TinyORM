@@ -20,8 +20,11 @@ namespace Orm::Tiny::Exceptions
         /*! Exception message will be generated on the base of this enum struct. */
         enum struct From : qint8
         {
+            /*! Tags undefined relation (used in exception messages). */
             UNDEFINED       = -1,
+            /*! Tags Belongs to relation (used in exception messages). */
             BELONGS_TO      = 0,
+            /*! Tags Belongs to many relation (used in exception messages). */
             BELONGS_TO_MANY = 1,
         };
 

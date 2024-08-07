@@ -822,6 +822,7 @@ namespace Orm::Query
         /*! Builder property types. */
         enum struct PropertyType : quint8
         {
+            /*! Columns property type (used to clone query without column names). */
             COLUMNS,
         };
 
