@@ -412,27 +412,33 @@ QString Application::getCommandName(const QString &name, const CommandNotFound n
 
     // If passed a non-existent command then show all commands list or error wall
     if (commandName.isEmpty())
-        switch (notFound) {
-        T_LIKELY
-        case ShowCommandsList:
-            showCommandsList(EXIT_FAILURE);
-
-        T_UNLIKELY
-        case ShowErrorWall:
-            errorWall(QStringLiteral("Command '%1' is not defined.").arg(name));
-
-            exitApplication(EXIT_FAILURE);
-
-        default:
-#ifndef TINYTOM_DEBUG
-            throw Exceptions::RuntimeError(
-                        sl("Unexpected value for enum struct CommandNotFound."));
-#else
-            Q_UNREACHABLE();
-#endif
-        }
+        handleEmptyCommandName(name, notFound); // [[noreturn]]
 
     return commandName;
+}
+
+void Application::handleEmptyCommandName(const QString &name,
+                                         const CommandNotFound notFound)
+{
+    switch (notFound) {
+    T_LIKELY
+    case ShowCommandsList:
+        showCommandsList(EXIT_FAILURE);
+
+    T_UNLIKELY
+    case ShowErrorWall:
+        errorWall(QStringLiteral("Command '%1' is not defined.").arg(name));
+
+        exitApplication(EXIT_FAILURE);
+
+    default:
+#ifndef TINYTOM_DEBUG
+        throw Exceptions::RuntimeError(
+                    sl("Unexpected value for enum struct CommandNotFound."));
+#else
+        Q_UNREACHABLE();
+#endif
+    }
 }
 
 /* Early exit during parse command-line */

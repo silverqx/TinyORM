@@ -189,6 +189,10 @@ namespace Concerns
         /*! Get the command name including the guess command name logic. */
         QString getCommandName(const QString &name, CommandNotFound notFound);
 
+        /*! If passed non-existent command then show all commands list or error wall. */
+        [[noreturn]] void
+        handleEmptyCommandName(const QString &name, CommandNotFound notFound);
+
         /* Early exit during parse command-line */
         /*! Display the version information and exits. */
         [[noreturn]] void showVersion() const;
