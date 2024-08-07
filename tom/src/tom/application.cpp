@@ -437,7 +437,7 @@ QString Application::getCommandName(const QString &name, const CommandNotFound n
 
 /* Early exit during parse command-line */
 
-Q_NORETURN void Application::showVersion() const
+void Application::showVersion() const
 {
     printFullVersions();
 
@@ -576,7 +576,7 @@ QList<SubSectionItem> Application::createVersionsSubsection()
     };
 }
 
-Q_NORETURN void Application::showCommandsList(const int exitCode)
+void Application::showCommandsList(const int exitCode)
 {
     // FUTURE tom, allocate on heap to make func const, I would have to pass the const Application & to the Command base class and instead of to use one Application::m_parser I would have to create own parser for Command, problem is with the saveOptions(), prependOptions(), and initializeParser(), they are used in commands and they modify Application instance silverqx
     ListCommand(*this, m_parser).run();
@@ -584,7 +584,7 @@ Q_NORETURN void Application::showCommandsList(const int exitCode)
     exitApplication(exitCode);
 }
 
-Q_NORETURN void Application::exitApplication(const int exitCode)
+void Application::exitApplication(const int exitCode)
 {
     ::exit(exitCode); // NOLINT(concurrency-mt-unsafe)
 }

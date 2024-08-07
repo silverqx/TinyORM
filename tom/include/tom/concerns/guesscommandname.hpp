@@ -55,7 +55,7 @@ namespace Concerns
         guessCommandsWithoutNamespace(const QString &commandName);
 
         /*! Print the error wall with ambiguous commands. */
-        Q_NORETURN void
+        [[noreturn]] void
         printAmbiguousCommands(
                     const QString &commandName,
                     const std::vector<std::shared_ptr<Command>> &commands) const;

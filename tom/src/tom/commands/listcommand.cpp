@@ -173,9 +173,8 @@ std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg)
             | ranges::to<std::vector<QString>>();
 }
 
-Q_NORETURN void
-ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
-                                      const std::vector<QString> &namespaces) const
+void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
+                                           const std::vector<QString> &namespaces) const
 {
     // Prepare namespaces for the errorWall()
     const auto formattedNamespaces = namespaces

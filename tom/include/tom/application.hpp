@@ -191,7 +191,7 @@ namespace Concerns
 
         /* Early exit during parse command-line */
         /*! Display the version information and exits. */
-        Q_NORETURN void showVersion() const;
+        [[noreturn]] void showVersion() const;
         /*! Display the version information. */
         void printVersion() const;
         /*! Display the full version information with dependencies, build types, and
@@ -202,9 +202,9 @@ namespace Concerns
         static QList<SubSectionItem> createVersionsSubsection();
 
         /*! Invoke the list command. */
-        Q_NORETURN void showCommandsList(int exitCode);
+        [[noreturn]] void showCommandsList(int exitCode);
         /*! Exit the application with post routines. */
-        Q_NORETURN static void exitApplication(int exitCode);
+        [[noreturn]] static void exitApplication(int exitCode);
 
         /* Commands factory */
         /*! Alias for an optional command-line parser reference. */
