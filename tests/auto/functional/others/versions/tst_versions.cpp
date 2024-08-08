@@ -351,10 +351,10 @@ void tst_Versions::checkFileVersion_TinyDrivers() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    const auto versionStr = QString::number(TINYDRIVERS_VERSION_MAJOR)  % DOT %
-                            QString::number(TINYDRIVERS_VERSION_MINOR)  % DOT %
-                            QString::number(TINYDRIVERS_VERSION_BUGFIX) % DOT %
-                            QString::number(TINYDRIVERS_VERSION_BUILD);
+    const QString versionStr = QString::number(TINYDRIVERS_VERSION_MAJOR)  % DOT %
+                               QString::number(TINYDRIVERS_VERSION_MINOR)  % DOT %
+                               QString::number(TINYDRIVERS_VERSION_BUGFIX) % DOT %
+                               QString::number(TINYDRIVERS_VERSION_BUILD);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -382,10 +382,10 @@ void tst_Versions::checkFileVersion_TinyMySql() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    const auto versionStr = QString::number(TINYMYSQL_VERSION_MAJOR)  % DOT %
-                            QString::number(TINYMYSQL_VERSION_MINOR)  % DOT %
-                            QString::number(TINYMYSQL_VERSION_BUGFIX) % DOT %
-                            QString::number(TINYMYSQL_VERSION_BUILD);
+    const QString versionStr = QString::number(TINYMYSQL_VERSION_MAJOR)  % DOT %
+                               QString::number(TINYMYSQL_VERSION_MINOR)  % DOT %
+                               QString::number(TINYMYSQL_VERSION_BUGFIX) % DOT %
+                               QString::number(TINYMYSQL_VERSION_BUILD);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -412,10 +412,10 @@ void tst_Versions::checkFileVersion_TinyOrm() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    const auto versionStr = QString::number(TINYORM_VERSION_MAJOR)  % DOT %
-                            QString::number(TINYORM_VERSION_MINOR)  % DOT %
-                            QString::number(TINYORM_VERSION_BUGFIX) % DOT %
-                            QString::number(TINYORM_VERSION_BUILD);
+    const QString versionStr = QString::number(TINYORM_VERSION_MAJOR)  % DOT %
+                               QString::number(TINYORM_VERSION_MINOR)  % DOT %
+                               QString::number(TINYORM_VERSION_BUGFIX) % DOT %
+                               QString::number(TINYORM_VERSION_BUILD);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -437,10 +437,10 @@ void tst_Versions::checkFileVersion_TinyUtils() const
                                   Fs::absolutePath(TINYTEST_VERSIONS_TINYUTILS_PATH));
 
     // Project and File Version strings
-    const auto versionStr = QString::number(TINYUTILS_VERSION_MAJOR)  % DOT %
-                            QString::number(TINYUTILS_VERSION_MINOR)  % DOT %
-                            QString::number(TINYUTILS_VERSION_BUGFIX) % DOT %
-                            QString::number(TINYUTILS_VERSION_BUILD);
+    const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR)  % DOT %
+                               QString::number(TINYUTILS_VERSION_MINOR)  % DOT %
+                               QString::number(TINYUTILS_VERSION_BUGFIX) % DOT %
+                               QString::number(TINYUTILS_VERSION_BUILD);
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
@@ -460,10 +460,10 @@ void tst_Versions::checkFileVersion_TomExample() const
                                   Fs::absolutePath(TINYTEST_VERSIONS_TOMEXAMPLE_PATH));
 
     // Project and File Version strings
-    const auto versionStr = QString::number(TINYTOM_VERSION_MAJOR)  % DOT %
-                            QString::number(TINYTOM_VERSION_MINOR)  % DOT %
-                            QString::number(TINYTOM_VERSION_BUGFIX) % DOT %
-                            QString::number(TINYTOM_VERSION_BUILD);
+    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR)  % DOT %
+                               QString::number(TINYTOM_VERSION_MINOR)  % DOT %
+                               QString::number(TINYTOM_VERSION_BUGFIX) % DOT %
+                               QString::number(TINYTOM_VERSION_BUILD);
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
