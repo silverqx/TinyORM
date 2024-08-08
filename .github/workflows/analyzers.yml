@@ -205,8 +205,14 @@ jobs:
 
     # Disabled checks
     # Level 2      - qstring-allocations
-    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
+    # Manual level - qt-keyword-emit (I'm not using the emit keyword; new in v1.12)
+    #                qt4-qstring-from-array (removed from v1.12)
+    #                qt6-qlatin1stringchar-to-u
     #                qvariant-template-instantiation
+    #                unused-result-check (causes crashes)
+    # Others:
+    # In v1.12 is also a new unused-result-check warning, but when I tried it clazy-standalone.exe
+    # crashed (on Windows), this check isn't EVEN in the Clazy Changelog (Release Notes).
     - name: TinyORM execute clazy-standalone 🚀
       # Run the clazy if the clang-tidy was executed and was success or failed
       if: env.TINY_CLANG_TIDY_COMPLETED == 'true' && (success() || failure())
@@ -226,7 +232,10 @@ jobs:
         'unexpected-flag-enumerator-value,'\
         'use-arrow-operator-instead-of-data,'\
         `# Checks Excluded from level2`\
-        'no-qstring-allocations'
+        'no-qstring-allocations,'\
+        `# New in Clazy 1.12`\
+        'no-module-include,'\
+        'sanitize-inline-keyword'
 
         python3 ./tools/run-clazy-standalone.py \
         -checks="$checks" \
