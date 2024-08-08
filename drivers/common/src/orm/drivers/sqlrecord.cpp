@@ -250,7 +250,7 @@ SqlRecord::getFieldNameSegments(const QStringView name) noexcept
 #ifdef TINYDRIVERS_MYSQL_DRIVER
 SqlField &SqlRecord::fieldInternal(const size_type index)
 {
-    return m_fields[index];
+    return m_fields[index]; // clazy:exclude=detaching-member
 }
 
 SqlField &SqlRecord::fieldInternal(const QString &name)
