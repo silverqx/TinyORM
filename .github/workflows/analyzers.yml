@@ -228,12 +228,12 @@ jobs:
         'qt6-qhash-signature,raw-environment-function,reserve-candidates,'\
         'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,'\
         'use-chrono-in-qtimer,'\
-        `# New in Clazy 1.11`\
+        `# New in Clazy v1.11`\
         'unexpected-flag-enumerator-value,'\
         'use-arrow-operator-instead-of-data,'\
         `# Checks Excluded from level2`\
         'no-qstring-allocations,'\
-        `# New in Clazy 1.12`\
+        `# New in Clazy v1.12`\
         'no-module-include,'\
         'sanitize-inline-keyword'
 
