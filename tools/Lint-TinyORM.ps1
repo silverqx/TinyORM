@@ -163,7 +163,7 @@ $clazyCurrentVersion = $Matches.version
 Write-Info 'Recommended versions'
 Newline
 Write-Output "  Clang-Tidy `e[32mv18`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
-Write-Output "  Clazy standalone `e[32mv1.11`e[0m (current `e[33mv$clazyCurrentVersion`e[0m)"
+Write-Output "  Clazy standalone `e[32mv1.12`e[0m (current `e[33mv$clazyCurrentVersion`e[0m)"
 
 # Initialize build environment if it's not already initialized
 if ($PSVersionTable.Platform -ceq 'Win32NT' -and -not (Test-Path env:WindowsSDKLibVersion)) {
@@ -259,8 +259,14 @@ if (-not $SkipClazy) {
 
     # Disabled checks
     # Level 2      - qstring-allocations
-    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
+    # Manual level - qt-keyword-emit (I'm not using the emit keyword; new in v1.12)
+    #                qt4-qstring-from-array (removed from v1.12)
+    #                qt6-qlatin1stringchar-to-u
     #                qvariant-template-instantiation
+    #                unused-result-check (causes crashes)
+    # Others:
+    # In v1.12 is also a new unused-result-check warning, but when I tried it clazy-standalone.exe
+    # crashed (on Windows), this check isn't EVEN in the Clazy Changelog (Release Notes).
     $Script:Checks =
         'level0,level1,level2,' +
         # Manual checks
@@ -275,7 +281,10 @@ if (-not $SkipClazy) {
         'unexpected-flag-enumerator-value,' +
         'use-arrow-operator-instead-of-data,' +
         # Checks Excluded from level2
-        'no-qstring-allocations'
+        'no-qstring-allocations,' +
+        # New in Clazy 1.12
+        'no-module-include,' +
+        'sanitize-inline-keyword'
 
     run-clazy-standalone.ps1 `
         -checks="$Script:Checks" `
