@@ -1034,6 +1034,9 @@ Build own Clazy Standalone:
 tags: clazy
 --
 
+Windows:
+--
+
 Special LLVM is needed that has clang.lib, LLVM releases doesn't provide it, last I found it at:
 https://github.com/KDABLabs/llvm-project/releases
 https://invent.kde.org/sdk/clazy/-/issues/12
@@ -1055,6 +1058,45 @@ cmake.exe --log-level=DEBUG --log-context `
 -D CMAKE_INSTALL_PREFIX:PATH='O:\Code\c\clazy\_install\clazy\Release' `
 -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
 -D CLANG_LIBRARY_IMPORT:FILEPATH='O:\Code\c\clazy\llvm-18.1.7-msvc2022\lib\clang.lib'
+
+Linux:
+--
+
+Clazy README.md for Linux:
+https://github.com/KDE/clazy?tab=readme-ov-file#linux
+
+On Linux it's much better as distros provide -dev or -devel packages which provide this clang.lib.
+
+Eg. on Fedora the clang-devel contains it.
+
+Build dependencies:
+Fedora: llvm-devel clang-devel (they also recommend to remove the llvm-static, but for me it works
+                                without this)
+
+cmake --log-level=DEBUG --log-context \
+-S ~/Code/c/clazy/clazy \
+-B ~/Code/c/clazy/clazy-builds/Release \
+-G Ninja \
+-D CMAKE_INSTALL_PREFIX:PATH=/usr
+-D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache \
+-D CMAKE_BUILD_TYPE:STRING=Release \
+-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
+
+sudo cmake --install .
+sudo cmake --install . --prefix /usr
+
+! Is very important to install it with the /usr install prefix because clazy-standalone fails
+during analyzes with errors like this for every TU:
+/usr/bin/../lib/gcc/x86_64-redhat-linux/14/../../../../include/c++/14/cstddef:50:10: fatal error: 'stddef.h' file not found
+
+I don't know if this is happening only on Fedora.
+Clazy doesn't support installing to the /usr/local prefix.
+
+In the Clazy Troubleshooting section is written:
+fatal error: 'stddef.h' file not found, while using clazy-standalone.
+Be sure the clazy-standalone binary is located in the same folder as the clang binary.
+
+So the clazy-standalone binary MUST be in the same location as the clang binary.
 
 
 pwsh autocomeplete:
