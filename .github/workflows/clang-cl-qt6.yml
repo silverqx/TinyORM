@@ -684,6 +684,10 @@ jobs:
       run: |
         & ${env:LLVM_PATH}\bin\clang-cl.exe --version
 
+    - name: Linker print version (lld-link.exe)
+      run: |
+        lld-link.exe --version
+
     - name: Compiler print version (cl.exe)
       run: |
         cl.exe

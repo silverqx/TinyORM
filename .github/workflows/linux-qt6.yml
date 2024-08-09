@@ -46,12 +46,14 @@ jobs:
             name: clang18
             apt: [ clang-18, lld-18 ]
             command: clang++-18
+            linker-command: ld.lld-18
 
           # Don't upgrade to v13 or v14 to test also older g++ versions
           - key: gcc
             name: gcc12
             apt: [ g++-12 ]
             command: g++-12
+            linker-command: ld
 
     steps:
     - uses: actions/checkout@v4
@@ -628,13 +630,13 @@ jobs:
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
-    - name: Compiler print version (${{ matrix.compiler.name }})
+    - name: Compiler print version (${{ matrix.compiler.command }})
       run: |
         ${{ matrix.compiler.command }} --version
 
-    - name: Linker print version (ld)
+    - name: Linker print version (${{ matrix.compiler.linker-command }})
       run: |
-        ld --version
+        ${{ matrix.compiler.linker-command }} --version
 
     - name: CMake print version
       run: |

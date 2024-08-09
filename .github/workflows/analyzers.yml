@@ -146,7 +146,11 @@ jobs:
       run: |
         ${{ env.TINY_COMPILER_COMMAND }} --version
 
-    - name: Linker print version (ld)
+    - name: Linker print version (ld.lld)
+      run: |
+        ld.lld --version
+
+    - name: Linker print version (ld - unused!)
       run: |
         ld --version
 

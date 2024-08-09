@@ -61,10 +61,12 @@ jobs:
           - key: clang
             name: clang18
             command: clang++-18
+            linker-command: ld.lld
 
           - key: gcc
             name: gcc14
             command: g++-14
+            linker-command: ld
 
         include:
           - lto: ON
@@ -76,6 +78,7 @@ jobs:
               key: clang
               name: clang18
               command: clang++-18
+              linker-command: ld.lld
 
           - lto: ON
             drivers-type: Loadable
@@ -86,6 +89,7 @@ jobs:
               key: gcc
               name: gcc14
               command: g++-14
+              linker-command: ld
 
     steps:
     - uses: actions/checkout@v4
@@ -215,13 +219,13 @@ jobs:
         # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
         echo "CMAKE_PREFIX_PATH=/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
-    - name: Compiler print version (${{ matrix.compiler.name }})
+    - name: Compiler print version (${{ matrix.compiler.command }})
       run: |
         ${{ matrix.compiler.command }} --version
 
-    - name: Linker print version (ld)
+    - name: Linker print version (${{ matrix.compiler.linker-command }})
       run: |
-        ld --version
+        ${{ matrix.compiler.linker-command }} --version
 
     - name: CMake print version
       run: |

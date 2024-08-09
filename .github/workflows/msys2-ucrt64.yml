@@ -364,15 +364,16 @@ jobs:
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
-    - name: Compiler print version (${{ matrix.compiler.name }})
+    - name: Compiler print version (${{ matrix.compiler.command }})
       shell: msys2 {0}
       run: |
         ${{ matrix.compiler.command }} --version
 
-    - name: Linker print version (ldd.exe)
+    # On MSYS2 is the lld linker used for both g++ and also clang++
+    - name: Linker print version (ld.lld.exe)
       shell: msys2 {0}
       run: |
-        ldd.exe --version
+        ld.lld.exe --version
 
     - name: Linker print version (ld.exe - unused!)
       shell: msys2 {0}
