@@ -479,7 +479,8 @@ jobs:
         ccache --show-stats --verbose
 
     - name: HelloWorld execute (SQLite) 🏁
-      working-directory: ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin
+      working-directory: >-
+        ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin
       run: |
         # This is enough for us to distinguish between Ubuntu, Fedora, or Gentoo
         [ -r /etc/debian_version ] && libFolder='lib' || libFolder='lib64'
