@@ -33,6 +33,9 @@ jobs:
       TINY_CLANG_TIDY_COMPLETED: false
       TINY_VCPKG_NEEDS_UPGRADE: false
 
+      # For simpler updates and to avoid duplicates
+      TINY_COMPILER_COMMAND: clang++-18
+
     # Clang Tidy can't be executed on Release builds, it's designed to be run on Debug builds only
     strategy:
       matrix:
@@ -139,13 +142,29 @@ jobs:
         # the GITHUB_PATH like define two line above. 🫤
         echo "CMAKE_PREFIX_PATH=/opt/Qt/${{ matrix.qt.version }}/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
+    - name: Compiler print version (${{ env.TINY_COMPILER_COMMAND }})
+      run: |
+        ${{ env.TINY_COMPILER_COMMAND }} --version
+
+    - name: Linker print version (ld)
+      run: |
+        ld --version
+
     - name: CMake print version
       run: |
         cmake --version
 
+    - name: Ninja print version
+      run: |
+        ninja --version
+
     - name: vcpkg print version
       run: |
         vcpkg --version
+
+    - name: Clang Tidy print version
+      run: |
+        clang-tidy --version
 
     - name: Clazy print version
       run: |
@@ -164,7 +183,7 @@ jobs:
         -B "$TinyORMBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=clang++-18
+        -D CMAKE_CXX_COMPILER:FILEPATH=${{ env.TINY_COMPILER_COMMAND }}
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON

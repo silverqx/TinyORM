@@ -628,9 +628,25 @@ jobs:
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
+    - name: Compiler print version (${{ matrix.compiler.name }})
+      run: |
+        ${{ matrix.compiler.command }} --version
+
+    - name: Linker print version (ld)
+      run: |
+        ld --version
+
     - name: CMake print version
       run: |
         cmake --version
+
+    - name: Ninja print version
+      run: |
+        ninja --version
+
+    - name: vcpkg print version
+      run: |
+        vcpkg --version
 
     - name: Ccache clear statistics
       run: |

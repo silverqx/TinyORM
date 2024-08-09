@@ -676,9 +676,29 @@ jobs:
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
         'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
 
+    - name: Compiler print version (clang-cl.exe)
+      run: |
+        & ${env:LLVM_PATH}\bin\clang-cl.exe --version
+
+    - name: Compiler print version (cl.exe)
+      run: |
+        cl.exe
+
+    - name: Linker print version (link.exe)
+      run: |
+        link.exe | Select-Object -First 1
+
     - name: CMake print version
       run: |
         cmake.exe --version
+
+    - name: Ninja print version
+      run: |
+        ninja.exe --version
+
+    - name: vcpkg print version
+      run: |
+        vcpkg.exe --version
 
     - name: Ccache clear statistics
       run: |

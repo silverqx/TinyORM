@@ -364,10 +364,30 @@ jobs:
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
+    - name: Compiler print version (${{ matrix.compiler.name }})
+      shell: msys2 {0}
+      run: |
+        ${{ matrix.compiler.command }} --version
+
+    - name: Linker print version (ldd.exe)
+      shell: msys2 {0}
+      run: |
+        ldd.exe --version
+
+    - name: Linker print version (ld.exe - unused!)
+      shell: msys2 {0}
+      run: |
+        ld.exe --version
+
     - name: CMake print version
       shell: msys2 {0}
       run: |
         cmake.exe --version
+
+    - name: Ninja print version
+      shell: msys2 {0}
+      run: |
+        ninja.exe --version
 
     - name: vcpkg print version
       shell: msys2 {0}

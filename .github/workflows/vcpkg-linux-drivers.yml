@@ -146,9 +146,22 @@ jobs:
 
         date +%Y-%m-%d > "$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
+    # I'm not setting the CMAKE_CXX_COMPILER so query the /usr/bin/c++
+    - name: Compiler print version (c++)
+      run: |
+        c++ --version
+
+    - name: Linker print version (ld)
+      run: |
+        ld --version
+
     - name: CMake print version
       run: |
         cmake --version
+
+    - name: Ninja print version
+      run: |
+        ninja --version
 
     - name: vcpkg print version
       run: |

@@ -222,9 +222,21 @@ jobs:
 
         Get-Date -Format 'yyyyMMdd' > "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
+    - name: Compiler print version (cl.exe)
+      run: |
+        cl.exe
+
+    - name: Linker print version (link.exe)
+      run: |
+        link.exe | Select-Object -First 1
+
     - name: CMake print version
       run: |
         cmake.exe --version
+
+    - name: Ninja print version
+      run: |
+        ninja.exe --version
 
     - name: vcpkg print version
       run: |

@@ -212,10 +212,30 @@ jobs:
 
         Get-Date -Format 'yyyyMMdd' > "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
+    - name: Compiler print version (${{ matrix.compiler.name }})
+      shell: msys2 {0}
+      run: |
+        ${{ matrix.compiler.command }} --version
+
+    - name: Linker print version (ldd.exe)
+      shell: msys2 {0}
+      run: |
+        ldd.exe --version
+
+    - name: Linker print version (ld.exe - unused!)
+      shell: msys2 {0}
+      run: |
+        ld.exe --version
+
     - name: CMake print version
       shell: msys2 {0}
       run: |
         cmake.exe --version
+
+    - name: Ninja print version
+      shell: msys2 {0}
+      run: |
+        ninja.exe --version
 
     - name: vcpkg print version
       shell: msys2 {0}

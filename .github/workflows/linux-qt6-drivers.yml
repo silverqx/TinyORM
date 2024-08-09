@@ -205,9 +205,21 @@ jobs:
 
         date +%Y-%m-%d > "$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
+    - name: Compiler print version (${{ matrix.compiler.name }})
+      run: |
+        ${{ matrix.compiler.command }} --version
+
+    - name: Linker print version (ld)
+      run: |
+        ld --version
+
     - name: CMake print version
       run: |
         cmake --version
+
+    - name: Ninja print version
+      run: |
+        ninja --version
 
     - name: vcpkg print version
       run: |
