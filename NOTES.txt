@@ -1077,7 +1077,7 @@ cmake --log-level=DEBUG --log-context \
 -S ~/Code/c/clazy/clazy \
 -B ~/Code/c/clazy/clazy-builds/Release \
 -G Ninja \
--D CMAKE_INSTALL_PREFIX:PATH=/usr
+-D CMAKE_INSTALL_PREFIX:PATH=/usr \
 -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache \
 -D CMAKE_BUILD_TYPE:STRING=Release \
 -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
