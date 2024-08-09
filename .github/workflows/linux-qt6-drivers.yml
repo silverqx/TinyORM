@@ -211,13 +211,8 @@ jobs:
 
     - name: Qt v${{ env.TINY_QT_VERSION }} prepare environment
       run: |
-        echo "/opt/Qt/$TINY_QT_VERSION/bin" >> $GITHUB_PATH
+        echo "/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain/bin" >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
-
-        # The CMAKE_PREFIX_PATH must be defined on the GitHub Actions, this is some kind of a bug
-        # because the CMake can't find the Qt, but if I export the PATH directly in the step
-        # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
-        echo "CMAKE_PREFIX_PATH=/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
     - name: Compiler print version (${{ matrix.compiler.command }})
       run: |
