@@ -397,7 +397,7 @@ jobs:
     - name: Qt print version
       shell: msys2 {0}
       run: |
-        qmake.exe -query QT_VERSION
+        qmake6.exe -query QT_VERSION
 
     - name: Ccache clear statistics
       shell: msys2 {0}

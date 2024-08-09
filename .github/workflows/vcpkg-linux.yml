@@ -167,9 +167,11 @@ jobs:
       run: |
         vcpkg --version
 
+    # Used full path to qmake because I don't want to move the Qt prepare environment
+    # section up, to avoid interfering with the Vcpkg Manifest method
     - name: Qt print version
       run: |
-        qmake -query QT_VERSION
+        /opt/Qt/${{ matrix.qt.version }}/gcc_64/bin/qmake -query QT_VERSION
 
     # Will be used in the classic method (vcpkg install tinyorm) and VcpkgManifest method
     # I will not write bash scripts for this, would be a pain 🫤

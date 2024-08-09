@@ -576,10 +576,11 @@ jobs:
       run: |
         sudo apt update
 
+    # qmake6 command is only used to query the Qt version
     - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6 base, and ccache
       run: >-
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
-        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql ccache
+        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql ccache qmake6
 
     # No need to use lukka/get-cmake, these images always have latest version
     - name: Ninja install latest version
@@ -650,7 +651,7 @@ jobs:
 
     - name: Qt print version
       run: |
-        qmake -query QT_VERSION
+        qmake6 -query QT_VERSION
 
     - name: Ccache clear statistics
       run: |

@@ -166,9 +166,11 @@ jobs:
       run: |
         vcpkg.exe --version
 
+    # Used full path to qmake because I don't want to move the Qt prepare environment
+    # section up, to avoid interfering with the Vcpkg Manifest method
     - name: Qt print version
       run: |
-        qmake.exe -query QT_VERSION
+        & "$env:TINY_QT_ROOT\${{ matrix.qt.version }}\msvc2019_64\bin\qmake.exe" -query QT_VERSION
 
     # Will be used in the classic method (vcpkg install tinyorm) and VcpkgManifest method
     - name: vcpkg prepare TinyORM ports (update REF and SHA512)
