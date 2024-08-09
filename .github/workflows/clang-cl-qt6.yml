@@ -626,6 +626,10 @@ jobs:
         version: ${{ env.TINY_LLVM_VERSION }}
         force-version: true
 
+    # Always install the latest CMake and Ninja
+    - name: CMake and Ninja install latest versions
+      uses: lukka/get-cmake@latest
+
     - name: Ccache initialize
       id: ccache-initialize-cache
       run: |

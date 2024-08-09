@@ -637,6 +637,10 @@ jobs:
         -MySQLServerPath $env:TinyMySQLInstallationPath
         -BuildPath $env:RUNNER_WORKSPACE
 
+    # Always install the latest CMake and Ninja
+    - name: CMake and Ninja install latest versions
+      uses: lukka/get-cmake@latest
+
     - name: Ccache initialize
       id: ccache-initialize-cache
       run: |

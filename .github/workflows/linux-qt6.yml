@@ -582,11 +582,9 @@ jobs:
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql ccache qmake6
 
-    # No need to use lukka/get-cmake, these images always have latest version
-    - name: Ninja install latest version
-      uses: seanmiddleditch/gha-setup-ninja@master
-      with:
-        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+    # Always install the latest CMake and Ninja
+    - name: CMake and Ninja install latest versions
+      uses: lukka/get-cmake@latest
 
     - name: Ccache initialize
       id: ccache-initialize-cache
