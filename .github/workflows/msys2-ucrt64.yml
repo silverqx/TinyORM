@@ -441,6 +441,11 @@ jobs:
       run: |
         ccache.exe --show-stats --verbose
 
+    - name: TinyOrm print linker version
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        objdump.exe --all-headers ./TinyOrm0d.dll | grep --ignore-case 'LinkerVersion'
+
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom

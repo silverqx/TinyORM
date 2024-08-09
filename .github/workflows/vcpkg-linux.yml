@@ -267,6 +267,11 @@ jobs:
       run: |
         cmake --build . --target all --parallel $TINY_PARALLEL
 
+    - name: HelloWorld print .comment section (${{ env.HelloWorldVcpkgManifestBuildName }})
+      working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
+      run: |
+        readelf --string-dump .comment ./HelloWorld
+
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
       run: |
@@ -359,6 +364,15 @@ jobs:
     - name: Ccache print statistics
       run: |
         ccache --show-stats --verbose
+
+    - name: libTinyOrm print .comment section (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.TinyORMManualBuildTree }}
+      run: >-
+        [[ '${{ matrix.build-type.key }}' == 'debug' ]] &&
+        tinyLibTinyOrm='libTinyOrmd.so' ||
+        tinyLibTinyOrm='libTinyOrm.so'
+
+        readelf --string-dump .comment "./$tinyLibTinyOrm"
 
     # Build and execute the HelloWorld console application
 
@@ -477,6 +491,12 @@ jobs:
     - name: Ccache print statistics
       run: |
         ccache --show-stats --verbose
+
+    - name: HelloWorld print .comment section (${{ env.HelloWorldFetchContentBuildName }})
+      working-directory: >-
+        ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin
+      run: |
+        readelf --string-dump .comment ./HelloWorld
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: >-

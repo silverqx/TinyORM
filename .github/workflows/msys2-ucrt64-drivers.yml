@@ -294,6 +294,16 @@ jobs:
       run: |
         ccache.exe --show-stats --verbose
 
+    - name: TinyOrm print linker version
+      shell: msys2 {0}
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: >-
+        [[ '${{ matrix.build-type.key }}' == 'debug' ]] &&
+        tinyTinyOrm='TinyOrm0d.dll' ||
+        tinyTinyOrm='TinyOrm0.dll'
+
+        objdump.exe --all-headers "./$tinyTinyOrm" | grep --ignore-case 'LinkerVersion'
+
     # Used migrate:fresh instead (is safer)
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}

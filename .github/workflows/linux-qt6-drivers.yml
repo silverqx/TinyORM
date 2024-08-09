@@ -281,6 +281,15 @@ jobs:
       run: |
         ccache --show-stats --verbose
 
+    - name: libTinyOrm print .comment section
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: >-
+        [[ '${{ matrix.build-type.key }}' == 'debug' ]] &&
+        tinyLibTinyOrm='libTinyOrmd.so' ||
+        tinyLibTinyOrm='libTinyOrm.so'
+
+        readelf --string-dump .comment "./$tinyLibTinyOrm"
+
     - name: TinyORM add on the $LD_LIBRARY_PATH
       run: |
         echo "LD_LIBRARY_PATH=$TinyORMBuildTree${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $env:GITHUB_ENV

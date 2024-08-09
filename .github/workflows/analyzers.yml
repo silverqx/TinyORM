@@ -214,6 +214,11 @@ jobs:
       run: |
         ccache --show-stats --verbose
 
+    - name: libTinyOrm print .comment section
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        readelf --string-dump .comment ./libTinyOrmd.so
+
     - name: TinyORM execute clang-tidy 🔥
       working-directory: ${{ env.TinyORMPath }}
       run: >-

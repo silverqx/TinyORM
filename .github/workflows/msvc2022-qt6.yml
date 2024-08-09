@@ -751,6 +751,13 @@ jobs:
       run: |
         ccache.exe --show-stats --verbose
 
+    - name: TinyOrm print linker version
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        $tinyTinyOrm = '${{ matrix.build-type.key }}' == 'debug' ? 'TinyOrm0d.dll' : 'TinyOrm0.dll'
+
+        dumpbin.exe /HEADERS .\$tinyTinyOrm | Select-String -SimpleMatch 'linker version'
+
     - name: TinyORM add on the $env:Path
       run: |
         $env:TinyORMBuildTree >> $env:GITHUB_PATH

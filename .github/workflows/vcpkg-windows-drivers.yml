@@ -328,6 +328,11 @@ jobs:
       run: |
         cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
+    - name: HelloWorld print linker version (${{ env.HelloWorldVcpkManifestBuildName }})
+      working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
+      run: |
+        dumpbin.exe /HEADERS .\HelloWorld | Select-String -SimpleMatch 'linker version'
+
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
       run: |
@@ -415,6 +420,13 @@ jobs:
     - name: Ccache print statistics
       run: |
         ccache.exe --show-stats --verbose
+
+    - name: TinyOrm print linker version (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.TinyORMManualBuildTree }}
+      run: |
+        $tinyTinyOrm = '${{ matrix.build-type.key }}' == 'debug' ? 'TinyOrm0d.dll' : 'TinyOrm0.dll'
+
+        dumpbin.exe /HEADERS .\$tinyTinyOrm | Select-String -SimpleMatch 'linker version'
 
     # Build and execute the HelloWorld-TinyDrivers console application
 
@@ -546,6 +558,11 @@ jobs:
     - name: Ccache print statistics
       run: |
         ccache.exe --show-stats --verbose
+
+    - name: HelloWorld print linker version (${{ env.HelloWorldFetchContentBuildName }})
+      working-directory: ${{ env.HelloWorldFetchContentBuildTree }}
+      run: |
+        dumpbin.exe /HEADERS .\HelloWorld | Select-String -SimpleMatch 'linker version'
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: ../HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}/bin

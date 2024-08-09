@@ -691,6 +691,11 @@ jobs:
       run: |
         ccache --show-stats --verbose
 
+    - name: libTinyOrm print .comment section
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        readelf --string-dump .comment ./libTinyOrmd.so
+
     - name: TinyORM add on the $LD_LIBRARY_PATH
       run: |
         echo "LD_LIBRARY_PATH=$TinyORMBuildTree${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $env:GITHUB_ENV
