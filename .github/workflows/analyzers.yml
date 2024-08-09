@@ -170,6 +170,10 @@ jobs:
       run: |
         clazy-standalone --version
 
+    - name: Qt print version
+      run: |
+        qmake -query QT_VERSION
+
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats

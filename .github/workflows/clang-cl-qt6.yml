@@ -700,6 +700,10 @@ jobs:
       run: |
         vcpkg.exe --version
 
+    - name: Qt print version
+      run: |
+        qmake.exe -query QT_VERSION
+
     - name: Ccache clear statistics
       run: |
         ccache.exe --zero-stats
