@@ -47,6 +47,7 @@ jobs:
             apt: [ clang-18, lld-18 ]
             command: clang++-18
 
+          # Don't upgrade to v13 or v14 to test also older g++ versions
           - key: gcc
             name: gcc12
             apt: [ g++-12 ]
