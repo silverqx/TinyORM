@@ -89,7 +89,7 @@ namespace Orm::Drivers::Support
            statement like: return cache.put(SqlRecord &). In this case the given SqlRecord
            must have the same memory address as the current cached SqlRecord.
            Used with: populateFieldDefaultValues(d->recordCache.get()) */
-        Q_ASSERT(std::addressof(record) == std::addressof(*cache));
+        Q_ASSERT(cache && std::addressof(record) == std::addressof(*cache));
 
         hasDefaultValues = defaultValues;
 
