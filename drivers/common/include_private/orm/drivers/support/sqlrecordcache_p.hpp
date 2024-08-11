@@ -14,7 +14,7 @@ namespace Orm::Drivers::Support
     {
         /*! Cached SqlRecord instance. */
         std::optional<SqlRecord> cache = std::nullopt;
-        /*! Determince whether the cached SqlRecord contains Default Column Values. */
+        /*! Determine whether the cached SqlRecord contains Default Column Values. */
         bool hasDefaultValues = false;
 
         /*! Determine if a SqlRecord is cached. */
