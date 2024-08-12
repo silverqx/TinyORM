@@ -492,17 +492,6 @@ jobs:
       run: |
         ccache --zero-stats
 
-    # Temporary workaround until the FetchContent UPDATE_DISCONNECTED bugs will be fixed
-    # See: https://discourse.cmake.org/t/fetchcontent-declare-update-disconnected-and-vcpkg/11312
-    - name: HelloWorld remove build and install trees (FetchContent method)
-      working-directory: ${{ runner.workspace }}
-      run: >-
-        rm --force --recursive
-        ./HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}
-
-        rm --force --recursive
-        ./HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}
-
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld-TinyDrivers
