@@ -427,7 +427,7 @@ jobs:
     - name: TinyOrm print linker version (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMManualBuildTree }}
       run: |
-        $tinyTinyOrm = '${{ matrix.build-type.key }}' == 'debug' ? 'TinyOrm0d.dll' : 'TinyOrm0.dll'
+        $tinyTinyOrm = '${{ matrix.build-type.key }}' -ceq 'debug' ? 'TinyOrm0d.dll' : 'TinyOrm0.dll'
 
         dumpbin.exe /HEADERS .\$tinyTinyOrm | Select-String -SimpleMatch 'linker version'
 
