@@ -267,7 +267,7 @@ jobs:
     - name: HelloWorld print linker version (${{ env.HelloWorldVcpkManifestBuildName }})
       working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
       run: |
-        dumpbin.exe /HEADERS .\HelloWorld | Select-String -SimpleMatch 'linker version'
+        dumpbin.exe /HEADERS .\HelloWorld.exe | Select-String -SimpleMatch 'linker version'
 
     # Related issue: https://github.com/microsoft/vcpkg/issues/33539
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
@@ -508,7 +508,7 @@ jobs:
     - name: HelloWorld print linker version (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: ${{ env.HelloWorldFetchContentBuildTree }}
       run: |
-        dumpbin.exe /HEADERS .\HelloWorld | Select-String -SimpleMatch 'linker version'
+        dumpbin.exe /HEADERS .\HelloWorld.exe | Select-String -SimpleMatch 'linker version'
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin
