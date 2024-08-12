@@ -188,7 +188,7 @@ QString String::snake(QString string, const QChar delimiter)
     }
 
     // Positions stay valid after inserts because reverse iterators used
-    std::ranges::for_each(positions | ranges::views::reverse,
+    std::ranges::for_each(positions.crbegin(), positions.crend(),
                           [&string, delimiter](const QString::size_type pos)
     {
         const auto previousPos = pos - 1;
