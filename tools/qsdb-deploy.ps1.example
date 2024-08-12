@@ -2,6 +2,9 @@
 
 Set-StrictMode -Version 3.0
 
+# This is an old deploy script, I leave it here as it's simple to use, but there are a new qsdb
+# deploy scripts that are more advanced
+
 $Script:BuildPath = '<your_path_here>\TinyORM\TinyORM-builds-qmake\' +
     'build-TinyORM-Desktop_Qt_6_7_2_MSVC2022_64bit-Release'
 
