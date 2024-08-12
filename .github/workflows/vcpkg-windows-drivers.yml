@@ -570,7 +570,8 @@ jobs:
         Select-String -SimpleMatch 'linker version'
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
-      working-directory: ../HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}/bin
+      working-directory: >-
+        ../HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}/bin
       run: |
         .\HelloWorld-TinyDrivers.exe
       env:
