@@ -188,9 +188,7 @@ QString String::snake(QString string, const QChar delimiter)
     }
 
     // Positions stay valid after inserts because reverse iterators used
-    std::ranges::for_each(positions.crbegin(), positions.crend(),
-                          [&string, delimiter](const QString::size_type pos)
-    {
+    for (const QString::size_type pos : positions | ranges::views::reverse) {
         const auto previousPos = pos - 1;
 
         // Change space to _
@@ -199,7 +197,7 @@ QString String::snake(QString string, const QChar delimiter)
         // Prepend the _ before A-Z
         else
             string.insert(pos, delimiter);
-    });
+    }
 
     return (*snakeCache)[std::move(key)] = string.replace(SPACE, EMPTY).toLower();
 }
