@@ -24,7 +24,7 @@ namespace Seeders
             call<PhoneSeeder, PropertySeeder>();
 
             // You can also pass arguments to the call() related methods
-//            callWith<UsersSeeder>(shouldSeedPasswd);
+//            callWith<UsersSeeder>(shouldSeedPassword);
         }
     };
 
