@@ -1705,12 +1705,12 @@ function Invoke-UpdateVcpkgPorts {
     Edit-VcpkgRefAndHash -Project $Script:GitHubProject -Ref $vcpkgRef -PortFile $portfiles `
                          -RefAsVersionVariable:(-not [string]::IsNullOrEmpty($Script:TagVersion))
 
-    # Allow to updated port-version fields if TinyOrm version wasn't bumped
+    # Increase the port-version fields if TinyOrm version wasn't bumped
     if ($Script:BumpsHash.TinyOrm.type -eq [BumpType]::None) {
         Invoke-BumpPortVersions
         NewLine
     }
-    # Remove a port-version fields if the TinyOrm version was bumped
+    # Remove the port-version fields if the TinyOrm version was bumped
     else {
         Remove-PortVersions
     }
