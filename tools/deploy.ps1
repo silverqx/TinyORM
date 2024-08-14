@@ -985,7 +985,15 @@ function Show-DiffSummaryAndApprove {
         [Parameter(
             HelpMessage = 'Specifies the folder for which to show  git diff, is pwd by default.')]
         [ValidateNotNullOrEmpty()]
-        [string[]] $Path = (Get-Location).Path
+        [string[]] $Path = (Get-Location).Path,
+
+        # Don't use an enum for this, it would be too many unnecessary mappings up and down
+        [Parameter(Mandatory,
+            HelpMessage = 'Specifies the name of updated artifacts (used in the info message).')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateSet('number of unit tests', 'versions', 'vcpkg port')]
+        [string]
+        $SummaryFor
     )
 
     Write-Progress 'Showing diff summary...'
@@ -993,7 +1001,7 @@ function Show-DiffSummaryAndApprove {
     git --no-pager diff --compact-summary $Path
 
     NewLine
-    Write-Info 'Please check updated versions in SmartGit...'
+    Write-Info "Please check updated $SummaryFor in SmartGit..."
     Approve-Continue -Exit
 }
 
@@ -1576,7 +1584,7 @@ function Invoke-UpdateNumberOfUnitTests {
 
     Edit-NumberOfUnitTestsInAllFiles
 
-    Show-DiffSummaryAndApprove
+    Show-DiffSummaryAndApprove -SummaryFor 'number of unit tests'
 
     NewLine
     Write-Progress 'Committing updated number of unit tests...'
@@ -1623,7 +1631,7 @@ function Invoke-BumpVersions {
     Edit-VersionNumbersInVersionHpp
     Edit-VersionNumbersInAllFiles
 
-    Show-DiffSummaryAndApprove
+    Show-DiffSummaryAndApprove -SummaryFor versions
 
     NewLine
     Write-Progress 'Committing bumped version numbers...'
@@ -1707,7 +1715,7 @@ function Invoke-UpdateVcpkgPorts {
         Remove-PortVersions
     }
 
-    Show-DiffSummaryAndApprove -Path (Resolve-Path .\cmake\vcpkg)
+    Show-DiffSummaryAndApprove -Path (Resolve-Path .\cmake\vcpkg) -SummaryFor 'vcpkg port'
 
     NewLine
     Write-Progress 'Committing vcpkg REF and SHA512...'
