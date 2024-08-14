@@ -340,6 +340,8 @@ jobs:
         ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
         ./tom migrate:reset --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:uninstall --database=tinyorm_tom_mysql --no-ansi
+        # Restore my development environment
+        ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
