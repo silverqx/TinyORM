@@ -39,7 +39,7 @@ function(tiny_init_driver_types)
             set(driversShared ON)
 
         # Build TinyDrivers as a static archive library (will be linked into the TinyOrm
-        # shared or static libary)
+        # shared or static library)
         elseif(driversTypeLower STREQUAL "static")
             set(driversStatic ON)
 
