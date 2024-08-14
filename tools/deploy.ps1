@@ -1,5 +1,10 @@
 #!/usr/bin/env pwsh
 
+Param(
+    [Parameter(HelpMessage = 'Specifies whether to skip git push (semi pretend or dry run).')]
+    [switch] $WithoutPush
+)
+
 Set-StrictMode -Version 3.0
 
 # Script variables section
@@ -1511,10 +1516,13 @@ function Invoke-MergeDevelopAndDeploy {
     Test-GitDevelopBranch
     Test-WorkingTreeClean
 
-    NewLine
-    Write-Progress 'Pushing to origin/develop branch...'
-    git push --progress origin refs/heads/develop:refs/heads/develop
-    Test-LastExitCode
+    # Allow to skip push-es (for testing)
+    if (-not $WithoutPush) {
+        NewLine
+        Write-Progress 'Pushing to origin/develop branch...'
+        git push --progress origin refs/heads/develop:refs/heads/develop
+        Test-LastExitCode
+    }
 
     NewLine
     Write-Progress 'Switching to main branch...'
@@ -1526,11 +1534,14 @@ function Invoke-MergeDevelopAndDeploy {
     git merge --ff-only develop
     Test-LastExitCode
 
-    NewLine
-    Write-Progress 'Pushing to origin/main branch...'
-    $followTagsArg = $FollowTags ? '--follow-tags' : $null
-    git push --progress $followTagsArg origin refs/heads/main:refs/heads/main
-    Test-LastExitCode
+    # Allow to skip push-es (for testing)
+    if (-not $WithoutPush) {
+        NewLine
+        Write-Progress 'Pushing to origin/main branch...'
+        $followTagsArg = $FollowTags ? '--follow-tags' : $null
+        git push --progress $followTagsArg origin refs/heads/main:refs/heads/main
+        Test-LastExitCode
+    }
 
     NewLine
     Write-Progress 'Switching back to develop branch...'
