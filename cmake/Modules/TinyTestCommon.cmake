@@ -134,7 +134,7 @@ endfunction()
 # all other test cases will use this PCH without compilation.
 function(tiny_configure_test_pch name provides_pch)
 
-    # Qt <v6.8.0 breaks REUSE_FROM
+    # Qt <v6.8.0 breaks REUSE_FROM (was/will be fixed in Qt v6.8.0-beta3)
     # See: https://bugreports.qt.io/projects/QTBUG/issues/QTBUG-126729
     if(NOT TINY_QT_VERSION VERSION_GREATER_EQUAL "6.8.0")
         target_precompile_headers(${name} PRIVATE
