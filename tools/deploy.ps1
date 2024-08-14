@@ -1,8 +1,10 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(HelpMessage = 'Specifies whether to skip git push (semi pretend or dry run).')]
-    [switch] $WithoutPush
+    [Parameter(
+        HelpMessage = 'Specifies whether to skip git push and updating vcpkg ports ' +
+            '(semi pretend or dry run).')]
+    [switch] $Pretend
 )
 
 Set-StrictMode -Version 3.0
@@ -1525,7 +1527,7 @@ function Invoke-MergeDevelopAndDeploy {
     Test-WorkingTreeClean
 
     # Allow to skip push-es (for testing)
-    if (-not $WithoutPush) {
+    if (-not $Pretend) {
         NewLine
         Write-Progress 'Pushing to origin/develop branch...'
         git push --progress origin refs/heads/develop:refs/heads/develop
@@ -1543,7 +1545,7 @@ function Invoke-MergeDevelopAndDeploy {
     Test-LastExitCode
 
     # Allow to skip push-es (for testing)
-    if (-not $WithoutPush) {
+    if (-not $Pretend) {
         NewLine
         Write-Progress 'Pushing to origin/main branch...'
         $followTagsArg = $FollowTags ? '--follow-tags' : $null
@@ -1685,7 +1687,13 @@ function Invoke-UpdateVcpkgPorts {
     Param()
 
     # Don't allow to skip updating the vcpkg ports because they must be always updated if merging
-    # into the main branch
+    # into the main branch (of course excluding the Pretend).
+
+    # This feature cannot be completed without a git push, so the entire function must be skipped
+    # in Pretend mode.
+    if ($Pretend) {
+        return
+    }
 
     Write-Header 'Updating vcpkg ports REF and SHA512'
 
