@@ -1495,7 +1495,9 @@ function Invoke-MergeDevelopAndDeploy {
     )
 
     # This is a special case, the $FollowTags indicates that the Invoke-MergeDevelopAndDeploy
-    # was invoked after bumping version numbers code.
+    # was invoked after bumping version numbers code and in this case we also need to push tags
+    # using the git push --follow-tags parameter, this is needed only after bumping version
+    # numbers code.
     # It allows to have a nicer code in the main section. 🫤
     $isInvokedAfterVersionsBump = $FollowTags
     if ($isInvokedAfterVersionsBump -and $Script:IsBumpingSkipped) {
