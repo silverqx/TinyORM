@@ -35,7 +35,7 @@ Param(
     [Parameter(Mandatory,
         HelpMessage = 'Specifies the build system that was used to build the TinyORM project.')]
     [ValidateNotNullOrEmpty()]
-    [ValidateSet('CMake', 'qmake')]
+    [ValidateSet('CMake', 'qmake', IgnoreCase = $false)]
     [string] $BuildSystem
 )
 

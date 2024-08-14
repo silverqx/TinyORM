@@ -993,7 +993,7 @@ function Show-DiffSummaryAndApprove {
         [Parameter(Mandatory,
             HelpMessage = 'Specifies the name of updated artifacts (used in the info message).')]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet('Number of Unit Tests', 'Version Numbers', 'Vcpkg Port')]
+        [ValidateSet('Number of Unit Tests', 'Version Numbers', 'Vcpkg Port', IgnoreCase = $false)]
         [string]
         $SummaryFor
     )
