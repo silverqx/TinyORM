@@ -12,6 +12,7 @@ Param(
         HelpMessage = 'Specifies a branch for which to download the package archive (works with ' +
             'a commit ID too).')]
     [ValidateNotNullOrEmpty()]
+    [ArgumentCompletions('develop', 'main')]
     [string] $Branch = 'main',
 
     [Parameter(Position = 1, Mandatory, ParameterSetName = 'Tag', ValueFromPipeline,
@@ -33,6 +34,7 @@ Param(
         ValueFromPipelineByPropertyName,
         HelpMessage = 'Specifies a git object, it can be the tag, commit ID, or branch.')]
     [ValidateNotNullOrEmpty()]
+    [ArgumentCompletions('develop', 'main')]
     [string] $Ref,
 
     [Parameter(HelpMessage = 'Specifies how many times PowerShell retries a connection when ' +

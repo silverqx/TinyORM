@@ -7,6 +7,7 @@ Param(
         HelpMessage = 'Specifies a branch for which to download the package archive (works with ' +
             'a commit ID too).')]
     [ValidateNotNullOrEmpty()]
+    [ArgumentCompletions('develop', 'main')]
     [string] $Branch = 'main',
 
     [Parameter(Position = 0, Mandatory, ParameterSetName = 'Tag', ValueFromPipeline,
@@ -28,6 +29,7 @@ Param(
         ValueFromPipelineByPropertyName,
         HelpMessage = 'Specifies a git object, it can be the tag, commit ID, or branch.')]
     [ValidateNotNullOrEmpty()]
+    [ArgumentCompletions('develop', 'main')]
     [string] $Ref
 )
 
