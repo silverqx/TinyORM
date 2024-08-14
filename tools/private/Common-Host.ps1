@@ -2,7 +2,13 @@
 
 Set-StrictMode -Version 3.0
 
+# Script variables section
+# ---
+
 Set-Alias NewLine Write-Host -Option ReadOnly -Force
+
+# Functions section
+# ---
 
 # Write a Header message to a host
 function Write-Header {
