@@ -3,6 +3,13 @@
 # Uses /ccache_vcpkg folder and the compressed cache size is 360M (after whole workflow finishes)
 # This /ccache_vcpkg folder is common for analyzers.yml and vcpkg-linux.yml workflows
 # vcpkg-linux.yml takes 205M and analyzers.yml takes 155M
+#
+# On the Clazy README.md page is written:
+#  - It's recommended that you disable pre-compiled headers and don't use ccache.
+#  - Some checks are mysteriously not producing warnings or not applying fixits?
+#    Check if you have ccache interfering and turn it off.
+#
+# I'm not using PCH, but I'm using ccache as it doesn't interfere, I have tried it. 🤔
 
 name: Clang-Tidy and Clazy 6.7
 
