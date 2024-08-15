@@ -203,9 +203,7 @@ jobs:
     # Install libmysql separately so I will see what's up if it fails
     - name: vcpkg install libmysql (classic mode)
       if: matrix.build-type.key == 'debug'
-      run: >-
-        # Temporary GCC14 workaround
-        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
+      run: |
         vcpkg install libmysql
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
@@ -215,9 +213,7 @@ jobs:
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
       if: matrix.build-type.key == 'debug'
-      run: >-
-        # Temporary GCC14 workaround
-        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
+      run: |
         vcpkg install ${{ matrix.qt.vcpkg-tinyorm-features }} --clean-after-build
 
     # Prepare TinyORM-HelloWorld-TinyDrivers project
@@ -275,11 +271,9 @@ jobs:
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
     # VCPKG_APPLOCAL_DEPS=OFF is correct as everything is linked statically on Linux
     # Don't use ccache for the VcpkgManifest method as the vcpkg has its own binary caching
-    # CFLAGS is a temporary GCC14 workaround because of libedit dependency of libmysql
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldVcpkgManifestBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
         cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldVcpkgManifestBuildTree"
