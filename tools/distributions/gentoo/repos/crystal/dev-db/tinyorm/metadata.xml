@@ -24,11 +24,11 @@
 		<flag name="inline-constants">
 			Use inline constants instead of extern constants in shared builds
 		</flag>
-		<flag name="mysql-ping">
-			Install MySQL C client library (libmysql) to support the mysql_ping()
-		</flag>
 		<flag name="orm">
 			Enable ORM-related source code (without it only the query builder is compiled)
+		</flag>
+		<flag name="mysql-ping">
+			Install MySQL C client library (libmysql) to support the mysql_ping()
 		</flag>
 		<flag name="mysql">
 			Add support for the MySQL database
