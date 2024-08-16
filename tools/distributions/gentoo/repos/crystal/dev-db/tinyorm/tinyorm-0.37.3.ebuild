@@ -52,7 +52,6 @@ src_configure() {
 		-D VERBOSE_CONFIGURE:BOOL=ON
 		-D BUILD_TESTS:BOOL=OFF
 		-D BUILD_DRIVERS:BOOL=$(usex build-drivers)
-		-D DRIVERS_TYPE:STRING=Shared
 		-D DISABLE_THREAD_LOCAL:BOOL=$(usex disable-thread-local)
 		-D INLINE_CONSTANTS:BOOL=$(usex inline-constants)
 		-D MYSQL_PING:BOOL=$(usex mysql-ping)
@@ -62,6 +61,8 @@ src_configure() {
 	)
 
 	use build-drivers && mycmakeargs+=(
+		# Change it to loadable when I have more SQL drivers
+		-D DRIVERS_TYPE:STRING=Shared
 		-D BUILD_MYSQL_DRIVER:BOOL=$(usex mysql)
 	)
 
