@@ -1209,7 +1209,7 @@ npm start -- --no-open
 
 - upgrade Docusaurus npm:
 
-npm install @docusaurus/core@latest @docusaurus/plugin-client-redirects@latest @docusaurus/plugin-ideal-image@latest @docusaurus/preset-classic@latest
+npm install @docusaurus/core@latest @docusaurus/plugin-client-redirects@latest @docusaurus/preset-classic@latest @docusaurus/module-type-aliases@latest @docusaurus/types@latest @docusaurus/plugin-ideal-image@latest
 
 - upgrade Docusaurus yarn:
 
