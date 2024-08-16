@@ -36,9 +36,6 @@
 		<flag name="postgres">
 			Add support for the PostgreSQL database
 		</flag>
-		<flag name="qt5">
-			Build and link against the Qt v5 (deprecated)
-		</flag>
 		<flag name="sqlite">
 			Add support for the SQLite database
 		</flag>
