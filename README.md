@@ -19,7 +19,7 @@
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
 
-The code is written in the modern c++20 way and is __heavily__ tested with __3366__ unit and functional tests. Almost all the query builder methods are unit tested. The TinyORM's query builder code and the code which is responsible for obtaining relationships, is tested by functional tests against all supported databases. The code coverage is good enough to guarantee API and behavior compatibility.
+The code is written in the modern c++20 way and is __heavily__ tested with __3378__ unit and functional tests. Almost all the query builder methods are unit tested. The TinyORM's query builder code and the code which is responsible for obtaining relationships, is tested by functional tests against all supported databases. The code coverage is good enough to guarantee API and behavior compatibility.
 
 ## Donations ❤️
 
@@ -67,7 +67,7 @@ The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' f
  - re-using the current `SqlQuery` instance to re-execute the same or another query
  - detaching from the result set (associated to release memory)
  - query size, number of affected rows, last inserted ID, testing `isNull()`, ...
- - all __3366 unit tests__ passed 😮
+ - all __3378 unit tests__ passed 😮
 
 The following list fastly summarizes all the `TinyORM` features.
 
@@ -109,7 +109,7 @@ The following list fastly summarizes all the `TinyORM` features.
 - __the `tom` console application with tab completion for all shells (pwsh, bash, zsh)__ 🥳
   - scaffolding of models, migrations, and seeders
   - impressive models scaffolding, every feature that is supported by models can be generated using the `tom make:model` cli command
-- a huge amount of code is unit tested, currently __3366 unit tests__ 🤯
+- a huge amount of code is unit tested, currently __3378 unit tests__ 🤯
 - C++20 only, with all the latest features used like concepts/constraints, ranges, smart pointers (no `new` keyword in the whole code 😎), folding expressions
 - qmake and CMake build systems support
   - CMake FetchContent module support 🤙
