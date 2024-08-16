@@ -21,9 +21,6 @@
 		<flag name="disable-thread-local">
 			Remove all thread_local storage duration specifiers (disables multi-threading support)
 		</flag>
-		<flag name="disable-thread-local">
-			Remove all thread_local storage duration specifiers (disables multi-threading support)
-		</flag>
 		<flag name="inline-constants">
 			Use inline constants instead of extern constants in shared builds
 		</flag>
