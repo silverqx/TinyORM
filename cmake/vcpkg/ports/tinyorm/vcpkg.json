@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "tinyorm",
   "version-semver": "0.38.0",
-  "port-version": 3,
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "description": "Modern C++ ORM library for Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
