@@ -52,6 +52,7 @@ Whole library is documented as markdown documents:
   - [TinyORM](/docs/building/tinyorm.mdx#building-tinyorm)
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
   - [Migrations](/docs/building/migrations.mdx#building-migrations)
+- [Stability](/docs/stability.mdx#stability)
 - [Features Summary](/docs/features-summary.mdx#features-summary)
 - [Sponsors](/docs/sponsors.mdx#sponsors)
 
