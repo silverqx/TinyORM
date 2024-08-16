@@ -321,20 +321,47 @@ function Test-RegExResult {
     throw "The '$RegEx' regex failed."
 }
 
-# Post deploy warnings
+# Post deploy actions
 # ---
+
+# Remove MSYS2 UCRT64 build trees to avoid the tst_Versions test case failure (ccache bug)
+function Remove-Msys2BuildTrees {
+    [OutputType([void])]
+    Param()
+
+    # Nothing to do, don't remove folders in the Pretend mode
+    if ($Pretend) {
+        return
+    }
+
+    Write-Progress 'Removing MSYS2 CMake Build Trees...'
+
+    $cmakeBuildTrees = Join-Path -Path $env:ActionRunnerTinyORM `
+        -ChildPath _work\TinyORM\TinyORM-builds-cmake
+
+    # Nothing to do, CMake build trees folder doesn't exist
+    if (-not (Test-Path -Path $cmakeBuildTrees)) {
+        return
+    }
+
+    # Get-Item -Path $cmakeBuildTrees\Drivers-msys2-u-gcc-*, $cmakeBuildTrees\Drivers-msys2-u-clang-*
+    #     | Remove-Item -Force -Recurse
+}
 
 # Print post-deploy warnings and messages about what is needed next to finish the deployment
 function Write-PostDeployWarnings {
     [OutputType([void])]
     Param()
 
-    Write-Header 'Post-deploy actions needed after bumping TinyOrm version numbers'
+    NewLine
+    Write-Error 'Post-deploy actions needed after bumping TinyORM version numbers'
+    NewLine
 
     Write-Error (" - remove all 'TinyORM-builds-cmake\Drivers-msys2-u-*' build trees " +
         'as tst_Versions test case will fail (ccache bug)')
     Write-Error ' - create a new tinyorm Gentoo ebuild'
     Write-Error ' - deploy TinyORM-github.io documentation'
+    Write-Error ' - create a new Release in GitHub UI'
     NewLine
 }
 
@@ -1731,6 +1758,20 @@ function Invoke-UpdateVcpkgPorts {
     Test-LastExitCode
 }
 
+# Invoke post-deploy actions that are needed to finish the deployment
+function Invoke-PostDeployActions {
+    [OutputType([void])]
+    Param()
+
+    Write-Header 'Invoking Post-deploy actions'
+
+    # Remove MSYS2 UCRT64 build trees to avoid the tst_Versions test case failure (ccache bug)
+    Remove-Msys2BuildTrees
+
+    # Warnings about what is needed next to finish the deployment
+    Write-PostDeployWarnings
+}
+
 # Main section
 # ---
 
@@ -1758,8 +1799,8 @@ Invoke-UpdateVcpkgPorts
 # Merge develop to main and and push to origin/main
 Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed successfully. 🥳'
 
-# Warnings about what is needed next to finish the deployment
-Write-PostDeployWarnings
+# Invoke post-deploy actions that are needed to finish the deployment
+Invoke-PostDeployActions
 
 <#
  .Synopsis
