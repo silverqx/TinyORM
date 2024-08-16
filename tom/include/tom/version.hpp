@@ -11,8 +11,8 @@ TINY_SYSTEM_HEADER
 #include <orm/macros/stringify.hpp>
 
 #define TINYTOM_VERSION_MAJOR 0
-#define TINYTOM_VERSION_MINOR 9
-#define TINYTOM_VERSION_BUGFIX 1
+#define TINYTOM_VERSION_MINOR 10
+#define TINYTOM_VERSION_BUGFIX 0
 #define TINYTOM_VERSION_BUILD 0
 // Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYTOM_VERSION_STATUS ""

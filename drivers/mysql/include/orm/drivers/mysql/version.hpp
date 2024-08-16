@@ -14,8 +14,8 @@ TINY_SYSTEM_HEADER
    https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++
    https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html */
 #define TINYMYSQL_VERSION_MAJOR 0
-#define TINYMYSQL_VERSION_MINOR 1
-#define TINYMYSQL_VERSION_BUGFIX 1
+#define TINYMYSQL_VERSION_MINOR 2
+#define TINYMYSQL_VERSION_BUGFIX 0
 #define TINYMYSQL_VERSION_BUILD 0
 // Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYMYSQL_VERSION_STATUS ""
