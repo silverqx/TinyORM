@@ -1315,7 +1315,7 @@ auto filtered = users.whereNotNull("name");
 ```
 
 :::note
-The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`.
+The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`. The reason why this class still exists even after Qt v5.15 support was removed is the performance boost.
 :::
 
 #### `whereNull()` {#method-wherenull}
@@ -1339,7 +1339,7 @@ auto filtered = users.whereNotNull("name");
 ```
 
 :::note
-The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`.
+The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`. The reason why this class still exists even after Qt v5.15 support was removed is the performance boost.
 :::
 
 </div>
