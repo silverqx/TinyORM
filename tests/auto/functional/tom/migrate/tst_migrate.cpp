@@ -165,9 +165,6 @@ namespace
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Migrate::initTestCase()
 {
-    /* Testing of the Qt 5 QSQLITE driver is excluded because it doesn't support
-       ALTER TABLE DROP COLUMN, support for dropping columns was added
-       in the SQLite v3.35.0. */
     m_connections = Databases::createConnections({Databases::MYSQL,
                                                   Databases::MARIADB,
                                                   Databases::POSTGRESQL,
