@@ -45,10 +45,19 @@ How to create a new Gentoo tinyorm ebuild:
 ------------------------------------------
 
 cd /var/db/repos/crystal/dev-db/tinyorm/
-sudo cp/mv tinyorm-0.37.x.ebuild tinyorm-0.37.y.ebuild
+sudo cp/mv tinyorm-0.37.x.ebuild tinyorm-0.37.y.ebuild
 sudo ebuild ./tinyorm-0.37.y.ebuild manifest
-copy an updated Manifest and a new ebuild to tools/distributions/gentoo/repos/crystal/dev-db/tinyorm/
-commit to TinyORM project
+- copy an updated Manifest and a new ebuild to tools/distributions/gentoo/repos/crystal/dev-db/tinyorm/
+cp ./{Manifest,tinyorm-0.37.y.ebuild} ~/Code/c/TinyORM/TinyORM/tools/distributions/gentoo/repos/crystal/dev-db/tinyorm
+cd ~/Code/c/TinyORM/TinyORM/tools/distributions/gentoo/repos/crystal/dev-db/tinyorm
+- update ownerships if needed
+chown xyz:xyz ./{Manifest,tinyorm-0.37.y.ebuild}
+- commit to TinyORM project, commit message like:
+added/updated tinyorm-0.38.0.ebuild
+
+[skip ci]
+  - added if the previous ebuild WASN'T removed (so adding a new ebuild version)
+  - updated if the previous ebuild WAS removed (so updating an old version to the new version)
 sudo emerge --update --newuse --deep --quiet-build -a @world
 
 
