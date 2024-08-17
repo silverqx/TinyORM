@@ -134,6 +134,11 @@ endfunction()
 # all other test cases will use this PCH without compilation.
 function(tiny_configure_test_pch name provides_pch)
 
+    # Set at the beginning as this function can early return
+    if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
+        target_compile_definitions(${name} PRIVATE TINYORM_USING_PCH)
+    endif()
+
     # Qt <v6.8.0 breaks REUSE_FROM (was/will be fixed in Qt v6.8.0-beta3)
     # See: https://bugreports.qt.io/projects/QTBUG/issues/QTBUG-126729
     # Also, I have patched the Qt6TestTargets.cmake so the REUSE_FROM work for me because
@@ -170,10 +175,6 @@ function(tiny_configure_test_pch name provides_pch)
         target_precompile_headers(${name} REUSE_FROM $CACHE{TINY_TESTS_PCH_REUSE_FROM})
 
         return()
-    endif()
-
-    if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
-        target_compile_definitions(${name} PRIVATE TINYORM_USING_PCH)
     endif()
 
 endfunction()
