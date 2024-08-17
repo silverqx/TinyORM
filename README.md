@@ -68,7 +68,7 @@ The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' f
  - currently, only the `MySQL` database driver is supported and finished 😞
  - both, normal and prepared statements are supported
  - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) (verify_ca, verify_identity) 🔥
- - setting many other connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
+ - setting many other MySQL connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
  - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/) 🕺
  - transactions
  - re-using the current `SqlQuery` instance to re-execute the same or another SQL query
@@ -76,7 +76,7 @@ The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' f
  - query size, number of affected rows, last inserted ID, testing `isNull()`, ...
  - `TinyDrivers` library supports both build systems `qmake` and also `CMake`
  - all __3378 unit tests__ passed 😮
- - strictly using __smart pointers__ (no `new` keyword in the whole code base 😎)
+ - strictly using __smart pointers__ (no `new` keyword in the whole `TinyDrivers` code base 😎)
  - clear code 🤔
 
 The following list quickly summarizes all the `TinyORM` features.
