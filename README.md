@@ -54,7 +54,7 @@ The whole library is documented as markdown documents:
   - [Migrations](/docs/building/migrations.mdx#building-migrations)
 - [Stability](/docs/stability.mdx#stability)
 - [Features Summary](/docs/features-summary.mdx#features-summary)
-- [Sponsors](/docs/sponsors.mdx#sponsors)
+- [Donations](/docs/donations.mdx#donations)
 
 ## Features Summary
 
