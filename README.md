@@ -28,7 +28,7 @@ PayPal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 
 ## Documentation
 
-Whole library is documented as markdown documents:
+The whole library is documented as markdown documents:
 
 [![www.tinyorm.org][docs-badge]][docs]
 
