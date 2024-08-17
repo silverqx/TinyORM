@@ -93,7 +93,7 @@ namespace Concerns
        TinyBuilder Model && or ModelsCollection<Model> && and that is a big confusing
        problem. I was able to compute these types using the metaprogramming at compile
        time and I named them eg. Results but you know nothing from this 'Results' type,
-       so when a user fastly looks into the .hpp file it would be fucked up about how
+       so when a user quickly looks into the .hpp file it would be fucked up about how
        these chunk/each methods work and what type of callback he needs to define.
        So I have decided to divide it like it's now to the QueryBuilder::BuildsQueries
        and TinyBuilder::BuildsQueries, now is everything crystal clear.

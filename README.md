@@ -70,7 +70,7 @@ The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' f
  - query size, number of affected rows, last inserted ID, testing `isNull()`, ...
  - all __3378 unit tests__ passed 😮
 
-The following list fastly summarizes all the `TinyORM` features.
+The following list quickly summarizes all the `TinyORM` features.
 
 - __simple database connections management__ 🧬
   - database manager that helps with the database connections management
