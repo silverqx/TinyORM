@@ -2,7 +2,7 @@
 
 Set-StrictMode -Version 3.0
 
-# Get slashes by platform (all allowed platform dependant path separators)
+# Get slashes by platform (all allowed platform dependent path separators)
 function Get-Slashes {
     [OutputType([string])]
     Param(

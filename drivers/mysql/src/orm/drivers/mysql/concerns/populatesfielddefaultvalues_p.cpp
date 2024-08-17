@@ -61,7 +61,7 @@ void PopulatesFieldDefaultValuesPrivate::populateFieldDefaultValuesInternal(
     constexpr static SqlQuery::size_type COLUMN_NAME = 0;
     constexpr static SqlQuery::size_type COLUMN_DEFAULT = 1;
 
-    /* The sqlQuery.value(1) QVariant's type is database dependant, MySQL returns
+    /* The sqlQuery.value(1) QVariant's type is database dependent, MySQL returns
        QByteArray because it has set the BINARY attribute on the COLUMN_DEFAULT column
        because it uses the utf8mb3_bin collation, the flags=144 (BLOB_FLAG, BINARY_FLAG).
        I spent a lot of time on this to find out. 🤔
