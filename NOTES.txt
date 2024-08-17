@@ -1321,6 +1321,9 @@ https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
 CMake confusions:
 -----------------
 
+- ❗Binary logical operators AND and OR, from left to right, WITHOUT any short-circuit!
+  - this is very important and it decides how to write or how expressions must be written
+  
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
   cmake added FetchContent support (23d0d904)
