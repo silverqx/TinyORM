@@ -3781,3 +3781,24 @@ impossible to fix it, it will only cost a lot of effort.
 
 This bug isn't happening with in Release mode with /MT because asserts are disabled.
 I also disabled vcpkg staticcrt like supports: !(windows & staticcrt); until this is fixed.
+
+
+MSYS2 BFD vs LLD:
+-----------------
+tags: linking, bfd, lld
+--
+
+Initial compilation g++ + lld : 28min (nothing was cached)
+Do clean and then with lld    : 57s
+Switch to bfd w/o clean       : 31s, 29s
+Do clean and then with bfd    : 63s
+Switch to lld w/o clean       : 22s, 21s
+
+After clean also moc files are re-compiled that makes the rest of the time ~50%.
+All this means BFD is slower ~27% and on TinyORM project it takes 8s!!!
+Which means BFD isn't slow, so compilation is slow, g++ is slow, it takes 28min to compile.
+Would be good to also test preprocessor vs compilation.
+
+So doesn't matter if LLD or BFD is used as the difference is counting in seconds.
+Much better would be to use BFD because of LTO, but LTO doesn't work even with BFD, on MinGW
+LTO fails in all cases. 😞
