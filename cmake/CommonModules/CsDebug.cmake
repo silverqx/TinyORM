@@ -34,7 +34,7 @@ function(cs_print_env_vars)
     execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 endfunction()
 
-# Get all propreties that CMake supports
+# Get all properties that CMake supports
 if(NOT CMAKE_PROPERTY_LIST)
     execute_process(
         COMMAND cmake --help-property-list
