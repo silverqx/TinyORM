@@ -139,12 +139,12 @@ function(tiny_configure_test_pch name provides_pch)
         target_compile_definitions(${name} PRIVATE TINYORM_USING_PCH)
     endif()
 
-    # Qt <v6.8.0 breaks REUSE_FROM (was/will be fixed in Qt v6.8.0-beta3)
+    # Qt <v6.9.0 breaks REUSE_FROM (will be fixed in Qt v6.9.0)
     # See: https://bugreports.qt.io/projects/QTBUG/issues/QTBUG-126729
     # Also, I have patched the Qt6TestTargets.cmake so the REUSE_FROM work for me because
     # of this I need to skip this if() using the TINY_QT6_TEST_TARGET_PATCHED environment
     # variable, it also affects CI pipelines on GitHub self-hosted runners
-    if(TINY_QT_VERSION VERSION_LESS "6.8.0" AND
+    if(TINY_QT_VERSION VERSION_LESS "6.9.0" AND
             NOT (DEFINED ENV{TINY_QT6_TEST_TARGET_PATCHED} AND
                 "$ENV{TINY_QT6_TEST_TARGET_PATCHED}")
     )
@@ -152,6 +152,12 @@ function(tiny_configure_test_pch name provides_pch)
             $<$<COMPILE_LANGUAGE:CXX>:"${${TinyOrm_ns}_SOURCE_DIR}/include/pch.h">
         )
         return()
+    endif()
+
+    # Disable QT_TESTCASE_BUILDDIR/SOURCEDIR compile definitions for REUSE_FROM to work,
+    # this property doesn't exist in my patched Qt6TestTargets.cmake
+    if(TINY_QT_VERSION VERSION_GREATER_EQUAL "6.9.0")
+        set_target_properties(${name} PROPERTIES QT_SKIP_DEFAULT_TESTCASE_DIRS YES)
     endif()
 
     if(provides_pch)
