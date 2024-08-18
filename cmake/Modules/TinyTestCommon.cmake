@@ -144,7 +144,7 @@ function(tiny_configure_test_pch name provides_pch)
     # Also, I have patched the Qt6TestTargets.cmake so the REUSE_FROM work for me because
     # of this I need to skip this if() using the TINY_QT6_TEST_TARGET_PATCHED environment
     # variable, it also affects CI pipelines on GitHub self-hosted runners
-    if(TINY_QT_VERSION VERSION_LESS "6.8.0" OR
+    if(TINY_QT_VERSION VERSION_LESS "6.8.0" AND
             NOT (DEFINED ENV{TINY_QT6_TEST_TARGET_PATCHED} AND
                 "$ENV{TINY_QT6_TEST_TARGET_PATCHED}")
     )
