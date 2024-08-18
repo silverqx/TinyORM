@@ -1314,16 +1314,65 @@ All are snake-case unless otherwise specified.
  - dot at the end of a sentence should be at:
    - CACHE [INTERNAL] help string descriptions
    - message(FATAL_ERROR), all other messages like STATUS, DEBUG, ... should be without a dot
+   - ❗multi-line comments don't end with dot (I don't know why I did it this way but I did)
+     - only one exception to this rule is ? and ! at the end of a sentence
 
 https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
 
 
 CMake confusions:
 -----------------
+Legend:
+- Automatic Variable Evaluation - if(var) (happens when the condition syntax accepts <variable|string>)
+- Variable Reference - ${var} (eg. if(${var}))
+- Variable Expansion - when ${var} is replaced by the value
+--
 
 - ❗Binary logical operators AND and OR, from left to right, WITHOUT any short-circuit!
+  - item 5. at: https://cmake.org/cmake/help/latest/command/if.html#condition-syntax
   - this is very important and it decides how to write or how expressions must be written
-  
+  - this has a really bad consequences eg. the following code fails if the variable isn't defined:
+if(DEFINED ENV{DB_MYSQL_CHARSET1} AND $ENV{DB_MYSQL_CHARSET1} MATCHES "utf8")
+Error:
+"DEFINED" "ENV{DB_MYSQL_CHARSET1}" "AND" "MATCHES" "utf8"
+Unknown arguments specified
+  - is very important to quote it
+
+- ❗Rules for Quoting
+  - everything what is described here is true also for our CMake Quoting Rules:
+    https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
+    https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#lists
+  - always quote variable expansions ${} as it fails if the variable isn't defined
+    - the problem they don't short-circuit (also described above)
+  - quote variable expansions ${} if there is a chance it will contain the LIST
+  - no need to quote if(var STREQUAL/MATCH ...)
+
+Not DEFINED case:
+if(DEFINED ENV{DB_MYSQL_CHARSET} AND $ENV{DB_MYSQL_CHARSET} MATCHES "utf8")
+if(DEFINED CACHE{TINY_QT_VERSION1} AND $CACHE{TINY_QT_VERSION1} MATCHES "6")
+if(DEFINED v1 AND ${v1} MATCHES "CXX")
+Error:
+Unknown arguments specified
+"DEFINED" "v11" "AND" "MATCHES" "CXX"
+
+Contains LIST case:
+set(v1 CXX C)
+if(${v1} STREQUAL "CXX")
+Error:
+"CXX" "C" "STREQUAL" "CXX"
+Unknown arguments specified
+
+- ❗Automatic Variable Evaluation - very important (source of all bugs):
+  https://cmake.org/cmake/help/latest/command/if.html#variable-expansion
+  https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#variable-references
+  - ❗${} normal variable evaluation applies before the if command even receives the arguments
+set(var1 OFF)
+set(var2 "var1")
+if(${var2}) # will be var1
+if(var2)    # will be var2
+    - there is no automatic evaluation for environment or cache Variable References
+    - must be referenced as $ENV{<name>} or $CACHE{<name>}
+
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
   cmake added FetchContent support (23d0d904)
