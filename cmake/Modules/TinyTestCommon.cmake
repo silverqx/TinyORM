@@ -146,7 +146,7 @@ function(tiny_configure_test_pch name provides_pch)
     # variable, it also affects CI pipelines on GitHub self-hosted runners
     if(TINY_QT_VERSION VERSION_LESS "6.8.0" OR
             NOT (DEFINED ENV{TINY_QT6_TEST_TARGET_PATCHED} AND
-                $ENV{TINY_QT6_TEST_TARGET_PATCHED})
+                "$ENV{TINY_QT6_TEST_TARGET_PATCHED}")
     )
         target_precompile_headers(${name} PRIVATE
             $<$<COMPILE_LANGUAGE:CXX>:"${${TinyOrm_ns}_SOURCE_DIR}/include/pch.h">
@@ -172,7 +172,7 @@ function(tiny_configure_test_pch name provides_pch)
         tiny_throw_if_no_cache_reuse_from()
 
         # TODO REUSE_FROM will fail if NOT $<COMPILE_LANGUAGE:CXX> silverqx
-        target_precompile_headers(${name} REUSE_FROM $CACHE{TINY_TESTS_PCH_REUSE_FROM})
+        target_precompile_headers(${name} REUSE_FROM "$CACHE{TINY_TESTS_PCH_REUSE_FROM}")
 
         return()
     endif()
@@ -184,7 +184,7 @@ function(tiny_throw_if_wrong_reuse_from name)
 
     # Nothing to do
     if(NOT DEFINED CACHE{TINY_TESTS_PCH_REUSE_FROM} OR
-            $CACHE{TINY_TESTS_PCH_REUSE_FROM} STREQUAL name
+            "$CACHE{TINY_TESTS_PCH_REUSE_FROM}" STREQUAL name
     )
         return()
     endif()
