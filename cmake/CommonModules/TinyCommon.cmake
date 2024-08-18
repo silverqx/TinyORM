@@ -197,10 +197,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<CONFIG:Debug,RelWithDebInfo>:
                 LINKER:--dynamicbase,--high-entropy-va,--nxcompat
                 LINKER:--default-image-base-high>
-            # Use faster linker ( GNU ld linker doesn't work with the Clang;
-            # for both GCC and Clang )
-            # TODO use LINKER_TYPE target property when min. version will be CMake v3.29 silverqx
-            -fuse-ld=lld
         )
     endif()
 
