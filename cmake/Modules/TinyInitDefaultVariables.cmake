@@ -48,7 +48,12 @@ DESTINATION is encountered.")
     # Also see the comment for the MSVC_RUNTIME_DYNAMIC option.
     if(MSVC AND NOT TINY_VCPKG AND NOT DEFINED VCPKG_CRT_LINKAGE AND
             DEFINED MSVC_RUNTIME_DYNAMIC AND
-            NOT MSVC_RUNTIME_DYNAMIC STREQUAL "MSVC_RUNTIME_DYNAMIC-NOTFOUND"
+            # Can't simply be: NOT MSVC_RUNTIME_DYNAMIC; as it would change the meaning,
+            # and no need to test if ends with -NOTFOUND as this is our internal thing,
+            # but I will test it this way because  it covers the edge case and can fail
+            # when the value is eg. xyz-NOTFOUND:
+            # NOT MSVC_RUNTIME_DYNAMIC STREQUAL "MSVC_RUNTIME_DYNAMIC-NOTFOUND"
+            NOT MSVC_RUNTIME_DYNAMIC MATCHES "(-NOTFOUND)$"
     )
         if(MSVC_RUNTIME_DYNAMIC)
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
