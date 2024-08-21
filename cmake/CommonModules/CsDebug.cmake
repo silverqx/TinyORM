@@ -8,7 +8,8 @@ function(cs_verbose_makefile)
     set(CMAKE_VERBOSE_MAKEFILE ON)
 endfunction()
 
-# Print all CMake variables
+# Print all CMake variables (excluding all CMake variables by default)
+# cs_print_vars() == cs_print_vars(yes)
 function(cs_print_vars)
     set(exclude_cmake yes)
     if(ARGC GREATER_EQUAL 1 AND DEFINED ARGV0 AND NOT ARGV0)
