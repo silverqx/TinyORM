@@ -1304,18 +1304,32 @@ All are snake-case unless otherwise specified.
    - local variables: preferred camelCase or snake-case
    - function parameters: lowercase and optional tiny_ prefix
    - cmake_parse_arguments: TINY_
+
  - option variables: upper case without prefix
  - cached variables: TINY_
  - function names has the tiny_ prefix
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
+
  - commands:
    - foreach: use the foreach(depend ${depends}) syntax everywhere as default syntax and use
               the IN LISTS XYZ syntax only if needed
+
  - dot at the end of a sentence should be at:
    - CACHE [INTERNAL] help string descriptions
    - message(FATAL_ERROR), all other messages like STATUS, DEBUG, ... should be without a dot
    - ❗multi-line comments don't end with dot (I don't know why I did it this way but I did)
      - only one exception to this rule is ? and ! at the end of a sentence
+
+ - quote strings, paths, and VERSION_XYZ "19.38.32914.95" (versions numbers)
+ - don't quote numbers like: CMAKE_SIZEOF_VOID_P EQUAL 4
+ - edge-cases:
+   - don't quote:
+     - TARGET strings: if(TARGET TinyOrm::TinyOrm)
+       - to better catch weird things, I want to know about them if they happen
+       - I don't quote any other TARGET definitions like:
+         - set/get_property(TARGET ${TinyOrm_target}
+         - install(TARGETS ${TinyOrm_target} ${CommonConfig_target}
+         - list(APPEND filesToDeploy $<TARGET_FILE:${TinyDrivers_target}>)
 
 https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
 
@@ -1345,7 +1359,7 @@ Unknown arguments specified
   - always quote variable expansions ${} as it fails if the variable isn't defined
     - the problem they don't short-circuit (also described above)
   - quote variable expansions ${} if there is a chance it will contain the LIST
-  - no need to quote if(var STREQUAL/MATCH ...)
+  - no need to quote if(var STREQUAL/MATCH ...) or if(var1 IN_LIST var2)
 
 Not DEFINED case:
 if(DEFINED ENV{DB_MYSQL_CHARSET} AND $ENV{DB_MYSQL_CHARSET} MATCHES "utf8")
@@ -1372,6 +1386,7 @@ if(${var2}) # will be var1
 if(var2)    # will be var2
     - there is no automatic evaluation for environment or cache Variable References
     - must be referenced as $ENV{<name>} or $CACHE{<name>}
+    - left side of IN_LIST, right side is always a variable name: var1 IN_LIST var2
 
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
@@ -1379,14 +1394,17 @@ if(var2)    # will be var2
 
 - foreach ITEMS vs LISTS
   - ITEMS:
-    - used like foreach(depend ${depends})
+    - used like: foreach(depend ${depends})
+    - equivalent to: foreach(depend ITEMS ${depends})
     - it loops over the each item in the given list
     - can't wrap in quotes as it will be parsed as a one-value
+    - it must be a Variable Reference, this DOESN'T work: foreach(depend depends)
   - LISTS:
     - used like foreach(depend IN LISTS depends anotherList)
     - it loops over the each item in the given LISTS so you can pass MORE list variables
   - the forms ITEMS ${A} and LISTS A are equivalent
-  - I'm using the first syntax everywhere, eg. vcpkg uses the second syntax everywhere
+  - I'm using the first syntax everywhere without the ITEMS keyword;
+    eg. vcpkg uses the second syntax everywhere
 
 - Variables
   - every new scope (block, function, add_subdirectory(), ...) creates a copy of all variables
