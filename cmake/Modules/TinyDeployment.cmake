@@ -170,9 +170,9 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
 
     # Used in the Package Config and Config Version files
     get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
+    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config}) # Don't quote, must fail if undefined
 
-    tiny_to_bool(cvf_is_vcpkg ${TINY_VCPKG})
+    tiny_to_bool(cvf_is_vcpkg ${TINY_VCPKG}) # Don't quote, must fail if undefined
 
     # Generate target includes for the TinyORM package config file
     set(tiny_target_includes)
@@ -291,7 +291,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     endif()
 
     get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
+    tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config}) # Don't quote, must fail if undefined
 
     # Generate target includes for the TinyORM package config file
     set(tiny_target_includes)

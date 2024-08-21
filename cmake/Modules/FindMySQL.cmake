@@ -70,7 +70,7 @@ if(MySQL_FOUND)
     set(MySQL_INCLUDE_DIRS "${MySQL_INCLUDE_DIR}")
     set(MySQL_LIBRARIES "${MySQL_LIBRARY}")
 
-    if(NOT TARGET MySQL::MySQL)
+    if(NOT TARGET MySQL::MySQL) # Quotes not needed (my code style)
         add_library(MySQL::MySQL UNKNOWN IMPORTED)
         set_target_properties(MySQL::MySQL
             PROPERTIES

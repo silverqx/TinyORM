@@ -148,7 +148,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 
 	# Since CMake 3.18 FindThreads may include a generator expression requiring a target, which gets propagated to us through INTERFACE_OPTIONS.
 	# Before CMake 3.19 there's no way to solve this in a general way, so we work around the specific case. See #4956 and CMake bug #21074.
-	if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.19)
+	if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.19")
 		set(_target_arg TARGET ${_target})
 	else()
 		string(REPLACE "<COMPILE_LANG_AND_ID:CUDA,NVIDIA>" "<COMPILE_LANGUAGE:CUDA>" _interface_compile_options "${_interface_compile_options}")

@@ -45,7 +45,7 @@ macro(tiny_find_package package_name)
 
     find_package(${package_name} ${ARGN})
 
-    if(${package_name}_FOUND)
+    if(${package_name}_FOUND) # Quotes not needed, will be _FOUND at least, so FALSE on empty/undefined ${package_name}
         set(args "${package_name}")
         # These arguments will be forwarded to the find_package() by find_dependency()
         list(APPEND args "${ARGN}")
@@ -61,7 +61,7 @@ macro(tiny_find_package package_name)
         # Check if the given args are in the TINY_PACKAGE_DEPENDENCIES list
         get_property(packageDependencies GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES)
 
-        if(NOT args IN_LIST packageDependencies)
+        if(NOT args IN_LIST packageDependencies) # Automatic Variable Expansion applies
             set_property(GLOBAL APPEND PROPERTY TINY_PACKAGE_DEPENDENCIES "${args}")
         endif()
     endif()
@@ -134,7 +134,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
 
-    if(${${TINY_NAME}})
+    if(${${TINY_NAME}}) # Quotes not needed, don't care about lists for now
         target_compile_definitions(${target} ${scope} ${TINY_ENABLED})
     else()
         target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
@@ -163,7 +163,7 @@ endfunction()
 # Create an empty SQLite database file if it does not exist
 function(tiny_create_sqlite_db db_filepath)
 
-    if(EXISTS ${db_filepath})
+    if(EXISTS ${db_filepath}) # Quotes not needed, the target cannot be a list (it fails on the list which is good, it quotes it doesn't fail with the list) and spaces are handled correctly without quotes
         return()
     endif()
 
@@ -179,7 +179,7 @@ function(tiny_create_buildtree_tagfiles filepaths)
 
     foreach(filepath ${filepaths})
         # Nothing to do, .build_tree tag already exists
-        if(EXISTS ${filepath})
+        if(EXISTS ${filepath}) # Quotes not needed, the target cannot be a list (it fails on the list which is good, it quotes it doesn't fail with the list) and spaces are handled correctly without quotes
             continue()
         endif()
 
@@ -479,6 +479,9 @@ endfunction()
 # Helper function to replace /Zi and /ZI by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option
 function(tiny_replace_Zi_by_Z7_for option help_string)
 
+    # Don't quote: ${option} MATCHES; it would change the meaning and stop working;
+    # CMake first do the Variable Expansion and then the Automatic Variable Evaluation
+    # on this replaced/expanded value (eg. CMAKE_CXX_FLAGS_DEBUG)
     if(DEFINED ${option} AND ${option} MATCHES "(/|-)(Zi|ZI)")
         string(REGEX REPLACE "(/|-)(Zi|ZI)" "/Z7" ${option} "${${option}}")
 

@@ -13,7 +13,7 @@ function(tiny_satisfies_minimum_required_qt_version out_variable)
 
     # Nothing to do, Qt version was already populated (cache hit)
     if(DEFINED TINY_QT_VERSION AND NOT TINY_QT_VERSION STREQUAL "")
-        if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion)
+        if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion) # Automatic Variable Expansion
             set(${out_variable} TRUE PARENT_SCOPE)
 
         # There is a very low chance that this code branch will be invoked, but I can't
@@ -59,7 +59,7 @@ in ${CMAKE_CURRENT_FUNCTION}().")
         "Qt version used to determine whether a minimum required Qt version was \
 satisfied (also used by tiny_configure_test_pch()).")
 
-    if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion)
+    if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion) # Automatic Variable Expansion
         set(${out_variable} TRUE PARENT_SCOPE)
     else()
         set(${out_variable} FALSE PARENT_SCOPE)

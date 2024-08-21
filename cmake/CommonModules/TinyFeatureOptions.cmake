@@ -55,7 +55,7 @@ macro(tiny_dependent_string_option option strings doc default depends force)
 
     # Determine whether the given option should be provided and visible (using the full
     # Condition Syntax (CMP0127 implementation))
-    foreach(depend ${depends})
+    foreach(depend ${depends}) # Don't use ITEMS keyword
         # Don't use the if(NOT ${depend}) without else() block here, the ${depend} can
         # contain complex condition and it can break meaning of this condition
         cmake_language(EVAL CODE "
@@ -66,7 +66,7 @@ macro(tiny_dependent_string_option option strings doc default depends force)
         )
     endforeach()
 
-    if(${option}_AVAILABLE)
+    if(${option}_AVAILABLE) # Quotes not needed, will be _AVAILABLE at least, so FALSE on empty/undefined ${option}
         # Restore the previous option value from the INTERNAL cache variable saved earlier
         if(DEFINED CACHE{${option}})
             set(${option} "${${option}}" CACHE STRING "${doc}" FORCE)

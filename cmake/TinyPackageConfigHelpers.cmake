@@ -122,7 +122,7 @@ function(tiny_build_type_requirements_install_tree
         list(LENGTH cvfTargetConfigurations count)
 
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-        tiny_to_bool(isMultiConfig ${isMultiConfig})
+        tiny_to_bool(isMultiConfig ${isMultiConfig}) # Don't quote, must fail if undefined
 
         # Used in STREQUAL comparisons
         string(TOLOWER "${CMAKE_BUILD_TYPE}" cmakeBuildTypeLower)
@@ -190,7 +190,7 @@ function(tiny_build_type_requirements_build_tree
 
     if(NOT cvf_is_multi_config)
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-        tiny_to_bool(isMultiConfig ${isMultiConfig})
+        tiny_to_bool(isMultiConfig ${isMultiConfig}) # Don't quote, must fail if undefined
 
         # Used in STREQUAL comparisons
         string(TOLOWER "${CMAKE_BUILD_TYPE}" cmakeBuildTypeLower)
