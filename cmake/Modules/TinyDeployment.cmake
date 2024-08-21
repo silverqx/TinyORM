@@ -230,7 +230,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
         @ONLY NEWLINE_STYLE LF
     )
 
-    # Install Package Config and Package Config Verion files
+    # Install Package Config and Package Config Version files
     install(
         FILES
             "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfig.cmake"
