@@ -68,9 +68,9 @@ function(cs_print_target_properties target)
             continue()
         endif()
 
-        get_property(was_set TARGET ${target} PROPERTY ${property} SET)
+        get_property(isTargetSet TARGET ${target} PROPERTY ${property} SET)
 
-        if(was_set)
+        if(isTargetSet)
             get_target_property(value ${target} ${property})
             message("${property} = ${value}")
         endif()
@@ -100,9 +100,9 @@ function(cs_print_source_properties source)
             continue()
         endif()
 
-        get_property(was_set SOURCE "${source}" PROPERTY ${property} SET)
+        get_property(isTargetSet SOURCE "${source}" PROPERTY ${property} SET)
 
-        if(was_set)
+        if(isTargetSet)
             get_source_file_property(value "${source}" ${property})
             message("${property} = ${value}")
         endif()
