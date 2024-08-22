@@ -20,7 +20,7 @@ else
 	KEYWORDS="~amd64"
 fi
 
-IUSE="build-drivers disable-thread-local inline-constants mysql mysql-ping +orm postgres +sqlite +tom +tom-cli"
+IUSE="build-drivers disable-thread-local inline-constants lto mysql mysql-ping +orm postgres +sqlite +tom +tom-cli"
 REQUIRED_USE="
 	build-drivers? ( || ( mysql ) !postgres !sqlite )
 	tom-cli? ( tom )
@@ -64,6 +64,10 @@ src_configure() {
 		# Change it to loadable when I have more SQL drivers
 		-D DRIVERS_TYPE:STRING=Shared
 		-D BUILD_MYSQL_DRIVER:BOOL=$(usex mysql)
+	)
+
+	use lto && mycmakeargs+=(
+	    -D CMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=ON
 	)
 
 	cmake_src_configure
