@@ -1,0 +1,12 @@
+# Use the latest Clang 😎
+sys-devel/llvm* ~amd64
+sys-devel/clang* ~amd64
+sys-libs/compiler-rt* ~amd64
+sys-libs/libomp ~amd64
+dev-debug/lldb ~amd64
+sys-devel/lld ~amd64
+sys-devel/lld-toolchain-symlinks ~amd64
+dev-python/lid ~amd64
+sys-libs/libcxx ~amd64
+sys-libs/libcxxabi ~amd64
+sys-libs/llvm-libunwind ~amd64

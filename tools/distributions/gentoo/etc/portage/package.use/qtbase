@@ -1,0 +1,1 @@
+dev-qt/qtbase dbus mysql postgres -cups -gtk -libinput -libproxy -nls -udev

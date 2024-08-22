@@ -1,0 +1,3 @@
+dev-db/tinyorm lto mysql postgres sqlite mysql-ping tom tom-cli
+# The sqlite use flag is ON by default so -sqlite is needed, postgres isn't ON by default
+# dev-db/tinyorm build-drivers lto mysql -sqlite

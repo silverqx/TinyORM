@@ -1,0 +1,2 @@
+# See https://wiki.gentoo.org/wiki/GDB#Retain_debug_symbols
+FEATURES="${FEATURES} installsources"

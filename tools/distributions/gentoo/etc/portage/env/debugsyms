@@ -1,0 +1,4 @@
+# See https://wiki.gentoo.org/wiki/Valgrind#Troubleshooting
+CFLAGS="${CFLAGS} -ggdb"
+CXXFLAGS="${CXXFLAGS} -ggdb"
+FEATURES="${FEATURES} splitdebug compressdebug -nostrip"

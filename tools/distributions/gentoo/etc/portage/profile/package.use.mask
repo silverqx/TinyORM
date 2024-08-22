@@ -1,0 +1,3 @@
+# Unmask the gold USE flag
+sys-devel/binutils -gold
+

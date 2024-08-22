@@ -1,0 +1,10 @@
+sys-devel/clang doc
+# clang <15 set flags on sys-devel/clang package
+<sys-devel/clang-15 default-lld llvm-libunwind default-compiler-rt
+# from clang 15 it was extracted to the sys-devel/clang-common
+>=sys-devel/clang-common-15 default-lld llvm-libunwind default-compiler-rt
+# required by sys-devel/clang-common-15.0.7-r3::gentoo[llvm-libunwind,default-compiler-rt]
+# required by sys-devel/clang-15.0.7-r1::gentoo
+# required by @selected
+# required by @world (argument)
+>=sys-libs/llvm-libunwind-15.0.7 static-libs

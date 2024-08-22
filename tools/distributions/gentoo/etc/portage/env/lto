@@ -1,0 +1,3 @@
+LTO="-flto=auto -fno-fat-lto-objects"
+CFLAGS="${CFLAGS} ${LTO}"
+CXXFLAGS="${CXXFLAGS} ${LTO}"
