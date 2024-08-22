@@ -139,7 +139,7 @@ function Initialize-ScriptVariables {
         TinyOrm = @{
             # RegEx: (?<!v)(?<version>0\.0\.0)
             [VersionType]::VersionOnly = [ordered] @{
-                (Resolve-Path -Path ./NOTES.txt)                                = 3
+                (Resolve-Path -Path ./NOTES.txt)                                = 4
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
                 (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 4
                 (Resolve-Path -Path ./docs/building/migrations.mdx)             = 1
