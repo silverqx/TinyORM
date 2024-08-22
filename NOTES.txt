@@ -53,7 +53,7 @@ cd ~/Code/c/TinyORM/TinyORM/tools/distributions/gentoo/repos/crystal/dev-db/tiny
 - update ownerships if needed
 chown xyz:xyz ./{Manifest,tinyorm-0.37.y.ebuild}
 - commit to TinyORM project, commit message like:
-added/updated tinyorm-0.38.1.ebuild
+(added/updated to) tinyorm-0.38.1.ebuild
 
 [skip ci]
   - added if the previous ebuild WASN'T removed (so adding a new ebuild version)
