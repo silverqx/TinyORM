@@ -1845,6 +1845,10 @@ Invoke-PostDeployActions
     - if TinyOrm version number wasn't bumped allow to bump the port-version number in vcpkg.json
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
+  - invoke post-deploy actions
+    - remove MSYS2 CMake Build Trees for GitHub Windows self-hosted runner
+      - remove all 'TinyORM-builds-cmake\Drivers-msys2-u-*' build trees as tst_Versions test case will fail (ccache bug)
+    - write to the output all other post-deploy actions that need to be done manually
 
   The deployment is not possible without bumping the `TinyOrm` library version number because a git tag must be created. That means that bumping only the `tom`, `TinyDrivers`, `TinyMySql`, or `TinyUtils` isn't possible. This used to be possible, but not anymore because git tags are created during deployment.
 
