@@ -344,8 +344,8 @@ function Remove-Msys2BuildTrees {
         return
     }
 
-    # Get-Item -Path $cmakeBuildTrees\Drivers-msys2-u-gcc-*, $cmakeBuildTrees\Drivers-msys2-u-clang-*
-    #     | Remove-Item -Force -Recurse
+    Get-Item -Path $cmakeBuildTrees\Drivers-msys2-u-gcc-*, $cmakeBuildTrees\Drivers-msys2-u-clang-*
+        | Remove-Item -Force -Recurse
 }
 
 # Print post-deploy warnings and messages about what is needed next to finish the deployment
