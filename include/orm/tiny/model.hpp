@@ -357,7 +357,7 @@ namespace Orm::Tiny
         /* Others */
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
-        /*! Determina whether the Derived Model extends the SoftDeletes. */
+        /*! Determine whether the Derived Model extends the SoftDeletes. */
         constexpr static bool extendsSoftDeletes();
 
         /* Data members */
