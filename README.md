@@ -65,7 +65,14 @@ The whole library is documented as markdown documents:
 
 The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' features. 🆕
 
+ - can be used instead of the `QtSql` module
+   - can be <ins>__swapped__</ins> at compile time 🤯
+   - has __1:1__ API as the `QtSql` module 😮
+   - swapping is controlled by the `qmake` and `CMake` build system options
+   - was designed to drop the `QtSql` dependency while maintaining backward compatibility and without the need for any code changes after the swap
  - currently, only the `MySQL` database driver is supported and finished 😞
+   - this is only true for our `TinyDrivers` library ❗
+   - all database drivers described in the [Database](https://www.tinyorm.org/database/getting-started#introduction) documentation are supported when linking against the [`QtSql`](https://doc.qt.io/qt/qtsql-index.html) module
  - both, normal and prepared statements are supported
  - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) (verify_ca, verify_identity) 🔥
  - setting many other MySQL connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
