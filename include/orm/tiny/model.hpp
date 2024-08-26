@@ -205,12 +205,12 @@ namespace Orm::Tiny
 
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        inline std::tuple<int, TSqlQuery>
+        std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QList<AttributeItem> &extra = {}, bool all = false);
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        inline std::tuple<int, TSqlQuery>
+        std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QList<AttributeItem> &extra = {}, bool all = false);
 
