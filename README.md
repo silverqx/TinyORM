@@ -63,7 +63,7 @@ The whole library is documented as markdown documents:
 
 ### Summary List
 
-The following list summarizes all features of `TinyDrivers` and `TinyMySql` libraries. 🆕
+The following list summarizes the main features of the `TinyDrivers` and `TinyMySql` libraries. 🆕
 
  - can be used instead of the `QtSql` module
    - can be <ins>__swapped__</ins> at compile time 🤯
