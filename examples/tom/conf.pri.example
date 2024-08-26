@@ -24,7 +24,7 @@ win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
 #    CONFIG *= ccache
 
-    # Use faster linker (for both GCC and Clang)
+    # Use alternative linker (for both GCC and Clang)
     # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
 
@@ -56,7 +56,7 @@ else:win32-msvc|win32-clang-msvc {
 
 # Unix
 else:unix {
-    # Use faster linker
+    # Use LLD linker for Clang
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
 

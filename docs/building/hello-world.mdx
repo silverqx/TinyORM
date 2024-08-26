@@ -581,7 +581,7 @@ TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-
 TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
 TINY_VCPKG_TRIPLET = x64-linux
 
-# Use faster linker
+# Use LLD linker for Clang
 clang: CONFIG *= use_lld_linker
 else: CONFIG *= use_gold_linker
 
@@ -607,7 +607,7 @@ TINY_VCPKG_TRIPLET = x64-mingw-dynamic
 # Enable ccache wrapper
 #CONFIG *= ccache
 
-# Use faster linker (for both GCC and Clang)
+# Use alternative linker (for both GCC and Clang)
 # CONFIG *= use_lld_linker does not work on MinGW
 QMAKE_LFLAGS *= -fuse-ld=lld
 ```
