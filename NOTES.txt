@@ -3182,6 +3182,32 @@ struct T1
     mutable QString s2;
 };
 
+ - Class templates
+   - this section isn't finished❗
+   - !! verify explicit special. also do template instan.
+   - member function is instantiated when it is called
+   - virtual member function is instantiated when its class is constructed
+   - compiler does not instantiate the class template until a reference to a member
+     of this template class is made, sizeof is used on the class, or an instance is created
+   - if there is not an explicit instantiation or specialization, the template will be
+     implicitly instantiated at the point where it is first used
+   - different instantiations of the same template are DIFFERENT types
+     - static members for one specialization or instantiation are separate from static members
+       for a different specialization or instantiation of the SAME template
+
+   - of course a new data members or methods can be added on fully or partially specialized
+     template classes
+   - only class templates may be partially specialized
+
+   - if specialization for pointer, reference, pointer to member, or function pointer types is
+     a template instead of actual type (eg. template<T*> NOT template<int*>), then
+     the specialization itself is still the class template on the type pointed to or referenced;
+     - this is a weird case to NOTE/describe
+     - is especially needed/useful for pointer types because they must be dereferenced, so
+       you can create a partial specialization for pointer types
+     - of course a new data members or methods can be added on partially specialized template
+       classes
+
 
 c++ library confusions:
 -----------------------
