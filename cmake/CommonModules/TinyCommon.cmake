@@ -193,11 +193,28 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-ignored-attributes>
         )
 
-        target_link_options(${target} INTERFACE
-            $<$<CONFIG:Debug,RelWithDebInfo>:
-                LINKER:--dynamicbase,--high-entropy-va,--nxcompat
-                LINKER:--default-image-base-high>
-        )
+        # All security flags below are enabled by default on MSYS2 and MinGW-w64
+        # Legend:
+        # - ASLR - Address space layout randomization
+        #   - same as PIC on Linux (position-independent code)
+        # - DEP - Windows Data Execution Prevention feature
+        # ---
+        # Linker options (supported by both bfd and LLD):
+        # --dynamicbase - Randomly rebase at load time by using the ASLR
+        # --high-entropy-va - ASLR can use the entire 64-bit address space
+        # --nxcompat - Executable is DEP compatible
+        # --default-image-base-high - Default image bases over 4GB (ASLR)
+        # ---
+        # Can be checked by:
+        # - Exe64bitDetector.exe -f .\TinyOrm0.dll
+        # - dumpbin.exe /HEADERS .\TinyOrm0.dll
+
+        # TODO cmake MSYS2 track /GUARD:CF progress and enable it when will work everywhere; see: https://gist.github.com/alvinhochun/a65e4177e2b34d551d7ecb02b55a4b0a silverqx
+        # target_link_options(${target} INTERFACE
+        #     $<$<CONFIG:Debug,RelWithDebInfo>:
+        #         LINKER:--dynamicbase,--high-entropy-va,--nxcompat
+        #         LINKER:--default-image-base-high>
+        # )
     endif()
 
     if(NOT MSVC AND
