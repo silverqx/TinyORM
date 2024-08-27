@@ -378,7 +378,7 @@ void tst_PostgreSQL_SchemaBuilder::createTable_Charset_Collation_Engine() const
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
-            // charset ignored with the PosrgreSQL grammar
+            // charset ignored with the PostgreSQL grammar
             table.charset = "WIN1250";
 
             table.id();
