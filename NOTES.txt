@@ -317,8 +317,8 @@ PostgreSQL:
 NULL values:
 -----
 
-In this case Int, Short, LongLong, ... are QMetaType-s that are passed to the QVariant ctor to
-create the NULL QVariant eg. QVariant(QMetaType(QMetaType::Int)).
+In this case Int, Short, LongLong, ... are QMetaType-s that are passed to the QVariant constructor
+to create the NULL QVariant eg. QVariant(QMetaType(QMetaType::Int)).
 
             bool      smallint  smallint_u  int       int_u     bigint    bigint_u   double   decimal
 MySQL       Char      Short     UShort      Int       UInt      LongLong  ULongLong  Double   Double
@@ -342,7 +342,7 @@ methods to support the Default Attribute values.
 All instance allocation are on the stack unless otherwise noted.
 
 Model:
-  ctors
+  constructors
   instance()
   on()
   query()
@@ -1782,12 +1782,12 @@ Add code below to class you want to optimize and set breakpoints inside and you 
 Torrent(const Torrent &torrent)
     : Model(torrent)
 {
-    qDebug() << "Torrent copy ctor";
+    qDebug() << "Torrent copy constructor";
 }
 Torrent(Torrent &&torrent) noexcept
     : Model(std::move(torrent))
 {
-    qDebug() << "Torrent move ctor";
+    qDebug() << "Torrent move constructor";
 }
 Torrent &operator=(const Torrent &torrent)
 {
@@ -2153,8 +2153,8 @@ tmp notes - Queryable columns:
 //        }
 
 
-Model copy ctor:
-----------------
+Model copy constructor:
+-----------------------
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(const Model &model)
@@ -3212,7 +3212,7 @@ struct T1
 c++ library confusions:
 -----------------------
 
- - std::unordered_map reserve() vs ctor(size_type), they are the same
+ - std::unordered_map reserve() vs constructor(size_type), they are the same
 
  - shared_ptr and unique_ptr complete vs incomplete type:
    - https://en.cppreference.com/w/cpp/memory/unique_ptr

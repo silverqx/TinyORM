@@ -33,9 +33,9 @@ int CallsCommands::runCommand(const QString &command, QStringList &&arguments) c
 
     application.initializeParser(parser);
 
-    /* Parse needed also here because InteractiveIO ctor calls isSet(). Also no error
-       handling needed here, it will be handled in the Command::run(), this is only
-       pre-parse because of isSet() in the InteractiveIO ctor. */
+    /* Parse needed also here because InteractiveIO constructor calls isSet().
+       Also, no error handling needed here, it will be handled in the Command::run(),
+       this is only pre-parse because of isSet() in the InteractiveIO constructor. */
     auto currentArguments = application.arguments();
     parser.parse(currentArguments);
 

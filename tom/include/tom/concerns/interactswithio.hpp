@@ -44,7 +44,7 @@ namespace Concerns
     {
         Q_DISABLE_COPY_MOVE(InteractsWithIO)
 
-        // To access private ctor and errorWallInternal() (used by logException())
+        // To access private constructor and errorWallInternal() (used by logException())
         friend Tom::Application;
 
     public:

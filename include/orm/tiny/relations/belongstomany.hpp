@@ -431,7 +431,7 @@ namespace Orm::Tiny::Relations
             const QString &relatedPivotKey, const QString &parentKey,
             const QString &relatedKey, const QString &relation)
     {
-        // Relations have private ctors, std::make_unique() can't be used
+        // Relations have private constructors, std::make_unique() can't be used
         auto instance =
                 std::unique_ptr<BelongsToMany<Model, Related, PivotType>>(
                     new BelongsToMany<Model, Related, PivotType>(

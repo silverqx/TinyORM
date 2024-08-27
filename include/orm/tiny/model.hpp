@@ -460,7 +460,7 @@ namespace Orm::Tiny
             instance that is not yet initialized. */
         inline static void
         throwIfCRTPctorProblem(const QList<AttributeItem> &attributes);
-        /*! The QDateTime attribute detected, causes CRTP ctor problem. */
+        /*! The QDateTime attribute detected, causes CRTP constructor problem. */
         static void throwIfQDateTimeAttribute(const QList<AttributeItem> &attributes);
         /*! Throw if an attempt to fill a guarded attribute is detected
             (mass assignment). */
@@ -1254,7 +1254,7 @@ namespace Orm::Tiny
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newBaseQueryBuilder();
 
-        /* Model is passed to the TinyBuilder ctor, because of that setModel()
+        /* Model is passed to the TinyBuilder constructor because of that setModel()
            isn't used here. Can't be const because of passed non-const model
            to the TinyBuilder. */
         return newTinyBuilder(std::move(query));
@@ -2214,7 +2214,7 @@ TINYORM_END_COMMON_NAMESPACE
 // BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on Linux too) works silverqx
 // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
 // CUR docs IdealImage silverqx
-// TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is cast every time now 😟 silverqx
+// TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy constructor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is cast every time now 😟 silverqx
 // CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
 // SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx

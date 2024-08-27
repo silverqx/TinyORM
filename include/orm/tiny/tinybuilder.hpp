@@ -60,7 +60,7 @@ namespace Orm::Tiny
         /*! Deleted copy assignment operator (not needed). */
         Builder &operator=(const Builder &) = delete;
 
-        /*! Move constructor (copy ctor needed so enable also the move ctor). */
+        /*! Move constructor (copy constructor needed so enable also the move ctor). */
         Builder(Builder &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         Builder &operator=(Builder &&) = delete;

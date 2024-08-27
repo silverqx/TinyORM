@@ -16,7 +16,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {
-    /* std::w/ostream don't have copy ctor, so need to check for const std::ostream &. */
+    /* std::w/ostream don't have a copy constructor so need to check
+       for const std::ostream &. */
     /*! Concept for the ostream and wostream. */
     template<typename T>
     concept OStreamConcept = std::convertible_to<T, const std::ostream &> ||

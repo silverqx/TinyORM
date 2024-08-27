@@ -116,7 +116,7 @@ namespace Query
             column alias (select expression)). */
         static QStringList getSegmentsFromAlias(const QString &aliasedExpression);
 
-        // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
+        // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t constructor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
         QString m_tablePrefix;
     };

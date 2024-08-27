@@ -209,14 +209,14 @@ void tst_Model_Connection_Independent::cleanupTestCase() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_DefaultCtor() const
 {
-    // Default ctor must throw because of the QDateTime
+    // Default constructor must throw because of the QDateTime
     TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, TorrentEager());
 }
 
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const
 {
-    // Attributes converting ctor must throw because of the QDateTime
+    // Attributes converting constructor must throw because of the QDateTime
     TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
                              TorrentEager({
                                  {NAME, "test22"},
@@ -341,7 +341,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
 {
-    // The default ctor without QDateTime must work well
+    // The default constructor without QDateTime must work well
     TorrentEager_Without_QDateTime torrent;
 
     QVERIFY(!torrent.exists);
@@ -359,7 +359,7 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
     const auto name = sl("test22");
     const auto note = sl("Torrent::instance()");
 
-    // The converting attributes ctor without QDateTime must work well
+    // The converting attributes constructor without QDateTime must work well
     TorrentEager_Without_QDateTime torrent({
         {NAME, name},
         {NOTE, note},
@@ -382,7 +382,7 @@ defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
     const auto name = sl("test22");
     const auto note = sl("Torrent::instance()");
 
-    /* The list initialization ctor without QDateTime
+    /* The list initialization constructor without QDateTime
        using the std::initializer_list<AttributeItem> must work well. */
     TorrentEager_Without_QDateTime torrent {
         {NAME, name},

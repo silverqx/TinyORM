@@ -453,7 +453,7 @@ namespace Orm::Tiny::Concerns
         /* Casting Attributes */
         /* Has to be static because of setAttribute - isDateAttribute - ... - getCasts:
            auto casts = model.getUserCasts()
-           Called from Models ctor. */
+           Called from Models' constructors. */
         /*! The attributes that should be cast. */
         T_THREAD_LOCAL
         inline static std::unordered_map<QString, CastItem> u_casts;
