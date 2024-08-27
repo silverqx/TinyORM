@@ -314,11 +314,11 @@ PostgreSQL:
    it simply detects - character at the beginning
 
 
-null values:
+NULL values:
 -----
 
 In this case Int, Short, LongLong, ... are QMetaType-s that are passed to the QVariant ctor to
-create a null QVariant eg. QVariant(QMetaType(QMetaType::Int)).
+create the NULL QVariant eg. QVariant(QMetaType(QMetaType::Int)).
 
             bool      smallint  smallint_u  int       int_u     bigint    bigint_u   double   decimal
 MySQL       Char      Short     UShort      Int       UInt      LongLong  ULongLong  Double   Double
