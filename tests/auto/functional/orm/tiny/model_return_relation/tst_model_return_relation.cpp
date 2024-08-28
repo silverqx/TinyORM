@@ -177,7 +177,7 @@ void tst_Model_Return_Relation::
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
 
-        /* Custom Pivot relation as the Tagged class, under the 'tagged' key
+        /* Basic Pivot relation as the Pivot class, under the 'pivot' key
            in the m_relations hash. */
         QVERIFY(tag->relationLoaded("pivot"));
         auto *pivot = tag->getRelation<Pivot, One>("pivot");
@@ -343,7 +343,7 @@ void tst_Model_Return_Relation::
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
 
-        /* Custom Pivot relation as the Tagged class, under the 'tagged' key
+        /* Basic Pivot relation as the Pivot class, under the 'pivot' key
            in the m_relations hash. */
         QVERIFY(tag->relationLoaded("pivot"));
         auto *pivot = tag->getRelation<Pivot, One>("pivot");
