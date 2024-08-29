@@ -23,7 +23,7 @@ public:
     fileProperty()
     {
         return belongsTo<TorrentPreviewableFileProperty>(
-                    "file_property_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
 private:

@@ -45,7 +45,8 @@ public:
     torrents_WithoutPivotAttributes()
     {
         // Ownership of a unique_ptr()
-        return belongsToMany<Torrent>();
+        return belongsToMany<Torrent>({}, {}, {}, {}, {},
+                                      "torrents_WithoutPivotAttributes");
     }
 
     /*! Get a tag property associated with the tag. */

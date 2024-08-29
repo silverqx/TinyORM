@@ -40,7 +40,7 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent_NoRelations>(
-                            {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault();
 
@@ -54,7 +54,7 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent_NoRelations>(
-                            {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault({{NAME, "default_torrent_name"}, {SIZE_, 123}});
 

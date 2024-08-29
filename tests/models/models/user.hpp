@@ -53,8 +53,8 @@ public:
     roles_appends()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Role, RoleUser_Appends>();
-
+        auto relation = belongsToMany<Role, RoleUser_Appends>({}, {}, {}, {}, {},
+                                                              "roles_appends");
         relation->as("subscription")
                  .withPivot("active");
 

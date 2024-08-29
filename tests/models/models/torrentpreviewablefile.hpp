@@ -38,7 +38,8 @@ public:
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<Torrent>();
+        auto relation = belongsTo<Torrent>(
+                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault();
 
@@ -50,7 +51,8 @@ public:
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<Torrent>();
+        auto relation = belongsTo<Torrent>(
+                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault({{NAME, "default_torrent_name"}, {SIZE_, 123}});
 
