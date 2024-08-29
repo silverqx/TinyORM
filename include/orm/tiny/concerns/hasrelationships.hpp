@@ -649,7 +649,8 @@ namespace Concerns
            by using the snake_case name of the relationship, which when combined
            with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
-            foreignKey = QStringLiteral("%1_%2").arg(relation, relatedKeyName);
+            foreignKey = QStringLiteral("%1_%2").arg(StringUtils::snake(relation),
+                                                     relatedKeyName);
 
         /* Once we have the foreign key names, we return the relationship instance,
            which will actually be responsible for retrieving and hydrating every
@@ -1033,9 +1034,9 @@ namespace Concerns
            just sort the models and join them together to get the table name. */
         QStringList segments {
             // The table name of the current model instance
-            TypeUtils::classPureBasename<Derived>(),
+            StringUtils::snake(TypeUtils::classPureBasename<Derived>()),
             // The table name of the related model instance
-            TypeUtils::classPureBasename<Related>(),
+            StringUtils::snake(TypeUtils::classPureBasename<Related>()),
         };
 
         /* Now that we have the model names in the vector, we can just sort them and
