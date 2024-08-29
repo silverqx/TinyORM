@@ -1043,6 +1043,7 @@ namespace Concerns
            which is typically used by convention within the database system. */
         segments.sort(Qt::CaseInsensitive);
 
+        // This is faster than QString::arg()
         return segments.join(UNDERSCORE).toLower();
     }
 

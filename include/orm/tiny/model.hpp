@@ -1526,6 +1526,7 @@ namespace Orm::Tiny
         // Guess as pluralized snake_case table name and set the u_table
         if (table.isEmpty())
             const_cast<QString &>(model.u_table) =
+                // This is faster than QString::append()
                 TMPL_PLURAL.arg(
                     StringUtils::snake(TypeUtils::classPureBasename<Derived>()));
 
