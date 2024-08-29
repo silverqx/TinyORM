@@ -1,3 +1,41 @@
+Relationship methods:
+---------------------
+
+How to memorize guessing logic for parameters for relationship methods.
+The order in which I describe this guessing logic is the same within the methods themselves.
+The syntax I use to describe them is similar to JavaScript Template literals if they concatenate.
+The following describes the guessing logic, but you can of course pass each argument manually.
+
+ - hasOne(foreignKey, localKey) and hasMany()
+   - the parameters are the same for both methods
+   - foreignKey = ${snake(classPureBasename<Derived>())}_${Derived::u_primaryKey}
+   - localKey   = Derived::u_primaryKey
+
+ - belongsTo(foreignKey, ownerKey, relation)
+   - relation = classPureBasename<Related>() (first character to lower - relation[0].toLower())
+     - used in BelongsTo::associate()/dissociate()/disassociate()/getRelationName() methods
+       - this relation name is used for setRelation() in associate()/dissociate()
+       - using it you can call getRelation(relation) later to get this related instance from model
+       - disassociate() is alias for dissociate()
+   - foreignKey = ${snake(relation)}_${Related::u_primaryKey}
+   - ownerKey   = Related::u_primaryKey (parent's model primary key)
+
+ - belongsToMany(table, foreignPivotKey, relatedPivotKey, parentKey, relatedKey, relation)
+   - relation        = ${classPureBasename<Related>()}s (first character to lower - relation[0].toLower())
+     - used in BelongsToMany::getRelationName()/touchIfTouching() methods
+       - touchIfTouching() calls Derived::touches()
+         - touch parent/Derived if u_touches.contains(relation)
+         - that means it must match the key in the Derived::u_relations hash
+   - foreignPivotKey = ${snake(classPureBasename<Derived>())}_${Derived::u_primaryKey}
+   - relatedPivotKey = ${snake(classPureBasename<Related>())}_${Related::u_primaryKey}
+   - table           = (${snake(classPureBasename<Derived>())}_${snake(classPureBasename<Related>())}).toLower()
+     - Pivot table name
+     - also the sort() is called on these two joined segments (using the join('_')),
+       so the result can be eg. a_b but NEVER b_a
+   - parentKey       = Derived::u_primaryKey
+   - relatedKey      = Related::u_primaryKey
+
+
 Increase/bump the release version:
 ----------------------------------
 
