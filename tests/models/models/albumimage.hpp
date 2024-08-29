@@ -34,11 +34,6 @@ private:
         {"album", [](auto &v) { v(&AlbumImage::album); }},
     };
 
-    /*! The relations to eager load on every query. */
-//    QList<QString> u_with {
-//        "album",
-//    };
-
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         ID,

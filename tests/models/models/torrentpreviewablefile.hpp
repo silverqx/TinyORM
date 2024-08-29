@@ -111,13 +111,6 @@ private:
         {"fileProperty_WithVectorDefaults", [](auto &v) { v(&TorrentPreviewableFile::fileProperty_WithVectorDefaults); }},
     };
 
-    /*! The relations to eager load on every query. */
-    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
-//        "torrent",
-//        "torrent.torrentPeer",
-//        "fileProperty",
-    };
-
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "file_index",

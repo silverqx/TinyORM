@@ -45,11 +45,6 @@ private:
         {"filePropertyProperty", [](auto &v) { v(&TorrentPreviewableFileProperty::filePropertyProperty); }},
     };
 
-    /*! The relations to eager load on every query. */
-    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
-//        "torrentFile",
-    };
-
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 

@@ -35,11 +35,6 @@ private:
         {"fileProperty", [](auto &v) { v(&FilePropertyProperty::fileProperty); }},
     };
 
-    /*! The relations to eager load on every query. */
-    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
-//        "fileProperty",
-    };
-
     /*! All of the relationships to be touched. */
     QStringList u_touches {"fileProperty"};
 };

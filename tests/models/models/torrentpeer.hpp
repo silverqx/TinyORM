@@ -32,11 +32,6 @@ private:
     QHash<QString, RelationVisitor> u_relations {
         {"torrent", [](auto &v) { v(&TorrentPeer::torrent); }},
     };
-
-    /*! The relations to eager load on every query. */
-    QList<QString> u_with { // NOLINT(readability-redundant-member-init)
-//        "torrent",
-    };
 };
 
 } // namespace Models
