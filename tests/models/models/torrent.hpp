@@ -212,7 +212,7 @@ private:
     /*! The model's default values for attributes. */
 //    inline static const QList<AttributeItem> u_attributes {
 //        {SIZE_,      0},
-//        {Progress, 0},
+//        {Progress,   0},
 //        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, QtTimeZoneConfig::utc())},
 //    };
 

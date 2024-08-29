@@ -43,7 +43,7 @@ public:
         auto relation = belongsToMany<Role, RoleUser>();
 
         relation->as("subscription")
-                .withPivot("active");
+                 .withPivot("active");
 
         return relation;
     }
@@ -56,7 +56,7 @@ public:
         auto relation = belongsToMany<Role, RoleUser_Appends>();
 
         relation->as("subscription")
-                .withPivot("active");
+                 .withPivot("active");
 
         return relation;
     }

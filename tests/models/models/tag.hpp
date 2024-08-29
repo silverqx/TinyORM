@@ -35,7 +35,7 @@ public:
 
         relation/*->as("tagged")*/
                 ->withPivot("active")
-                .withTimestamps();
+                 .withTimestamps();
 
         return relation;
     }
@@ -63,7 +63,7 @@ public:
         auto relation = belongsToMany<Role>();
 
         relation->as("acl")
-                .withPivot("active");
+                 .withPivot("active");
 
         return relation;
     }
