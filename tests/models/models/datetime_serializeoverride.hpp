@@ -49,6 +49,7 @@ protected:
     }
 
 private:
+    /* Serialization */
     /*! Prepare a date for vector, map, or JSON serialization. */
     static QString serializeDate(const QDate date)
     {
@@ -69,6 +70,10 @@ private:
            no rounding support for now and we can't force the output to .1 only. */
         return time.toString("HH-mm-ss.z");
     }
+
+    /* Data members */
+    /*! The table associated with the model. */
+    QString u_table {"datetimes"};
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)

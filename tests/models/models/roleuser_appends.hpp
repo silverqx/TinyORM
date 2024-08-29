@@ -27,6 +27,9 @@ protected:
     }
 
 private:
+    /*! The table associated with the model. */
+    QString u_table {"role_user"}; // Not used in belongsToMany()
+
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 

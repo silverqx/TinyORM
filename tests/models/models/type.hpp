@@ -14,9 +14,6 @@ class Type final : public Model<Type> // NOLINT(bugprone-exception-escape, misc-
     friend Model;
     using Model::Model;
 
-    /*! The table associated with the model. */
-    QString u_table {"types"};
-
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 

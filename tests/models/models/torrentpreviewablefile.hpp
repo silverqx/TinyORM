@@ -98,9 +98,6 @@ protected:
     }
 
 private:
-    /*! The table associated with the model. */
-    QString u_table {"torrent_previewable_files"};
-
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
         {"torrent",                         [](auto &v) { v(&TorrentPreviewableFile::torrent); }},

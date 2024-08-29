@@ -15,9 +15,6 @@ class Setting final : public Model<Setting> // NOLINT(bugprone-exception-escape,
     using Model::Model;
 
 private:
-    /*! The table associated with the model. */
-    QString u_table {"settings"};
-
     /*! Indicates if the model's ID is auto-incrementing. */
     bool u_incrementing = false;
 };
