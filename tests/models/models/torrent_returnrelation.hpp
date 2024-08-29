@@ -44,7 +44,7 @@ public:
     std::unique_ptr<Relation<Torrent_ReturnRelation, Tag_BasicPivot_NoRelations>>
     tags()
     {
-        // Basic pivot model
+        // Basic Pivot model
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Tag_BasicPivot_NoRelations>(
                             "tag_torrent", "torrent_id", "tag_id", {}, {}, "tags");

@@ -19,7 +19,7 @@ class TorrentPreviewableFileProperty_NoRelations final : // NOLINT(bugprone-exce
     QString u_table {"torrent_previewable_file_properties"};
 
     /*! Indicates whether the model should be timestamped. */
-    bool u_timestamps = false;
+    bool u_timestamps = false; // Timestamps disabled explicitly (even if the table has timestamp columns; they aren't used anywhere)
 };
 
 } // namespace Models

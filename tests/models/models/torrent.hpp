@@ -91,6 +91,7 @@ public:
     std::unique_ptr<BelongsToMany<Torrent, Tag, Tagged>>
     tags()
     {
+        // Basic Pivot model
         // Ownership of a unique_ptr()
 //        auto relation = belongsToMany<Tag>();
 //        relation->as("tagged")
@@ -106,7 +107,7 @@ public:
 
         return relation;
 
-        // Basic pivot model
+        // Basic Pivot model
 //        return belongsToMany<Tag>("tag_torrent", "torrent_id", "tag_id", ID, ID,
 //                                  "tags");
     }
