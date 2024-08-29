@@ -27,11 +27,11 @@ class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged> // NOLIN
 
 public:
     /*! Get torrents that belong to the tag. */
-    std::unique_ptr<BelongsToMany<Tag, Torrent, Pivot>>
+    std::unique_ptr<BelongsToMany<Tag, Torrent>>
     torrents()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Torrent, Pivot>();
+        auto relation = belongsToMany<Torrent>();
 
         relation/*->as("tagged")*/
                 ->withPivot("active")
@@ -41,11 +41,11 @@ public:
     }
 
     /*! Get torrents that belong to the tag. */
-    std::unique_ptr<BelongsToMany<Tag, Torrent, Pivot>>
+    std::unique_ptr<BelongsToMany<Tag, Torrent>>
     torrents_WithoutPivotAttributes()
     {
         // Ownership of a unique_ptr()
-        return belongsToMany<Torrent, Pivot>();
+        return belongsToMany<Torrent>();
     }
 
     /*! Get a tag property associated with the tag. */
