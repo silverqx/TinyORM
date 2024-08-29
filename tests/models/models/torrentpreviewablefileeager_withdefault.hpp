@@ -4,9 +4,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/torrenteager_withdefault.hpp"
-#include "models/torrentpreviewablefilepropertyeager.hpp"
-
 namespace Models
 {
 
@@ -17,9 +14,12 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
+class Torrent_NoRelations;
+class TorrentPreviewableFileProperty_NoRelations;
+
 class TorrentPreviewableFileEager_WithDefault final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<TorrentPreviewableFileEager_WithDefault, TorrentEager_WithDefault,
-                     TorrentPreviewableFilePropertyEager>
+        public Model<TorrentPreviewableFileEager_WithDefault, Torrent_NoRelations,
+                     TorrentPreviewableFileProperty_NoRelations>
 {
     friend Model;
     using Model::Model;
@@ -27,19 +27,19 @@ class TorrentPreviewableFileEager_WithDefault final : // NOLINT(bugprone-excepti
 public:
     /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
-                              TorrentEager_WithDefault>>
+                              Torrent_NoRelations>>
     torrent()
     {
-        return belongsTo<TorrentEager_WithDefault>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        return belongsTo<Torrent_NoRelations>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
-                              TorrentEager_WithDefault>>
+                              Torrent_NoRelations>>
     torrent_WithBoolDefault()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>(
+        auto relation = belongsTo<Torrent_NoRelations>(
                             {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault();
@@ -49,11 +49,11 @@ public:
 
     /*! Get a torrent that owns the previewable file. */
     std::unique_ptr<BelongsTo<TorrentPreviewableFileEager_WithDefault,
-                              TorrentEager_WithDefault>>
+                              Torrent_NoRelations>>
     torrent_WithVectorDefaults()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsTo<TorrentEager_WithDefault>(
+        auto relation = belongsTo<Torrent_NoRelations>(
                             {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault({{NAME, "default_torrent_name"}, {SIZE_, 123}});
@@ -63,19 +63,19 @@ public:
 
     /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
-                           TorrentPreviewableFilePropertyEager>>
+                           TorrentPreviewableFileProperty_NoRelations>>
     fileProperty()
     {
-        return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
+        return hasOne<TorrentPreviewableFileProperty_NoRelations>("previewable_file_id");
     }
 
     /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
-                           TorrentPreviewableFilePropertyEager>>
+                           TorrentPreviewableFileProperty_NoRelations>>
     fileProperty_WithBoolDefault()
     {
-        auto relation =
-                hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
+        auto relation = hasOne<TorrentPreviewableFileProperty_NoRelations>(
+                            "previewable_file_id");
 
         relation->withDefault();
 
@@ -84,11 +84,11 @@ public:
 
     /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager_WithDefault,
-                           TorrentPreviewableFilePropertyEager>>
+                           TorrentPreviewableFileProperty_NoRelations>>
     fileProperty_WithVectorDefaults()
     {
-        auto relation =
-                hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
+        auto relation = hasOne<TorrentPreviewableFileProperty_NoRelations>(
+                            "previewable_file_id");
 
         relation->withDefault({{NAME, "default_fileproperty_name"}, {SIZE_, 321}});
 

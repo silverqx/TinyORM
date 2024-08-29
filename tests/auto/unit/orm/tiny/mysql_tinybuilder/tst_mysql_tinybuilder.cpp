@@ -8,7 +8,7 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/torrent.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::AND;
 using Orm::Constants::LIKE;

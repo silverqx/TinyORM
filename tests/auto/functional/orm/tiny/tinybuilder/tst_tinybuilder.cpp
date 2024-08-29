@@ -4,7 +4,7 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/torrent.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;

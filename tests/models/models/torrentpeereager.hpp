@@ -4,24 +4,24 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/torrenteager.hpp"
-
 namespace Models
 {
 
 using Orm::Tiny::Model;
 
-class TorrentPeerEager final : public Model<TorrentPeerEager, TorrentEager> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_NoRelations;
+
+class TorrentPeerEager final : public Model<TorrentPeerEager, Torrent_NoRelations> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;
 
 public:
     /*! Get a torrent that owns the torrent peer. */
-    std::unique_ptr<BelongsTo<TorrentPeerEager, TorrentEager>>
+    std::unique_ptr<BelongsTo<TorrentPeerEager, Torrent_NoRelations>>
     torrent()
     {
-        return belongsTo<TorrentEager>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        return belongsTo<Torrent_NoRelations>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
 private:

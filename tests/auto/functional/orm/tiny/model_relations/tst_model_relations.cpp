@@ -11,13 +11,11 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/torrent.hpp"
-#include "models/torrenteager.hpp"
+#include "models/torrent_includeslist.hpp"
 #include "models/torrenteager_failed.hpp"
-#include "models/torrentpeer.hpp"
-#include "models/torrentpeereager.hpp"
-#include "models/torrentpeereager_norelations.hpp"
-#include "models/torrentpreviewablefileeager_withdefault.hpp"
+#include "models/torrenteager_includeslist.hpp"
+#include "models/torrentpeereager_includeslist.hpp"
+#include "models/torrentpreviewablefileeager_withdefault_includeslist.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
@@ -54,17 +52,17 @@ using Models::Tag;
 using Models::TagProperty;
 using Models::Tagged;
 using Models::Torrent;
+using Models::Torrent_NoRelations;
 using Models::TorrentEager;
 using Models::TorrentEager_Failed;
-using Models::TorrentEager_WithDefault;
 using Models::TorrentPeer;
 using Models::TorrentPeerEager;
-using Models::TorrentPeerEager_NoRelations;
+using Models::TorrentPeer_NoRelations;
 using Models::TorrentPreviewableFile;
 using Models::TorrentPreviewableFileEager;
 using Models::TorrentPreviewableFileEager_WithDefault;
 using Models::TorrentPreviewableFileProperty;
-using Models::TorrentPreviewableFilePropertyEager;
+using Models::TorrentPreviewableFileProperty_NoRelations;
 
 class tst_Model_Relations : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -232,14 +230,15 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (file), typeid (TorrentPreviewableFileEager *));
 
-        /* TorrentPreviewableFilePropertyEager has-one relation, loaded by
+        /* TorrentPreviewableFileProperty_NoRelations has-one relation, loaded by
            dot notation in the u_with data member. */
         auto *fileProperty =
-                file->getRelation<TorrentPreviewableFilePropertyEager, One>(
+                file->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
                     "fileProperty");
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
-        QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
+        QCOMPARE(typeid (fileProperty),
+                 typeid (TorrentPreviewableFileProperty_NoRelations *));
         QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
@@ -256,11 +255,11 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
     QVERIFY(torrentPeer->exists);
     QCOMPARE(torrentPeer->getAttribute("torrent_id"), QVariant(2));
 
-    // TorrentEager belongs to relation
-    auto *torrent = torrentPeer->getRelation<TorrentEager, One>("torrent");
+    // Torrent_NoRelations belongs to relation
+    auto *torrent = torrentPeer->getRelation<Torrent_NoRelations, One>("torrent");
     QVERIFY(torrent);
     QCOMPARE(torrent->getKey(), torrentPeer->getAttribute("torrent_id"));
-    QCOMPARE(typeid (torrent), typeid (TorrentEager *));
+    QCOMPARE(typeid (torrent), typeid (Torrent_NoRelations *));
 }
 
 void tst_Model_Relations::
@@ -1902,7 +1901,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     auto filepathOriginal =
             filesOriginal.first()->getAttribute("filepath");
     auto *peerOriginal =
-            torrent->getRelation<TorrentPeerEager_NoRelations, One>("torrentPeer");
+            torrent->getRelation<TorrentPeer_NoRelations, One>("torrentPeer");
     auto seedsOriginal =
             peerOriginal->getAttribute("seeds");
     QVERIFY(filepathOriginal == QVariant("test3_file1.mkv"));
@@ -1917,7 +1916,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
             torrent->getRelationValue<TorrentPreviewableFileEager>("torrentFiles")
             .first()->getAttribute("filepath");
     auto seedsOriginalChanged =
-            torrent->getRelationValue<TorrentPeerEager_NoRelations, One>("torrentPeer")
+            torrent->getRelationValue<TorrentPeer_NoRelations, One>("torrentPeer")
             ->getAttribute("seeds");
     QVERIFY(filepathOriginalChanged == QVariant("test3_file1-refresh.mkv"));
     QVERIFY(seedsOriginalChanged == QVariant(33));
@@ -1952,7 +1951,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
             torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     auto filepathRefreshed = filesRefreshed.first()->getAttribute("filepath");
     auto *peerRefreshed =
-            torrent->getRelation<TorrentPeerEager_NoRelations, One>("torrentPeer");
+            torrent->getRelation<TorrentPeer_NoRelations, One>("torrentPeer");
     auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
     QVERIFY(filepathOriginal == filepathRefreshed);
     QVERIFY(seedsOriginal == seedsRefreshed);
@@ -2061,7 +2060,8 @@ void tst_Model_Relations::push_EagerLoad() const
         QFAIL("File was not found in the files vector.");
     auto *file = *itFile;
     auto *fileProperty =
-            file->getRelation<TorrentPreviewableFilePropertyEager, One>("fileProperty");
+            file->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
+                "fileProperty");
 
     QCOMPARE(files.size(), 2);
     QVERIFY(file);
@@ -2100,7 +2100,7 @@ void tst_Model_Relations::push_EagerLoad() const
         QFAIL("File to verify was not found in the filesVerify vector.");
     auto *fileVerify = *itFileVerify;
     auto *filePropertyVerify =
-            fileVerify->getRelation<TorrentPreviewableFilePropertyEager, One>(
+            fileVerify->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
                 "fileProperty");
 
     QCOMPARE(filesVerify.size(), 2);
@@ -2317,7 +2317,7 @@ void tst_Model_Relations::withoutDefaultModel_EagerLoad_HasOne() const
     QVERIFY(torrentFile->exists);
 
     auto *fileProperty =
-            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+            torrentFile->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
                 "fileProperty");
 
     QVERIFY(fileProperty == nullptr);
@@ -2332,7 +2332,7 @@ void tst_Model_Relations::withoutDefaultModel_EagerLoad_BelongsTo() const
     auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
     QVERIFY(torrentFile->exists);
 
-    auto *torrent = torrentFile->getRelation<TorrentEager_WithDefault, One>("torrent");
+    auto *torrent = torrentFile->getRelation<Torrent_NoRelations, One>("torrent");
 
     QVERIFY(torrent == nullptr);
 }
@@ -2427,12 +2427,13 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
     QVERIFY(torrentFile->exists);
 
     auto *fileProperty =
-            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+            torrentFile->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
                 "fileProperty_WithBoolDefault");
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
+    QCOMPARE(typeid (fileProperty),
+             typeid (TorrentPreviewableFileProperty_NoRelations *));
     QCOMPARE(fileProperty->getAttributes().size(), 1);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
 }
@@ -2447,12 +2448,13 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() c
     QVERIFY(torrentFile->exists);
 
     auto *fileProperty =
-            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+            torrentFile->getRelation<TorrentPreviewableFileProperty_NoRelations, One>(
                 "fileProperty_WithVectorDefaults");
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
+    QCOMPARE(typeid (fileProperty),
+             typeid (TorrentPreviewableFileProperty_NoRelations *));
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
     QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
@@ -2469,12 +2471,12 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
     QVERIFY(torrentFile->exists);
 
     auto *torrent =
-            torrentFile->getRelation<TorrentEager_WithDefault, One>(
+            torrentFile->getRelation<Torrent_NoRelations, One>(
                 "torrent_WithBoolDefault");
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
+    QCOMPARE(typeid (torrent), typeid (Torrent_NoRelations *));
     QCOMPARE(torrent->getAttributes().size(), 0);
 }
 
@@ -2488,12 +2490,12 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
     QVERIFY(torrentFile->exists);
 
     auto *torrent =
-            torrentFile->getRelation<TorrentEager_WithDefault, One>(
+            torrentFile->getRelation<Torrent_NoRelations, One>(
                 "torrent_WithVectorDefaults");
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
+    QCOMPARE(typeid (torrent), typeid (Torrent_NoRelations *));
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)[SIZE_], QVariant(123));

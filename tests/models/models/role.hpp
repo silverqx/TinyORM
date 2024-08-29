@@ -4,10 +4,6 @@
 
 #include "orm/tiny/relations/pivot.hpp"
 
-#include "models/roleuser.hpp"
-#include "models/roleuser_appends.hpp"
-#include "models/user.hpp"
-
 namespace Models
 {
 
@@ -16,6 +12,8 @@ using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
 
+class RoleUser;
+class RoleUser_Appends;
 class User;
 
 class Role final : public Model<Role, User, RoleUser, RoleUser_Appends, Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)

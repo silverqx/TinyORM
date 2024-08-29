@@ -4,8 +4,6 @@
 
 #include "orm/tiny/relations/pivot.hpp"
 
-#include "models/torrent.hpp"
-
 namespace Models
 {
 

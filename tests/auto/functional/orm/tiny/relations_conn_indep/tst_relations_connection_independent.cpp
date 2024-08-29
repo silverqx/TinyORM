@@ -4,7 +4,7 @@
 #include "common/collection.hpp"
 #include "databases.hpp"
 
-#include "models/torrent.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;

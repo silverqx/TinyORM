@@ -5,7 +5,7 @@
 #include "macros.hpp"
 
 #include "models/datetime_serializeoverride.hpp"
-#include "models/torrent.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::HASH_;

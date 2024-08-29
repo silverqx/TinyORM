@@ -4,7 +4,7 @@
 #include "databases.hpp"
 
 #include "models/setting.hpp"
-#include "models/user.hpp"
+#include "models/user_norelations.hpp"
 
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
@@ -19,7 +19,7 @@ using Orm::Tiny::ConnectionOverride;
 using TestUtils::Databases;
 
 using Models::Setting;
-using Models::User;
+using Models::User_NoRelations;
 
 class tst_SoftDeletes : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -101,7 +101,7 @@ void tst_SoftDeletes::initTestCase()
 
 void tst_SoftDeletes::model_User_Extends_SoftDeletes()
 {
-    QVERIFY(User::extendsSoftDeletes());
+    QVERIFY(User_NoRelations::extendsSoftDeletes());
 }
 
 void tst_SoftDeletes::model_Setting_NotExtends_SoftDeletes()
@@ -111,7 +111,7 @@ void tst_SoftDeletes::model_Setting_NotExtends_SoftDeletes()
 
 void tst_SoftDeletes::trashed() const
 {
-    auto user = User::withTrashed()->find(5);
+    auto user = User_NoRelations::withTrashed()->find(5);
 
     QVERIFY(user);
     QVERIFY(user->exists);
@@ -121,7 +121,7 @@ void tst_SoftDeletes::trashed() const
 
 void tst_SoftDeletes::trashed_Not() const
 {
-    auto user = User::find(1);
+    auto user = User_NoRelations::find(1);
 
     QVERIFY(user);
     QVERIFY(user->exists);
@@ -136,7 +136,7 @@ void tst_SoftDeletes::withoutTrashed_Default() const
     QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
-    auto users = User::orderBy(ID)->get({ID});
+    auto users = User_NoRelations::orderBy(ID)->get({ID});
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
@@ -153,7 +153,7 @@ void tst_SoftDeletes::withoutTrashed_Explicit() const
     QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
-    auto users = User::withoutTrashed()->orderBy(ID).get({ID});
+    auto users = User_NoRelations::withoutTrashed()->orderBy(ID).get({ID});
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
@@ -170,7 +170,7 @@ void tst_SoftDeletes::withTrashed() const
     QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
-    auto users = User::withTrashed()->orderBy(ID).get({ID});
+    auto users = User_NoRelations::withTrashed()->orderBy(ID).get({ID});
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(5));
 
@@ -187,7 +187,7 @@ void tst_SoftDeletes::withTrashed_False() const
     QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
-    auto users = User::withTrashed(false)->orderBy(ID).get({ID});
+    auto users = User_NoRelations::withTrashed(false)->orderBy(ID).get({ID});
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(3));
 
@@ -204,7 +204,7 @@ void tst_SoftDeletes::onlyTrashed() const
     QList<quint64> actualIds;
     actualIds.reserve(expectedIds.size());
 
-    auto users = User::onlyTrashed()->orderBy(ID).get({ID});
+    auto users = User_NoRelations::onlyTrashed()->orderBy(ID).get({ID});
 
     QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
 
@@ -227,7 +227,7 @@ namespace
 void tst_SoftDeletes::restore_remove_OnModel() const
 {
     // This is a big test that tests all at once
-    auto user = User::withTrashed()->find(5);
+    auto user = User_NoRelations::withTrashed()->find(5);
 
     // Loop two times isn't totally bad idea 😎
     for (auto i = 0; i < 2; ++i) {
@@ -259,7 +259,7 @@ void tst_SoftDeletes::restore_remove_OnModel() const
 
         // Validate also a user record in the database after the restore
         {
-            auto userValidate = User::find(5);
+            auto userValidate = User_NoRelations::find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -289,7 +289,7 @@ void tst_SoftDeletes::restore_remove_OnModel() const
 
         // Validate also a user record in the database after the remove
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -309,7 +309,7 @@ void tst_SoftDeletes::restore_remove_OnModel() const
 
         // Validate a user record in the database after restoring the db
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -328,7 +328,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
     // This is a big test that tests all at once
     // Validate original user records
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -360,7 +360,9 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Restore more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).restore();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .restore();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         QCOMPARE(affected, static_cast<int>(2));
@@ -368,7 +370,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Validate user records in the database after the restore
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -398,7 +400,9 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Soft delete more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).remove();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .remove();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         QCOMPARE(affected, static_cast<int>(2));
@@ -406,7 +410,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Validate user records in the database after the remove
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -429,7 +433,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Restore db
     {
-        auto [affected, query] = User::withTrashed()->whereKey(4)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(4)
                                  .update({{UPDATED_AT, UpdatedAt4Original},
                                           {DELETED_AT, DeletedAt4Original}});
 
@@ -437,7 +441,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         QCOMPARE(affected, static_cast<int>(1));
     }
     {
-        auto [affected, query] = User::withTrashed()->whereKey(5)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(5)
                                  .update({{UPDATED_AT, UpdatedAt5Original},
                                           {DELETED_AT, DeletedAt5Original}});
 
@@ -447,7 +451,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
     // Validate user records in the database after restoring the db
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -475,7 +479,7 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
 {
     // Validate before Restore
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -485,7 +489,7 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
     }
     // Restore
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -509,7 +513,7 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
 
     // Validate a user record in db
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -523,7 +527,7 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
 
         // Validate a user record in the database after restoring the db
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -541,7 +545,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 {
     // Validate original user records before Restore
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -573,7 +577,9 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 
     // Restore more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).restore();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .restore();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         QCOMPARE(affected, static_cast<int>(2));
@@ -581,7 +587,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 
     // Validate user records in the database after the restore
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -604,7 +610,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 
     // Restore db
     {
-        auto [affected, query] = User::withTrashed()->whereKey(4)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(4)
                                  .update({{UPDATED_AT, UpdatedAt4Original},
                                           {DELETED_AT, DeletedAt4Original}});
 
@@ -612,7 +618,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         QCOMPARE(affected, static_cast<int>(1));
     }
     {
-        auto [affected, query] = User::withTrashed()->whereKey(5)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(5)
                                  .update({{UPDATED_AT, UpdatedAt5Original},
                                           {DELETED_AT, DeletedAt5Original}});
 
@@ -622,7 +628,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 
     // Validate user records in the database after restoring the db
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -650,7 +656,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
 {
     // Prepare (restore)
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -664,7 +670,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
 
     // Restore NOT TRASHED (need to test also this scenario 🤯)
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -692,7 +698,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
 
     // Validate a user record in db
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -706,7 +712,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
 
         // Validate a user record in the database after restoring the db
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -735,7 +741,8 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         }
 
         {
-            auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5})
+            auto [affected, query] = User_NoRelations::withTrashed()
+                                     ->whereBetween(ID, {4, 5})
                                      .restore();
 
             QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
@@ -744,7 +751,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
         // Validate user records after prepare
         {
-            auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+            auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                          .orderBy(ID).get();
 
             QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -775,7 +782,9 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
     // Restore more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).restore();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .restore();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         /* Longstanding bug, OK, the problem was here, sometimes can happen that
@@ -787,7 +796,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
     // Validate user records in the database after the restore
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -810,7 +819,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
     // Restore db
     {
-        auto [affected, query] = User::withTrashed()->whereKey(4)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(4)
                                  .update({{UPDATED_AT, UpdatedAt4Original},
                                           {DELETED_AT, DeletedAt4Original}});
 
@@ -818,7 +827,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         QCOMPARE(affected, static_cast<int>(1));
     }
     {
-        auto [affected, query] = User::withTrashed()->whereKey(5)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(5)
                                  .update({{UPDATED_AT, UpdatedAt5Original},
                                           {DELETED_AT, DeletedAt5Original}});
 
@@ -828,7 +837,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
     // Validate user records in the database after restoring the db
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -856,7 +865,7 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
 {
     // Validate before Soft delete
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -874,7 +883,7 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
 
     // Soft delete
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -891,7 +900,7 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
 
     // Validate a user record in db
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -907,7 +916,7 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
 
         // Validate a user record in the database after restoring the db
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -925,7 +934,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 {
     // Validate original user records before Restore
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -957,7 +966,9 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 
     // Soft delete more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).remove();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .remove();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         QCOMPARE(affected, static_cast<int>(2));
@@ -965,7 +976,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 
     // Validate user records in the database after the remove
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -988,7 +999,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 
     // Restore db
     {
-        auto [affected, query] = User::withTrashed()->whereKey(4)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(4)
                                  .update({{UPDATED_AT, UpdatedAt4Original},
                                           {DELETED_AT, DeletedAt4Original}});
 
@@ -996,7 +1007,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         QCOMPARE(affected, static_cast<int>(1));
     }
     {
-        auto [affected, query] = User::withTrashed()->whereKey(5)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(5)
                                  .update({{UPDATED_AT, UpdatedAt5Original},
                                           {DELETED_AT, DeletedAt5Original}});
 
@@ -1006,7 +1017,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 
     // Validate user records in the database after restoring the db
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -1034,7 +1045,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
 {
     // Prepare
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -1055,7 +1066,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
 
     // Soft delete
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -1072,7 +1083,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
 
     // Validate a user record in db
     {
-        auto user = User::withTrashed()->find(5);
+        auto user = User_NoRelations::withTrashed()->find(5);
 
         QVERIFY(user);
         QVERIFY(user->exists);
@@ -1088,7 +1099,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
 
         // Validate a user record in the database after restoring the db
         {
-            auto userValidate = User::withTrashed()->find(5);
+            auto userValidate = User_NoRelations::withTrashed()->find(5);
 
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
@@ -1114,7 +1125,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         }
 
         {
-            auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5})
+            auto [affected, query] = User_NoRelations::withTrashed()
+                                     ->whereBetween(ID, {4, 5})
                                      .restore();
 
             QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
@@ -1123,7 +1135,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
         // Validate user records after prepare
         {
-            auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+            auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                          .orderBy(ID).get();
 
             QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -1154,7 +1166,9 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
     // Soft delete more users at once
     {
-        auto [affected, query] = User::withTrashed()->whereBetween(ID, {4, 5}).remove();
+        auto [affected, query] = User_NoRelations::withTrashed()
+                                 ->whereBetween(ID, {4, 5})
+                                 .remove();
 
         QVERIFY(query.isActive() && !query.isSelect() && !query.isValid());
         QCOMPARE(affected, static_cast<int>(2));
@@ -1162,7 +1176,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
     // Validate user records in the database after the remove
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -1185,7 +1199,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
     // Restore db
     {
-        auto [affected, query] = User::withTrashed()->whereKey(4)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(4)
                                  .update({{UPDATED_AT, UpdatedAt4Original},
                                           {DELETED_AT, DeletedAt4Original}});
 
@@ -1193,7 +1207,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         QCOMPARE(affected, static_cast<int>(1));
     }
     {
-        auto [affected, query] = User::withTrashed()->whereKey(5)
+        auto [affected, query] = User_NoRelations::withTrashed()->whereKey(5)
                                  .update({{UPDATED_AT, UpdatedAt5Original},
                                           {DELETED_AT, DeletedAt5Original}});
 
@@ -1203,7 +1217,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
     // Validate user records in the database after restoring the db
     {
-        auto users = User::withTrashed()->whereBetween(ID, {4, 5})
+        auto users = User_NoRelations::withTrashed()->whereBetween(ID, {4, 5})
                      .orderBy(ID).get();
 
         QCOMPARE(users.size(), static_cast<QList<quint64>::size_type>(2));
@@ -1230,13 +1244,13 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 void tst_SoftDeletes::forceDelete_Trashed_OnModel() const
 {
     // Create test user
-    auto user = User::create({{NAME, "liltrash"},
-                              {"is_banned", false},
-                              {NOTE, "forceDelete test"}});
+    auto user = User_NoRelations::create({{NAME, "liltrash"},
+                                          {"is_banned", false},
+                                          {NOTE, "forceDelete test"}});
 
     QVERIFY(user.exists);
     QVERIFY(!user.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user.getKey()).exists());
 
     // Soft delete
     QVERIFY(user.remove());
@@ -1247,25 +1261,25 @@ void tst_SoftDeletes::forceDelete_Trashed_OnModel() const
     QVERIFY(user.forceDelete());
 
     QVERIFY(!user.exists);
-    QVERIFY(User::withTrashed()->whereKey(user.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user.getKey()).doesntExist());
 }
 
 void tst_SoftDeletes::forceDelete_Trashed_OnTinyBuilder() const
 {
     // Create test users
-    auto user1 = User::create({{NAME, "liltrash"},
-                               {"is_banned", false},
-                               {NOTE, "forceDelete test"}});
+    auto user1 = User_NoRelations::create({{NAME, "liltrash"},
+                                           {"is_banned", false},
+                                           {NOTE, "forceDelete test"}});
     QVERIFY(user1.exists);
     QVERIFY(!user1.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user1.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user1.getKey()).exists());
 
-    auto user2 = User::create({{NAME, "loltrash"},
-                               {"is_banned", false},
-                               {NOTE, "forceDelete test"}});
+    auto user2 = User_NoRelations::create({{NAME, "loltrash"},
+                                           {"is_banned", false},
+                                           {NOTE, "forceDelete test"}});
     QVERIFY(user2.exists);
     QVERIFY(!user2.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user2.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user2.getKey()).exists());
 
     // Soft delete
     QVERIFY(user1.remove());
@@ -1276,62 +1290,62 @@ void tst_SoftDeletes::forceDelete_Trashed_OnTinyBuilder() const
     QVERIFY(user2.trashed());
 
     // Force delete more users at once
-    auto [affected, query] = User::whereEq(ID, user1.getKey())
+    auto [affected, query] = User_NoRelations::whereEq(ID, user1.getKey())
                              ->orWhereEq(ID, user2.getKey())
                              .forceDelete();
 
     QCOMPARE(affected, static_cast<int>(2));
     QVERIFY(query.isActive() && !query.isValid() && !query.isSelect());
 
-    QVERIFY(User::withTrashed()->whereKey(user1.getKey()).doesntExist());
-    QVERIFY(User::withTrashed()->whereKey(user2.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user1.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user2.getKey()).doesntExist());
 }
 
 void tst_SoftDeletes::forceDelete_NotTrashed_OnModel() const
 {
     // Create test user
-    auto user = User::create({{NAME, "lilnot-trash"},
-                              {"is_banned", false},
-                              {NOTE, "forceDelete test"}});
+    auto user = User_NoRelations::create({{NAME, "lilnot-trash"},
+                                          {"is_banned", false},
+                                          {NOTE, "forceDelete test"}});
 
     QVERIFY(user.exists);
     QVERIFY(!user.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user.getKey()).exists());
 
     // Force delete
     QVERIFY(user.forceDelete());
 
     QVERIFY(!user.exists);
-    QVERIFY(User::withTrashed()->whereKey(user.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user.getKey()).doesntExist());
 }
 
 void tst_SoftDeletes::forceDelete_NotTrashed_OnTinyBuilder() const
 {
     // Create test users
-    auto user1 = User::create({{NAME, "liltrash"},
-                               {"is_banned", false},
-                               {NOTE, "forceDelete test"}});
+    auto user1 = User_NoRelations::create({{NAME, "liltrash"},
+                                           {"is_banned", false},
+                                           {NOTE, "forceDelete test"}});
     QVERIFY(user1.exists);
     QVERIFY(!user1.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user1.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user1.getKey()).exists());
 
-    auto user2 = User::create({{NAME, "loltrash"},
-                               {"is_banned", false},
-                               {NOTE, "forceDelete test"}});
+    auto user2 = User_NoRelations::create({{NAME, "loltrash"},
+                                           {"is_banned", false},
+                                           {NOTE, "forceDelete test"}});
     QVERIFY(user2.exists);
     QVERIFY(!user2.trashed());
-    QVERIFY(User::withTrashed()->whereKey(user2.getKey()).exists());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user2.getKey()).exists());
 
     // Force delete more users at once
-    auto [affected, query] = User::whereEq(ID, user1.getKey())
+    auto [affected, query] = User_NoRelations::whereEq(ID, user1.getKey())
                              ->orWhereEq(ID, user2.getKey())
                              .forceDelete();
 
     QCOMPARE(affected, static_cast<int>(2));
     QVERIFY(query.isActive() && !query.isValid() && !query.isSelect());
 
-    QVERIFY(User::withTrashed()->whereKey(user1.getKey()).doesntExist());
-    QVERIFY(User::withTrashed()->whereKey(user2.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user1.getKey()).doesntExist());
+    QVERIFY(User_NoRelations::withTrashed()->whereKey(user2.getKey()).doesntExist());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

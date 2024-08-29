@@ -7,11 +7,10 @@
 #include "macros.hpp"
 
 #include "models/datetime.hpp"
-#include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
-#include "models/torrent.hpp"
-#include "models/torrenteager.hpp"
-#include "models/torrenteager_without_qdatetime.hpp"
+#include "models/torrent_includeslist.hpp"
+#include "models/torrent_with_qdatetime.hpp"
+#include "models/torrent_without_qdatetime.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
@@ -47,8 +46,8 @@ using Models::TorrentPreviewableFile;
 using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
 using Models::Torrent_TotallyGuarded;
-using Models::TorrentEager;
-using Models::TorrentEager_Without_QDateTime;
+using Models::Torrent_With_QDateTime;
+using Models::Torrent_Without_QDateTime;
 using Models::TorrentPreviewableFileProperty;
 using Models::User;
 
@@ -210,7 +209,7 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_DefaultCtor() const
 {
     // Default constructor must throw because of the QDateTime
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, TorrentEager());
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, Torrent_With_QDateTime());
 }
 
 void tst_Model_Connection_Independent::
@@ -218,7 +217,7 @@ defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const
 {
     // Attributes converting constructor must throw because of the QDateTime
     TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
-                             TorrentEager({
+                             Torrent_With_QDateTime({
                                  {NAME, "test22"},
                                  {NOTE, "Torrent::instance()"},
                              }));
@@ -230,7 +229,7 @@ defaultAttributeValues_WithQDateTime_ListInitializationCtor() const
     /* List initialization using the std::initializer_list<AttributeItem> must throw
        because of the QDateTime. */
     TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
-                             (TorrentEager {
+                             (Torrent_With_QDateTime {
                                  {NAME, "test22"},
                                  {NOTE, "Torrent::instance()"},
                              }));
@@ -240,7 +239,7 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceMethod() const
 {
     // The Model::instance() method must work well
-    auto torrent = TorrentEager::instance();
+    auto torrent = Torrent_With_QDateTime::instance();
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
@@ -260,7 +259,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
     const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well
-    auto torrent = TorrentEager::instance({
+    auto torrent = Torrent_With_QDateTime::instance({
         {NAME, name},
         {NOTE, note},
     });
@@ -286,7 +285,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
                "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
-    auto torrent = TorrentEager::instance(connectionForInstance);
+    auto torrent = Torrent_With_QDateTime::instance(connectionForInstance);
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
@@ -315,7 +314,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
     const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well (with connection override)
-    auto torrent = TorrentEager::instance({
+    auto torrent = Torrent_With_QDateTime::instance({
         {NAME, name},
         {NOTE, note},
     },
@@ -342,7 +341,7 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
 {
     // The default constructor without QDateTime must work well
-    TorrentEager_Without_QDateTime torrent;
+    Torrent_Without_QDateTime torrent;
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
@@ -360,7 +359,7 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
     const auto note = sl("Torrent::instance()");
 
     // The converting attributes constructor without QDateTime must work well
-    TorrentEager_Without_QDateTime torrent({
+    Torrent_Without_QDateTime torrent({
         {NAME, name},
         {NOTE, note},
     });
@@ -384,7 +383,7 @@ defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
 
     /* The list initialization constructor without QDateTime
        using the std::initializer_list<AttributeItem> must work well. */
-    TorrentEager_Without_QDateTime torrent {
+    Torrent_Without_QDateTime torrent {
         {NAME, name},
         {NOTE, note},
     };
@@ -404,7 +403,7 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
 {
     // The Model::instance() method must work well
-    auto torrent = TorrentEager::instanceHeap();
+    auto torrent = Torrent_With_QDateTime::instanceHeap();
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
@@ -424,7 +423,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
     const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well
-    auto torrent = TorrentEager::instanceHeap({
+    auto torrent = Torrent_With_QDateTime::instanceHeap({
         {NAME, name},
         {NOTE, note},
     });
@@ -450,7 +449,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
                "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
-    auto torrent = TorrentEager::instanceHeap(connectionForInstance);
+    auto torrent = Torrent_With_QDateTime::instanceHeap(connectionForInstance);
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
@@ -479,7 +478,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
     const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well (with connection override)
-    auto torrent = TorrentEager::instanceHeap({
+    auto torrent = Torrent_With_QDateTime::instanceHeap({
         {NAME, name},
         {NOTE, note},
     },

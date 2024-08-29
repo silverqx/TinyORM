@@ -10,7 +10,8 @@
 #include "macros.hpp"
 
 #ifndef TINYORM_DISABLE_ORM
-#  include "models/user.hpp"
+#  include "models/torrent_norelations.hpp"
+#  include "models/user_norelations.hpp"
 #endif
 
 using Orm::Constants::HASH_;
@@ -3044,17 +3045,17 @@ void tst_MySql_SchemaBuilder::foreignKey_WithModel() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        Models::Torrent torrent;
-        Models::User user;
+        Models::Torrent_NoRelations torrent;
+        Models::User_NoRelations user;
 
         Schema::on(connection.getName())
                 .create(Firewalls, [&torrent, &user](Blueprint &table)
         {
             table.id();
 
-            table.foreignIdFor(torrent).constrained()
+            table.foreignIdFor(torrent, sl("torrent_id")).constrained()
                     .onDelete(Cascade).onUpdate(Restrict);
-            table.foreignIdFor(user).nullable().constrained()
+            table.foreignIdFor(user, sl("user_id")).nullable().constrained()
                     .nullOnDelete().cascadeOnUpdate();
         });
     });

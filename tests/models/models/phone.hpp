@@ -4,8 +4,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/user.hpp"
-
 namespace Models
 {
 

@@ -19,9 +19,6 @@ class Tagged final : public BasePivot<Tagged> // NOLINT(bugprone-exception-escap
     /*! The table associated with the model. */
     QString u_table {"tag_torrent"};
 
-    /*! Indicates if the ID is auto-incrementing. */
-//    bool u_incrementing = true;
-
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
         {"active", CastType::Boolean},

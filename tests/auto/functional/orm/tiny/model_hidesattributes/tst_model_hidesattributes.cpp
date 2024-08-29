@@ -3,8 +3,8 @@
 
 #include "databases.hpp"
 
-#include "models/album.hpp"
-#include "models/torrent.hpp"
+#include "models/album_includeslist.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;

@@ -4,55 +4,51 @@
 
 #include "orm/tiny/relations/pivot.hpp"
 
-#include "models/tag.hpp"
-#include "models/tag_returnrelation.hpp"
-#include "models/tagged.hpp"
-#include "models/torrentpeer.hpp"
-#include "models/torrentpreviewablefile.hpp"
-#include "models/user.hpp"
-
 namespace Models
 {
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
 
-class Tag;
-class Tag_ReturnRelation;
-class TorrentPeer;
-class TorrentPreviewableFile;
-class User;
+class Tag_BasicPivot_NoRelations;
+class Tag_CustomPivot_NoRelations;
+class Tagged;
+class TorrentPeer_NoRelations;
+class TorrentPreviewableFile_NoRelations;
+class User_NoRelations;
 
 class Torrent_ReturnRelation final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<Torrent_ReturnRelation, TorrentPreviewableFile, TorrentPeer, Tag,
-                     Tag_ReturnRelation, User, Pivot>
+        public Model<Torrent_ReturnRelation, TorrentPreviewableFile_NoRelations,
+                     TorrentPeer_NoRelations, Tag_BasicPivot_NoRelations,
+                     Tag_CustomPivot_NoRelations, User_NoRelations, Pivot>
 {
     friend Model;
     using Model::Model;
 
 public:
     /*! Get previewable files associated with the torrent. */
-    std::unique_ptr<Relation<Torrent_ReturnRelation, TorrentPreviewableFile>>
+    std::unique_ptr<Relation<Torrent_ReturnRelation, TorrentPreviewableFile_NoRelations>>
     torrentFiles()
     {
-        return hasMany<TorrentPreviewableFile>("torrent_id");
+        return hasMany<TorrentPreviewableFile_NoRelations>("torrent_id");
     }
 
     /*! Get a torrent peer associated with the torrent. */
-    std::unique_ptr<Relation<Torrent_ReturnRelation, TorrentPeer>>
+    std::unique_ptr<Relation<Torrent_ReturnRelation, TorrentPeer_NoRelations>>
     torrentPeer()
     {
-        return hasOne<TorrentPeer>("torrent_id");
+        return hasOne<TorrentPeer_NoRelations>("torrent_id");
     }
 
     /*! Get tags that belong to the torrent. */
-    std::unique_ptr<Relation<Torrent_ReturnRelation, Tag_ReturnRelation>>
+    std::unique_ptr<Relation<Torrent_ReturnRelation, Tag_BasicPivot_NoRelations>>
     tags()
     {
         // Basic pivot model
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Tag_ReturnRelation>("tag_torrent", "torrent_id",
-                                                          "tag_id", {}, {}, "tags");
+        auto relation = belongsToMany<Tag_BasicPivot_NoRelations>(
+                            "tag_torrent", "torrent_id", "tag_id", {}, {}, "tags");
+
         relation->withPivot("active")
                  .withTimestamps();
 
@@ -60,13 +56,14 @@ public:
     }
 
     /*! Get tags that belong to the torrent. */
-    std::unique_ptr<Relation<Torrent_ReturnRelation, Tag>>
+    std::unique_ptr<Relation<Torrent_ReturnRelation, Tag_CustomPivot_NoRelations>>
     tagsCustom()
     {
         // Custom 'Tagged' pivot model ✨
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<Tag, Tagged>("tag_torrent", "torrent_id", {},
-                                                   {}, {}, "tags");
+        auto relation = belongsToMany<Tag_CustomPivot_NoRelations, Tagged>(
+                            "tag_torrent", "torrent_id", "tag_id", {}, {}, "tags");
+
         relation->as("tagged")
                  .withPivot("active")
                  .withTimestamps();
@@ -75,10 +72,10 @@ public:
     }
 
     /*! Get a user that owns the torrent. */
-    std::unique_ptr<Relation<Torrent_ReturnRelation, User>>
+    std::unique_ptr<Relation<Torrent_ReturnRelation, User_NoRelations>>
     user()
     {
-        return belongsTo<User>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+        return belongsTo<User_NoRelations>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
 private:

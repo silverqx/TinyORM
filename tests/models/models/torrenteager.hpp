@@ -4,9 +4,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/torrentpeereager_norelations.hpp"
-#include "models/torrentpreviewablefileeager.hpp"
-
 namespace Models
 {
 
@@ -18,8 +15,11 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
+class TorrentPeer_NoRelations;
+class TorrentPreviewableFileEager;
+
 class TorrentEager final : public Model<TorrentEager, TorrentPreviewableFileEager, // NOLINT(bugprone-exception-escape, misc-no-recursion)
-                                        TorrentPeerEager_NoRelations>
+                                        TorrentPeer_NoRelations>
 {
     friend Model;
     using Model::Model;
@@ -33,10 +33,10 @@ public:
     }
 
     /*! Get a torrent peer associated with the torrent. */
-    std::unique_ptr<HasOne<TorrentEager, TorrentPeerEager_NoRelations>>
+    std::unique_ptr<HasOne<TorrentEager, TorrentPeer_NoRelations>>
     torrentPeer()
     {
-        return hasOne<TorrentPeerEager_NoRelations>("torrent_id");
+        return hasOne<TorrentPeer_NoRelations>("torrent_id");
     }
 
 private:

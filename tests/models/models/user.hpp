@@ -5,10 +5,6 @@
 #include "orm/tiny/relations/pivot.hpp"
 #include "orm/tiny/softdeletes.hpp"
 
-#include "models/phone.hpp"
-#include "models/role.hpp"
-#include "models/torrent.hpp"
-
 namespace Models
 {
 
@@ -21,6 +17,8 @@ using Orm::Tiny::SoftDeletes;
 
 class Phone;
 class Role;
+class RoleUser;
+class RoleUser_Appends;
 class Torrent;
 
 class User final : public Model<User, Phone, Role, Torrent, Pivot>, // NOLINT(bugprone-exception-escape, misc-no-recursion)
@@ -85,9 +83,6 @@ private:
         "is_banned",
         NOTE,
     };
-
-    /*! Indicates whether the model should be timestamped. */
-    bool u_timestamps = true;
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {

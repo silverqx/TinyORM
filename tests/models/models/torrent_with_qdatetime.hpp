@@ -1,13 +1,12 @@
 #pragma once
-#ifndef MODELS_TORRENTEAGER_WITHOUT_QDATETIME_HPP
-#define MODELS_TORRENTEAGER_WITHOUT_QDATETIME_HPP
+#ifndef MODELS_TORRENT_WITH_QDATETIME_HPP
+#define MODELS_TORRENT_WITH_QDATETIME_HPP
 
 #include "orm/tiny/model.hpp"
 
 namespace Models
 {
 
-using Orm::Constants::HASH_;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::Progress;
@@ -15,7 +14,7 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
-class TorrentEager_Without_QDateTime final : public Model<TorrentEager_Without_QDateTime> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_With_QDateTime final : public Model<Torrent_With_QDateTime> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;
@@ -25,8 +24,9 @@ class TorrentEager_Without_QDateTime final : public Model<TorrentEager_Without_Q
 
     /*! The model's default values for attributes. */
     inline static const QList<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        {SIZE_,    0},
-        {Progress, 0},
+        {SIZE_,      0},
+        {Progress,   0},
+        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Orm::TTimeZone::UTC)},
     };
 
     /*! The attributes that are mass assignable. */
@@ -35,7 +35,6 @@ class TorrentEager_Without_QDateTime final : public Model<TorrentEager_Without_Q
         SIZE_,
         Progress,
         "added_on",
-        HASH_,
         NOTE,
     };
 
@@ -45,4 +44,4 @@ class TorrentEager_Without_QDateTime final : public Model<TorrentEager_Without_Q
 
 } // namespace Models
 
-#endif // MODELS_TORRENTEAGER_WITHOUT_QDATETIME_HPP
+#endif // MODELS_TORRENT_WITH_QDATETIME_HPP

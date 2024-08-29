@@ -8,13 +8,6 @@
 #include "orm/tiny/relations/pivot.hpp"
 //#include "orm/tiny/softdeletes.hpp"
 
-#include "models/tag.hpp"
-#include "models/tagged.hpp"
-#include "models/torrentpeer.hpp"
-#include "models/torrentpreviewablefile.hpp"
-#include "models/torrentstate.hpp"
-#include "models/user.hpp"
-
 #ifdef PROJECT_TINYORM_PLAYGROUND
 #  include "configuration.hpp"
 #endif
@@ -45,6 +38,7 @@ using TinyPlay::Configuration;
 /* This class serves as a showcase, so all possible features are defined / used. */
 
 class Tag;
+class Tagged;
 class TorrentPeer;
 class TorrentPreviewableFile;
 class TorrentState;
@@ -294,6 +288,10 @@ private:
 
 /* Recursive #include-s
    ---
+   New:
+   Recursive #include-s were fixed in 99701f4e (see commit message).
+
+   Older findings:
    I tried to remove all recursive #include-s beginning from this Torrent class all way
    down and it didn't save any memory during compilation. In both cases with and without
    recursive #include-s the cl.exe memory usage for the tst_model.pro test case was

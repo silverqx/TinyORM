@@ -5,10 +5,6 @@
 #include "orm/tiny/model.hpp"
 //#include "orm/tiny/relations/pivot.hpp"
 
-#include "models/tagged.hpp"
-#include "models/tagproperty.hpp"
-#include "models/torrent.hpp"
-
 namespace Models
 {
 
@@ -19,6 +15,8 @@ using Orm::Tiny::Model;
 //using Orm::Tiny::Relations::Pivot;
 
 class Role;
+class TagProperty;
+class Tagged;
 class Torrent;
 
 class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged> // NOLINT(bugprone-exception-escape, misc-no-recursion)

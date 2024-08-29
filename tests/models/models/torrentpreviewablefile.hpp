@@ -4,9 +4,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/torrent.hpp"
-#include "models/torrentpreviewablefileproperty.hpp"
-
 namespace Models
 {
 

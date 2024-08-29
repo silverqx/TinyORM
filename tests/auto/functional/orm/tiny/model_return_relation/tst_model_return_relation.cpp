@@ -3,7 +3,7 @@
 
 #include "databases.hpp"
 
-#include "models/torrent_returnrelation.hpp"
+#include "models/torrent_returnrelation_includeslist.hpp"
 
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::UPDATED_AT;
@@ -18,13 +18,13 @@ using Orm::Tiny::Types::ModelsCollection;
 
 using TestUtils::Databases;
 
-using Models::Tag;
-using Models::Tag_ReturnRelation;
+using Models::Tag_BasicPivot_NoRelations;
+using Models::Tag_CustomPivot_NoRelations;
 using Models::Tagged;
 using Models::Torrent_ReturnRelation;
-using Models::TorrentPeer;
-using Models::TorrentPreviewableFile;
-using Models::User;
+using Models::TorrentPeer_NoRelations;
+using Models::TorrentPreviewableFile_NoRelations;
+using Models::User_NoRelations;
 
 /* This test case is connection independent and it only runs against the MySQL database.
    The following test methods are practically identical as in the tst_model_relations
@@ -100,12 +100,13 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasOne() const
 
     // TorrentPeer has-one relation
     QVERIFY(torrent->relationLoaded("torrentPeer"));
-    auto *torrentPeer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    auto *torrentPeer = torrent->getRelation<TorrentPeer_NoRelations, One>(
+                            "torrentPeer");
     QVERIFY(torrentPeer);
     QVERIFY(torrentPeer->exists);
     QCOMPARE(torrentPeer->getKey(), QVariant(2));
     QCOMPARE(torrentPeer->getAttribute("torrent_id"), QVariant(2));
-    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer *));
+    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer_NoRelations *));
 }
 
 void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
@@ -118,9 +119,11 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
 
     // TorrentPreviewableFile has-many relation
     QVERIFY(torrent->relationLoaded("torrentFiles"));
-    auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    auto files = torrent->getRelationValue<TorrentPreviewableFile_NoRelations>(
+                     "torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
+    QCOMPARE(typeid (files),
+             typeid (ModelsCollection<TorrentPreviewableFile_NoRelations *>));
 
     // Expected file IDs
     QList<QVariant> fileIds {2, 3};
@@ -130,7 +133,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrentId);
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile_NoRelations *));
     }
 }
 
@@ -144,11 +147,11 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_BelongsTo() const
 
     // User belongs-to relation
     QVERIFY(torrent->relationLoaded("user"));
-    auto *user = torrent->getRelationValue<User, One>("user");
+    auto *user = torrent->getRelationValue<User_NoRelations, One>("user");
     QVERIFY(user);
     QVERIFY(user->exists);
     QCOMPARE(user->getKey(), QVariant(1));
-    QCOMPARE(typeid (user), typeid (User *));
+    QCOMPARE(typeid (user), typeid (User_NoRelations *));
 
 }
 
@@ -163,9 +166,9 @@ void tst_Model_Return_Relation::
 
     // Tag belongs-to-many relation (basic pivot)
     QVERIFY(torrent->relationLoaded("tags"));
-    auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
+    auto tags = torrent->getRelationValue<Tag_BasicPivot_NoRelations>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_ReturnRelation *>));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_BasicPivot_NoRelations *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -175,7 +178,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
+        QCOMPARE(typeid (tag), typeid (Tag_BasicPivot_NoRelations *));
 
         /* Basic Pivot relation as the Pivot class, under the 'pivot' key
            in the m_relations hash. */
@@ -214,9 +217,9 @@ void tst_Model_Return_Relation::
 
     // Tag belongs-to-many relation (custom Tagged pivot)
     QVERIFY(torrent->relationLoaded("tagsCustom"));
-    auto tags = torrent->getRelationValue<Tag>("tagsCustom");
+    auto tags = torrent->getRelationValue<Tag_CustomPivot_NoRelations>("tagsCustom");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_CustomPivot_NoRelations *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -226,7 +229,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (tag), typeid (Tag *));
+        QCOMPARE(typeid (tag), typeid (Tag_CustomPivot_NoRelations *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
@@ -263,13 +266,14 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasOne() const
 
     // TorrentPeer has-one relation
     QVERIFY(!torrent->relationLoaded("torrentPeer"));
-    auto *torrentPeer = torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
+    auto *torrentPeer = torrent->getRelationValue<TorrentPeer_NoRelations, One>(
+                            "torrentPeer");
     QVERIFY(torrent->relationLoaded("torrentPeer"));
     QVERIFY(torrentPeer);
     QVERIFY(torrentPeer->exists);
     QCOMPARE(torrentPeer->getKey(), QVariant(2));
     QCOMPARE(torrentPeer->getAttribute("torrent_id"), QVariant(2));
-    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer *));
+    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer_NoRelations *));
 }
 
 void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
@@ -282,10 +286,12 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
 
     // TorrentPreviewableFile has-many relation
     QVERIFY(!torrent->relationLoaded("torrentFiles"));
-    auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    auto files = torrent->getRelationValue<TorrentPreviewableFile_NoRelations>(
+                     "torrentFiles");
     QVERIFY(torrent->relationLoaded("torrentFiles"));
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
+    QCOMPARE(typeid (files),
+             typeid (ModelsCollection<TorrentPreviewableFile_NoRelations *>));
 
     // Expected file IDs
     QList<QVariant> fileIds {2, 3};
@@ -295,7 +301,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrentId);
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile_NoRelations *));
     }
 }
 
@@ -309,12 +315,12 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_BelongsTo() const
 
     // User belongs-to relation
     QVERIFY(!torrent->relationLoaded("user"));
-    auto *user = torrent->getRelationValue<User, One>("user");
+    auto *user = torrent->getRelationValue<User_NoRelations, One>("user");
     QVERIFY(torrent->relationLoaded("user"));
     QVERIFY(user);
     QVERIFY(user->exists);
     QCOMPARE(user->getKey(), QVariant(1));
-    QCOMPARE(typeid (user), typeid (User *));
+    QCOMPARE(typeid (user), typeid (User_NoRelations *));
 }
 
 void tst_Model_Return_Relation::
@@ -328,10 +334,10 @@ void tst_Model_Return_Relation::
 
     // Tag belongs-to-many relation (basic pivot)
     QVERIFY(!torrent->relationLoaded("tags"));
-    auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
+    auto tags = torrent->getRelationValue<Tag_BasicPivot_NoRelations>("tags");
     QVERIFY(torrent->relationLoaded("tags"));
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_ReturnRelation *>));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_BasicPivot_NoRelations *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -341,7 +347,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
+        QCOMPARE(typeid (tag), typeid (Tag_BasicPivot_NoRelations *));
 
         /* Basic Pivot relation as the Pivot class, under the 'pivot' key
            in the m_relations hash. */
@@ -380,10 +386,10 @@ void tst_Model_Return_Relation::
 
     // Tag belongs-to-many relation (custom Tagged pivot)
     QVERIFY(!torrent->relationLoaded("tagsCustom"));
-    auto tags = torrent->getRelationValue<Tag>("tagsCustom");
+    auto tags = torrent->getRelationValue<Tag_CustomPivot_NoRelations>("tagsCustom");
     QVERIFY(torrent->relationLoaded("tagsCustom"));
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_CustomPivot_NoRelations *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -393,7 +399,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (tag), typeid (Tag *));
+        QCOMPARE(typeid (tag), typeid (Tag_CustomPivot_NoRelations *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */

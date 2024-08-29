@@ -4,8 +4,6 @@
 
 #include "orm/tiny/model.hpp"
 
-#include "models/torrentpreviewablefilepropertyeager.hpp"
-
 namespace Models
 {
 
@@ -15,8 +13,11 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
+class TorrentPreviewableFileProperty_NoRelations;
+
 class TorrentPreviewableFileEager final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<TorrentPreviewableFileEager, TorrentPreviewableFilePropertyEager>
+        public Model<TorrentPreviewableFileEager,
+                     TorrentPreviewableFileProperty_NoRelations>
 {
     friend Model;
     using Model::Model;
@@ -24,10 +25,10 @@ class TorrentPreviewableFileEager final : // NOLINT(bugprone-exception-escape, m
 public:
     /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFileEager,
-                           TorrentPreviewableFilePropertyEager>>
+                           TorrentPreviewableFileProperty_NoRelations>>
     fileProperty()
     {
-        return hasOne<TorrentPreviewableFilePropertyEager>("previewable_file_id");
+        return hasOne<TorrentPreviewableFileProperty_NoRelations>("previewable_file_id");
     }
 
 private:

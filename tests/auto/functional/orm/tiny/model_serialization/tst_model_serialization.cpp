@@ -4,10 +4,10 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/album.hpp"
+#include "models/album_includeslist.hpp"
 #include "models/datetime.hpp"
 #include "models/datetime_serializeoverride.hpp"
-#include "models/torrent.hpp"
+#include "models/torrent_includeslist.hpp"
 #include "models/type.hpp"
 
 using Orm::Constants::CREATED_AT;

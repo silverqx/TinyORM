@@ -615,6 +615,17 @@ function(tiny_model_sources out_headers out_sources)
     # Header files section
     set(headers)
 
+    # Model Include lists (used to avoid duplicate #include-s) 😮
+    list(APPEND headers
+        album_includeslist.hpp
+        torrent_includeslist.hpp
+        torrent_returnrelation_includeslist.hpp
+        torrenteager_includeslist.hpp
+        torrentpeereager_includeslist.hpp
+        torrentpreviewablefileeager_withdefault_includeslist.hpp
+    )
+
+    # Individual Model classes
     list(APPEND headers
         album.hpp
         albumimage.hpp
@@ -628,26 +639,30 @@ function(tiny_model_sources out_headers out_sources)
         roleuser_appends.hpp
         setting.hpp
         tag.hpp
-        tag_returnrelation.hpp
+        tag_basicpivot_norelations.hpp
+        tag_custompivot_norelations.hpp
         tagged.hpp
         tagproperty.hpp
         torrent.hpp
+        torrent_norelations.hpp
         torrent_returnrelation.hpp
+        torrent_with_qdatetime.hpp
+        torrent_without_qdatetime.hpp
         torrenteager.hpp
         torrenteager_failed.hpp
-        torrenteager_withdefault.hpp
-        torrenteager_without_qdatetime.hpp
         torrentpeer.hpp
+        torrentpeer_norelations.hpp
         torrentpeereager.hpp
-        torrentpeereager_norelations.hpp
         torrentpreviewablefile.hpp
+        torrentpreviewablefile_norelations.hpp
         torrentpreviewablefileeager.hpp
         torrentpreviewablefileeager_withdefault.hpp
         torrentpreviewablefileproperty.hpp
-        torrentpreviewablefilepropertyeager.hpp
+        torrentpreviewablefileproperty_norelations.hpp
         torrentstate.hpp
         type.hpp
         user.hpp
+        user_norelations.hpp
     )
 
     # Source files section (empty)

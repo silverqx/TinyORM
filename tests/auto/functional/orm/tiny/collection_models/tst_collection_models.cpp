@@ -8,7 +8,7 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/albumimage.hpp"
+#include "models/album_includeslist.hpp"
 
 using Orm::Constants::COMMA;
 using Orm::Constants::CREATED_AT;

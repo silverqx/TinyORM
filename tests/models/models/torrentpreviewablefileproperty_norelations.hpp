@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MODELS_TORRENTPREVIEWABLEFILEPROPERTYEAGER_HPP
-#define MODELS_TORRENTPREVIEWABLEFILEPROPERTYEAGER_HPP
+#ifndef MODELS_TORRENTPREVIEWABLEFILEPROPERTY_NORELATIONS_HPP
+#define MODELS_TORRENTPREVIEWABLEFILEPROPERTY_NORELATIONS_HPP
 
 #include "orm/tiny/model.hpp"
 
@@ -9,8 +9,8 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-class TorrentPreviewableFilePropertyEager final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<TorrentPreviewableFilePropertyEager>
+class TorrentPreviewableFileProperty_NoRelations final : // NOLINT(bugprone-exception-escape)
+        public Model<TorrentPreviewableFileProperty_NoRelations>
 {
     friend Model;
     using Model::Model;
@@ -24,4 +24,4 @@ class TorrentPreviewableFilePropertyEager final : // NOLINT(bugprone-exception-e
 
 } // namespace Models
 
-#endif // MODELS_TORRENTPREVIEWABLEFILEPROPERTYEAGER_HPP
+#endif // MODELS_TORRENTPREVIEWABLEFILEPROPERTY_NORELATIONS_HPP

@@ -4,8 +4,7 @@
 #include "databases.hpp"
 #include "macros.hpp"
 
-#include "models/torrent.hpp"
-#include "models/torrentpreviewablefile.hpp"
+#include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::Attached;
 using Orm::Constants::Detached;
