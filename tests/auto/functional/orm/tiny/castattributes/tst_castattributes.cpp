@@ -510,7 +510,7 @@ void tst_CastAttributes::cast_QByteArray_to_QDateTime_ThrowException() const
 
     type.mergeCasts({{"binary", CastType::QDateTime}});
 
-    TVERIFY_THROWS_EXCEPTION(InvalidFormatError,
+    QVERIFY_THROWS_EXCEPTION(InvalidFormatError,
                              type.getAttribute("binary"));
 }
 
@@ -526,7 +526,7 @@ void tst_CastAttributes::cast_QDateTime_to_QByteArray_ThrowException() const
 
     type.mergeCasts({{"datetime", CastType::QByteArray}});
 
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
                              type.getAttribute("datetime"));
 }
 

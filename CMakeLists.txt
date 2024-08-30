@@ -59,7 +59,7 @@ set(minRecGCCVersion     10.2)
 set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
-set(minReqQtVersion      6.2)
+set(minReqQtVersion      6.4)
 # Unused
 # As the range-v3 uses exact version policy in the package config file so passing version
 # makes real problems on CI pipelines where different OS images can have installed

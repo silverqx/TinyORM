@@ -776,7 +776,7 @@ void tst_PostgreSQL_SchemaBuilder::renameColumn() const
 
 void tst_PostgreSQL_SchemaBuilder::dropAllTypes() const
 {
-    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
+    QVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_PostgreSQL_SchemaBuilder::getAllTables() const
@@ -904,7 +904,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() con
     // Verify
     DB::connection(m_connection).pretend([](auto &connection)
     {
-        TVERIFY_THROWS_EXCEPTION(
+        QVERIFY_THROWS_EXCEPTION(
                     InvalidArgumentError,
                     Schema::on(connection.getName())
                     .hasTable(sl("%1-database.public.users").arg(dummy_NONEXISTENT)));
@@ -1052,7 +1052,7 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Create database connection
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
                              DB::connection(*connectionName));
 
     // Restore
@@ -2604,7 +2604,7 @@ void tst_PostgreSQL_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() con
 
 void tst_PostgreSQL_SchemaBuilder::change_VirtualAs_ThrowException() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 LogicError,
                 DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -2621,7 +2621,7 @@ void tst_PostgreSQL_SchemaBuilder::change_VirtualAs_ThrowException() const
 
 void tst_PostgreSQL_SchemaBuilder::change_StoredAs_ThrowException() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 LogicError,
                 DB::connection(m_connection).pretend([](auto &connection)
     {

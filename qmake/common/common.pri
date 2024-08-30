@@ -6,6 +6,7 @@ load(private/tiny_dotenv)
 # Common Configuration ( also for tests )
 # ---
 
+# Don't remove even after Qt <6.4 support is removed
 versionAtLeast(QT_VERSION, 6.2.4): \
     CONFIG *= c++20
 else: \

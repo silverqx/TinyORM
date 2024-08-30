@@ -751,7 +751,7 @@ void tst_SQLite_SchemaBuilder::renameColumn() const
 
 void tst_SQLite_SchemaBuilder::dropAllTypes() const
 {
-    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
+    QVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_SQLite_SchemaBuilder::getAllTables() const
@@ -1332,7 +1332,7 @@ void tst_SQLite_SchemaBuilder::indexes_Blueprint() const
 
 void tst_SQLite_SchemaBuilder::indexes_Fluent_Fulltext_SpatialIndex_Exceptions() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
@@ -1341,7 +1341,7 @@ void tst_SQLite_SchemaBuilder::indexes_Fluent_Fulltext_SpatialIndex_Exceptions()
                     table.string("name_f").fulltext();
                 }));
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
@@ -1353,7 +1353,7 @@ void tst_SQLite_SchemaBuilder::indexes_Fluent_Fulltext_SpatialIndex_Exceptions()
 
 void tst_SQLite_SchemaBuilder::indexes_Blueprint_Fulltext_SpatialIndex_Exceptions() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
@@ -1363,7 +1363,7 @@ void tst_SQLite_SchemaBuilder::indexes_Blueprint_Fulltext_SpatialIndex_Exception
                     table.fullText({"name_f"});
                 }));
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
@@ -1376,7 +1376,7 @@ void tst_SQLite_SchemaBuilder::indexes_Blueprint_Fulltext_SpatialIndex_Exception
 
 void tst_SQLite_SchemaBuilder::renameIndex() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
@@ -1562,7 +1562,7 @@ void tst_SQLite_SchemaBuilder::dropIndex_ByMultipleColumns() const
 
 void tst_SQLite_SchemaBuilder::dropPrimary_Exception() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
@@ -1572,7 +1572,7 @@ void tst_SQLite_SchemaBuilder::dropPrimary_Exception() const
 
 void tst_SQLite_SchemaBuilder::dropFullText_Exception() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
@@ -1583,7 +1583,7 @@ void tst_SQLite_SchemaBuilder::dropFullText_Exception() const
 
 void tst_SQLite_SchemaBuilder::dropSpatialIndex_Exception() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
@@ -1706,7 +1706,7 @@ void tst_SQLite_SchemaBuilder::foreignKey_WithModel() const
 
 void tst_SQLite_SchemaBuilder::dropForeign() const
 {
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {

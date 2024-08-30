@@ -166,9 +166,9 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
     ConnectionOverride::connection = connection;
 
-    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
                              Torrent::whereEq(ID, 999999)->firstOrFail());
-    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
                              Torrent::whereEq(ID, 999999)->firstOrFail({ID, NAME}));
 }
 
@@ -275,7 +275,7 @@ void tst_TinyBuilder::update_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 QueryError,
                 Torrent::whereEq(ID, 3)->update({{"progress-NON_EXISTENT", 333}}));
 }

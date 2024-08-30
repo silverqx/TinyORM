@@ -811,7 +811,7 @@ void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
               .toUtf8().constData(), );
 
     // Verify
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 SQLiteDatabaseDoesNotExistError,
                 m_dm->connection(*connectionName)
                 .statement(sl("create table tbl1 (one varchar(10), two smallint)")));

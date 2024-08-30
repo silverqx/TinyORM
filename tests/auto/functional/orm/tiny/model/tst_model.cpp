@@ -392,7 +392,7 @@ void tst_Model::save_Update_Failed() const
 
     peer->setAttribute("total_seeds-NON_EXISTENT", 15);
 
-    TVERIFY_THROWS_EXCEPTION(QueryError, peer->save());
+    QVERIFY_THROWS_EXCEPTION(QueryError, peer->save());
 
     QVERIFY(peer->exists);
 }
@@ -835,8 +835,8 @@ void tst_Model::findOrFail_NotFoundFailed() const
 
     ConnectionOverride::connection = connection;
 
-    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999));
-    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999, {ID, NAME}));
+    QVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999));
+    QVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999, {ID, NAME}));
 }
 
 void tst_Model::findMany() const
@@ -1352,7 +1352,7 @@ void tst_Model::create_Failed() const
     const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, TTimeZone::UTC);
 
     Torrent torrent;
-    TVERIFY_THROWS_EXCEPTION(QueryError,
+    QVERIFY_THROWS_EXCEPTION(QueryError,
     (torrent = Torrent::create({
         {"name-NON_EXISTENT", "test100"},
         {SIZE_,               100},

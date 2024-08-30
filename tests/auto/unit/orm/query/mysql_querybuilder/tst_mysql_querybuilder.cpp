@@ -3012,16 +3012,16 @@ void tst_MySql_QueryBuilder::whereRowValues() const
 void tst_MySql_QueryBuilder::whereRowValues_Empty() const
 {
     // Different size
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 InvalidArgumentError,
                 createQuery()->select("*").from("torrents")
                 .whereRowValues({NAME}, EQ, {"test3", 3}));
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             InvalidArgumentError,
             createQuery()->select("*").from("torrents")
             .whereRowValues({}, EQ, {"test3", 3}));
     // Empty columns/values
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             InvalidArgumentError,
             createQuery()->select("*").from("torrents")
             .whereRowValues({}, EQ, {}));

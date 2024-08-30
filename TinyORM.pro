@@ -8,7 +8,7 @@ TEMPLATE = subdirs
 
 # 16.10/16.11 (1929) - to support #pragma system_header
 tinyMinReqMsvc    = 19.29
-tinyMinReqQt      = 6.2
+tinyMinReqQt      = 6.4
 tinyMinReqClangCl = 14.0.3
 tinyMinRecClang   = 12
 tinyMinRecGCC     = 10.2

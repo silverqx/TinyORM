@@ -409,7 +409,7 @@ void tst_SqlDatabaseManager::MySQL_addExistingConnection_ThrowException() const
     QCOMPARE(Databases::driversConnectionNames().size(), 1);
     QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 InvalidArgumentError,
                 Databases::createDriversConnectionTemp(
                     Databases::MYSQL_DRIVERS,
@@ -464,7 +464,7 @@ void tst_SqlDatabaseManager::MySQL_enableOptionalMetadata_ThrowException() const
                                  u"CLIENT_OPTIONAL_RESULTSET_METADATA"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
                     .join(SEMICOLON));
 
-        TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
 
         // Restore
         /* This will generate expected warning about the connection is still in use
@@ -497,7 +497,7 @@ void tst_SqlDatabaseManager::MySQL_enableOptionalMetadata_ThrowException() const
                                  u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=ON"_s})
                     .join(SEMICOLON));
 
-        TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
 
         // Restore
         /* This will generate expected warning about the connection is still in use
@@ -541,7 +541,7 @@ void tst_SqlDatabaseManager::MySQL_disableOptionalMetadata_CLIENT_OPTIONAL() con
                              u"CLIENT_OPTIONAL_RESULTSET_METADATA=OFF"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
                 .join(SEMICOLON));
 
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
 
     // Restore
     /* This will generate expected warning about the connection is still in use
@@ -629,7 +629,7 @@ void tst_SqlDatabaseManager::MySQL_MariaDB_disableOptionalMetadata_MYSQL_OPT() c
                              u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF"_s})
                 .join(SEMICOLON));
 
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
 
     // Restore
     /* This will generate expected warning about the connection is still in use

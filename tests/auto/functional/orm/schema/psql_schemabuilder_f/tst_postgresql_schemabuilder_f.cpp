@@ -109,7 +109,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
               .toUtf8().constData(), );
 
     // Verify
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 SearchPathEmptyError,
                 Schema::on(*connectionName).hasTable(sl("users")));
 

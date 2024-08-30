@@ -835,7 +835,7 @@ void tst_MySql_SchemaBuilder::renameColumn() const
 
 void tst_MySql_SchemaBuilder::dropAllTypes() const
 {
-    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
+    QVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_MySql_SchemaBuilder::getAllTables() const

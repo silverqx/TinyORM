@@ -931,7 +931,7 @@ void tst_MySql_TinyBuilder::has_UnsupportedHasNested_Failed() const
 {
     auto builder = createTinyQuery<Torrent>();
 
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
                              builder->has("torrentFiles.fileProperty"));
 }
 

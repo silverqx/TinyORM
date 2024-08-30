@@ -2667,7 +2667,7 @@ void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
     // Verify before
     verify();
 
-    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
                              albums.load("albumImages-NON_EXISTENT"));
 
     // Verify after
@@ -2906,7 +2906,7 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
     // Verify before
     verify();
 
-    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
                              std::move(albums).load("albumImages-NON_EXISTENT"));
 
     // Verify after
@@ -3133,7 +3133,7 @@ void tst_Collection_Models::where_InvalidComparisonOperator_ThrowException() con
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
-    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
                              images.where(ID, dummy_NONEXISTENT, 10));
 }
 

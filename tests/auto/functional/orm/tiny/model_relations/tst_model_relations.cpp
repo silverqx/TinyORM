@@ -417,23 +417,23 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
     Torrent torrent;
 
     // Many relation
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<TorrentPreviewableFile>("torrentFiles")));
     // One relation, obtained as QList, also possible
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<TorrentPeer>("torrentFiles")));
     // Many relation
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<TorrentPeer, One>("torrentFiles")));
     // BelongsTo relation
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (TorrentPeer().getRelation<Torrent, One>("torrent")));
     // BelongsToMany relation
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
                 (torrent.getRelation<Tag>("tags")));
 }
@@ -444,7 +444,7 @@ void tst_Model_Relations::eagerLoad_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
                              TorrentEager_Failed::find(1));
 }
 
@@ -933,7 +933,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
         QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
-        TVERIFY_THROWS_EXCEPTION(
+        QVERIFY_THROWS_EXCEPTION(
                     RuntimeError,
                     (file->getRelation<TorrentPreviewableFileProperty, One>(
                          "fileProperty")));
@@ -946,7 +946,7 @@ void tst_Model_Relations::with_NonExistentRelation_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
                              Torrent::with("torrentFiles-NON_EXISTENT")->find(1));
 }
 
@@ -1793,7 +1793,7 @@ void tst_Model_Relations::load_NonExistentRelation_Failed() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+    QVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
                              torrent->load("torrentFiles-NON_EXISTENT"));
     QVERIFY(torrent->getRelations().empty());
 }

@@ -66,7 +66,7 @@ include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
 # Req - requirement, throws error
 # Rec - recommended, shows info message
 
-tinyMinReqQt = 6.2
+tinyMinReqQt = 6.4
 # Unused
 #tinyMinReqRangeV3Version  = 0.12.0
 #tinyMinReqTabulateVersion = 1.5.0

@@ -1313,7 +1313,7 @@ void tst_QueryBuilder::upsert_EmptyUpdate() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
                 InvalidArgumentError,
                 createQuery(connection)->from("tag_properties")
                 .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
@@ -1672,7 +1672,7 @@ void tst_QueryBuilder::sole_RecordsNotFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             RecordsNotFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq(NAME, dummy_NONEXISTENT)
@@ -1683,7 +1683,7 @@ void tst_QueryBuilder::sole_MultipleRecordsFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             MultipleRecordsFoundError,
             createQuery(connection)->from("torrents").whereEq("user_id", 1).sole());
 }
@@ -1704,7 +1704,7 @@ void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             RecordsNotFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq(NAME, dummy_NONEXISTENT)
@@ -1715,7 +1715,7 @@ void tst_QueryBuilder::soleValue_MultipleRecordsFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             MultipleRecordsFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq("user_id", 1)
@@ -1808,7 +1808,7 @@ void tst_QueryBuilder::chunk_EnforceOrderBy() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             RuntimeError,
             createQuery(connection)->from("file_property_properties")
                         .chunk(3, [](SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1902,7 +1902,7 @@ void tst_QueryBuilder::each_EnforceOrderBy() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(
+    QVERIFY_THROWS_EXCEPTION(
             RuntimeError,
             createQuery(connection)->from("file_property_properties")
                         .each([](SqlQuery &/*unused*/, const qint64 /*unused*/)

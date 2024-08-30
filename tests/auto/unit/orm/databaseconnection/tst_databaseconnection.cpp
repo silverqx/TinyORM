@@ -866,7 +866,7 @@ void tst_DatabaseConnection::scalar_MultipleColumnsSelectedError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    TVERIFY_THROWS_EXCEPTION(MultipleColumnsSelectedError,
+    QVERIFY_THROWS_EXCEPTION(MultipleColumnsSelectedError,
                              DB::connection(connection).scalar(
                                  "select id, name from torrents order by id"));
 }
