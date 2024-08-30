@@ -7,6 +7,7 @@
 #include "models/datetime_serializeoverride.hpp"
 #include "models/torrent_includeslist.hpp"
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;
@@ -152,7 +153,7 @@ void tst_Model_Appends::toMap_WithAppends() const
     QCOMPARE(serialized.size(), 11);
 
     QVariantMap expectedAttributes {
-        {"added_on",      "2020-08-04T20:11:10.000Z"},
+        {AddedOn,         "2020-08-04T20:11:10.000Z"},
         {CREATED_AT,      "2019-09-04T08:11:23.000Z"},
         {HASH_,           "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,              4},
@@ -189,7 +190,7 @@ void tst_Model_Appends::toList_WithAppends() const
         {NAME,            "test4"},
         {SIZE_,           14},
         {Progress,        400},
-        {"added_on",      "2020-08-04T20:11:10.000Z"},
+        {AddedOn,         "2020-08-04T20:11:10.000Z"},
         {HASH_,           "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,            "after update revert updated_at"},
         {CREATED_AT,      "2019-09-04T08:11:23.000Z"},
@@ -209,14 +210,14 @@ void tst_Model_Appends::toMap_WithAppends_WithVisible() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on", "name_size"});
+    torrent->setVisible({ID, "user_id", AddedOn, "name_size"});
     torrent->append({"name_progress", "name_size"});
 
     QVariantMap serialized = torrent->toMap();
     QCOMPARE(serialized.size(), 4);
 
     QVariantMap expectedAttributes {
-        {"added_on",  "2020-08-04T20:11:10.000Z"},
+        {AddedOn,     "2020-08-04T20:11:10.000Z"},
         {ID,          4},
         {"name_size", "test4 (14)"},
         {"user_id",   1},
@@ -235,7 +236,7 @@ void tst_Model_Appends::toList_WithAppends_WithVisible() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on", "name_progress"});
+    torrent->setVisible({ID, "user_id", AddedOn, "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
     QList<AttributeItem> serialized = torrent->toList();
@@ -245,7 +246,7 @@ void tst_Model_Appends::toList_WithAppends_WithVisible() const
     QList<AttributeItem> expectedAttributes {
         {ID,              4},
         {"user_id",       1},
-        {"added_on",      "2020-08-04T20:11:10.000Z"},
+        {AddedOn,         "2020-08-04T20:11:10.000Z"},
         {"name_progress", "test4 (400)"},
     };
     QCOMPARE(serialized, expectedAttributes);
@@ -269,7 +270,7 @@ void tst_Model_Appends::toMap_WithAppends_WithHidden() const
     QCOMPARE(serialized.size(), 8);
 
     QVariantMap expectedAttributes {
-        {"added_on",      "2020-08-04T20:11:10.000Z"},
+        {AddedOn,         "2020-08-04T20:11:10.000Z"},
         {CREATED_AT,      "2019-09-04T08:11:23.000Z"},
         {ID,              4},
         {NAME,            "test4"},
@@ -304,7 +305,7 @@ void tst_Model_Appends::toList_WithAppends_WithHidden() const
         {"user_id",   1},
         {NAME,        "test4"},
         {Progress,    400},
-        {"added_on",  "2020-08-04T20:11:10.000Z"},
+        {AddedOn,     "2020-08-04T20:11:10.000Z"},
         {CREATED_AT,  "2019-09-04T08:11:23.000Z"},
         {UPDATED_AT,  "2021-01-04T18:46:31.000Z"},
         {"name_size", "test4 (14)"},
@@ -323,8 +324,8 @@ void tst_Model_Appends::toMap_WithAppends_WithVisibleAndHidden() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on", "name_progress", "name_size"});
-    torrent->setHidden({"added_on", "name_progress"});
+    torrent->setVisible({ID, "user_id", AddedOn, "name_progress", "name_size"});
+    torrent->setHidden({AddedOn, "name_progress"});
     torrent->append({"name_progress", "name_size"});
 
     QVariantMap serialized = torrent->toMap();
@@ -350,8 +351,8 @@ void tst_Model_Appends::toList_WithAppends_WithVisibleAndHidden() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on", "name_progress", "name_size"});
-    torrent->setHidden({"added_on", "name_size"});
+    torrent->setVisible({ID, "user_id", AddedOn, "name_progress", "name_size"});
+    torrent->setHidden({AddedOn, "name_size"});
     torrent->append({"name_progress", "name_size"});
 
     QList<AttributeItem> serialized = torrent->toList();
@@ -559,7 +560,7 @@ void tst_Model_Appends::toMap_WithAppends_OnCustomPivot() const
         {ID,              1},
         {NAME,            "andrej"},
         {"roles_appends", QVariantList {QVariantMap {
-                              {"added_on",     "2022-08-01T13:36:56.000Z"},
+                              {AddedOn,        "2022-08-01T13:36:56.000Z"},
                               {ID,             1},
                               {NAME,           "role one"},
                               {"subscription", QVariantMap {
@@ -569,7 +570,7 @@ void tst_Model_Appends::toMap_WithAppends_OnCustomPivot() const
                                                    {"user_id",   1},
                                                }},
                           }, QVariantMap {
-                              {"added_on",     "2022-08-02T13:36:56.000Z"},
+                              {AddedOn,        "2022-08-02T13:36:56.000Z"},
                               {ID,             2},
                               {NAME,           "role two"},
                               {"subscription", QVariantMap {
@@ -579,7 +580,7 @@ void tst_Model_Appends::toMap_WithAppends_OnCustomPivot() const
                                                    {"user_id",   1},
                                                }},
                           }, QVariantMap {
-                              {"added_on",     NullVariant::QDateTime()},
+                              {AddedOn,        NullVariant::QDateTime()},
                               {ID,             3},
                               {NAME,           "role three"},
                               {"subscription", QVariantMap {
@@ -614,7 +615,7 @@ void tst_Model_Appends::toList_WithAppends_OnCustomPivot() const
         {"roles_appends", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                               {ID,             1},
                               {NAME,           "role one"},
-                              {"added_on",     "2022-08-01T13:36:56.000Z"},
+                              {AddedOn,        "2022-08-01T13:36:56.000Z"},
                               {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   1},
@@ -624,7 +625,7 @@ void tst_Model_Appends::toList_WithAppends_OnCustomPivot() const
                           }), QVariant::fromValue(QList<AttributeItem> {
                               {ID,             2},
                               {NAME,           "role two"},
-                              {"added_on",     "2022-08-02T13:36:56.000Z"},
+                              {AddedOn,        "2022-08-02T13:36:56.000Z"},
                               {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   2},
@@ -634,7 +635,7 @@ void tst_Model_Appends::toList_WithAppends_OnCustomPivot() const
                           }), QVariant::fromValue(QList<AttributeItem> {
                               {ID,             3},
                               {NAME,           "role three"},
-                              {"added_on",     NullVariant::QDateTime()},
+                              {AddedOn,        NullVariant::QDateTime()},
                               {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                    {"user_id",   1},
                                                    {"role_id",   3},

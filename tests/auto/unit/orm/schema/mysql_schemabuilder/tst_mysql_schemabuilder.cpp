@@ -14,6 +14,7 @@
 #  include "models/user_norelations.hpp"
 #endif
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::MyISAM;
@@ -1134,7 +1135,7 @@ void tst_MySql_SchemaBuilder::change_modifiers() const
             table.multiPolygon("positions").srid(1234).storedAs("expression").change();
             table.multiPoint("positions1").srid(1234).virtualAs("expression").nullable()
                  .change();
-            table.timestamp("added_on").nullable(false).useCurrent().change();
+            table.timestamp(AddedOn).nullable(false).useCurrent().change();
             table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate().change();
         });
         /* Tests from and also integerIncrements, this would of course fail on real DB

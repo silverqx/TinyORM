@@ -6,6 +6,7 @@
 #include "models/album_includeslist.hpp"
 #include "models/torrent_includeslist.hpp"
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::HASH_;
@@ -111,13 +112,13 @@ void tst_Model_HidesAttributes::toMap_WithVisible() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on"});
+    torrent->setVisible({ID, "user_id", AddedOn});
 
     QVariantMap serialized = torrent->toMap();
     QCOMPARE(serialized.size(), 3);
 
     QVariantMap expectedAttributes {
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
         {ID,         4},
         {"user_id",  1},
     };
@@ -134,7 +135,7 @@ void tst_Model_HidesAttributes::toList_WithVisible() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on"});
+    torrent->setVisible({ID, "user_id", AddedOn});
 
     QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 3);
@@ -143,7 +144,7 @@ void tst_Model_HidesAttributes::toList_WithVisible() const
     QList<AttributeItem> expectedAttributes {
         {ID,         4},
         {"user_id",  1},
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -164,7 +165,7 @@ void tst_Model_HidesAttributes::toMap_WithHidden() const
     QCOMPARE(serialized.size(), 7);
 
     QVariantMap expectedAttributes {
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
         {ID,         4},
         {NAME,       "test4"},
@@ -196,7 +197,7 @@ void tst_Model_HidesAttributes::toList_WithHidden() const
         {"user_id",  1},
         {NAME,       "test4"},
         {Progress,   400},
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
         {UPDATED_AT, "2021-01-04T18:46:31.000Z"},
     };
@@ -213,8 +214,8 @@ void tst_Model_HidesAttributes::toMap_WithVisibleAndHidden() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on"});
-    torrent->setHidden({"added_on"});
+    torrent->setVisible({ID, "user_id", AddedOn});
+    torrent->setHidden({AddedOn});
 
     QVariantMap serialized = torrent->toMap();
     QCOMPARE(serialized.size(), 2);
@@ -237,8 +238,8 @@ void tst_Model_HidesAttributes::toList_WithVisibleAndHidden() const
     QVERIFY(torrent->exists);
 
     // Prepare
-    torrent->setVisible({ID, "user_id", "added_on"});
-    torrent->setHidden({"added_on"});
+    torrent->setVisible({ID, "user_id", AddedOn});
+    torrent->setHidden({AddedOn});
 
     QList<AttributeItem> serialized = torrent->toList();
     QCOMPARE(serialized.size(), 2);
@@ -551,7 +552,7 @@ void tst_Model_HidesAttributes::
         {ID,      1},
         {NAME,    "andrej"},
         {"roles", QVariantList {QVariantMap {
-                      {"added_on",     "2022-08-01T13:36:56.000Z"},
+                      {AddedOn,        "2022-08-01T13:36:56.000Z"},
                       {ID,             1},
                       {NAME,           "role one"},
                       {"subscription", QVariantMap {
@@ -560,7 +561,7 @@ void tst_Model_HidesAttributes::
                                            {"user_id", 1},
                                        }},
                   }, QVariantMap {
-                      {"added_on",     "2022-08-02T13:36:56.000Z"},
+                      {AddedOn,        "2022-08-02T13:36:56.000Z"},
                       {ID,             2},
                       {NAME,           "role two"},
                       {"subscription", QVariantMap {
@@ -569,7 +570,7 @@ void tst_Model_HidesAttributes::
                                            {"user_id", 1},
                                        }},
                   }, QVariantMap {
-                      {"added_on",     NullVariant::QDateTime()},
+                      {AddedOn,        NullVariant::QDateTime()},
                       {ID,             3},
                       {NAME,           "role three"},
                       {"subscription", QVariantMap {
@@ -604,7 +605,7 @@ void tst_Model_HidesAttributes::
         {"roles", QVariantList {QVariant::fromValue(QList<AttributeItem> {
                       {ID,             1},
                       {NAME,           "role one"},
-                      {"added_on",     "2022-08-01T13:36:56.000Z"},
+                      {AddedOn,        "2022-08-01T13:36:56.000Z"},
                       {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 1},
@@ -613,7 +614,7 @@ void tst_Model_HidesAttributes::
                   }), QVariant::fromValue(QList<AttributeItem> {
                       {ID,             2},
                       {NAME,           "role two"},
-                      {"added_on",     "2022-08-02T13:36:56.000Z"},
+                      {AddedOn,        "2022-08-02T13:36:56.000Z"},
                       {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 2},
@@ -622,7 +623,7 @@ void tst_Model_HidesAttributes::
                   }), QVariant::fromValue(QList<AttributeItem> {
                       {ID,             3},
                       {NAME,           "role three"},
-                      {"added_on",     NullVariant::QDateTime()},
+                      {AddedOn,        NullVariant::QDateTime()},
                       {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                            {"user_id", 1},
                                            {"role_id", 3},

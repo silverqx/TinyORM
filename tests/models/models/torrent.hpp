@@ -16,6 +16,7 @@
 namespace Models
 {
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -216,7 +217,7 @@ private:
 //    inline static const QList<AttributeItem> u_attributes {
 //        {SIZE_,      0},
 //        {Progress,   0},
-//        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, QtTimeZoneConfig::utc())},
+//        {AddedOn, QDateTime({2021, 4, 1}, {15, 10, 10}, QtTimeZoneConfig::utc())},
 //    };
 
     /*! The attributes that are mass assignable. */
@@ -225,7 +226,7 @@ private:
         NAME,
         SIZE_,
         Progress,
-        "added_on",
+        AddedOn,
         HASH_,
         NOTE,
         UPDATED_AT(),
@@ -245,7 +246,7 @@ private:
 //    inline static QString u_timeFormat {"HH:mm:ss"};
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {"added_on", "added_on_alt"};
+    inline static const QStringList u_dates {AddedOn, "added_on_alt"};
 
     /*! All of the relationships to be touched. */
 //    QStringList u_touches {"tags"};
@@ -271,7 +272,7 @@ private:
 //    };
     /*! The attributes that should be hidden during serialization. */
 //    inline static std::set<QString> u_hidden {
-//        "added_on", HASH_,
+//        AddedOn, HASH_,
 //    };
 
     /* Appends */

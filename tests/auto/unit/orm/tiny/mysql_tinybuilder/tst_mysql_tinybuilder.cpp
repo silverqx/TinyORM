@@ -11,6 +11,7 @@
 #include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::AND;
+using Orm::Constants::AddedOn;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
 using Orm::Constants::OR;
@@ -229,7 +230,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat()
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on",
+        role.setAttribute(AddedOn,
                           QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
@@ -243,7 +244,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat()
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", timestamp);
+        role.setAttribute(AddedOn, timestamp);
 
         const auto &attributes = role.getAttributes();
 
@@ -270,7 +271,7 @@ namespace
 
     public:
         /*! The attributes that should be mutated to dates. */
-        inline static QStringList u_dates {"added_on"}; // clazy:exclude=non-pod-global-static
+        inline static QStringList u_dates {AddedOn}; // clazy:exclude=non-pod-global-static
     };
 } // namespace
 
@@ -280,7 +281,7 @@ void tst_MySql_TinyBuilder::
     // 2022-08-03 13:36:56 UTC
     qint64 timestamp = 1659533816;
     // Prepare without u_dateFormat but with u_dates
-    Role_CustomUDate::u_dates = QStringList {"added_on"};
+    Role_CustomUDate::u_dates = QStringList {AddedOn};
     /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
        the input is the Unix timestamp. */
     auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC)
@@ -292,7 +293,7 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on",
+        role.setAttribute(AddedOn,
                           QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
@@ -309,7 +310,7 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", timestamp);
+        role.setAttribute(AddedOn, timestamp);
 
         const auto &attributes = role.getAttributes();
 
@@ -341,7 +342,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
 
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on",
+        role.setAttribute(AddedOn,
                           QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
@@ -358,7 +359,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", timestamp);
+        role.setAttribute(AddedOn, timestamp);
 
         const auto &attributes = role.getAttributes();
 
@@ -378,7 +379,7 @@ void tst_MySql_TinyBuilder::
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::QDateTime());
+        role.setAttribute(AddedOn, NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
@@ -391,7 +392,7 @@ void tst_MySql_TinyBuilder::
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::LongLong());
+        role.setAttribute(AddedOn, NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 
@@ -406,7 +407,7 @@ void tst_MySql_TinyBuilder::
      setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat_Null() const
 {
     // Prepare without u_dateFormat but with u_dates
-    Role_CustomUDate::u_dates = QStringList {"added_on"};
+    Role_CustomUDate::u_dates = QStringList {AddedOn};
 
     /* As the added_on is in u_dates it autodetects QDateTime values even if the string
        will be with all chars as numbers. */
@@ -415,7 +416,7 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::QDateTime());
+        role.setAttribute(AddedOn, NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
@@ -428,7 +429,7 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::LongLong());
+        role.setAttribute(AddedOn, NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 
@@ -453,7 +454,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() con
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::QDateTime());
+        role.setAttribute(AddedOn, NullVariant::QDateTime());
 
         const auto &attributes = role.getAttributes();
 
@@ -466,7 +467,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() con
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", NullVariant::LongLong());
+        role.setAttribute(AddedOn, NullVariant::LongLong());
 
         const auto &attributes = role.getAttributes();
 

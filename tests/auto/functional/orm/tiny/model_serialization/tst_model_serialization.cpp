@@ -10,6 +10,7 @@
 #include "models/torrent_includeslist.hpp"
 #include "models/type.hpp"
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::HASH_;
@@ -179,7 +180,7 @@ void tst_Model_Serialization::toMap() const
     QCOMPARE(serialized.size(), 10);
 
     QVariantMap expectedAttributes {
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
         {HASH_,      "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         4},
@@ -209,7 +210,7 @@ void tst_Model_Serialization::toList() const
         {NAME,       "test4"},
         {SIZE_,      14},
         {Progress,   400},
-        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {AddedOn,    "2020-08-04T20:11:10.000Z"},
         {HASH_,      "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "after update revert updated_at"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
@@ -892,7 +893,7 @@ tst_Model_Serialization::toMap_WithRelations_HasOne_HasMany_BelongsTo() const
     QVariantMap serialized = torrent->toMap();
 
     QVariantMap expectedAttributes {
-        {"added_on",      "2020-08-07T20:11:10.000Z"},
+        {AddedOn,         "2020-08-07T20:11:10.000Z"},
         {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
         {HASH_,           "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,              7},
@@ -1069,7 +1070,7 @@ tst_Model_Serialization::toList_WithRelations_HasOne_HasMany_BelongsTo() const
             {NAME,            "test7"},
             {SIZE_,           17},
             {Progress,        700},
-            {"added_on",      "2020-08-07T20:11:10.000Z"},
+            {AddedOn,         "2020-08-07T20:11:10.000Z"},
             {HASH_,           "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
             {NOTE,            "for serialization"},
             {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
@@ -1090,7 +1091,7 @@ tst_Model_Serialization::toMap_WithRelation_BelongsToMany_TorrentTags() const
     QVariantMap serialized = torrent->toMap();
 
     QVariantMap expectedAttributes {
-        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {AddedOn,    "2020-08-07T20:11:10.000Z"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         7},
@@ -1246,7 +1247,7 @@ tst_Model_Serialization::toList_WithRelation_BelongsToMany_TorrentTags() const
         {NAME,       "test7"},
         {SIZE_,      17},
         {Progress,   700},
-        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {AddedOn,    "2020-08-07T20:11:10.000Z"},
         {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
@@ -1308,7 +1309,7 @@ void tst_Model_Serialization::
     QVariantMap serialized = torrent->toMap();
 
     QVariantMap expectedAttributes {
-        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {AddedOn,    "2020-08-07T20:11:10.000Z"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         7},
@@ -1512,7 +1513,7 @@ void tst_Model_Serialization::
         {NAME,       "test7"},
         {SIZE_,      17},
         {Progress,   700},
-        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {AddedOn,    "2020-08-07T20:11:10.000Z"},
         {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
@@ -1579,7 +1580,7 @@ void tst_Model_Serialization::toMap_WithRelation_BelongsToMany_UserRoles() const
         {NAME,        "andrej"},
         {NOTE,        NullVariant::QString()},
         {"roles",     QVariantList {QVariantMap {
-                          {"added_on",     "2022-08-01T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-01T13:36:56.000Z"},
                           {ID,             1},
                           {NAME,           "role one"},
                           {"subscription", QVariantMap {
@@ -1588,7 +1589,7 @@ void tst_Model_Serialization::toMap_WithRelation_BelongsToMany_UserRoles() const
                                                {"user_id", 1},
                                            }},
                       }, QVariantMap {
-                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-02T13:36:56.000Z"},
                           {ID,             2},
                           {NAME,           "role two"},
                           {"subscription", QVariantMap {
@@ -1597,7 +1598,7 @@ void tst_Model_Serialization::toMap_WithRelation_BelongsToMany_UserRoles() const
                                                {"user_id", 1},
                                            }},
                       }, QVariantMap {
-                          {"added_on",     NullVariant::QDateTime()},
+                          {AddedOn,        NullVariant::QDateTime()},
                           {ID,             3},
                           {NAME,           "role three"},
                           {"subscription", QVariantMap {
@@ -1632,7 +1633,7 @@ void tst_Model_Serialization::
         {"roles",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                           {ID,             1},
                           {NAME,           "role one"},
-                          {"added_on",     "2022-08-01T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-01T13:36:56.000Z"},
                           {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 1},
@@ -1641,7 +1642,7 @@ void tst_Model_Serialization::
                       }), QVariant::fromValue(QList<AttributeItem> {
                           {ID,             2},
                           {NAME,           "role two"},
-                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-02T13:36:56.000Z"},
                           {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 2},
@@ -1650,7 +1651,7 @@ void tst_Model_Serialization::
                       }), QVariant::fromValue(QList<AttributeItem> {
                           {ID,             3},
                           {NAME,           "role three"},
-                          {"added_on",     NullVariant::QDateTime()},
+                          {AddedOn,        NullVariant::QDateTime()},
                           {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 1},
                                                {"role_id", 3},
@@ -1797,7 +1798,7 @@ void tst_Model_Serialization::toMap_HasOne_EmptyRelation() const
     QList<QVariantMap> serialized = torrents.toMap();
 
     QList<QVariantMap> expectedAttributes {{
-        {"added_on",     "2020-08-06T20:11:10.000Z"},
+        {AddedOn,        "2020-08-06T20:11:10.000Z"},
         {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
         {HASH_,          "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,             6},
@@ -1809,7 +1810,7 @@ void tst_Model_Serialization::toMap_HasOne_EmptyRelation() const
         {UPDATED_AT,     "2021-01-06T18:46:31.000Z"},
         {"user_id",      2},
     }, {
-        {"added_on",     "2020-08-07T20:11:10.000Z"},
+        {AddedOn,        "2020-08-07T20:11:10.000Z"},
         {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
         {HASH_,          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,             7},
@@ -1848,7 +1849,7 @@ void tst_Model_Serialization::toList_HasOne_EmptyRelation() const
         {NAME,           "test6"},
         {SIZE_,          16},
         {Progress,       600},
-        {"added_on",     "2020-08-06T20:11:10.000Z"},
+        {AddedOn,        "2020-08-06T20:11:10.000Z"},
         {HASH_,          "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,           "no files no peers"},
         {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
@@ -1860,7 +1861,7 @@ void tst_Model_Serialization::toList_HasOne_EmptyRelation() const
         {NAME,           "test7"},
         {SIZE_,          17},
         {Progress,       700},
-        {"added_on",     "2020-08-07T20:11:10.000Z"},
+        {AddedOn,        "2020-08-07T20:11:10.000Z"},
         {HASH_,          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,           "for serialization"},
         {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
@@ -1894,7 +1895,7 @@ void tst_Model_Serialization::toMap_BelongsTo_EmptyRelation() const
         {"leechers",       7},
         {"seeds",          NullVariant::Int()},
         {"torrent",        QVariantMap {
-                               {"added_on", "2020-08-07T20:11:10.000Z"},
+                               {AddedOn,    "2020-08-07T20:11:10.000Z"},
                                {CREATED_AT, "2021-11-07T08:13:23.000Z"},
                                {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
                                {ID,         7},
@@ -1947,7 +1948,7 @@ void tst_Model_Serialization::toList_BelongsTo_EmptyRelation() const
                                {NAME,       "test7"},
                                {SIZE_,      17},
                                {Progress,   700},
-                               {"added_on", "2020-08-07T20:11:10.000Z"},
+                               {AddedOn,    "2020-08-07T20:11:10.000Z"},
                                {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
                                {NOTE,       "for serialization"},
                                {CREATED_AT, "2021-11-07T08:13:23.000Z"},
@@ -1984,7 +1985,7 @@ void tst_Model_Serialization::toMap_BelongsToMany_EmptyRelation() const
         {NAME,        "silver"},
         {NOTE,        NullVariant::QString()},
         {"roles",     QVariantList {QVariantMap {
-                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-02T13:36:56.000Z"},
                           {ID,             2},
                           {NAME,           "role two"},
                           {"subscription", QVariantMap {
@@ -2027,7 +2028,7 @@ void tst_Model_Serialization::toList_BelongsToMany_EmptyRelation() const
         {"roles",     QVariantList {QVariant::fromValue(QList<AttributeItem> {
                           {ID,             2},
                           {NAME,           "role two"},
-                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {AddedOn,        "2022-08-02T13:36:56.000Z"},
                           {"subscription", QVariant::fromValue(QList<AttributeItem> {
                                                {"user_id", 2},
                                                {"role_id", 2},
@@ -2154,7 +2155,7 @@ void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
     QList<QVariantMap> serialized = roles.toMap<RoleUser>();
 
     QList<QVariantMap> expectedAttributes {QVariantMap {
-        {"added_on",     "2022-08-01T13:36:56.000Z"},
+        {AddedOn,        "2022-08-01T13:36:56.000Z"},
         {ID,             1},
         {NAME,           "role one"},
         {"subscription", QVariantMap {
@@ -2163,7 +2164,7 @@ void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
                              {"user_id", 1},
                          }},
     }, QVariantMap {
-        {"added_on",     "2022-08-02T13:36:56.000Z"},
+        {AddedOn,        "2022-08-02T13:36:56.000Z"},
         {ID,             2},
         {NAME,           "role two"},
         {"subscription", QVariantMap {
@@ -2172,7 +2173,7 @@ void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
                              {"user_id", 1},
                          }},
     }, QVariantMap {
-        {"added_on",     NullVariant::QDateTime()},
+        {AddedOn,        NullVariant::QDateTime()},
         {ID,             3},
         {NAME,           "role three"},
         {"subscription", QVariantMap {
@@ -2199,7 +2200,7 @@ void tst_Model_Serialization::toList_RelationOnly_BelongsToMany() const
     QList<QList<AttributeItem>> expectedAttributes {QList<AttributeItem> {
         {ID,             1},
         {NAME,           "role one"},
-        {"added_on",     "2022-08-01T13:36:56.000Z"},
+        {AddedOn,        "2022-08-01T13:36:56.000Z"},
         {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 1},
@@ -2208,7 +2209,7 @@ void tst_Model_Serialization::toList_RelationOnly_BelongsToMany() const
     }, QList<AttributeItem> {
         {ID,             2},
         {NAME,           "role two"},
-        {"added_on",     "2022-08-02T13:36:56.000Z"},
+        {AddedOn,        "2022-08-02T13:36:56.000Z"},
         {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 2},
@@ -2217,7 +2218,7 @@ void tst_Model_Serialization::toList_RelationOnly_BelongsToMany() const
     }, QList<AttributeItem> {
         {ID,             3},
         {NAME,           "role three"},
-        {"added_on",     NullVariant::QDateTime()},
+        {AddedOn,        NullVariant::QDateTime()},
         {"subscription", QVariant::fromValue(QList<AttributeItem> {
                              {"user_id", 1},
                              {"role_id", 3},
@@ -2804,7 +2805,7 @@ void tst_Model_Serialization::toJson_WithDateModfiers_UnixTimestamp() const
     QVERIFY(torrent->exists);
 
     torrent->mergeCasts({
-        {"added_on", {CastType::CustomQDateTime, "U"}},
+        {AddedOn,    {CastType::CustomQDateTime, "U"}},
         // These two attributes have also the u_dates defined
         {CREATED_AT, {CastType::CustomQDateTime, "U"}},
         {UPDATED_AT, {CastType::CustomQDateTime, "U"}},

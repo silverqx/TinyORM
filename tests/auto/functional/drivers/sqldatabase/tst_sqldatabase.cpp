@@ -11,6 +11,7 @@
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::ID;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
@@ -161,7 +162,7 @@ void tst_SqlDatabase::table_record_WithDefaultValues() const
 
     // Verify all at once
     QCOMPARE(record.fieldNames(),
-             QStringList({ID, "user_id", SIZE_, "decimal", "added_on", NOTE}));
+             QStringList({ID, "user_id", SIZE_, "decimal", AddedOn, NOTE}));
     QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
     QCOMPARE(actualNullColumns, expectedNullColumns);
     QCOMPARE(actualMetaTypes, expectedMetaTypes);
@@ -280,7 +281,7 @@ void tst_SqlDatabase::table_record_WithoutDefaultValues() const
 
     // Verify all at once
     QCOMPARE(record.fieldNames(),
-             QStringList({ID, "user_id", SIZE_, "decimal", "added_on", NOTE}));
+             QStringList({ID, "user_id", SIZE_, "decimal", AddedOn, NOTE}));
     QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
     QCOMPARE(actualNullColumns, expectedNullColumns);
     QCOMPARE(actualMetaTypes, expectedMetaTypes);
@@ -331,7 +332,7 @@ void tst_SqlDatabase::table_record_WithoutDefaultValues() const
 
     // Verify all at once
     QCOMPARE(recordNew.fieldNames(),
-             QStringList({ID, "user_id", SIZE_, "decimal", "added_on", NOTE}));
+             QStringList({ID, "user_id", SIZE_, "decimal", AddedOn, NOTE}));
     QCOMPARE(actualAutoIncrements, expectedAutoIncrements);
     QCOMPARE(actualNullColumns, expectedNullColumns);
     QCOMPARE(actualMetaTypes, expectedMetaTypes);

@@ -13,6 +13,7 @@
 #include "models/torrent_without_qdatetime.hpp"
 
 using Orm::Constants::ASTERISK;
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -244,7 +245,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod() const
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
-    QCOMPARE(torrent["added_on"],
+    QCOMPARE(torrent[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
 
@@ -267,7 +268,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
-    QCOMPARE(torrent["added_on"],
+    QCOMPARE(torrent[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
@@ -290,7 +291,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
-    QCOMPARE(torrent["added_on"],
+    QCOMPARE(torrent[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
 
@@ -323,7 +324,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
-    QCOMPARE(torrent["added_on"],
+    QCOMPARE(torrent[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
@@ -408,7 +409,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
-    QCOMPARE((*torrent)["added_on"],
+    QCOMPARE((*torrent)[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent).getAttributes().size(), 3);
 
@@ -431,7 +432,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
-    QCOMPARE((*torrent)["added_on"],
+    QCOMPARE((*torrent)[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
     QCOMPARE((*torrent)[NOTE], QVariant(note));
@@ -454,7 +455,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
-    QCOMPARE((*torrent)["added_on"],
+    QCOMPARE((*torrent)[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent->getAttributes().size(), 3);
 
@@ -487,7 +488,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
-    QCOMPARE((*torrent)["added_on"],
+    QCOMPARE((*torrent)[AddedOn],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
     QCOMPARE((*torrent)[NOTE], QVariant(note));
@@ -624,7 +625,7 @@ void tst_Model_Connection_Independent::subscriptOperator() const
     QCOMPARE((*torrent)[ID], QVariant(2));
     QCOMPARE((*torrent)[NAME], QVariant("test2"));
 
-    QCOMPARE((*torrent)["added_on"],
+    QCOMPARE((*torrent)[AddedOn],
             QVariant(QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)));
 }
 
@@ -1189,7 +1190,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
 {
     // Simple pluck without keying
     {
-        auto result = Torrent::pluck("added_on");
+        auto result = Torrent::pluck(AddedOn);
 
         QList<QVariant> expected {
             QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
@@ -1204,7 +1205,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
     }
     // Templated pluck keyed by id<quint64> and QVariant<QDateTime> as the value
     {
-        auto result = Torrent::pluck<quint64>("added_on", ID);
+        auto result = Torrent::pluck<quint64>(AddedOn, ID);
 
         std::map<quint64, QVariant> expected {
             {1, QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)},
@@ -1219,7 +1220,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
     }
     // Templated pluck keyed by added_on<QDateTime>
     {
-        auto result = Torrent::pluck<QDateTime>(ID, "added_on");
+        auto result = Torrent::pluck<QDateTime>(ID, AddedOn);
 
         std::map<QDateTime, QVariant> expected {
             {QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC), 1},
@@ -1237,13 +1238,13 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
 void tst_Model_Connection_Independent::pluck_EmptyResult_With_u_dates() const
 {
     {
-        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck("added_on");
+        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck(AddedOn);
 
         QCOMPARE(result, QList<QVariant>());
     }
     {
         auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)
-                      ->pluck<QDateTime>(ID, "added_on");
+                      ->pluck<QDateTime>(ID, AddedOn);
 
         std::map<QDateTime, QVariant> expected;
         QCOMPARE(result, expected);

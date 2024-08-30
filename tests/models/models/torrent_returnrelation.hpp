@@ -7,6 +7,8 @@
 namespace Models
 {
 
+using Orm::Constants::AddedOn;
+
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
 
@@ -92,7 +94,7 @@ private:
     };
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {"added_on"};
+    inline static const QStringList u_dates {AddedOn};
 };
 
 } // namespace Models

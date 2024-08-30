@@ -21,7 +21,7 @@ namespace Migrations
 
                 table.unsignedBigInteger(SIZE_).defaultValue("0");
                 table.decimal("decimal").defaultValue("100.12").nullable();
-                table.datetime("added_on").useCurrent();
+                table.datetime(AddedOn).useCurrent();
                 table.string(NOTE).nullable();
             });
         }

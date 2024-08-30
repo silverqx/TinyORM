@@ -25,7 +25,7 @@ namespace Seeders
                 {5, "obiwan", true,  "test SoftDeletes",     "2022-01-05 14:51:23", "2022-01-05 17:46:31", "2022-01-05 20:46:31"},
             });
 
-            DB::table("roles")->insert({ID, NAME, "added_on"},
+            DB::table("roles")->insert({ID, NAME, AddedOn},
             {
                 {1, "role one",   1659361016},
                 {2, "role two",   1659447416},
@@ -47,7 +47,7 @@ namespace Seeders
                 {3, 3, "905111999"},
             });
 
-            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, Progress, "added_on", HASH_, NOTE, CREATED_AT, UPDATED_AT},
+            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, Progress, AddedOn, HASH_, NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2016-06-01 08:08:23", "2021-01-01 18:46:31"},
                 {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2017-07-02 08:09:23", "2021-01-02 18:46:31"},

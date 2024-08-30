@@ -16,6 +16,7 @@
 #include "models/torrent_includeslist.hpp"
 
 using Orm::Constants::ASTERISK;
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;
@@ -174,7 +175,7 @@ void tst_Model::save_Insert() const
     torrent.setAttribute(NAME, "test50")
             .setAttribute(SIZE_, 50)
             .setAttribute(Progress, 50)
-            .setAttribute("added_on", addedOn)
+            .setAttribute(AddedOn, addedOn)
             .setAttribute(HASH_, "5079e3af2768cdf52ec84c1f320333f68401dc61");
 
     QVERIFY(!torrent.exists);
@@ -188,7 +189,7 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrent.getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrent.getAttribute(Progress), QVariant(50));
-    QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute(AddedOn), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
@@ -204,7 +205,7 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute(Progress), QVariant(50));
-    QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute(AddedOn), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
@@ -225,7 +226,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
 
     const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, TTimeZone::UTC);
     torrent.setAttribute(NAME, "test51")
-            .setAttribute("added_on", addedOn)
+            .setAttribute(AddedOn, addedOn)
             .setAttribute(HASH_, "5179e3af2768cdf52ec84c1f320333f68401dc61");
 
     QVERIFY(!torrent.exists);
@@ -237,7 +238,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.getKey().isValid());
     QVERIFY(torrent.getKeyCasted() > 6);
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test51"));
-    QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
+    QCOMPARE(torrent.getAttribute(AddedOn), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute(HASH_),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
@@ -254,7 +255,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test51"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute(Progress), QVariant(0));
-    QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
+    QCOMPARE(torrentToVerify->getAttribute(AddedOn), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
@@ -625,8 +626,8 @@ void tst_Model::whereEq() const
     }
     // QDateTime
     {
-        auto torrent = Torrent::whereEq("added_on", QDateTime({2020, 8, 1}, {20, 11, 10},
-                                                              TTimeZone::UTC))
+        auto torrent = Torrent::whereEq(AddedOn, QDateTime({2020, 8, 1}, {20, 11, 10},
+                                                           TTimeZone::UTC))
                        ->first();
         QVERIFY(torrent);
         QCOMPARE(torrent->getKey(), QVariant(1));
@@ -1164,7 +1165,7 @@ void tst_Model::firstOrCreate_Found() const
 
                            {{SIZE_, 33},
                             {Progress, 33},
-                            {"added_on", addedOn},
+                            {AddedOn, addedOn},
                             {HASH_, "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
 
         QVERIFY(torrent.exists);
@@ -1173,7 +1174,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent[SIZE_], QVariant(13));
         QCOMPARE(torrent[Progress], QVariant(300));
-        QCOMPARE(torrent["added_on"],
+        QCOMPARE(torrent[AddedOn],
                 QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)));
         QCOMPARE(torrent[HASH_], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
@@ -1192,7 +1193,7 @@ void tst_Model::firstOrCreate_NotFound() const
 
                        {{SIZE_, 113},
                         {Progress, 313},
-                        {"added_on", addedOn},
+                        {AddedOn, addedOn},
                         {HASH_, "1999e3af2768cdf52ec84c1f320333f68401dc6e"}});
 
     QVERIFY(torrent.exists);
@@ -1201,7 +1202,7 @@ void tst_Model::firstOrCreate_NotFound() const
     QCOMPARE(torrent[NAME], QVariant("test100"));
     QCOMPARE(torrent[SIZE_], QVariant(113));
     QCOMPARE(torrent[Progress], QVariant(313));
-    QCOMPARE(torrent["added_on"], QVariant(addedOn));
+    QCOMPARE(torrent[AddedOn], QVariant(addedOn));
     QCOMPARE(torrent[HASH_], QVariant("1999e3af2768cdf52ec84c1f320333f68401dc6e"));
 
     const auto result = torrent.remove();
@@ -1313,7 +1314,7 @@ void tst_Model::create() const
         {NAME,       "test100"},
         {SIZE_,      100},
         {Progress,   333},
-        {"added_on", addedOn},
+        {AddedOn,    addedOn},
         {HASH_,      "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     });
 
@@ -1323,7 +1324,7 @@ void tst_Model::create() const
     QCOMPARE(torrent[NAME], QVariant("test100"));
     QCOMPARE(torrent[SIZE_], QVariant(100));
     QCOMPARE(torrent[Progress], QVariant(333));
-    QCOMPARE(torrent["added_on"], QVariant(addedOn));
+    QCOMPARE(torrent[AddedOn], QVariant(addedOn));
     QCOMPARE(torrent[HASH_], QVariant("1009e3af2768cdf52ec84c1f320333f68401dc6e"));
 
     QVERIFY(!torrent.isDirty());
@@ -1356,7 +1357,7 @@ void tst_Model::create_Failed() const
         {"name-NON_EXISTENT", "test100"},
         {SIZE_,               100},
         {Progress,            333},
-        {"added_on",          addedOn},
+        {AddedOn,             addedOn},
         {HASH_,               "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     })));
 
@@ -1727,7 +1728,7 @@ void tst_Model::touch_WithAttribute() const
     ConnectionOverride::connection = connection;
 
     // Verify an original added_on value
-    auto addedOnOriginal = Torrent::find(1)->getAttribute("added_on");
+    auto addedOnOriginal = Torrent::find(1)->getAttribute(AddedOn);
     QCOMPARE(addedOnOriginal,
              QVariant(QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)));
 
@@ -1740,19 +1741,19 @@ void tst_Model::touch_WithAttribute() const
     }
 
     // Make touch
-    auto result = Torrent::find(1)->touch("added_on");
+    auto result = Torrent::find(1)->touch(AddedOn);
     QVERIFY(result);
 
     // Verify a new touched added_on value
-    auto addedOnTouched = Torrent::find(1)->getAttribute("added_on");
+    auto addedOnTouched = Torrent::find(1)->getAttribute(AddedOn);
     QVERIFY(addedOnTouched.value<QDateTime>() >= timeBeforeTouch);
 
     // Restore
-    result = Torrent::find(1)->update({{"added_on", addedOnOriginal}});
+    result = Torrent::find(1)->update({{AddedOn, addedOnOriginal}});
     QVERIFY(result);
 
     // Verify restored added_on value
-    auto addedOnRestored = Torrent::find(1)->getAttribute("added_on");
+    auto addedOnRestored = Torrent::find(1)->getAttribute(AddedOn);
     QCOMPARE(addedOnRestored, addedOnOriginal);
 }
 
@@ -1826,7 +1827,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
     QVERIFY(role);
     QVERIFY(role->exists);
 
-    auto addedOn = role->getAttribute("added_on");
+    auto addedOn = role->getAttribute(AddedOn);
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
     // Also the SQLite returns the QDateTime
@@ -1846,7 +1847,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
     QVERIFY(role);
     QVERIFY(role->exists);
 
-    auto addedOn = role->getAttribute("added_on");
+    auto addedOn = role->getAttribute(AddedOn);
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
     /* Only MySQL returns correct underlying type, the SQLite doesn't care and PostgreSQL
@@ -1870,7 +1871,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
     QVERIFY(role);
     QVERIFY(role->exists);
 
-    auto addedOn = role->getAttribute("added_on");
+    auto addedOn = role->getAttribute(AddedOn);
     // Compare is null
     QVERIFY(addedOn.isValid() && addedOn.isNull());
 
@@ -1895,7 +1896,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
     QVERIFY(role);
     QVERIFY(role->exists);
 
-    auto addedOn = role->getAttribute("added_on");
+    auto addedOn = role->getAttribute(AddedOn);
     // Compare is null
     QVERIFY(addedOn.isValid() && addedOn.isNull());
 

@@ -19,6 +19,7 @@
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
@@ -433,7 +434,7 @@ void tst_SqlQuery_Prepared::select_recordCached_WithDefaultValues() const
     // Column definitions related
     static const QString Torrents(u"torrents"_s);
     static const QStringList fieldNames({
-        ID, "user_id", NAME, SIZE_, Progress, "added_on", NOTE,
+        ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });
     static const auto fieldsCount = fieldNames.size();
 
@@ -556,14 +557,14 @@ void tst_SqlQuery_Prepared::select_recordCached_WithDefaultValues() const
                                          torrents.value(NAME).value<QString>(),
                                          torrents.value(SIZE_).value<quint64>(),
                                          torrents.value(Progress).value<uint>(),
-                                         torrents.value("added_on").value<QDateTime>(),
+                                         torrents.value(AddedOn).value<QDateTime>(),
                                          torrents.value(NOTE).value<QString>()});
         actualNullValues << QList<bool>({torrents.isNull(ID),
                                          torrents.isNull("user_id"),
                                          torrents.isNull(NAME),
                                          torrents.isNull(SIZE_),
                                          torrents.isNull(Progress),
-                                         torrents.isNull("added_on"),
+                                         torrents.isNull(AddedOn),
                                          torrents.isNull(NOTE)});
     }
 
@@ -644,7 +645,7 @@ void tst_SqlQuery_Prepared::select_recordCached_WithoutDefaultValues() const
     // Column definitions related
     static const QString Torrents(u"torrents"_s);
     static const QStringList fieldNames({
-        ID, "user_id", NAME, SIZE_, Progress, "added_on", NOTE,
+        ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });
     static const auto fieldsCount = fieldNames.size();
 
@@ -761,14 +762,14 @@ void tst_SqlQuery_Prepared::select_recordCached_WithoutDefaultValues() const
                                          torrents.value(NAME).value<QString>(),
                                          torrents.value(SIZE_).value<quint64>(),
                                          torrents.value(Progress).value<uint>(),
-                                         torrents.value("added_on").value<QDateTime>(),
+                                         torrents.value(AddedOn).value<QDateTime>(),
                                          torrents.value(NOTE).value<QString>()});
         actualNullValues << QList<bool>({torrents.isNull(ID),
                                          torrents.isNull("user_id"),
                                          torrents.isNull(NAME),
                                          torrents.isNull(SIZE_),
                                          torrents.isNull(Progress),
-                                         torrents.isNull("added_on"),
+                                         torrents.isNull(AddedOn),
                                          torrents.isNull(NOTE)});
 
         /* Re-populate the Default Column Values on the cached SqlRecord, it of course
@@ -819,14 +820,14 @@ void tst_SqlQuery_Prepared::select_recordCached_WithoutDefaultValues() const
                                           torrents.value(NAME).value<QString>(),
                                           torrents.value(SIZE_).value<quint64>(),
                                           torrents.value(Progress).value<uint>(),
-                                          torrents.value("added_on").value<QDateTime>(),
+                                          torrents.value(AddedOn).value<QDateTime>(),
                                           torrents.value(NOTE).value<QString>()});
         actualNullValues2 << QList<bool>({torrents.isNull(ID),
                                           torrents.isNull("user_id"),
                                           torrents.isNull(NAME),
                                           torrents.isNull(SIZE_),
                                           torrents.isNull(Progress),
-                                          torrents.isNull("added_on"),
+                                          torrents.isNull(AddedOn),
                                           torrents.isNull(NOTE)});
     }
 
@@ -1419,7 +1420,7 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance() const
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
-            QVERIFY(record.contains(u"added_on"_s));
+            QVERIFY(record.contains(AddedOn));
 
             actual.emplaceBack(query.value(ID).value<quint64>(),
                                query.value(NAME).value<QString>());
@@ -1677,7 +1678,7 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance_AfterFinis
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
-            QVERIFY(record.contains(u"added_on"_s));
+            QVERIFY(record.contains(AddedOn));
 
             actual.emplaceBack(query.value(ID).value<quint64>(),
                                query.value(NAME).value<QString>());
@@ -1907,7 +1908,7 @@ void tst_SqlQuery_Prepared::
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
-            QVERIFY(record.contains(u"added_on"_s));
+            QVERIFY(record.contains(AddedOn));
 
             actual.emplaceBack(query.value(ID).value<quint64>(),
                                query.value(NAME).value<QString>());
@@ -2187,7 +2188,7 @@ void tst_SqlQuery_Prepared::
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
-            QVERIFY(record.contains(u"added_on"_s));
+            QVERIFY(record.contains(AddedOn));
 
             actual.emplaceBack(query.value(ID).value<quint64>(),
                                query.value(NAME).value<QString>());

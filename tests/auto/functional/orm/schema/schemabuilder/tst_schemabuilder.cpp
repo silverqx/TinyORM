@@ -15,6 +15,7 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOSPACE;
@@ -281,7 +282,7 @@ void tst_SchemaBuilder::getColumnListing() const
     std::ranges::move(columnsList, std::inserter(columns, columns.end()));
 
     QCOMPARE(columns,
-             std::unordered_set<QString>({ID, NAME, sl("added_on")}));
+             std::unordered_set<QString>({ID, NAME, AddedOn}));
 }
 
 void tst_SchemaBuilder::hasTable() const

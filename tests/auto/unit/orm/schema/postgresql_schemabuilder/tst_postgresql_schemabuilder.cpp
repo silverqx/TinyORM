@@ -14,6 +14,7 @@
 #  include "models/user_norelations.hpp"
 #endif
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::PUBLIC;
@@ -1187,7 +1188,7 @@ void tst_PostgreSQL_SchemaBuilder::modifiers() const
             table.Double("amount", 6, 2);
             table.multiPolygon("positions").srid(1234).storedAs("expression");
             table.point("positions1").isGeometry().srid(1234);
-            table.timestamp("added_on").nullable(false).useCurrent();
+            table.timestamp(AddedOn).nullable(false).useCurrent();
             // PostgreSQL doesn't support useCurrentOnUpdate()
 //            table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate();
         });
@@ -1350,7 +1351,7 @@ void tst_PostgreSQL_SchemaBuilder::change_modifiers() const
             // PostgreSQL doesn't support changing generated columns
 //            table.multiPolygon("positions").srid(1234).storedAs("expression").change();
             table.point("positions1").isGeometry().projection(1234).change();
-            table.timestamp("added_on").nullable(false).useCurrent().change();
+            table.timestamp(AddedOn).nullable(false).useCurrent().change();
             // PostgreSQL doesn't support useCurrentOnUpdate()
 //            table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate().change();
         });

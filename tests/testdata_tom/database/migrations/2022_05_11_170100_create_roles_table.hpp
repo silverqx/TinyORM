@@ -19,7 +19,7 @@ namespace Migrations
                 table.string(NAME).unique();
 
                 // To test Unix timestamps, u_dateFormat = 'U'
-                table.bigInteger("added_on").nullable()
+                table.bigInteger(AddedOn).nullable()
                         .comment("To test Unix timestamps, u_dateFormat = 'U'");
             });
         }

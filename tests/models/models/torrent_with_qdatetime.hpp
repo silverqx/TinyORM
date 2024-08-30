@@ -7,6 +7,7 @@
 namespace Models
 {
 
+using Orm::Constants::AddedOn;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::Progress;
@@ -26,7 +27,7 @@ class Torrent_With_QDateTime final : public Model<Torrent_With_QDateTime> // NOL
     inline static const QList<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE_,      0},
         {Progress,   0},
-        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Orm::TTimeZone::UTC)},
+        {AddedOn,    QDateTime({2021, 4, 1}, {15, 10, 10}, Orm::TTimeZone::UTC)},
     };
 
     /*! The attributes that are mass assignable. */
@@ -34,12 +35,12 @@ class Torrent_With_QDateTime final : public Model<Torrent_With_QDateTime> // NOL
         NAME,
         SIZE_,
         Progress,
-        "added_on",
+        AddedOn,
         NOTE,
     };
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {"added_on"};
+    inline static const QStringList u_dates {AddedOn};
 };
 
 } // namespace Models

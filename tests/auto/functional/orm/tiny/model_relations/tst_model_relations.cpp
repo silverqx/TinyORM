@@ -18,6 +18,7 @@
 #include "models/torrentpreviewablefileeager_withdefault_includeslist.hpp"
 
 using Orm::Constants::ASTERISK;
+using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -813,7 +814,7 @@ void tst_Model_Relations::with_BelongsToMany_Twice() const
     expectedRoleAttributes {
         {ID,         0},
         {NAME,       1},
-        {"added_on", 2},
+        {AddedOn,    2},
     };
     // Expected role attribute values - ID and name
     std::map<Role::KeyType, QVariant> expectedRoles {
