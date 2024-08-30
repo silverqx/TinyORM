@@ -103,6 +103,10 @@ Next, you have to define the `u_relations` hash, which maps relation names to re
 You may omit the `friend Model` declaration and define all the private data and function members as `public`.
 :::
 
+:::note
+[Here](https://github.com/silverqx/TinyORM/blob/main/NOTES.txt#L1) are the rules for memorizing guessing logic for parameters for relationship methods that I personally use.
+:::
+
 ### One To One
 
 A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::Model<Derived, AllRelations...>` base class:
