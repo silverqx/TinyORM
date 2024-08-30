@@ -760,7 +760,7 @@ Databases::postgresConfiguration()
         {prefix_,            EMPTY},
         {prefix_indexes,     false},
 //        {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED
-//        {synchronous_commit, sl("off")}, // Postgres default is on
+//        {synchronous_commit, off}, // Postgres default is on
         // ConnectionFactory provides a default value for this, this is only for reference
 //        {dont_drop,          QStringList {spatial_ref_sys}},
         {options_,           ConfigUtils::postgresSslOptions()},
