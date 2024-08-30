@@ -20,7 +20,7 @@ class Tagged;
 class Torrent;
 
 class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged> // NOLINT(bugprone-exception-escape, misc-no-recursion)
-//class Tag final : public Model<Tag, Torrent, TagProperty, Role, Pivot>
+//class Tag final : public Model<Tag, Torrent, TagProperty, Role, Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;
