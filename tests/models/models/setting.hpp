@@ -14,7 +14,6 @@ class Setting final : public Model<Setting> // NOLINT(bugprone-exception-escape,
     friend Model;
     using Model::Model;
 
-private:
     /*! Indicates if the model's ID is auto-incrementing. */
     bool u_incrementing = false;
 };
