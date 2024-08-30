@@ -49,7 +49,6 @@ private:
     };
 
     /*! Indicates whether attributes are snake_cased during serialization. */
-    T_THREAD_LOCAL
     inline static const bool u_snakeAttributes = false;
 };
 
