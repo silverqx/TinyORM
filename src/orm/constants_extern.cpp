@@ -49,6 +49,7 @@ namespace Orm::Constants
     const QString pivot_       = QStringLiteral("pivot");
     const QString HASH_        = QStringLiteral("hash");
     const QString Progress     = QStringLiteral("progress");
+    const QString AddedOn      = QStringLiteral("added_on");
     const QString ON           = QStringLiteral("ON");
     const QString OFF          = QStringLiteral("OFF");
     const QString on           = QStringLiteral("on");

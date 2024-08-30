@@ -60,6 +60,7 @@ namespace Orm::Constants
     TINYORM_EXPORT extern const QString pivot_;
     TINYORM_EXPORT extern const QString HASH_;
     TINYORM_EXPORT extern const QString Progress;
+    TINYORM_EXPORT extern const QString AddedOn;
     TINYORM_EXPORT extern const QString ON;
     TINYORM_EXPORT extern const QString OFF;
     TINYORM_EXPORT extern const QString on;
