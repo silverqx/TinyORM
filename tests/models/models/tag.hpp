@@ -3,7 +3,6 @@
 #define MODELS_TAG_HPP
 
 #include "orm/tiny/model.hpp"
-//#include "orm/tiny/relations/pivot.hpp"
 
 namespace Models
 {

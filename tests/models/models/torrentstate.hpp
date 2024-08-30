@@ -2,7 +2,7 @@
 #ifndef MODELS_TORRENTSTATE_HPP
 #define MODELS_TORRENTSTATE_HPP
 
-#include "orm/tiny/relations/pivot.hpp"
+#include "orm/tiny/model.hpp"
 
 namespace Models
 {

@@ -3,6 +3,8 @@
 #define MODELS_TORRENT_RETURNRELATION_INCLUDESLIST_HPP
 
 // IWYU pragma: begin_exports
+#include "orm/tiny/relations/pivot.hpp"
+
 #include "models/tag_basicpivot_norelations.hpp"
 #include "models/tag_custompivot_norelations.hpp"
 #include "models/tagged.hpp"

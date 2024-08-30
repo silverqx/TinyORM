@@ -3,6 +3,8 @@
 #define MODELS_TORRENT_INCLUDESLIST_HPP
 
 // IWYU pragma: begin_exports
+#include "orm/tiny/relations/pivot.hpp"
+
 #include "models/filepropertyproperty.hpp"
 #include "models/phone.hpp"
 #include "models/role.hpp"

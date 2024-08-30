@@ -2,7 +2,7 @@
 #ifndef MODELS_TORRENT_RETURNRELATION_HPP
 #define MODELS_TORRENT_RETURNRELATION_HPP
 
-#include "orm/tiny/relations/pivot.hpp"
+#include "orm/tiny/model.hpp"
 
 namespace Models
 {

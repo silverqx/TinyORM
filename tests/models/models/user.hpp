@@ -2,7 +2,7 @@
 #ifndef MODELS_USER_HPP
 #define MODELS_USER_HPP
 
-#include "orm/tiny/relations/pivot.hpp"
+#include "orm/tiny/model.hpp"
 #include "orm/tiny/softdeletes.hpp"
 
 namespace Models

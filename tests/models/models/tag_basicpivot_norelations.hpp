@@ -2,7 +2,7 @@
 #ifndef MODELS_TAG_BASICPIVOT_NORELATIONS_HPP
 #define MODELS_TAG_BASICPIVOT_NORELATIONS_HPP
 
-#include "orm/tiny/relations/pivot.hpp"
+#include "orm/tiny/model.hpp"
 
 namespace Models
 {
