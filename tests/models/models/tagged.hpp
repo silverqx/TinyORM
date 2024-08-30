@@ -24,8 +24,8 @@ class Tagged final : public BasePivot<Tagged> // NOLINT(bugprone-exception-escap
         {"active", CastType::Boolean},
     };
 
-    /* Below is true, only when obtaining pivot records from the database during
-       the lazy or eager loading with the Custom Pivot models only.
+    /* Below is only true when obtaining pivot records from the database during
+       the lazy or eager loading with the Custom Pivot models.
        It's not true eg. if you call Tagged::create()/save()/update()/..., in all this
        cases the Ignored u_xyz data members are taken into account normally❗
 
