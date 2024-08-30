@@ -90,11 +90,12 @@ public:
 
     /*! Get tags that belong to the torrent. */
     std::unique_ptr<BelongsToMany<Torrent, Tag, Tagged>>
+//    std::unique_ptr<BelongsToMany<Torrent, Tag, /*Pivot*/>>
     tags()
     {
         // Basic Pivot model
         // Ownership of a unique_ptr()
-//        auto relation = belongsToMany<Tag>();
+//        auto relation = belongsToMany<Tag, /*Pivot*/>();
 //        relation->as("tagged")
 //                 .withPivot("active")
 //                 .withTimestamps();

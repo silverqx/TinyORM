@@ -18,7 +18,7 @@ class Type final : public Model<Type> // NOLINT(bugprone-exception-escape, misc-
     bool u_timestamps = false;
 
     /*! The attributes that should be cast. */
-    inline static std::unordered_map<QString, CastItem> u_casts {};
+    inline static std::unordered_map<QString, CastItem> u_casts {}; // Don't remove to be defined on Type and not in HasAttributes
 
 public:
     /*! The attributes that should be mutated to dates. */
