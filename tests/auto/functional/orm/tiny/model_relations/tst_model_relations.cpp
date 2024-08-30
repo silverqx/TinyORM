@@ -1480,6 +1480,11 @@ void tst_Model_Relations::without() const
 
 void tst_Model_Relations::without_NestedRelations() const
 {
+    /* The name of this test method is a little weird, it means that
+       the torrentFiles.fileProperty nested relation (fileProperty) will not be loaded,
+       but that is crystal clear as the torrentFiles relation isn't loaded.
+       No need to put more effort to this as this without() API works great. 😎 */
+
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
