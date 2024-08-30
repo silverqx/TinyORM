@@ -49,8 +49,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> //
     };
 };
 
-class Torrent_AllowedMassAssignment final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<Torrent_AllowedMassAssignment>
+class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssignment> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;
@@ -62,8 +61,7 @@ class Torrent_AllowedMassAssignment final : // NOLINT(bugprone-exception-escape,
     inline static QStringList u_guarded {}; // disabled
 };
 
-class Torrent_GuardableColumn final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
-        public Model<Torrent_GuardableColumn>
+class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;
