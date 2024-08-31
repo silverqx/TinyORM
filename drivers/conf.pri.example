@@ -11,9 +11,9 @@ win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
 #    CONFIG *= ccache
 
-    # Use alternative linker (for both GCC and Clang)
+    # Prefer LLD linker for Clang
     # CONFIG *= use_lld_linker does not work on MinGW
-#    QMAKE_LFLAGS *= -fuse-ld=lld
+    clang: QMAKE_LFLAGS *= -fuse-ld=lld
 
     # Nothing to do, auto-configuration is enabled
     !disable_autoconf: return()
@@ -88,7 +88,7 @@ else:win32-msvc|win32-clang-msvc {
 
 # Unix
 else:unix {
-    # Use LLD linker for Clang
+    # Prefer LLD linker for Clang
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
 
