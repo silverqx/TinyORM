@@ -64,7 +64,7 @@ public:
         // Custom 'Tagged' pivot model ✨
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Tag_CustomPivot_NoRelations, Tagged>(
-                            "tag_torrent", "torrent_id", "tag_id", {}, {}, "tags");
+                            "tag_torrent", "torrent_id", "tag_id", {}, {}, "tagsCustom");
 
         relation->as("tagged")
                  .withPivot("active")
