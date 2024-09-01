@@ -12,12 +12,9 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 namespace fs = std::filesystem;
 
@@ -108,7 +105,7 @@ ModelCommand::ModelCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, sl("The name of the model class (required StudlyCase)")},
+        {NAME, u"The name of the model class (required StudlyCase)"_s},
     };
 
     return cached;
@@ -119,99 +116,99 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
     return {
         // Call other commands
         {{QChar('m'),
-          migration_},         sl("Create a new migration file for the model")},
+          migration_},         u"Create a new migration file for the model"_s},
         {{QChar('s'),
-          seeder},             sl("Create a new seeder for the model")},
+          seeder},             u"Create a new seeder for the model"_s},
 
         // Relationship methods
-        {one_to_one,           sl("Create one-to-one relation to the given model "
-                                  "<comment>(multiple options allowed)</comment>"),
+        {one_to_one,           u"Create one-to-one relation to the given model "
+                                "<comment>(multiple options allowed)</comment>"_s,
                                one_to_one_up}, // Value
-        {one_to_many,          sl("Create one-to-many relation to the given model "
-                                  "<comment>(multiple options allowed)</comment>"),
+        {one_to_many,          u"Create one-to-many relation to the given model "
+                                "<comment>(multiple options allowed)</comment>"_s,
                                one_to_many_up}, // Value
-        {belongs_to,           sl("Create belongs-to relation to the given model "
-                                  "<comment>(multiple options allowed)</comment>"),
+        {belongs_to,           u"Create belongs-to relation to the given model "
+                                "<comment>(multiple options allowed)</comment>"_s,
                                belongs_to_up}, // Value
-        {belongs_to_many,      sl("Create many-to-many relation to the given model "
-                                  "<comment>(multiple options allowed)</comment>"),
+        {belongs_to_many,      u"Create many-to-many relation to the given model "
+                                "<comment>(multiple options allowed)</comment>"_s,
                                belongs_to_many_up}, // Value
 
         // Common for all relations
-        {foreign_key,          sl("The foreign key name <comment>(two values allowed "
-                                  "for btm)</comment>"), foreign_key_up},
+        {foreign_key,          u"The foreign key name <comment>(two values allowed "
+                                "for btm)</comment>"_s, foreign_key_up},
 
         // Belongs-to-many related
-        {pivot_table,          sl("The pivot table name"), pivot_table_up}, // Value
-        {pivot_,               sl("The class name of the pivot class for the "
-                                  "belongs-to-many relationship"), pivot_up}, // Value
-        {pivot_inverse,        sl("The class name of the pivot class for the "
-                                  "belongs-to-many inverse relationship "
-                                  "<comment>(multiple values allowed)</comment>"),
+        {pivot_table,          u"The pivot table name"_s, pivot_table_up}, // Value
+        {pivot_,               u"The class name of the pivot class for the "
+                                "belongs-to-many relationship"_s, pivot_up}, // Value
+        {pivot_inverse,        u"The class name of the pivot class for the "
+                                "belongs-to-many inverse relationship "
+                                "<comment>(multiple values allowed)</comment>"_s,
                                pivot_inverse_up}, // Value
-        {as_,                  sl("The name for the pivot relation"), as_up}, // Value
-        {with_pivot,           sl("Extra attributes for the pivot model "
-                                  "<comment>(multiple values allowed)</comment>"),
+        {as_,                  u"The name for the pivot relation"_s, as_up}, // Value
+        {with_pivot,           u"Extra attributes for the pivot model "
+                                "<comment>(multiple values allowed)</comment>"_s,
                                with_pivot_up}, // Value
-        {with_timestamps,      sl("Pivot table with timestamps")},
+        {with_timestamps,      u"Pivot table with timestamps"_s},
 
         // Model related attributes in the private section
-        {table_,               sl("The table associated with the model"), table_up}, // Value
-        {primary_key,          sl("The primary key associated with the table"),
+        {table_,               u"The table associated with the model"_s, table_up}, // Value
+        {primary_key,          u"The primary key associated with the table"_s,
                                primary_key_up}, // Value
-        {incrementing,         sl("Enable auto-incrementing for the model's primary key "
-                                  "<comment>(default)</comment>")},
-        {disable_incrementing, sl("Disable auto-incrementing for the model's primary "
-                                  "key")},
-        {connection_,          sl("The connection name for the model"), connection_up}, // Value
-        {with_,                sl("The relations to eager load on every query "
-                                  "<comment>(multiple values allowed)</comment>"),
+        {incrementing,         u"Enable auto-incrementing for the model's primary key "
+                                "<comment>(default)</comment>"_s},
+        {disable_incrementing, u"Disable auto-incrementing for the model's primary "
+                                "key"_s},
+        {connection_,          u"The connection name for the model"_s, connection_up}, // Value
+        {with_,                u"The relations to eager load on every query "
+                                "<comment>(multiple values allowed)</comment>"_s,
                                with_up}, // Value
-        {fillable,             sl("The attributes that are mass assignable <comment>"
-                                  "(multiple values allowed)</comment>"), fillable_up}, // Value
-        {guarded,              sl("The guarded attributes that aren't mass assignable "
-                                  "<comment>(multiple values allowed) </comment>"),
+        {fillable,             u"The attributes that are mass assignable <comment>"
+                                "(multiple values allowed)</comment>"_s, fillable_up}, // Value
+        {guarded,              u"The guarded attributes that aren't mass assignable "
+                                "<comment>(multiple values allowed) </comment>"_s,
                                guarded_up}, // Value
-        {disable_timestamps,   sl("Disable timestamping of the model")},
-        {dateformat,           sl("The storage format of the model's date columns"),
+        {disable_timestamps,   u"Disable timestamping of the model"_s},
+        {dateformat,           u"The storage format of the model's date columns"_s,
                                dateformat_up}, // Value
-        {dates,                sl("The attributes that should be mutated to dates "
-                                  "<comment>(multiple values allowed)</comment>"),
+        {dates,                u"The attributes that should be mutated to dates "
+                                "<comment>(multiple values allowed)</comment>"_s,
                                dates_up}, // Value
-        {touches,              sl("All of the relationships to be touched <comment>"
-                                  "(multiple values allowed)</comment>"), touches_up}, // Value
-        {casts_example,        sl("Create the u_casts map example")},
-        {snake_attributes,     sl("Enable snake_cased attributes during serialization "
-                                  "<comment>(default)</comment>")},
+        {touches,              u"All of the relationships to be touched <comment>"
+                                "(multiple values allowed)</comment>"_s, touches_up}, // Value
+        {casts_example,        u"Create the u_casts map example"_s},
+        {snake_attributes,     u"Enable snake_cased attributes during serialization "
+                                "<comment>(default)</comment>"_s},
         {disable_snake_attributes,
-                               sl("Disable snake_cased attributes during serialization")},
-        {visible,              sl("The attributes that should be visible during "
-                                  "serialization <comment>(multiple values allowed)"
-                                  "</comment>"), visible_up}, // Value
-        {hidden,               sl("The attributes that should be hidden during "
-                                  "serialization <comment>(multiple values allowed)"
-                                  "</comment>"), hidden_up}, // Value
-        {accessors,            sl("Create accessor methods (merged with appends) "
-                                  "<comment>(multiple values allowed)</comment>"),
+                               u"Disable snake_cased attributes during serialization"_s},
+        {visible,              u"The attributes that should be visible during "
+                                "serialization <comment>(multiple values allowed)"
+                                "</comment>"_s, visible_up}, // Value
+        {hidden,               u"The attributes that should be hidden during "
+                                "serialization <comment>(multiple values allowed)"
+                                "</comment>"_s, hidden_up}, // Value
+        {accessors,            u"Create accessor methods (merged with appends) "
+                                "<comment>(multiple values allowed)</comment>"_s,
                                accessors_up}, // Value
-        {appends,              sl("The attributes that should be appended during "
-                                  "serialization <comment>(multiple values allowed)"
-                                  "</comment>"), appends_up}, // Value
-        {pivot_model,          sl("Genarate a custom pivot model class")},
+        {appends,              u"The attributes that should be appended during "
+                                "serialization <comment>(multiple values allowed)"
+                                "</comment>"_s, appends_up}, // Value
+        {pivot_model,          u"Genarate a custom pivot model class"_s},
 
         // Others
         {{QChar('o'),
-          preserve_order},     sl("Preserve relations order defined on the "
-                                  "command-line")},
+          preserve_order},     u"Preserve relations order defined on the "
+                                "command-line"_s},
 
         // Paths related
-        {path_,                sl("The location where the model file should be created"),
+        {path_,                u"The location where the model file should be created"_s,
                                path_up}, // Value
-        {realpath_,            sl("Indicate that any provided model file paths are "
-                                  "pre-resolved absolute paths")},
-        {fullpath,             sl("Output the full path of the created model")},
+        {realpath_,            u"Indicate that any provided model file paths are "
+                                "pre-resolved absolute paths"_s},
+        {fullpath,             u"Output the full path of the created model"_s},
         {{QChar('f'),
-          force},              sl("Overwrite the model class if already exists")},
+          force},              u"Overwrite the model class if already exists"_s},
     };
 }
 

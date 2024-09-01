@@ -6,12 +6,9 @@
 
 #include "tom/migrator.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::database_;
 
@@ -40,14 +37,14 @@ RollbackCommand::RollbackCommand(
 QList<CommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_,   sl("The database connection to use <comment>(multiple values "
-                         "allowed)</comment>"), database_up}, // Value
+        {database_,   u"The database connection to use <comment>(multiple values "
+                       "allowed)</comment>"_s, database_up}, // Value
         {{QChar('f'),
-          force},     sl("Force the operation to run when in production")},
-        {pretend,     sl("Dump the SQL queries that would be run")},
-        {step_,       sl("The number of migrations to be reverted"), step_up}, // Value
-        {batch_,      sl("The batch of migrations (identified by their batch number) "
-                         "to be reverted"), batch_up}, // Value
+          force},     u"Force the operation to run when in production"_s},
+        {pretend,     u"Dump the SQL queries that would be run"_s},
+        {step_,       u"The number of migrations to be reverted"_s, step_up}, // Value
+        {batch_,      u"The batch of migrations (identified by their batch number) "
+                       "to be reverted"_s, batch_up}, // Value
     };
 }
 

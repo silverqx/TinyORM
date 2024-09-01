@@ -12,12 +12,9 @@
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 namespace fs = std::filesystem;
 
@@ -55,7 +52,7 @@ MigrationCommand::MigrationCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, sl("The name of the migration (best snake_case)")},
+        {NAME, u"The name of the migration (best snake_case)"_s},
     };
 
     return cached;
@@ -64,18 +61,18 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<CommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,      sl("The table name to be created"), create_up}, // Value
-        {table_,       sl("The table name to migrate (update)"), table_up}, // Value
-        {path_,        sl("The location where the migration file should be created"),
+        {create_,      u"The table name to be created"_s, create_up}, // Value
+        {table_,       u"The table name to migrate (update)"_s, table_up}, // Value
+        {path_,        u"The location where the migration file should be created"_s,
                        path_up}, // Value
-        {realpath_,    sl("Indicate that any provided migration file paths are "
-                          "pre-resolved absolute paths")},
-        {fullpath,     sl("Output the full path of the created migration")},
+        {realpath_,    u"Indicate that any provided migration file paths are "
+                        "pre-resolved absolute paths"_s},
+        {fullpath,     u"Output the full path of the created migration"_s},
 
         {{QChar('f'),
-          force},      sl("Overwrite the migration file if already exists")},
+          force},      u"Overwrite the migration file if already exists"_s},
         // Hidden option, used in the special case when called from the make:model
-        {from_model,   sl("Internal argument used when guessing a path"), true},
+        {from_model,   u"Internal argument used when guessing a path"_s, true},
     };
 }
 

@@ -18,12 +18,9 @@
 #include "tom/application.hpp"
 #include "tom/version.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 #ifdef TINYORM_USING_TINYDRIVERS
 using DriversLibraryInfo = Orm::Drivers::LibraryInfo;
@@ -57,10 +54,10 @@ AboutCommand::AboutCommand(Application &application, QCommandLineParser &parser)
 QList<CommandLineOption> AboutCommand::optionsSignature() const
 {
     return {
-        {json_,  sl("Output the information as JSON")},
-        {pretty, sl("Enable JSON human readable output")},
-        {only_,  sl("Sections to display <gray>(partial match)</gray> "
-                    "<comment>(multiple values allowed)</comment>"), only_up}, // Value
+        {json_,  u"Output the information as JSON"_s},
+        {pretty, u"Enable JSON human readable output"_s},
+        {only_,  u"Sections to display <gray>(partial match)</gray> "
+                  "<comment>(multiple values allowed)</comment>"_s, only_up}, // Value
     };
 }
 
@@ -209,7 +206,7 @@ std::unordered_set<QString> AboutCommand::getOnlyValues() const
 QString AboutCommand::prepareJsonSectionName(const QString &name)
 {
     static const std::unordered_map<QString, QString> sectionNamesMap {
-        {sl("Macros <gray>C Preprocessor</gray>"), sl("Macros")},
+        {u"Macros <gray>C Preprocessor</gray>"_s, u"Macros"_s},
     };
 
     if (!sectionNamesMap.contains(name))
@@ -221,8 +218,8 @@ QString AboutCommand::prepareJsonSectionName(const QString &name)
 QString AboutCommand::prepareJsonAboutItemName(const QString &section,
                                                const QString &aboutItem)
 {
-    return section == sl("Macros") ? aboutItem
-                                   : StringUtils::snake(aboutItem.toLower());
+    return section == u"Macros"_s ? aboutItem
+                                  : StringUtils::snake(aboutItem.toLower());
 }
 
 void
@@ -292,10 +289,10 @@ void AboutCommand::prepareAboutItemsJson(
 QList<SectionItem> AboutCommand::gatherAllAboutInformation() const
 {
     return {
-        {sl("Environment"),                        gatherEnvironmentInformation()},
-        {sl("Macros <gray>C Preprocessor</gray>"), gatherMacrosInformation()},
-        {sl("Versions"),                           gatherVersionsInformation()},
-        {sl("Connections"),                        gatherConnectionsInformation()},
+        {u"Environment"_s,                        gatherEnvironmentInformation()},
+        {u"Macros <gray>C Preprocessor</gray>"_s, gatherMacrosInformation()},
+        {u"Versions"_s,                           gatherVersionsInformation()},
+        {u"Connections"_s,                        gatherConnectionsInformation()},
     };
 }
 
@@ -304,37 +301,37 @@ QList<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
     return {
         {std::nullopt,
             std::map<QString, QString> {
-                {sl("Application name"),    QCoreApplication::applicationName()},
-                {sl("Organization name"),   QCoreApplication::organizationName()},
-                {sl("Organization domain"), QCoreApplication::organizationDomain()},
-                {sl("tom version"),         TINYTOM_VERSION_STR},
-                {sl("Environment"),         application().environment()},
+                {u"Application name"_s,    QCoreApplication::applicationName()},
+                {u"Organization name"_s,   QCoreApplication::organizationName()},
+                {u"Organization domain"_s, QCoreApplication::organizationDomain()},
+                {u"tom version"_s,         TINYTOM_VERSION_STR},
+                {u"Environment"_s,         application().environment()},
 #ifdef TINYORM_DEBUG
-                {sl("Build type"),          "Debug"},
+                {u"Build type"_s,          "Debug"},
 #else
-                {sl("Build type"),          "Release"},
+                {u"Build type"_s,          "Release"},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_BUILDING_SHARED
-                {sl("Link type"),           "Shared (dynamic)"},
+                {u"Link type"_s,           "Shared (dynamic)"},
 #else
-                {sl("Link type"),           "Static"},
+                {u"Link type"_s,           "Static"},
 #endif
 // CMake ON/OFF
 // qmake has bad support for ltcg so it's not handled in qmake (don't do it in future)
 #ifdef TINYORM_LTO
-                {sl("Link Time Optimization"),
+                {u"Link Time Optimization"_s,
                             TypeUtils::normalizeCMakeBool(TINY_STRINGIFY(TINYORM_LTO))},
 #endif
 // CMake ON/OFF/NOTFOUND (TriState bool)
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
-                {sl("MSVC Runtime dynamic"),
+                {u"MSVC Runtime dynamic"_s,
                             TypeUtils::normalizeCMakeTriStateBool(
                                 TINY_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))},
 #endif
 // CMake ON/OFF
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
-                {sl("MSVC Runtime library"),
+                {u"MSVC Runtime library"_s,
                             TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 #endif
             }},
@@ -371,9 +368,9 @@ QList<SubSectionItem> AboutCommand::gatherConnectionsInformation()
     return {
         {std::nullopt,
             std::map<QString, QString> {
-                {sl("Available drivers"),   DB::supportedDrivers().join(SPACE)},
-                {sl("Connection names"),    DB::connectionNames().join(SPACE)},
-                {sl("Default connection"),  DB::getDefaultConnection()},
+                {u"Available drivers"_s,   DB::supportedDrivers().join(SPACE)},
+                {u"Connection names"_s,    DB::connectionNames().join(SPACE)},
+                {u"Default connection"_s,  DB::getDefaultConnection()},
             }},
     };
 }

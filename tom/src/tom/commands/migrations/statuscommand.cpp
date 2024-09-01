@@ -16,12 +16,9 @@
 #  include "tom/exceptions/runtimeerror.hpp"
 #endif
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::database_;
 
@@ -45,9 +42,9 @@ StatusCommand::StatusCommand(
 QList<CommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
-        {database_, sl("The database connection to use <comment>(multiple values "
-                       "allowed)</comment>"), database_up}, // Value
-        {pending_,  sl("Only list pending migrations")},
+        {database_, u"The database connection to use <comment>(multiple values "
+                     "allowed)</comment>"_s, database_up}, // Value
+        {pending_,  u"Only list pending migrations"_s},
     };
 }
 

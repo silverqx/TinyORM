@@ -8,12 +8,9 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 namespace fs = std::filesystem;
 
@@ -43,7 +40,7 @@ SeederCommand::SeederCommand(Application &application, QCommandLineParser &parse
 const std::vector<PositionalArgument> &SeederCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, sl("The name of the seeder class (required StudlyCase)")},
+        {NAME, u"The name of the seeder class (required StudlyCase)"_s},
     };
 
     return cached;
@@ -52,16 +49,16 @@ const std::vector<PositionalArgument> &SeederCommand::positionalArguments() cons
 QList<CommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
-        {path_,        sl("The location where the seeder file should be created"),
+        {path_,        u"The location where the seeder file should be created"_s,
                        path_up}, // Value
-        {realpath_,    sl("Indicate that any provided seeder file paths are "
-                          "pre-resolved absolute paths")},
-        {fullpath,     sl("Output the full path of the created seeder")},
+        {realpath_,    u"Indicate that any provided seeder file paths are "
+                        "pre-resolved absolute paths"_s},
+        {fullpath,     u"Output the full path of the created seeder"_s},
 
         {{QChar('f'),
-          force},      sl("Overwrite the seeder class if already exists")},
+          force},      u"Overwrite the seeder class if already exists"_s},
         // Hidden option, used in the special case when called from the make:model
-        {from_model,   sl("Internal argument used when guessing a path"), true},
+        {from_model,   u"Internal argument used when guessing a path"_s, true},
     };
 }
 

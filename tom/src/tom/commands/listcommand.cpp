@@ -9,12 +9,9 @@
 
 #include "tom/application.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
@@ -47,7 +44,7 @@ const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 QList<CommandLineOption> ListCommand::optionsSignature() const
 {
     return {
-        {raw_, sl("To output raw command list")},
+        {raw_, u"To output raw command list"_s},
     };
 }
 

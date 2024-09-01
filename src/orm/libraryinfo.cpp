@@ -6,11 +6,6 @@
 #include "orm/utils/type.hpp"
 #include "orm/version.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 // Build type release/debug
 #ifdef TINYORM_NO_DEBUG
 #  define DEBUG_STRING " release"
@@ -31,6 +26,8 @@
     DEBUG_STRING " build; by " TINYORM_COMPILER_STRING ")"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::OFF; // NOLINT(misc-unused-using-decls)
 using Orm::Constants::ON; // NOLINT(misc-unused-using-decls)
@@ -71,89 +68,89 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 {
     return {
 #ifdef TINYORM_BUILDING_SHARED
-        {sl("TINYORM_BUILDING_SHARED"), ON},
+        {u"TINYORM_BUILDING_SHARED"_s, ON},
 #else
-        {sl("TINYORM_BUILDING_SHARED"), OFF},
+        {u"TINYORM_BUILDING_SHARED"_s, OFF},
 #endif
 #ifdef TINYORM_DEBUG
-        {sl("TINYORM_DEBUG"), ON},
+        {u"TINYORM_DEBUG"_s, ON},
 #else
-        {sl("TINYORM_DEBUG"), OFF},
+        {u"TINYORM_DEBUG"_s, OFF},
 #endif
 #ifdef TINYORM_DEBUG_SQL
-        {sl("TINYORM_DEBUG_SQL"), ON},
+        {u"TINYORM_DEBUG_SQL"_s, ON},
 #else
-        {sl("TINYORM_DEBUG_SQL"), OFF},
+        {u"TINYORM_DEBUG_SQL"_s, OFF},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_DISABLE_ORM
-        {sl("TINYORM_DISABLE_ORM"), ON},
+        {u"TINYORM_DISABLE_ORM"_s, ON},
 #else
-        {sl("TINYORM_DISABLE_ORM"), OFF},
+        {u"TINYORM_DISABLE_ORM"_s, OFF},
 #endif
 #ifdef TINYORM_DISABLE_THREAD_LOCAL
-        {sl("TINYORM_DISABLE_THREAD_LOCAL"), ON},
+        {u"TINYORM_DISABLE_THREAD_LOCAL"_s, ON},
 #else
-        {sl("TINYORM_DISABLE_THREAD_LOCAL"), OFF},
+        {u"TINYORM_DISABLE_THREAD_LOCAL"_s, OFF},
 #endif
 #ifdef TINYORM_DISABLE_TOM
-        {sl("TINYORM_DISABLE_TOM"), ON},
+        {u"TINYORM_DISABLE_TOM"_s, ON},
 #else
-        {sl("TINYORM_DISABLE_TOM"), OFF},
+        {u"TINYORM_DISABLE_TOM"_s, OFF},
 #endif
 #ifdef TINYORM_EXTERN_CONSTANTS
-        {sl("TINYORM_EXTERN_CONSTANTS"), ON},
+        {u"TINYORM_EXTERN_CONSTANTS"_s, ON},
 #else
-        {sl("TINYORM_EXTERN_CONSTANTS"), OFF},
+        {u"TINYORM_EXTERN_CONSTANTS"_s, OFF},
 #endif
 #ifdef TINYORM_INLINE_CONSTANTS
-        {sl("TINYORM_INLINE_CONSTANTS"), ON},
+        {u"TINYORM_INLINE_CONSTANTS"_s, ON},
 #else
-        {sl("TINYORM_INLINE_CONSTANTS"), OFF},
+        {u"TINYORM_INLINE_CONSTANTS"_s, OFF},
 #endif
 // CMake ON/OFF
 #ifdef TINYORM_LTO
-        {sl("TINYORM_LTO"), TINY_MACRO_BOOL(TINYORM_LTO)},
+        {u"TINYORM_LTO"_s, TINY_MACRO_BOOL(TINYORM_LTO)},
 #endif
 #ifdef TINYORM_MYSQL_PING
-        {sl("TINYORM_MYSQL_PING"), ON},
+        {u"TINYORM_MYSQL_PING"_s, ON},
 #else
-        {sl("TINYORM_MYSQL_PING"), OFF},
+        {u"TINYORM_MYSQL_PING"_s, OFF},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_NO_DEBUG
-        {sl("TINYORM_NO_DEBUG"), ON},
+        {u"TINYORM_NO_DEBUG"_s, ON},
 #else
-        {sl("TINYORM_NO_DEBUG"), OFF},
+        {u"TINYORM_NO_DEBUG"_s, OFF},
 #endif
 #ifdef TINYORM_NO_DEBUG_SQL
-        {sl("TINYORM_NO_DEBUG_SQL"), ON},
+        {u"TINYORM_NO_DEBUG_SQL"_s, ON},
 #else
-        {sl("TINYORM_NO_DEBUG_SQL"), OFF},
+        {u"TINYORM_NO_DEBUG_SQL"_s, OFF},
 #endif
 // CMake ON/OFF
 #ifdef TINYORM_STRICT_MODE
-        {sl("TINYORM_STRICT_MODE"), TINY_MACRO_BOOL(TINYORM_STRICT_MODE)},
+        {u"TINYORM_STRICT_MODE"_s, TINY_MACRO_BOOL(TINYORM_STRICT_MODE)},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_TESTS_CODE
-        {sl("TINYORM_TESTS_CODE"), ON},
+        {u"TINYORM_TESTS_CODE"_s, ON},
 #else
-        {sl("TINYORM_TESTS_CODE"), OFF},
+        {u"TINYORM_TESTS_CODE"_s, OFF},
 #endif
 #ifdef TINYORM_TOM_EXAMPLE
-        {sl("TINYORM_TOM_EXAMPLE"), ON},
+        {u"TINYORM_TOM_EXAMPLE"_s, ON},
 #else
-        {sl("TINYORM_TOM_EXAMPLE"), OFF},
+        {u"TINYORM_TOM_EXAMPLE"_s, OFF},
 #endif
 #ifdef TINYORM_USING_PCH
-        {sl("TINYORM_USING_PCH"), ON},
+        {u"TINYORM_USING_PCH"_s, ON},
 #else
-        {sl("TINYORM_USING_PCH"), OFF},
+        {u"TINYORM_USING_PCH"_s, OFF},
 #endif
 // CMake ON/OFF/NOTFOUND (TriState bool)
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
-        {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
+        {u"TINYORM_MSVC_RUNTIME_DYNAMIC"_s,
                     TypeUtils::normalizeCMakeTriStateBool(
                         TINY_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))},
 #endif
@@ -164,12 +161,12 @@ std::map<QString, QString> LibraryInfo::tomCMacrosMap()
 {
     return {
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
-        {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
+        {u"TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"_s,
                     TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 #endif
-        {sl("TINYTOM_MIGRATIONS_DIR"), TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
-        {sl("TINYTOM_MODELS_DIR"),     TINY_STRINGIFY(TINYTOM_MODELS_DIR)},
-        {sl("TINYTOM_SEEDERS_DIR"),    TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)},
+        {u"TINYTOM_MIGRATIONS_DIR"_s, TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
+        {u"TINYTOM_MODELS_DIR"_s,     TINY_STRINGIFY(TINYTOM_MODELS_DIR)},
+        {u"TINYTOM_SEEDERS_DIR"_s,    TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)},
     };
 }
 

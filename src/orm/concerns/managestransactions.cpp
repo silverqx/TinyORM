@@ -10,12 +10,9 @@
 
 #include TINY_INCLUDE_TSqlTransactionError
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using TSqlTransactionError;
 
@@ -189,7 +186,7 @@ bool ManagesTransactions::savepoint(const QString &id)
 
     auto &connection = databaseConnection();
 
-    static const auto savepointQueryTmpl = sl("SAVEPOINT %1_%2");
+    static const auto savepointQueryTmpl = u"SAVEPOINT %1_%2"_s;
     const auto queryString = savepointQueryTmpl.arg(m_savepointNamespace, id);
 
     // Is Elapsed timer needed?
@@ -235,7 +232,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
 
     auto &connection = databaseConnection();
 
-    static const auto rollbackToSavepointQueryTmpl = sl("ROLLBACK TO SAVEPOINT %1_%2");
+    static const auto rollbackToSavepointQueryTmpl = u"ROLLBACK TO SAVEPOINT %1_%2"_s;
     const auto queryString = rollbackToSavepointQueryTmpl.arg(m_savepointNamespace, id);
 
     // Is Elapsed timer needed?
@@ -336,7 +333,7 @@ void ManagesTransactions::throwSqlTransactionError(
         const QString &functionName, const QString &queryString, QSqlError &&error)
 {
     throw Exceptions::SqlTransactionError(
-                sl("Transaction statement in %1() failed : %2")
+                u"Transaction statement in %1() failed : %2"_s
                 .arg(functionName, queryString),
                 std::move(error));
 }

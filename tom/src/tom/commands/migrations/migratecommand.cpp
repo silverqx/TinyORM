@@ -6,12 +6,9 @@
 
 #include "tom/migrator.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::database_;
 
@@ -40,15 +37,15 @@ MigrateCommand::MigrateCommand(
 QList<CommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
-        {database_,     sl("The database connection to use <comment>(multiple values "
-                           "allowed)</comment>"), database_up}, // Value
+        {database_,     u"The database connection to use <comment>(multiple values "
+                         "allowed)</comment>"_s, database_up}, // Value
         {{QChar('f'),
-          force},       sl("Force the operation to run when in production")},
-        {pretend,       sl("Dump the SQL queries that would be run")},
-//        {"schema-path", sl("The path to a schema dump file")}, // Value
-        {seed,          sl("Indicates if the seed task should be re-run")},
-        {step_,         sl("Force the migrations to be run so they can be rolled back "
-                           "individually")},
+          force},       u"Force the operation to run when in production"_s},
+        {pretend,       u"Dump the SQL queries that would be run"_s},
+//        {"schema-path", u"The path to a schema dump file"_s}, // Value
+        {seed,          u"Indicates if the seed task should be re-run"_s},
+        {step_,         u"Force the migrations to be run so they can be rolled back "
+                         "individually"_s},
     };
 }
 

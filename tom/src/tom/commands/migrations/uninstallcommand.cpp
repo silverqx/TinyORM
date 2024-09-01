@@ -6,12 +6,9 @@
 
 #include "tom/migrationrepository.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::database_;
 
@@ -38,13 +35,13 @@ UninstallCommand::UninstallCommand(
 QList<CommandLineOption> UninstallCommand::optionsSignature() const
 {
     return {
-        {database_,   sl("The database connection to use <comment>(multiple values "
-                         "allowed)</comment>"), database_up}, // Value
+        {database_,   u"The database connection to use <comment>(multiple values "
+                       "allowed)</comment>"_s, database_up}, // Value
         {{QChar('f'),
-          force},     sl("Force the operation to run when in production")},
-        {pretend,     sl("Dump the SQL queries that would be run")},
+          force},     u"Force the operation to run when in production"_s},
+        {pretend,     u"Dump the SQL queries that would be run"_s},
         {{QChar('r'),
-          reset},     sl("Rollback all database migrations")},
+          reset},     u"Rollback all database migrations"_s},
     };
 }
 

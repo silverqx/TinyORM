@@ -15,12 +15,9 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::COMMA;
 #if defined(__linux__) || defined(__MINGW32__)
@@ -59,10 +56,10 @@ const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() c
 QList<CommandLineOption> IntegrateCommand::optionsSignature() const
 {
     return {
-        {stdout_, sl("Print content of the <info>integrate</info> command "
-                     "(instead of writing to the disk)")},
-        {path_,   sl("The location where the completion file should be created "
-                     "(zsh only)"), path_up}, // Value
+        {stdout_, u"Print content of the <info>integrate</info> command "
+                   "(instead of writing to the disk)"_s},
+        {path_,   u"The location where the completion file should be created "
+                   "(zsh only)"_s, path_up}, // Value
     };
 }
 

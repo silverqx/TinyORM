@@ -20,12 +20,9 @@
 #  include "tom/exceptions/runtimeerror.hpp"
 #endif
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 namespace fs = std::filesystem;
 
@@ -85,14 +82,14 @@ CompleteCommand::CompleteCommand(Application &application, QCommandLineParser &p
 QList<CommandLineOption> CompleteCommand::optionsSignature() const
 {
     return {
-        {word_,       sl("The current word that is being completed"), word_up},
-        {commandline, sl("The entire current command-line"), commandline_up},
+        {word_,       u"The current word that is being completed"_s, word_up},
+        {commandline, u"The entire current command-line"_s, commandline_up},
 #ifdef _MSC_VER
-        {position_,   sl("The current position of the cursor on the command-line"),
-                      position_up, sl("0")},
+        {position_,   u"The current position of the cursor on the command-line"_s,
+                      position_up, u"0"_s},
 #else
-        {cword_,      sl("Position of the current word on the command-line that is "
-                         "being completed"), cword_up},
+        {cword_,      u"Position of the current word on the command-line that is "
+                       "being completed"_s, cword_up},
 #endif
     };
 }
@@ -407,7 +404,7 @@ int
 CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNamesArg) const
 {
     static const QStringList allSectionNames {
-        sl("environment"), sl("macros"), sl("versions"), sl("connections"),
+        u"environment"_s, u"macros"_s, u"versions"_s, u"connections"_s,
     };
 
     // Initialize local variables
@@ -420,7 +417,7 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
     /* Print only one space if all array option values have already been entered,
        it prevents printing basic files completion. */
     if (allSectionNamesFiltered.isEmpty()){
-        note(sl(" ; "));
+        note(u" ; "_s);
         return EXIT_SUCCESS;
     }
 
@@ -436,7 +433,7 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
        the entire text of the --only= option, so we only need to print a section name. */
     for (const auto allSectionName : allSectionNamesFiltered)
         if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
-            sectionNames << sl("%1;%2").arg(
+            sectionNames << u"%1;%2"_s.arg(
                                 isFirstSectionNameArg
                                 ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C),
                                               allSectionName)
@@ -467,7 +464,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
     /* Print only one space if all array option values have already been entered,
        it prevents printing basic files completion. */
     if (allConnectionNamesFiltered.isEmpty()){
-        note(sl(" ; "));
+        note(u" ; "_s);
         return EXIT_SUCCESS;
     }
 
@@ -484,7 +481,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
        the connection name. */
     for (const auto allConnectionName : allConnectionNamesFiltered)
         if (printAllConnectionNames || allConnectionName.startsWith(connectionNameArg))
-            connectionNames << sl("%1;%2").arg(
+            connectionNames << u"%1;%2"_s.arg(
                                    isFirstConnectionNameArg
                                    ? NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
                                                  allConnectionName)
@@ -676,8 +673,7 @@ bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType 
         return isShort;
 
 #ifndef TINYTOM_DEBUG
-    throw Exceptions::RuntimeError(
-                sl("Unexpected value for enum struct OptionType."));
+    throw Exceptions::RuntimeError(u"Unexpected value for enum struct OptionType."_s);
 #else
     Q_UNREACHABLE();
 #endif

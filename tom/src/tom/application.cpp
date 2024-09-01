@@ -57,12 +57,9 @@
 #include "tom/tomutils.hpp"
 #include "tom/version.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using fspath = std::filesystem::path;
 
@@ -434,7 +431,7 @@ void Application::handleEmptyCommandName(const QString &name,
     default:
 #ifndef TINYTOM_DEBUG
         throw Exceptions::RuntimeError(
-                    sl("Unexpected value for enum struct CommandNotFound."));
+                    u"Unexpected value for enum struct CommandNotFound."_s);
 #else
         Q_UNREACHABLE();
 #endif
@@ -507,9 +504,9 @@ namespace
     inline QStringList getQtComponents()
     {
         return {
-            sl("Core"),
+            u"Core"_s,
 #ifdef TINYORM_USING_QTSQLDRIVERS
-            sl("Sql"),
+            u"Sql"_s,
 #endif
         };
     }
@@ -521,42 +518,42 @@ QList<SubSectionItem> Application::createVersionsSubsection()
     static const auto Release_ = QStringLiteral("Release");
 
     return {
-        {sl("Dependencies"),
+        {u"Dependencies"_s,
             std::map<QString, AboutValue> {
-                {sl("TinyORM"),     TINYORM_VERSION_STR},
+                {u"TinyORM"_s,     TINYORM_VERSION_STR},
 #ifdef TINYORM_USING_TINYDRIVERS
-                {sl("TinyDrivers"), {TINYDRIVERS_VERSION_STR, getDriversComponents()}},
+                {u"TinyDrivers"_s, {TINYDRIVERS_VERSION_STR, getDriversComponents()}},
 #endif
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-                {sl("TinyMySql"),   TINYMYSQL_VERSION_STR},
+                {u"TinyMySql"_s,   TINYMYSQL_VERSION_STR},
 #endif
-                {sl("Qt"),          {QT_VERSION_STR, getQtComponents()}},
-                {sl("range-v3"),    sl("%1.%2.%3").arg(RANGE_V3_MAJOR)
-                                                  .arg(RANGE_V3_MINOR)
-                                                  .arg(RANGE_V3_PATCHLEVEL)},
+                {u"Qt"_s,          {QT_VERSION_STR, getQtComponents()}},
+                {u"range-v3"_s,    u"%1.%2.%3"_s.arg(RANGE_V3_MAJOR)
+                                                .arg(RANGE_V3_MINOR)
+                                                .arg(RANGE_V3_PATCHLEVEL)},
 #if __has_include(<tabulate/tabulate.hpp>) && defined(TABULATE_VERSION_MAJOR) && \
     defined(TABULATE_VERSION_MINOR) && defined(TABULATE_VERSION_PATCH)
-                {sl("tabulate"),    sl("%1.%2.%3").arg(TABULATE_VERSION_MAJOR)
-                                                  .arg(TABULATE_VERSION_MINOR)
-                                                  .arg(TABULATE_VERSION_PATCH)},
+                {u"tabulate"_s,    u"%1.%2.%3"_s.arg(TABULATE_VERSION_MAJOR)
+                                                .arg(TABULATE_VERSION_MINOR)
+                                                .arg(TABULATE_VERSION_PATCH)},
 #else
-                {sl("tabulate"),    sl("<=1.3 (doesn't has <tabulate/tabulate.hpp>)")}}},
+                {u"tabulate"_s,    u"<=1.3 (doesn't has <tabulate/tabulate.hpp>)"_s}}},
 #endif
             }},
-        {sl("Build types"),
+        {u"Build types"_s,
             std::map<QString, AboutValue> {
 #ifdef TINYTOM_DEBUG
-                {sl("tom build type"), Debug_},
+                {u"tom build type"_s, Debug_},
 #else
-                {sl("tom build type"), Release_},
+                {u"tom build type"_s, Release_},
 #endif
-                {sl("TinyORM build type"),          LibraryInfo::isDebugBuild()
-                                                    ? Debug_ : Release_},
-                {sl("TinyORM full build type"),     LibraryInfo::build()},
+                {u"TinyORM build type"_s,          LibraryInfo::isDebugBuild()
+                                                   ? Debug_ : Release_},
+                {u"TinyORM full build type"_s,     LibraryInfo::build()},
 #ifdef TINYORM_USING_TINYDRIVERS
-                {sl("TinyDrivers build type"),      DriversLibraryInfo::isDebugBuild()
-                                                    ? Debug_ : Release_},
-                {sl("TinyDrivers full build type"), DriversLibraryInfo::build()},
+                {u"TinyDrivers build type"_s,      DriversLibraryInfo::isDebugBuild()
+                                                   ? Debug_ : Release_},
+                {u"TinyDrivers full build type"_s, DriversLibraryInfo::build()},
 #endif
                 /* I have dropped the MySqlLibraryInfo because the TinyDrivers library has
                    all information about TinyMySql/... drivers and it would be problematic
@@ -564,19 +561,19 @@ QList<SubSectionItem> Application::createVersionsSubsection()
                    module. I would need to store a handle to this loadable library and
                    then resolve those symbols and it would be practically for nothing. */
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-                {sl("TinyMySql build type"),        DriversLibraryInfo::isDebugBuild()
-                                                    ? Debug_ : Release_},
-                {sl("TinyMySql full build type"),   DriversLibraryInfo::mysqlBuild()},
+                {u"TinyMySql build type"_s,        DriversLibraryInfo::isDebugBuild()
+                                                   ? Debug_ : Release_},
+                {u"TinyMySql full build type"_s,   DriversLibraryInfo::mysqlBuild()},
 #endif
-                {sl("Qt build type"),               QLibraryInfo::isDebugBuild()
-                                                    ? Debug_ : Release_},
-                {sl("Qt full build type"),          QLibraryInfo::build()},
+                {u"Qt build type"_s,               QLibraryInfo::isDebugBuild()
+                                                   ? Debug_ : Release_},
+                {u"Qt full build type"_s,          QLibraryInfo::build()},
             }},
-        {sl("Compiler"),
+        {u"Compiler"_s,
             std::map<QString, AboutValue> {
-                {sl("Compiler version"), TINYORM_COMPILER_STRING},
+                {u"Compiler version"_s, TINYORM_COMPILER_STRING},
 #ifdef TINYORM_SIMULATED_STRING
-                {sl("Simulated compiler version"), TINYORM_SIMULATED_STRING},
+                {u"Simulated compiler version"_s, TINYORM_SIMULATED_STRING},
 #endif
             }},
     };

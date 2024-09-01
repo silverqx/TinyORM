@@ -6,12 +6,9 @@
 
 #include "tom/migrator.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::database_;
 
@@ -57,15 +54,15 @@ RefreshCommand::RefreshCommand(
 QList<CommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,    sl("The database connection to use <comment>(multiple values "
-                          "allowed)</comment>"), database_up}, // Value
+        {database_,    u"The database connection to use <comment>(multiple values "
+                        "allowed)</comment>"_s, database_up}, // Value
         {{QChar('f'),
-          force},      sl("Force the operation to run when in production")},
-        {seed,         sl("Indicates if the seed task should be re-run")},
-        {seeder,       sl("The class name of the root seeder"), seeder_up}, // Value
-        {step_,        sl("The number of migrations to be reverted & re-run"), step_up}, // Value
-        {step_migrate, sl("Force the migrations to be run so they can be rolled back "
-                          "individually")},
+          force},      u"Force the operation to run when in production"_s},
+        {seed,         u"Indicates if the seed task should be re-run"_s},
+        {seeder,       u"The class name of the root seeder"_s, seeder_up}, // Value
+        {step_,        u"The number of migrations to be reverted & re-run"_s, step_up}, // Value
+        {step_migrate, u"Force the migrations to be run so they can be rolled back "
+                        "individually"_s},
     };
 }
 
