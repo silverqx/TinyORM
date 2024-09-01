@@ -8,6 +8,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
@@ -40,14 +42,14 @@ void MakeCommand::prepareFileSystem(
 void MakeCommand::throwIfContainsNamespaceOrPath(
             const QString &type, const QString &className, const QString &source)
 {
-    if (!className.contains(QStringLiteral("::")) &&
-        !className.contains(QLatin1Char('/')) &&
-        !className.contains(QLatin1Char('\\'))
+    if (!className.contains(u"::"_s) &&
+        !className.contains('/'_L1) &&
+        !className.contains('\\'_L1)
     )
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Namespace or path is not allowed in the %1 name (%2).")
+                u"Namespace or path is not allowed in the %1 name (%2)."_s
                 .arg(type, source));
 }
 
@@ -199,11 +201,9 @@ void MakeCommand::throwIfFileAlreadyExists(
             // Allow overwriting a file using the --force option
             if (!isSet(force))
                 throw Exceptions::InvalidArgumentError(
-                        QStringLiteral("A '%1' %2 already exists.")
-                        .arg(itemName, type));
+                        u"A '%1' %2 already exists."_s.arg(itemName, type));
 
-            comment(QStringLiteral("Overwriting '%1' already existing %2.")
-                    .arg(itemName, type));
+            comment(u"Overwriting '%1' already existing %2."_s.arg(itemName, type));
             break;
         }
     }

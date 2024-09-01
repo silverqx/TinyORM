@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::SPACE;
 
 using Tom::Constants::command_name;
@@ -29,7 +31,7 @@ HelpCommand::HelpCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {command_name, QStringLiteral("The command name"), {}, true, Constants::help},
+        {command_name, u"The command name"_s, {}, true, Constants::help},
     };
 
     return cached;
@@ -117,9 +119,9 @@ bool HelpCommand::validateRequiredArguments(
 
 void HelpCommand::printDescriptionSection(const Command &command) const
 {
-    comment(QStringLiteral("Description:"));
+    comment(u"Description:"_s);
 
-    note(QStringLiteral("  %1").arg(command.description()));
+    note(u"  %1"_s.arg(command.description()));
 }
 
 void HelpCommand::printUsageSection(
@@ -131,7 +133,7 @@ void HelpCommand::printUsageSection(
 
     newLine();
 
-    comment(QStringLiteral("Usage:"));
+    comment(u"Usage:"_s);
 
     const auto commandName = command.name();
     const auto hasOptions = command.hasOptions();
@@ -151,10 +153,10 @@ void HelpCommand::printUsageSection(
     usage += commandName;
 
     if (hasOptions)
-        usage += QStringLiteral(" [options]");
+        usage += u" [options]"_s;
 
     if (hasPositionalArguments) {
-        usage += QStringLiteral(" [--]");
+        usage += u" [--]"_s;
 
         auto optionalCounter = 0;
 
@@ -163,14 +165,14 @@ void HelpCommand::printUsageSection(
                                                           : argument.syntax;
 
             if (argument.optional) {
-                usage += QStringLiteral(" [<%1>").arg(syntax);
+                usage += u" [<%1>"_s.arg(syntax);
                 ++optionalCounter;
             }
             else
-                usage += QStringLiteral(" <%1>").arg(syntax);
+                usage += u" <%1>"_s.arg(syntax);
         }
 
-        usage += QString(optionalCounter, QLatin1Char(']'));
+        usage += QString(optionalCounter, ']'_L1);
     }
 
     note(usage);
@@ -184,7 +186,7 @@ void HelpCommand::printArgumentsSection(
 
     newLine();
 
-    comment(QStringLiteral("Arguments:"));
+    comment(u"Arguments:"_s);
 
     for (const auto argumentsMaxSize = HelpCommand::argumentsMaxSize(arguments);
          const auto &argument : arguments
@@ -192,7 +194,7 @@ void HelpCommand::printArgumentsSection(
         // Compute indent
         const auto indent = QString(argumentsMaxSize - argument.name.size(), SPACE);
 
-        info(QStringLiteral("  %1%2  ").arg(argument.name, indent), false);
+        info(u"  %1%2  "_s.arg(argument.name, indent), false);
 
         note(argument.description, false);
 
@@ -256,7 +258,7 @@ void HelpCommand::printHelpSection(const Command &command) const
 
     newLine();
 
-    comment(QStringLiteral("Help:"));
+    comment(u"Help:"_s);
 
     note(help);
 }

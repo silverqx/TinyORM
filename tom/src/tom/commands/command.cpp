@@ -15,6 +15,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::ConnectionResolverInterface;
 
 using Orm::Constants::COMMA_C;
@@ -229,8 +231,7 @@ QString Command::valueCmd(const QString &name, const QString &key) const
     if (const auto value = parser().value(name);
         !value.isEmpty()
     )
-        return QStringLiteral("--%1=%2").arg(key.isEmpty() ? name : key,
-                                             value);
+        return u"--%1=%2"_s.arg(key.isEmpty() ? name : key, value);
 
     return {};
 }
@@ -250,7 +251,7 @@ QString Command::longOption(const QString &name)
 
 QString Command::longOption(const QString &name, const QString &value)
 {
-    return QStringLiteral("--%1=%2").arg(name, value);
+    return u"--%1=%2"_s.arg(name, value);
 }
 
 bool Command::hasArgument(const ArgumentsSizeType index) const

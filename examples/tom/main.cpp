@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         auto db = setupDatabaseManager();
 
         return TomApplication(argc, argv, std::move(db), "TOM_EXAMPLE_ENV",
-                              QStringLiteral("migrations_example"))
+                              u"migrations_example"_s)
                 /* Default migrations path for the make:migration command, the path
                    can be absolute or relative (to the pwd at runtime). */
 //                .migrationsPath("database/migrations")
@@ -73,7 +73,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
     return DB::create({
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_MYSQL_DRIVER)
         // MySQL connection
-        {QStringLiteral("tinyorm_tom_mysql"), { // shell:connection
+        {u"tinyorm_tom_mysql"_s, { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
@@ -91,14 +91,14 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mysqlSslOptions()},
         }},
 
         // MariaDB connection
-        {QStringLiteral("tinyorm_tom_maria"), { // shell:connection
+        {u"tinyorm_tom_maria"_s, { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
@@ -117,7 +117,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mariaSslOptions()},
@@ -125,9 +125,9 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 #endif
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_PSQL_DRIVER)
         // PostgreSQL connection
-        {QStringLiteral("tinyorm_tom_postgres"), { // shell:connection
+        {u"tinyorm_tom_postgres"_s, { // shell:connection
             {driver_,          QPSQL},
-            {application_name, QStringLiteral("tom")},
+            {application_name, u"tom"_s},
             {host_,            qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
             {port_,            qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
             {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
@@ -151,8 +151,8 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 //            {qt_timezone,        {}}, // The same as QTimeZone::UTC
             {prefix_,            EMPTY},
             {prefix_indexes,     false},
-//            {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
-//            {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
+//            {isolation_level,    u"REPEATABLE READ"_s}, // Postgres default is READ COMMITTED
+//            {synchronous_commit, u"off"_s}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,          QStringList {spatial_ref_sys}},
             {options_,           ConfigUtils::postgresSslOptions()},
@@ -160,7 +160,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 #endif
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_SQLITE_DRIVER)
         // SQLite connection
-        {QStringLiteral("tinyorm_tom_sqlite"), { // shell:connection
+        {u"tinyorm_tom_sqlite"_s, { // shell:connection
             {driver_,                 QSQLITE},
             {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
             {foreign_key_constraints, true},
@@ -178,12 +178,12 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 #endif
     },
         // MySQL as the default database connection
-        QStringLiteral("tinyorm_tom_mysql"));
+        u"tinyorm_tom_mysql"_s);
 }
 
 /* Alternative syntax to instantiate migration classes. */
 //        return TomApplication(argc, argv, std::move(db), "TOM_EXAMPLE_ENV",
-//                              QStringLiteral("migrations_table")
+//                              u"migrations_table"_s
 //        {
 //            std::make_shared<CreatePostsTable>(),
 //            std::make_shared<AddFactorColumnToPostsTable>(),

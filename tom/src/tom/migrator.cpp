@@ -19,6 +19,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::DatabaseConnection;
 
 using Orm::Constants::DESC;
@@ -63,7 +65,7 @@ std::vector<std::shared_ptr<Migration>> Migrator::run(const MigrateOptions optio
        aren't, we will just make a note of it to the developer so they're aware
        that all of the migrations have been run against this database system. */
     if (migrations.empty()) {
-        info(QStringLiteral("Nothing to migrate."));
+        info(u"Nothing to migrate."_s);
 
         return migrations;
     }
@@ -214,7 +216,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
 
     const auto migrationName = cachedMigrationName(migration);
 
-    comment(QStringLiteral("Migrating: "), false).note(migrationName);
+    comment(u"Migrating: "_s, false).note(migrationName);
 
     QElapsedTimer timer;
     timer.start();
@@ -228,8 +230,8 @@ void Migrator::runUp(const Migration &migration, const int batch,
        in the application. A migration repository keeps the migrate order. */
     m_repository->log(migrationName, batch);
 
-    info(QStringLiteral("Migrated:"), false);
-    note(QStringLiteral("  %1 (%2ms)").arg(migrationName).arg(elapsedTime));
+    info(u"Migrated:"_s, false);
+    note(u"  %1 (%2ms)"_s.arg(migrationName).arg(elapsedTime));
 }
 
 /* Rollback */
@@ -291,7 +293,7 @@ Migrator::rollbackMigrations(std::vector<RollbackItem> &&migrations,
                              const bool pretend) const
 {
     if (migrations.empty()) {
-        info(QStringLiteral("Nothing to rollback"));
+        info(u"Nothing to rollback"_s);
 
         return std::move(migrations);
     }
@@ -309,7 +311,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
     if (pretend)
         return pretendToRun(*migration, MigrateMethod::Down); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
-    comment(QStringLiteral("Rolling back: "), false).note(migrationName);
+    comment(u"Rolling back: "_s, false).note(migrationName);
 
     QElapsedTimer timer;
     timer.start();
@@ -323,8 +325,8 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
        by the application then will be able to fire by any later operation. */
     m_repository->deleteMigration(id);
 
-    info(QStringLiteral("Rolled back:"), false);
-    note(QStringLiteral("  %1 (%2ms)").arg(migrationName).arg(elapsedTime));
+    info(u"Rolled back:"_s, false);
+    note(u"  %1 (%2ms)"_s.arg(migrationName).arg(elapsedTime));
 }
 
 /* Pretend */
@@ -332,7 +334,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
 void Migrator::pretendToRun(const Migration &migration, const MigrateMethod method) const
 {
     for (auto &&query : getQueries(migration, method)) {
-        info(QStringLiteral("%1: ").arg(cachedMigrationName(migration)), false);
+        info(u"%1: "_s.arg(cachedMigrationName(migration)), false);
 
         note(QueryUtils::parseExecutedQueryForPretend(query.query,
                                                       query.boundValues));
@@ -405,7 +407,7 @@ void Migrator::migrateByMethod(const Migration &migration, const MigrateMethod m
     default:
 #ifndef TINYTOM_DEBUG
         throw Exceptions::RuntimeError(
-                    QStringLiteral("Unexpected value for enum struct MigrateMethod."));
+                    u"Unexpected value for enum struct MigrateMethod."_s);
 #else
         Q_UNREACHABLE();
 #endif

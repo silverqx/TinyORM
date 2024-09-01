@@ -35,7 +35,7 @@ ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {namespace_, QStringLiteral("The namespace name"), {}, true},
+        {namespace_, u"The namespace name"_s, {}, true},
     };
 
     return cached;
@@ -80,8 +80,8 @@ int ListCommand::full(const QString &namespaceArg)
     application().printVersion();
 
     newLine();
-    comment(QStringLiteral("Usage:"));
-    note(QStringLiteral("  command [options] [--] [arguments]"));
+    comment(u"Usage:"_s);
+    note(u"  command [options] [--] [arguments]"_s);
 
     // Options section
     const auto optionsMaxSize = printOptionsSection(true);
@@ -113,8 +113,7 @@ int ListCommand::raw(const QString &namespaceArg)
 
         const auto indent = QString(commandMaxSize - commandName.size(), SPACE);
 
-        note(QStringLiteral("%1%2   %3").arg(commandName, indent,
-                                             command->description()));
+        note(u"%1%2   %3"_s.arg(commandName, indent, command->description()));
     }
 
     return EXIT_SUCCESS;
@@ -177,7 +176,7 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
     const auto formattedNamespaces = namespaces
             | ranges::views::transform([](const auto &ambiguousNsName) -> QString
     {
-        return QStringLiteral("    %1").arg(ambiguousNsName);
+        return u"    %1"_s.arg(ambiguousNsName);
     })
             | ranges::to<QStringList>();
 
@@ -204,12 +203,12 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
     if (hasNamespaceName)
                 // Custom message for the namespaced argument
         comment(namespaceName == NsNamespaced
-                ? QStringLiteral("Commands with the namespace prefix:")
-                : QStringLiteral("Available commands for the '%1' namespace:")
+                ? u"Commands with the namespace prefix:"_s
+                : u"Available commands for the '%1' namespace:"_s
                   .arg(namespaceName.isEmpty() ? NsGlobal : namespaceName));
     // All commands
     else
-        comment(QStringLiteral("Available commands:"));
+        comment(u"Available commands:"_s);
 
     // Get max. command size in all command names
     const auto commandsMaxSize = ListCommand::commandsMaxSize(commands, optionsMaxSize);
@@ -252,9 +251,9 @@ void ListCommand::printCommands(
 
         const auto indent = QString(commandsMaxSize - commandName.size(), SPACE);
 
-        info(QStringLiteral("  %1%2").arg(commandName, indent), false);
+        info(u"  %1%2"_s.arg(commandName, indent), false);
 
-        note(QStringLiteral("  %1").arg(command->description()));
+        note(u"  %1"_s.arg(command->description()));
     }
 }
 
@@ -270,7 +269,7 @@ void ListCommand::tryBeginNsSection(
     // Update currently rendering NS section
     renderingNamespace = commandNamespace;
 
-    comment(QStringLiteral(" %1").arg(renderingNamespace));
+    comment(u" %1"_s.arg(renderingNamespace));
 }
 
 QString ListCommand::commandNamespace(const QString &commandName)

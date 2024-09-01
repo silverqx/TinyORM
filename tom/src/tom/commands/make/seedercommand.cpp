@@ -84,11 +84,10 @@ int SeederCommand::run()
 QString SeederCommand::prepareSeederClassName(QString &&className)
 {
     // Validate the seeder name
-    throwIfContainsNamespaceOrPath(QStringLiteral("seeder"), className,
-                                   QStringLiteral("argument 'name'"));
+    throwIfContainsNamespaceOrPath(u"seeder"_s, className, u"argument 'name'"_s);
 
-    static const auto Seeder = QStringLiteral("Seeder");
-    static const auto Seeder_lc = QStringLiteral("seeder");
+    static const auto Seeder    = u"Seeder"_s;
+    static const auto Seeder_lc = u"seeder"_s;
 
     static const auto Seeder_lc_size = Seeder_lc.size();
 
@@ -102,7 +101,7 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
         return std::move(className.append(Seeder));
 
     // Change Xyzseeder to XyzSeeder
-    className[className.size() - Seeder_lc_size] = QLatin1Char('S');
+    className[className.size() - Seeder_lc_size] = 'S'_L1;
 
     return std::move(className);
 }
@@ -116,7 +115,7 @@ void SeederCommand::writeSeeder(const QString &className,
     const auto seederFile = isSet(fullpath) ? seederFilePath.make_preferred()
                                             : seederFilePath.filename();
 
-    info(QStringLiteral("Created Seeder: "), false);
+    info(u"Created Seeder: "_s, false);
 
     note(QString::fromStdString(seederFile.string()));
 }
@@ -135,7 +134,7 @@ fspath SeederCommand::getSeedersPath() const
     // Validate
     if (fs::exists(seedersPath) && !fs::is_directory(seedersPath))
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Seeders path '%1' exists and it's not a directory.")
+                u"Seeders path '%1' exists and it's not a directory."_s
                 .arg(seedersPath.c_str()));
 
     return seedersPath;

@@ -128,8 +128,7 @@ void PrepareForeignKeyValues::insertEmptyForeignKeyValue()
 #endif
     else
 #ifndef TINYTOM_DEBUG
-        throw Exceptions::RuntimeError(
-                    QStringLiteral("Unexpected value for m_currentRelation."));
+        throw Exceptions::RuntimeError(u"Unexpected value for m_currentRelation."_s);
 #else
         Q_UNREACHABLE();
 #endif
@@ -154,8 +153,7 @@ void PrepareForeignKeyValues::insertForeignKeyValue()
 
     else
 #ifndef TINYTOM_DEBUG
-        throw Exceptions::RuntimeError(
-                    QStringLiteral("Unexpected value for m_currentRelation."));
+        throw Exceptions::RuntimeError(u"Unexpected value for m_currentRelation."_s);
 #else
         Q_UNREACHABLE();
 #endif

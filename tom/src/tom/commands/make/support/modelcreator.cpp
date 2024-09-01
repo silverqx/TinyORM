@@ -22,6 +22,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using fspath = std::filesystem::path;
 
 using Orm::Constants::COMMA;
@@ -118,36 +120,36 @@ ModelCreator::populateStub(const QString &className, const CmdOptions &cmdOption
     const auto forwardsSection    = createForwardsSection();
 
     return QString(cmdOptions.pivotModel ? PivotModelStub : ModelStub)
-            .replace(QStringLiteral("DummyClass"),  className)
-            .replace(QStringLiteral("{{ class }}"), className)
-            .replace(QStringLiteral("{{class}}"),   className)
+            .replace(u"DummyClass"_s,  className)
+            .replace(u"{{ class }}"_s, className)
+            .replace(u"{{class}}"_s,   className)
 
-            .replace(QStringLiteral("{{ macroguard }}"), macroGuard)
-            .replace(QStringLiteral("{{macroguard}}"),   macroGuard)
+            .replace(u"{{ macroguard }}"_s, macroGuard)
+            .replace(u"{{macroguard}}"_s,   macroGuard)
 
-            .replace(QStringLiteral("{{ publicSection }}"), publicSection)
-            .replace(QStringLiteral("{{publicSection}}"),   publicSection)
+            .replace(u"{{ publicSection }}"_s, publicSection)
+            .replace(u"{{publicSection}}"_s,   publicSection)
 
-            .replace(QStringLiteral("{{ protectedSection }}"), protectedSection)
-            .replace(QStringLiteral("{{protectedSection}}"),   protectedSection)
+            .replace(u"{{ protectedSection }}"_s, protectedSection)
+            .replace(u"{{protectedSection}}"_s,   protectedSection)
 
-            .replace(QStringLiteral("{{ privateSection }}"), privateSection)
-            .replace(QStringLiteral("{{privateSection}}"),   privateSection)
+            .replace(u"{{ privateSection }}"_s, privateSection)
+            .replace(u"{{privateSection}}"_s,   privateSection)
 
-            .replace(QStringLiteral("{{ includesOrmSection }}"), includesOrmSection)
-            .replace(QStringLiteral("{{includesOrmSection}}"),   includesOrmSection)
-            .replace(QStringLiteral("{{ includesSection }}"),    includesSection)
-            .replace(QStringLiteral("{{includesSection}}"),      includesSection)
+            .replace(u"{{ includesOrmSection }}"_s, includesOrmSection)
+            .replace(u"{{includesOrmSection}}"_s,   includesOrmSection)
+            .replace(u"{{ includesSection }}"_s,    includesSection)
+            .replace(u"{{includesSection}}"_s,      includesSection)
 
-            .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
-            .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
-            .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
-            .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
+            .replace(u"{{ usingsSection }}"_s,   usingsSection)
+            .replace(u"{{usingsSection}}"_s,     usingsSection)
+            .replace(u"{{ forwardsSection }}"_s, forwardsSection)
+            .replace(u"{{forwardsSection}}"_s,   forwardsSection)
 
-            .replace(QStringLiteral("{{ relationsList }}"), relationsList)
-            .replace(QStringLiteral("{{relationsList}}"),   relationsList)
-            .replace(QStringLiteral("{{ pivotsList }}"),    pivotsList)
-            .replace(QStringLiteral("{{pivotsList}}"),      pivotsList)
+            .replace(u"{{ relationsList }}"_s, relationsList)
+            .replace(u"{{relationsList}}"_s,   relationsList)
+            .replace(u"{{ pivotsList }}"_s,    pivotsList)
+            .replace(u"{{pivotsList}}"_s,      pivotsList)
 
             .toStdString();
 }
@@ -254,21 +256,21 @@ ModelCreator::createOneToOneRelation(
 
         auto content =
                 QString(OneToOneStub)
-                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+                .replace(u"{{ parentClass }}"_s,     parentClass)
+                .replace(u"{{parentClass}}"_s,       parentClass)
+                .replace(u"{{ relatedClass }}"_s,    relatedClass)
+                .replace(u"{{relatedClass}}"_s,      relatedClass)
 
-                .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(u"{{ relationName }}"_s,    relationName)
+                .replace(u"{{relationName}}"_s,      relationName)
 
-                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(u"{{ parentComment }}"_s,   parentComment)
+                .replace(u"{{parentComment}}"_s,     parentComment)
+                .replace(u"{{ relatedComment }}"_s,  relatedComment)
+                .replace(u"{{relatedComment}}"_s,    relatedComment)
 
-                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(u"{{ relationArguments }}"_s, relationArguments)
+                .replace(u"{{relationArguments}}"_s,   relationArguments);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -312,21 +314,21 @@ ModelCreator::createOneToManyRelation(
 
         auto content =
                 QString(OneToManyStub)
-                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+                .replace(u"{{ parentClass }}"_s,     parentClass)
+                .replace(u"{{parentClass}}"_s,       parentClass)
+                .replace(u"{{ relatedClass }}"_s,    relatedClass)
+                .replace(u"{{relatedClass}}"_s,      relatedClass)
 
-                .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(u"{{ relationName }}"_s,    relationName)
+                .replace(u"{{relationName}}"_s,      relationName)
 
-                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(u"{{ parentComment }}"_s,   parentComment)
+                .replace(u"{{parentComment}}"_s,     parentComment)
+                .replace(u"{{ relatedComment }}"_s,  relatedComment)
+                .replace(u"{{relatedComment}}"_s,    relatedComment)
 
-                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(u"{{ relationArguments }}"_s, relationArguments)
+                .replace(u"{{relationArguments}}"_s,   relationArguments);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -370,21 +372,21 @@ ModelCreator::createBelongsToRelation(
 
         auto content =
                 QString(BelongsToStub)
-                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+                .replace(u"{{ parentClass }}"_s,     parentClass)
+                .replace(u"{{parentClass}}"_s,       parentClass)
+                .replace(u"{{ relatedClass }}"_s,    relatedClass)
+                .replace(u"{{relatedClass}}"_s,      relatedClass)
 
-                .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(u"{{ relationName }}"_s,    relationName)
+                .replace(u"{{relationName}}"_s,      relationName)
 
-                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(u"{{ parentComment }}"_s,   parentComment)
+                .replace(u"{{parentComment}}"_s,     parentComment)
+                .replace(u"{{ relatedComment }}"_s,  relatedComment)
+                .replace(u"{{relatedComment}}"_s,    relatedComment)
 
-                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(u"{{ relationArguments }}"_s, relationArguments)
+                .replace(u"{{relationArguments}}"_s,   relationArguments);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -481,26 +483,26 @@ ModelCreator::createBelongsToManyRelation(
         auto content =
                 QString(relationCalls.isEmpty() ? BelongsToManyStub
                                                 : BelongsToManyStub2)
-                .replace(QStringLiteral("{{ parentClass }}"),     parentClass)
-                .replace(QStringLiteral("{{parentClass}}"),       parentClass)
-                .replace(QStringLiteral("{{ relatedClass }}"),    relatedClass)
-                .replace(QStringLiteral("{{relatedClass}}"),      relatedClass)
+                .replace(u"{{ parentClass }}"_s,     parentClass)
+                .replace(u"{{parentClass}}"_s,       parentClass)
+                .replace(u"{{ relatedClass }}"_s,    relatedClass)
+                .replace(u"{{relatedClass}}"_s,      relatedClass)
 
-                .replace(QStringLiteral("{{ relationName }}"),    relationName)
-                .replace(QStringLiteral("{{relationName}}"),      relationName)
+                .replace(u"{{ relationName }}"_s,    relationName)
+                .replace(u"{{relationName}}"_s,      relationName)
 
-                .replace(QStringLiteral("{{ parentComment }}"),   parentComment)
-                .replace(QStringLiteral("{{parentComment}}"),     parentComment)
-                .replace(QStringLiteral("{{ relatedComment }}"),  relatedComment)
-                .replace(QStringLiteral("{{relatedComment}}"),    relatedComment)
+                .replace(u"{{ parentComment }}"_s,   parentComment)
+                .replace(u"{{parentComment}}"_s,     parentComment)
+                .replace(u"{{ relatedComment }}"_s,  relatedComment)
+                .replace(u"{{relatedComment}}"_s,    relatedComment)
 
-                .replace(QStringLiteral("{{ pivotClass }}"),      pivot)
-                .replace(QStringLiteral("{{pivotClass}}"),        pivot)
-                .replace(QStringLiteral("{{ relationCalls }}"),   relationCalls)
-                .replace(QStringLiteral("{{relationCalls}}"),     relationCalls)
+                .replace(u"{{ pivotClass }}"_s,      pivot)
+                .replace(u"{{pivotClass}}"_s,        pivot)
+                .replace(u"{{ relationCalls }}"_s,   relationCalls)
+                .replace(u"{{relationCalls}}"_s,     relationCalls)
 
-                .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
-                .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
+                .replace(u"{{ relationArguments }}"_s, relationArguments)
+                .replace(u"{{relationArguments}}"_s,   relationArguments);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -525,13 +527,13 @@ QString ModelCreator::createRelationArgumentsBtm(
     if (!foreignPivotKey.isEmpty())
         argumentsList.push_front(StringUtils::wrapValue(foreignPivotKey, QUOTE));
     else if (!relatedPivotKey.isEmpty())
-        argumentsList.push_front(QStringLiteral("{}"));
+        argumentsList.push_front(u"{}"_s);
 
     // Table name of the relationship's intermediate table
     if (!pivotTable.isEmpty())
         argumentsList.push_front(StringUtils::wrapValue(pivotTable, QUOTE));
     else if (!foreignPivotKey.isEmpty() || !relatedPivotKey.isEmpty())
-        argumentsList.push_front(QStringLiteral("{}"));
+        argumentsList.push_front(u"{}"_s);
 
     // Nothing to create
     if (argumentsList.empty())
@@ -557,7 +559,7 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
     if (pivotInverseClasses.isEmpty())
         return;
 
-    static const auto PivotConst = QStringLiteral("Pivot");
+    static const auto PivotConst = u"Pivot"_s;
 
     std::ranges::for_each(pivotInverseClasses, [this](const auto &inverseClass)
     {
@@ -571,7 +573,7 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
         if (inverseClass == PivotConst) {
             m_usingsList.emplace(QString(ModelUsingItemStub).arg(PivotConst));
             m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
-                                      .arg(QStringLiteral("tiny/relations/pivot.hpp")));
+                                      .arg(u"tiny/relations/pivot.hpp"_s));
         } else
             m_includesList.emplace(QString(ModelIncludeItemStub)
                                    .arg(inverseClass.toLower()));
@@ -585,15 +587,15 @@ QString ModelCreator::createRelationCalls(
     const auto relationCallsAlign = [](const auto &relationCalls)
     {
         return relationCalls.isEmpty() ? QString("")
-                                       : QStringLiteral("%1%2%3")
-                                         .arg(NEWLINE, QString(16, SPACE)).arg(DOT);
+                                       : u"%1%2%3"_s.arg(NEWLINE,
+                                                         QString(16, SPACE)).arg(DOT);
     };
 
     QString relationCalls;
 
     // The name for the pivot relation
     if (!as.isEmpty())
-        relationCalls = QStringLiteral("as(\"%1\")").arg(as);
+        relationCalls = u"as(\"%1\")"_s.arg(as);
 
     // Extra attributes for the pivot model
     if (!withPivot.isEmpty()) {
@@ -605,19 +607,18 @@ QString ModelCreator::createRelationCalls(
         })
                 | ranges::to<QStringList>();
 
-        relationCalls += QStringLiteral("%1withPivot(%2)")
+        relationCalls += u"%1withPivot(%2)"_s
                          .arg(relationCallsAlign(relationCalls),
                               // Wrap in init. list {} if more pivot columns passed
                               withPivot.size() == 1
                               ? withPivotWrapped.constFirst()
                               : StringUtils::wrapValue(withPivotWrapped.join(COMMA),
-                                                       QLatin1Char('{'),
-                                                       QLatin1Char('}')));
+                                                       '{'_L1, '}'_L1));
     }
 
     // Pivot table with timestamps
     if (withTimestamps)
-        relationCalls += QStringLiteral("%1withTimestamps()")
+        relationCalls += u"%1withTimestamps()"_s
                          .arg(relationCallsAlign(relationCalls));
 
     return relationCalls;
@@ -630,7 +631,7 @@ QString ModelCreator::guessSingularComment(const QString &className)
 
 QString ModelCreator::guessPluralComment(const QString &className)
 {
-    return StringUtils::snake(className, SPACE).append(QLatin1Char('s'));
+    return StringUtils::snake(className, SPACE).append('s'_L1);
 }
 
 QString ModelCreator::guessOneTypeRelationName(const QString &className)
@@ -640,7 +641,7 @@ QString ModelCreator::guessOneTypeRelationName(const QString &className)
 
 QString ModelCreator::guessManyTypeRelationName(const QString &className)
 {
-    return guessOneTypeRelationName(className).append(QLatin1Char('s'));
+    return guessOneTypeRelationName(className).append('s'_L1);
 }
 
 /* Protected model section */
@@ -685,11 +686,11 @@ QString ModelCreator::createAccessorMethods(const QStringList &accessors,
 
         accessorMethodsList
                 << QString(AccessorMethodStub)
-                   .replace(QStringLiteral("{{ accessorNameCamel }}"), accessorCamel)
-                   .replace(QStringLiteral("{{accessorNameCamel}}"),   accessorCamel)
+                   .replace(u"{{ accessorNameCamel }}"_s, accessorCamel)
+                   .replace(u"{{accessorNameCamel}}"_s,   accessorCamel)
 
-                   .replace(QStringLiteral("{{ accessorNameSnake }}"), accessor)
-                   .replace(QStringLiteral("{{accessorNameSnake}}"),   accessor);
+                   .replace(u"{{ accessorNameSnake }}"_s, accessor)
+                   .replace(u"{{accessorNameSnake}}"_s,   accessor);
     }
 
     return accessorMethodsList.join(NEWLINE);
@@ -729,9 +730,9 @@ QString ModelCreator::createPrivateSection(
         privateSection += QString(ModelPrimaryKeyStub).arg(primaryKey);
 
     if (incrementing)
-        privateSection += QString(ModelIncrementingStub).arg(QStringLiteral("true"));
+        privateSection += QString(ModelIncrementingStub).arg(u"true"_s);
     else if (disableIncrementing)
-        privateSection += QString(ModelIncrementingStub).arg(QStringLiteral("false"));
+        privateSection += QString(ModelIncrementingStub).arg(u"false"_s);
 
     if (!connection.isEmpty())
         privateSection += QString(ModelConnectionStub).arg(connection);
@@ -765,9 +766,9 @@ QString ModelCreator::createPrivateSection(
                           .arg(prepareInitializerListValues(touches));
 
     if (snakeAttributes)
-        privateSection += QString(ModelSnakeAttributesStub).arg(QStringLiteral("true"));
+        privateSection += QString(ModelSnakeAttributesStub).arg(u"true"_s);
     else if (disableSnakeAttributes)
-        privateSection += QString(ModelSnakeAttributesStub).arg(QStringLiteral("false"));
+        privateSection += QString(ModelSnakeAttributesStub).arg(u"false"_s);
 
     if (!visible.isEmpty())
         privateSection += QString(ModelVisibleStub)
@@ -831,7 +832,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
         })
                 | ranges::views::transform([&prefix](const QString &value)
         {
-            return QStringLiteral("%2\"%1\"").arg(value, prefix);
+            return u"%2\"%1\""_s.arg(value, prefix);
         })
                 | ranges::to<std::vector<QString>>();
     };
@@ -846,7 +847,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
     auto listJoined = ContainerUtils::join(
                           wrapValues(list, listSize > 2 ? QString(8, SPACE)
                                                         : QString("")),
-                          listSize > 2 ? QStringLiteral(",\n") : COMMA);
+                          listSize > 2 ? u",\n"_s : COMMA);
 
     if (listSize > 2)
         listJoined.prepend(NEWLINE);
@@ -921,8 +922,8 @@ QString ModelCreator::createRelationsHash(
     auto relationItems = joinRelationsList(std::move(relationItemsList));
 
     return QString(ModelRelationsStub)
-            .replace(QStringLiteral("{{ relationItems }}"), relationItems)
-            .replace(QStringLiteral("{{relationItems}}"),   relationItems);
+            .replace(u"{{ relationItems }}"_s, relationItems)
+            .replace(u"{{relationItems}}"_s,   relationItems);
 }
 
 QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOptions)
@@ -970,14 +971,14 @@ ModelCreator::createOneToOneRelationItem(
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
         auto content = QString(ModelRelationItemStub)
-                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+                       .replace(u"{{ parentClass }}"_s,  parentClass)
+                       .replace(u"{{parentClass}}"_s,    parentClass)
 
-                       .replace(QStringLiteral("{{ relationName }}"), relationName)
-                       .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(u"{{ relationName }}"_s, relationName)
+                       .replace(u"{{relationName}}"_s,   relationName)
 
-                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(u"{{ spaceAlign }}"_s,   spaceAlign)
+                       .replace(u"{{spaceAlign}}"_s,     spaceAlign);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -1012,14 +1013,14 @@ ModelCreator::createOneToManyRelationItem(
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
         auto content = QString(ModelRelationItemStub)
-                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+                       .replace(u"{{ parentClass }}"_s,  parentClass)
+                       .replace(u"{{parentClass}}"_s,    parentClass)
 
-                       .replace(QStringLiteral("{{ relationName }}"), relationName)
-                       .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(u"{{ relationName }}"_s, relationName)
+                       .replace(u"{{relationName}}"_s,   relationName)
 
-                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(u"{{ spaceAlign }}"_s,   spaceAlign)
+                       .replace(u"{{spaceAlign}}"_s,     spaceAlign);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -1054,14 +1055,14 @@ ModelCreator::createBelongsToRelationItem(
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
         auto content = QString(ModelRelationItemStub)
-                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+                       .replace(u"{{ parentClass }}"_s,  parentClass)
+                       .replace(u"{{parentClass}}"_s,    parentClass)
 
-                       .replace(QStringLiteral("{{ relationName }}"), relationName)
-                       .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(u"{{ relationName }}"_s, relationName)
+                       .replace(u"{{relationName}}"_s,   relationName)
 
-                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(u"{{ spaceAlign }}"_s,   spaceAlign)
+                       .replace(u"{{spaceAlign}}"_s,     spaceAlign);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -1096,14 +1097,14 @@ ModelCreator::createBelongsToManyRelationItem(
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
         auto content = QString(ModelRelationItemStub)
-                       .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
-                       .replace(QStringLiteral("{{parentClass}}"),    parentClass)
+                       .replace(u"{{ parentClass }}"_s,  parentClass)
+                       .replace(u"{{parentClass}}"_s,    parentClass)
 
-                       .replace(QStringLiteral("{{ relationName }}"), relationName)
-                       .replace(QStringLiteral("{{relationName}}"),   relationName)
+                       .replace(u"{{ relationName }}"_s, relationName)
+                       .replace(u"{{relationName}}"_s,   relationName)
 
-                       .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
-                       .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
+                       .replace(u"{{ spaceAlign }}"_s,   spaceAlign)
+                       .replace(u"{{spaceAlign}}"_s,     spaceAlign);
 
 #if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
@@ -1143,8 +1144,8 @@ ModelCreator::createMutatorsHash(const QString &className, const QStringList &ac
     const auto mutatorItems = wrapMutatorItemsList(mutatorItemsList);
 
     return QString(ModelMutatorsStub)
-            .replace(QStringLiteral("{{ mutatorItems }}"), mutatorItems)
-            .replace(QStringLiteral("{{mutatorItems}}"),   mutatorItems);
+            .replace(u"{{ mutatorItems }}"_s, mutatorItems)
+            .replace(u"{{mutatorItems}}"_s,   mutatorItems);
 }
 
 std::set<QString>
@@ -1190,17 +1191,17 @@ ModelCreator::createMutatorItem(const QString &className, const QString &mutator
     const auto mutatorCamel = StringUtils::camel(mutator);
 
     return QString(ModelMutatorItemStub)
-            .replace(QStringLiteral("{{ class }}"),      className)
-            .replace(QStringLiteral("{{class}}"),        className)
+            .replace(u"{{ class }}"_s,      className)
+            .replace(u"{{class}}"_s,        className)
 
-            .replace(QStringLiteral("{{ spaceAlign }}"), spaceAlign)
-            .replace(QStringLiteral("{{spaceAlign}}"),   spaceAlign)
+            .replace(u"{{ spaceAlign }}"_s, spaceAlign)
+            .replace(u"{{spaceAlign}}"_s,   spaceAlign)
 
-            .replace(QStringLiteral("{{ mutatorNameSnake }}"), mutator)
-            .replace(QStringLiteral("{{mutatorNameSnake}}"),   mutator)
+            .replace(u"{{ mutatorNameSnake }}"_s, mutator)
+            .replace(u"{{mutatorNameSnake}}"_s,   mutator)
 
-            .replace(QStringLiteral("{{ mutatorNameCamel }}"), mutatorCamel)
-            .replace(QStringLiteral("{{mutatorNameCamel}}"),   mutatorCamel);
+            .replace(u"{{ mutatorNameCamel }}"_s, mutatorCamel)
+            .replace(u"{{mutatorNameCamel}}"_s,   mutatorCamel);
 }
 
 QString ModelCreator::wrapMutatorItemsList(const QStringList &mutatorItems)
@@ -1226,8 +1227,8 @@ QString ModelCreator::createIncludesOrmSection(const CmdOptions &cmdOptions)
     // Will always contain
     m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
                               .arg(cmdOptions.pivotModel
-                                   ? QStringLiteral("tiny/relations/basepivot.hpp")
-                                   : QStringLiteral("tiny/model.hpp")));
+                                   ? u"tiny/relations/basepivot.hpp"_s
+                                   : u"tiny/model.hpp"_s));
 
     return ContainerUtils::join(m_includesOrmList, NEWLINE);
 }
@@ -1245,8 +1246,8 @@ QString ModelCreator::createUsingsSection(const CmdOptions &cmdOptions)
 {
     // Will always contain
     m_usingsList.emplace(cmdOptions.pivotModel
-                         ? QStringLiteral("using Orm::Tiny::Relations::BasePivot;")
-                         : QStringLiteral("using Orm::Tiny::Model;"));
+                         ? u"using Orm::Tiny::Relations::BasePivot;"_s
+                         : u"using Orm::Tiny::Model;"_s);
 
     return ContainerUtils::join(m_usingsList, NEWLINE);
 }

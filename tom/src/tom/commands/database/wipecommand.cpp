@@ -59,17 +59,17 @@ int WipeCommand::run()
         if (isSet(drop_views)) {
             dropAllViews(connection);
 
-            info(QStringLiteral("Dropped all views successfully."));
+            info(u"Dropped all views successfully."_s);
         }
 
         dropAllTables(connection);
 
-        info(QStringLiteral("Dropped all tables successfully."));
+        info(u"Dropped all tables successfully."_s);
 
         if (isSet(drop_types)) {
             dropAllTypes(connection);
 
-            info(QStringLiteral("Dropped all types successfully."));
+            info(u"Dropped all types successfully."_s);
         }
 
         return EXIT_SUCCESS;

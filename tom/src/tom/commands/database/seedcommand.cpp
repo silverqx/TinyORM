@@ -34,7 +34,7 @@ using TypeUtils = Orm::Utils::Type;
 namespace Tom::Commands::Database
 {
 
-const QString SeedCommand::DatabaseSeeder = QStringLiteral("Seeders::DatabaseSeeder");
+const QString SeedCommand::DatabaseSeeder = u"Seeders::DatabaseSeeder"_s;
 
 /* public */
 
@@ -77,8 +77,8 @@ int SeedCommand::run()
     {
         const auto seederResult = getSeeder();
 
-        comment(QStringLiteral("Seeding: "), false);
-        note(QStringLiteral("%1 (root)").arg(seederResult.name));
+        comment(u"Seeding: "_s, false);
+        note(u"%1 (root)"_s.arg(seederResult.name));
 
         QElapsedTimer timer; // NOLINT(misc-const-correctness)
         timer.start();
@@ -89,11 +89,10 @@ int SeedCommand::run()
 
         const auto elapsedTime = timer.elapsed();
 
-        info(QStringLiteral("Seeded:"), false);
-        note(QStringLiteral("  %1 (%2ms total)").arg(seederResult.name)
-                                                .arg(elapsedTime));
+        info(u"Seeded:"_s, false);
+        note(u"  %1 (%2ms total)"_s.arg(seederResult.name).arg(elapsedTime));
 
-        info(QStringLiteral("Database seeding completed successfully."));
+        info(u"Database seeding completed successfully."_s);
 
         return EXIT_SUCCESS;
     });
@@ -107,8 +106,8 @@ SeedCommand::GetSeederResult Tom::Commands::Database::SeedCommand::getSeeder() c
     auto seederClass = hasArgument(class_) ? argument(class_) : value(class_);
 
     // Prepend Seeders:: namespace, it's requirement
-    if (!seederClass.contains(QStringLiteral("::")))
-        seederClass.prepend(QStringLiteral("Seeders::"));
+    if (!seederClass.contains(u"::"_s))
+        seederClass.prepend(u"Seeders::"_s);
 
     // Throw if the root seeder is not defined
     throwIfDoesntContainSeeder(seederClass);
@@ -153,8 +152,7 @@ void SeedCommand::throwIfDoesntContainSeeder(const QString &seederClass) const
         return;
 
     throw Exceptions::InvalidTemplateArgumentError(
-                QStringLiteral("The root seeder '%1' is not defined.")
-                .arg(seederClass));
+                u"The root seeder '%1' is not defined."_s.arg(seederClass));
 }
 
 const std::vector<std::shared_ptr<Seeder>> &SeedCommand::seeders() const noexcept

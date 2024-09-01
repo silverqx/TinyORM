@@ -8,6 +8,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using TypeUtils = Orm::Utils::Type;
 
 namespace Tom
@@ -35,7 +37,7 @@ void Seeder::callInternal(const bool silent, std::function<void()> &&callback) c
     if (shouldLog) {
         seederName = TypeUtils::classPureBasename(*this, true);
 
-        m_io->get().comment(QStringLiteral("Seeding: "), false).note(seederName);
+        m_io->get().comment(u"Seeding: "_s, false).note(seederName);
 
         timer.start();
     }
@@ -47,9 +49,8 @@ void Seeder::callInternal(const bool silent, std::function<void()> &&callback) c
 
     const auto elapsedTime = timer.elapsed();
 
-    m_io->get().info(QStringLiteral("Seeded:"), false);
-    m_io->get().note(QStringLiteral("  %1 (%2ms)").arg(seederName)
-                                                  .arg(elapsedTime));
+    m_io->get().info(u"Seeded:"_s, false);
+    m_io->get().note(u"  %1 (%2ms)"_s.arg(seederName).arg(elapsedTime));
 }
 
 } // namespace Tom

@@ -264,8 +264,7 @@ int ModelCommand::run()
     const auto modelsPath = getModelsPath();
 
     // Check whether a model file already exists and create parent folder if needed
-    prepareFileSystem(QStringLiteral("model"), modelsPath, className.toLower(),
-                      className);
+    prepareFileSystem(u"model"_s, modelsPath, className.toLower(), className);
 
     // Ready to write the model to the disk 🧨✨
     writeModel(className, cmdOptions, modelsPath);
@@ -308,22 +307,22 @@ ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOption
     ] = cmdOptions;
 
     // Validate the model class names
-    MakeCommand::throwIfContainsNamespaceOrPath(QStringLiteral("model"), className,
-                                                QStringLiteral("argument 'name'"));
+    MakeCommand::throwIfContainsNamespaceOrPath(u"model"_s, className,
+                                                u"argument 'name'"_s);
     throwIfContainsNamespaceOrPath(oneToOneList,
-                                   QStringLiteral("option --one-to-one"));
+                                   u"option --one-to-one"_s);
     throwIfContainsNamespaceOrPath(oneToManyList,
-                                   QStringLiteral("option --one-to-many"));
+                                   u"option --one-to-many"_s);
     throwIfContainsNamespaceOrPath(belongsToList,
-                                   QStringLiteral("option --belongs-to"));
+                                   u"option --belongs-to"_s);
     throwIfContainsNamespaceOrPath(belongsToManyList,
-                                   QStringLiteral("option --belongs-to-many"));
+                                   u"option --belongs-to-many"_s);
     throwIfContainsNamespaceOrPath(pivotClasses,
-                                   QStringLiteral("option --pivot"),
-                                   QStringLiteral("pivot model"));
+                                   u"option --pivot"_s,
+                                   u"pivot model"_s);
     throwIfContainsNamespaceOrPath(pivotInverseClasses,
-                                   QStringLiteral("option --pivot-inverse"),
-                                   QStringLiteral("pivot model"));
+                                   u"option --pivot-inverse"_s,
+                                   u"pivot model"_s);
 
     oneToOneList        = StringUtils::studly(std::move(oneToOneList));
     oneToManyList       = StringUtils::studly(std::move(oneToManyList));
@@ -374,22 +373,22 @@ void ModelCommand::findUnusedBtmOptions(const CmdOptions &cmdOptions)
         return;
 
     if (isSet(pivot_table))
-        m_unusedBtmOptions.emplace(QStringLiteral("--pivot-table"));
+        m_unusedBtmOptions.emplace(u"--pivot-table"_s);
 
     if (isSet(pivot_))
-        m_unusedBtmOptions.emplace(QStringLiteral("--pivot"));
+        m_unusedBtmOptions.emplace(u"--pivot"_s);
 
     if (isSet(pivot_inverse))
-        m_unusedBtmOptions.emplace(QStringLiteral("--pivot-inverse"));
+        m_unusedBtmOptions.emplace(u"--pivot-inverse"_s);
 
     if (isSet(as_))
-        m_unusedBtmOptions.emplace(QStringLiteral("--as"));
+        m_unusedBtmOptions.emplace(u"--as"_s);
 
     if (isSet(with_pivot))
-        m_unusedBtmOptions.emplace(QStringLiteral("--with-pivot"));
+        m_unusedBtmOptions.emplace(u"--with-pivot"_s);
 
     if (isSet(with_timestamps))
-        m_unusedBtmOptions.emplace(QStringLiteral("--with-timestamps"));
+        m_unusedBtmOptions.emplace(u"--with-timestamps"_s);
 }
 
 void ModelCommand::showUnusedPivotModelOptionsWarnings()
@@ -459,7 +458,7 @@ void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOpt
     const auto modelFile = isSet(fullpath) ? modelFilePath.make_preferred()
                                            : modelFilePath.filename();
 
-    info(QStringLiteral("Created Model: "), false);
+    info(u"Created Model: "_s, false);
 
     note(QString::fromStdString(modelFile.string()));
 }
@@ -557,7 +556,7 @@ fspath ModelCommand::getModelsPath() const
     // Validate
     if (fs::exists(modelsPath) && !fs::is_directory(modelsPath))
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Models path '%1' exists and it's not a directory.")
+                u"Models path '%1' exists and it's not a directory."_s
                 .arg(modelsPath.c_str()));
 
     return modelsPath;
@@ -595,11 +594,11 @@ void ModelCommand::createMigration(const QString &className) const
 
     // Plural for a non-pivot models
     if (!isSet(pivot_model))
-        table += QLatin1Char('s');
+        table += 's'_L1;
 
     call(MakeMigration, {longOption(create_, table),
                          boolCmd(force),
-                         QStringLiteral("create_%1_table").arg(table),
+                         u"create_%1_table"_s.arg(table),
                          // Inform the make:migration that it's called from the make:model
                          longOption(from_model),
                          // Proxy path to the make:seeder
@@ -608,7 +607,7 @@ void ModelCommand::createMigration(const QString &className) const
 
 void ModelCommand::createSeeder(const QString &className) const
 {
-    auto seederClassName = NOSPACE.arg(className, QStringLiteral("Seeder"));
+    auto seederClassName = NOSPACE.arg(className, u"Seeder"_s);
 
     // FUTURE tom, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
 

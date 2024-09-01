@@ -58,7 +58,7 @@ int StatusCommand::run()
                 [this]
     {
         if (!m_migrator->repositoryExists()) {
-            error(QStringLiteral("Migration table not found."));
+            error(u"Migration table not found."_s);
 
             return EXIT_FAILURE;
         }
@@ -86,7 +86,7 @@ int StatusCommand::run()
             m_status.clear();
 #endif
 
-        error(QStringLiteral("No migrations found"));
+        error(u"No migrations found"_s);
 
         return EXIT_SUCCESS;
     });

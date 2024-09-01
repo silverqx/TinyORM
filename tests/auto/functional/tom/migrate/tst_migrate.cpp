@@ -897,9 +897,7 @@ void tst_Migrate::throwIfWrongEnvironment(const char *const environmentEnvName)
 {
     const auto environment = qEnvironmentVariable(environmentEnvName);
 
-    if (environment != QLatin1String("production") &&
-        environment != QLatin1String("prod")
-    )
+    if (environment != "production"_L1 && environment != "prod"_L1)
         return;
 
     throw RuntimeError(

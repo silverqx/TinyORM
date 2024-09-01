@@ -89,7 +89,7 @@ int MigrationCommand::run()
     const auto migrationsPath = getMigrationsPath();
 
     // Check whether a migration file already exists and create parent folder if needed
-    prepareFileSystem(QStringLiteral("migration"), migrationsPath, migrationName);
+    prepareFileSystem(u"migration"_s, migrationsPath, migrationName);
 
     auto table = value(table_);
 
@@ -214,7 +214,7 @@ void MigrationCommand::writeMigration(
     const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()
                                                : migrationFilePath.filename();
 
-    info(QStringLiteral("Created Migration: "), false);
+    info(u"Created Migration: "_s, false);
 
     note(QString::fromStdString(migrationFile.string()));
 }
@@ -233,7 +233,7 @@ fspath MigrationCommand::getMigrationsPath() const
     // Validate
     if (fs::exists(migrationsPath) && !fs::is_directory(migrationsPath))
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Migrations path '%1' exists and it's not a directory.")
+                u"Migrations path '%1' exists and it's not a directory."_s
                 .arg(migrationsPath.c_str()));
 
     return migrationsPath;

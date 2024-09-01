@@ -6,6 +6,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Tom::Constants::force;
 
 namespace Tom::Concerns
@@ -33,12 +35,12 @@ bool Confirmable::confirmToProceed(const QString &warning,
     command().alert(warning);
 
     const auto confirmed = command().confirm(
-                               QStringLiteral("Do you really wish to run this command?"));
+                               u"Do you really wish to run this command?"_s);
 
     if (confirmed)
         return true;
 
-    command().comment(QStringLiteral("Command Canceled!"));
+    command().comment(u"Command Canceled!"_s);
 
     return false;
 }
@@ -51,8 +53,7 @@ std::function<bool()> Confirmable::defaultConfirmCallback() const
     {
         const auto &environment = command().application().environment();
 
-        return environment == QLatin1String("production") ||
-               environment == QLatin1String("prod");
+        return environment == "production"_L1 || environment == "prod"_L1;
     };
 }
 

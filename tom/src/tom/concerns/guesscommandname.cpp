@@ -12,6 +12,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
@@ -94,8 +96,7 @@ void GuessCommandName::printAmbiguousCommands(
         const auto commandName_ = command->name();
         const auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
 
-        return QStringLiteral("    %1%2%3").arg(commandName_, indent,
-                                                command->description());
+        return u"    %1%2%3"_s.arg(commandName_, indent, command->description());
     })
             | ranges::to<QStringList>();
 

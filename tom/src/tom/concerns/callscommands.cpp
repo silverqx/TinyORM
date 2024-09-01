@@ -87,13 +87,15 @@ QStringList CallsCommands::getCommonArguments(const QStringList &arguments)
         return LongOption.arg(optionName);
     };
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     static const std::unordered_set<QString> allowed {
         o(ansi),
         o(noansi),
-        o(nointeraction), QLatin1String("-n"),
-        o(quiet),         QLatin1String("-q"),
-        o(verbose),       QLatin1String("-v"), QLatin1String("-vv"),
-                          QLatin1String("-vvv"),
+        o(nointeraction), u"-n"_s,
+        o(quiet),         u"-q"_s,
+        o(verbose),       u"-v"_s, u"-vv"_s,
+                          u"-vvv"_s,
     };
 
     return arguments

@@ -196,8 +196,10 @@ UsingConnection::printConnection(const QString &name, const bool shouldPrintConn
     else
         io().newLine();
 
-    io().note(QStringLiteral("<blue>Connection:</blue> <b-white>%1</b-white>").arg(name),
-              true, InteractsWithIO::Quiet);
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+    io().note(u"<blue>Connection:</blue> <b-white>%1</b-white>"_s.arg(name), true,
+              InteractsWithIO::Quiet);
 }
 
 const InteractsWithIO &UsingConnection::io() const

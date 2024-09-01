@@ -12,6 +12,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
@@ -75,7 +77,7 @@ InteractsWithIO::line(const QString &string, const bool newline,
     if (dontOutput(verbosity))
         return *this;
 
-    static const auto tmplStyled = QStringLiteral("<%3>%1</%3>%2");
+    static const auto tmplStyled = u"<%3>%1</%3>%2"_s;
 
     const auto parsedString = parseOutput(string, isAnsiOutput(cout));
 
@@ -99,14 +101,14 @@ const InteractsWithIO &
 InteractsWithIO::info(const QString &string, const bool newline,
                       const Verbosity verbosity) const
 {
-    return line(QStringLiteral("<info>%1</info>").arg(string), newline, verbosity);
+    return line(u"<info>%1</info>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &
 InteractsWithIO::error(const QString &string, const bool newline,
                        const Verbosity verbosity) const
 {
-    return line(QStringLiteral("<error>%1</error>").arg(string), newline, verbosity,
+    return line(u"<error>%1</error>"_s.arg(string), newline, verbosity,
                 {}, std::cerr);
 }
 
@@ -114,14 +116,14 @@ const InteractsWithIO &
 InteractsWithIO::comment(const QString &string, const bool newline,
                          const Verbosity verbosity) const
 {
-    return line(QStringLiteral("<comment>%1</comment>").arg(string), newline, verbosity);
+    return line(u"<comment>%1</comment>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &
 InteractsWithIO::muted(const QString &string, const bool newline,
                        const Verbosity verbosity) const
 {
-    return line(QStringLiteral("<muted>%1</muted>").arg(string), newline, verbosity);
+    return line(u"<muted>%1</muted>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &InteractsWithIO::alert(const QString &string,
@@ -133,7 +135,7 @@ const InteractsWithIO &InteractsWithIO::alert(const QString &string,
     const auto asterisks = ASTERISK.repeated(string.size() + 12);
 
     comment(asterisks);
-    comment(QStringLiteral("*     %1     *").arg(string));
+    comment(u"*     %1     *"_s.arg(string));
     comment(asterisks);
 
     newLine();
@@ -151,7 +153,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     if (!isAnsiOutput())
         return line(string, true, verbosity, {}, std::cerr);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
 
     line(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::cerr);
 
@@ -166,7 +168,7 @@ InteractsWithIO::wline(const QString &string, const bool newline,
     if (dontOutput(verbosity))
         return *this;
 
-    static const auto tmplStyled = QStringLiteral("<%3>%1</%3>%2");
+    static const auto tmplStyled = u"<%3>%1</%3>%2"_s;
 
     const auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
 
@@ -190,29 +192,28 @@ const InteractsWithIO &
 InteractsWithIO::winfo(const QString &string, const bool newline,
                        const Verbosity verbosity) const
 {
-    return wline(QStringLiteral("<info>%1</info>").arg(string), newline, verbosity);
+    return wline(u"<info>%1</info>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &
 InteractsWithIO::werror(const QString &string, const bool newline,
                         const Verbosity verbosity) const
 {
-    return wline(QStringLiteral("<error>%1</error>").arg(string), newline, verbosity,
-                 {}, std::wcerr);
+    return wline(u"<error>%1</error>"_s.arg(string), newline, verbosity, {}, std::wcerr);
 }
 
 const InteractsWithIO &
 InteractsWithIO::wcomment(const QString &string, const bool newline,
                           const Verbosity verbosity) const
 {
-    return wline(QStringLiteral("<comment>%1</comment>").arg(string), newline, verbosity);
+    return wline(u"<comment>%1</comment>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &
 InteractsWithIO::wmuted(const QString &string, const bool newline,
                         const Verbosity verbosity) const
 {
-    return wline(QStringLiteral("<muted>%1</muted>").arg(string), newline, verbosity);
+    return wline(u"<muted>%1</muted>"_s.arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &InteractsWithIO::walert(const QString &string,
@@ -224,7 +225,7 @@ const InteractsWithIO &InteractsWithIO::walert(const QString &string,
     const auto asterisks = ASTERISK.repeated(string.size() + 12);
 
     wcomment(asterisks);
-    wcomment(QStringLiteral("*     %1     *").arg(string));
+    wcomment(u"*     %1     *"_s.arg(string));
     wcomment(asterisks);
 
     newLine();
@@ -242,7 +243,7 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
     if (!isAnsiWOutput())
         return wline(string, true, verbosity, {}, std::wcerr);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
 
     wline(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::wcerr);
 
@@ -329,11 +330,10 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     if (!m_interactive)
         return defaultAnswer;
 
-    info(QStringLiteral("%1 (yes/no) ").arg(question), false);
+    info(u"%1 (yes/no) "_s.arg(question), false);
 
-    comment(QStringLiteral("[%1]").arg(defaultAnswer ? QStringLiteral("yes")
-                                                     : QStringLiteral("no")));
-    note(QStringLiteral("> "), false);
+    comment(u"[%1]"_s.arg(defaultAnswer ? u"yes"_s : u"no"_s));
+    note(u"> "_s, false);
 
     /* MSVC contains a bug, it doesn't work with std::cin, it throws assert,
        the std::wcin works well, even emoji-s work.
@@ -361,31 +361,30 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     const auto answer = QString::fromStdString(answerRaw).toLower();
 #endif
 
-    return answer == QLatin1String("y") || answer == QLatin1String("ye") ||
-           answer == QLatin1String("yes");
+    return answer == 'y'_L1 || answer == "ye"_L1 || answer == "yes"_L1;
 }
 
 QString InteractsWithIO::stripAnsiTags(QString string)
 {
     return string
-            .replace(QStringLiteral("<note>"),     "")
-            .replace(QStringLiteral("</note>"),    "")
-            .replace(QStringLiteral("<info>"),     "")
-            .replace(QStringLiteral("<error>"),    "")
-            .replace(QStringLiteral("<comment>"),  "")
-            .replace(QStringLiteral("<muted>"),    "")
-            .replace(QStringLiteral("<blue>"),     "")
-            .replace(QStringLiteral("<gray>"),     "")
-            .replace(QStringLiteral("<b-blue>"),   "")
-            .replace(QStringLiteral("<b-white>"),  "")
-            .replace(QStringLiteral("</info>"),    "")
-            .replace(QStringLiteral("</error>"),   "")
-            .replace(QStringLiteral("</comment>"), "")
-            .replace(QStringLiteral("</muted>"),   "")
-            .replace(QStringLiteral("</blue>"),    "")
-            .replace(QStringLiteral("</gray>"),    "")
-            .replace(QStringLiteral("</b-blue>"),  "")
-            .replace(QStringLiteral("</b-white>"), "");
+            .replace(u"<note>"_s,     "")
+            .replace(u"</note>"_s,    "")
+            .replace(u"<info>"_s,     "")
+            .replace(u"<error>"_s,    "")
+            .replace(u"<comment>"_s,  "")
+            .replace(u"<muted>"_s,    "")
+            .replace(u"<blue>"_s,     "")
+            .replace(u"<gray>"_s,     "")
+            .replace(u"<b-blue>"_s,   "")
+            .replace(u"<b-white>"_s,  "")
+            .replace(u"</info>"_s,    "")
+            .replace(u"</error>"_s,   "")
+            .replace(u"</comment>"_s, "")
+            .replace(u"</muted>"_s,   "")
+            .replace(u"</blue>"_s,    "")
+            .replace(u"</gray>"_s,    "")
+            .replace(u"</b-blue>"_s,  "")
+            .replace(u"</b-white>"_s, "");
 }
 
 /* Getters / Setters */
@@ -422,24 +421,24 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
     // ansi output
     if (isAnsi)
         return string
-                .replace(QStringLiteral("<note>"),     "")
-                .replace(QStringLiteral("</note>"),    "")
-                .replace(QStringLiteral("<info>"),     QStringLiteral("\033[32m"))
-                .replace(QStringLiteral("<error>"),    QStringLiteral("\033[37;41m"))
-                .replace(QStringLiteral("<comment>"),  QStringLiteral("\033[33m"))
-                .replace(QStringLiteral("<muted>"),    QStringLiteral("\033[90m")) // Bright black
-                .replace(QStringLiteral("<blue>"),     QStringLiteral("\033[34m"))
-                .replace(QStringLiteral("<gray>"),     QStringLiteral("\033[90m")) // Bright black
-                .replace(QStringLiteral("<b-blue>"),   QStringLiteral("\033[94m"))
-                .replace(QStringLiteral("<b-white>"),  QStringLiteral("\033[97m"))
-                .replace(QStringLiteral("</info>"),    QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</error>"),   QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</comment>"), QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</muted>"),   QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</blue>"),    QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</gray>"),    QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</b-blue>"),  QStringLiteral("\033[0m"))
-                .replace(QStringLiteral("</b-white>"), QStringLiteral("\033[0m"));
+                .replace(u"<note>"_s,     "")
+                .replace(u"</note>"_s,    "")
+                .replace(u"<info>"_s,     u"\033[32m"_s)
+                .replace(u"<error>"_s,    u"\033[37;41m"_s)
+                .replace(u"<comment>"_s,  u"\033[33m"_s)
+                .replace(u"<muted>"_s,    u"\033[90m"_s) // Bright black
+                .replace(u"<blue>"_s,     u"\033[34m"_s)
+                .replace(u"<gray>"_s,     u"\033[90m"_s) // Bright black
+                .replace(u"<b-blue>"_s,   u"\033[94m"_s)
+                .replace(u"<b-white>"_s,  u"\033[97m"_s)
+                .replace(u"</info>"_s,    u"\033[0m"_s)
+                .replace(u"</error>"_s,   u"\033[0m"_s)
+                .replace(u"</comment>"_s, u"\033[0m"_s)
+                .replace(u"</muted>"_s,   u"\033[0m"_s)
+                .replace(u"</blue>"_s,    u"\033[0m"_s)
+                .replace(u"</gray>"_s,    u"\033[0m"_s)
+                .replace(u"</b-blue>"_s,  u"\033[0m"_s)
+                .replace(u"</b-white>"_s, u"\033[0m"_s);
 
     // no-ansi output
     return stripAnsiTags(std::move(string));
@@ -451,7 +450,7 @@ InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser)
     if (parser.isSet(quiet))
         return Quiet;
 
-    const auto verboseCount = countSetOption(QStringLiteral("v"), parser);
+    const auto verboseCount = countSetOption(u"v"_s, parser);
 
     if (verboseCount == 1)
         return Verbose;
@@ -565,7 +564,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
 
     {
         // Ansi template
-        static const auto tmpl = QStringLiteral("\033[37;41m%1\033[0m");
+        static const auto tmpl = u"\033[37;41m%1\033[0m"_s;
         // Get final max. line width in all rendered lines (after splitted by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
         // Full line width (with spaces at the beginning and end)
@@ -584,7 +583,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
 
         for (const auto &line : std::as_const(lines)) {
             // Prepend/append spaces
-            auto lineSpaced = QStringLiteral("  %1  ").arg(line);
+            auto lineSpaced = u"  %1  "_s.arg(line);
             // Fill a line to the end with spaces
             lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
             // Ansi wrap

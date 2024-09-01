@@ -59,7 +59,7 @@ int InstallCommand::run()
             m_repository->createRepository();
         });
 
-        info(QStringLiteral("Migration table created successfully."));
+        info(u"Migration table created successfully."_s);
 
         return EXIT_SUCCESS;
     });

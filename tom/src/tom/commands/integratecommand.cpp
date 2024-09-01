@@ -47,7 +47,7 @@ IntegrateCommand::IntegrateCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {shell_, QStringLiteral("The shell name (values: bash, pwsh, zsh)"), {}, true},
+        {shell_, u"The shell name (values: bash, pwsh, zsh)"_s, {}, true},
     };
 
     return cached;
@@ -121,9 +121,8 @@ namespace
         // BUG __tiny_func__ fails in this type of functions silverqx
         if (!pwshProfileFile.open(openMode))
             throw Exceptions::RuntimeError(
-                    QStringLiteral("Can not open '%1' file in openPwshProfileFile().")
-                    .arg(QStringLiteral("%1/%2").arg(pwshProfileFolder,
-                                                     profileFileRelative)));
+                    u"Can not open '%1' file in openPwshProfileFile()."_s
+                    .arg(u"%1/%2"_s.arg(pwshProfileFolder, profileFileRelative)));
     }
 
     /*! Detect whether PowerShell profile folder already exists and create it
@@ -143,8 +142,7 @@ namespace
         throw Exceptions::RuntimeError(
                     QStringLiteral("Can not create '%1' directory "
                                    "in preparePowerShellFolder().")
-                    .arg(QStringLiteral("%1/%2").arg(documentsFolder,
-                                                     powershellFolder)));
+                    .arg(u"%1/%2"_s.arg(documentsFolder, powershellFolder)));
     }
 } // namespace
 
@@ -161,11 +159,11 @@ int IntegrateCommand::integratePwsh() const
 {
     // Prepare all paths
 #ifdef _MSC_VER
-    const auto powershellFolder = QStringLiteral("PowerShell");
+    const auto powershellFolder = u"PowerShell"_s;
 #else
-    const auto powershellFolder = QStringLiteral("powershell");
+    const auto powershellFolder = u"powershell"_s;
 #endif
-    const auto profileFileRelative = QStringLiteral("%1/Microsoft.PowerShell_profile.ps1")
+    const auto profileFileRelative = u"%1/Microsoft.PowerShell_profile.ps1"_s
                                      .arg(powershellFolder);
 
     // Get the system-dependent PowerShell folder
@@ -214,8 +212,8 @@ bool IntegrateCommand::writeToPwshProfile(
             const QString &pwshProfileFolder, const QString &profileFileRelative,
             const QString &pwshProfile)
 {
-    const auto pwshProfileFilepath = QStringLiteral("%1/%2").arg(pwshProfileFolder,
-                                                                 profileFileRelative);
+    const auto pwshProfileFilepath = u"%1/%2"_s.arg(pwshProfileFolder,
+                                                    profileFileRelative);
     // Prepare QFile and QTextStream
     QFile pwshProfileFile(pwshProfileFilepath);
     openPwshProfileFile(pwshProfileFile, pwshProfileFolder, profileFileRelative,
@@ -256,7 +254,7 @@ bool IntegrateCommand::isPwshCompletionRegistered(const QString &pwshProfile,
     auto line = pwshProfileStream.readLine();
 
     while (!line.isNull())
-        if (line.contains(QStringLiteral("tom complete --word")))
+        if (line.contains(u"tom complete --word"_s))
             return true;
         else
             line = pwshProfileStream.readLine();
@@ -297,7 +295,7 @@ void IntegrateCommand::throwIfBashCompletionDirNotExists()
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral("Bash completion directory '%1' doesn't exists in %2().")
+                u"Bash completion directory '%1' doesn't exists in %2()."_s
                 .arg(*BashCompletionsDirPath, __tiny_func__));
 }
 
@@ -309,7 +307,7 @@ bool IntegrateCommand::writeTomBashCompletion()
     QFile tomBashCompletionFile(*TomBashCompletionFilepath);
     if (!tomBashCompletionFile.open(QIODevice::WriteOnly | QIODevice::Text))
         throw Exceptions::RuntimeError(
-                QStringLiteral("Can not open '%1' tom bash completion file in %2().")
+                u"Can not open '%1' tom bash completion file in %2()."_s
                 .arg(*TomBashCompletionFilepath, __tiny_func__));
 
     QTextStream tomBashCompletionStream(&tomBashCompletionFile);
@@ -416,7 +414,7 @@ void IntegrateCommand::zshOverrideInstallFolder() const
     const auto completionsDir = QDir::cleanPath(value(path_));
 
     TomZshCompletionPaths->prepend({{completionsDir},
-                                    {QStringLiteral("%1/_tom").arg(completionsDir)}});
+                                    {u"%1/_tom"_s.arg(completionsDir)}});
 }
 
 bool IntegrateCommand::isZshCompletionRegistered()
@@ -467,7 +465,7 @@ bool IntegrateCommand::writeTomZshCompletion(const QString &filepath)
 
 void IntegrateCommand::createZshCompletionFolder()
 {
-    if (QDir(QStringLiteral("/"))
+    if (QDir(u"/"_s)
             .mkpath(TomZshCompletionPaths->constFirst().dirPath)
     )
         return;
@@ -508,7 +506,7 @@ void IntegrateCommand::throwIfUnknownShell(const QString &shellArg)
     };
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unknown shell name '%1' (allowed values: %2).")
+                u"Unknown shell name '%1' (allowed values: %2)."_s
                 .arg(shellArg, allowedShells.join(COMMA)));
 }
 

@@ -68,10 +68,12 @@ void Pretendable::optionalPretendInternal(
         QList<Orm::Log> &&queriesLog, const std::optional<QString> &title, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const bool newline) const
 {
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     // Log gathered queries to the console
     for (auto &&query : queriesLog) {
         if (title && !title->isEmpty())
-            io().info(QStringLiteral("%1: ").arg(*title), newline);
+            io().info(u"%1: "_s.arg(*title), newline);
 
         io().note(QueryUtils::parseExecutedQueryForPretend(std::move(query.query),
                                                            query.boundValues));

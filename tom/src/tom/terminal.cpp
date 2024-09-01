@@ -19,6 +19,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Tom
 {
 
@@ -90,7 +92,7 @@ bool Terminal::hasColorSupport(const std::ostream &cout) const
         stream = stderr;
     else
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unsupported stream type passed in %1().")
+                u"Unsupported stream type passed in %1()."_s
                 .arg(__tiny_func__));
 
     // Autodetect
@@ -119,7 +121,7 @@ bool Terminal::hasWColorSupport(const std::wostream &wcout) const
         stream = stderr;
     else
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unsupported stream type passed in %1().")
+                u"Unsupported stream type passed in %1()."_s
                 .arg(__tiny_func__));
 
     // Autodetect
@@ -183,7 +185,7 @@ namespace
             handle = GetStdHandle(STD_ERROR_HANDLE);
         else
             throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("Unsupported stream type passed in %1().")
+                    u"Unsupported stream type passed in %1()."_s
                     .arg(__tiny_func__));
 
         return handle;
@@ -200,7 +202,7 @@ namespace
             handle = GetStdHandle(STD_ERROR_HANDLE);
         else
             throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("Unsupported stream type passed in %1().")
+                    u"Unsupported stream type passed in %1()."_s
                     .arg(__tiny_func__));
 
         return handle;

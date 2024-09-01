@@ -201,9 +201,9 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
     // Enable UTF-8 encoding and vt100 support
     Terminal::initialize();
 
-    QCoreApplication::setApplicationName(QStringLiteral("tom"));
-    QCoreApplication::setOrganizationName(QStringLiteral("TinyORM"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("tinyorm.org"));
+    QCoreApplication::setApplicationName(u"tom"_s);
+    QCoreApplication::setOrganizationName(u"TinyORM"_s);
+    QCoreApplication::setOrganizationDomain(u"tinyorm.org"_s);
     QCoreApplication::setApplicationVersion(TINYTOM_VERSION_STR);
 
     // Initialize the command-line parser
@@ -233,9 +233,9 @@ void Application::logException(const std::exception &e, const bool noAnsi)
        instantiated again. */
     const Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
 
-    const auto message = QStringLiteral("Caught '%1' Exception:\n%2")
+    const auto message = u"Caught '%1' Exception:\n%2"_s
                          .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     // No-ansi output
@@ -291,12 +291,12 @@ void Application::enableInUnitTests() noexcept
 void Application::initializeParser(QCommandLineParser &parser)
 {
     parser.setApplicationDescription(
-                QStringLiteral("TinyORM %1").arg(TINYORM_VERSION_STR));
+                u"TinyORM %1"_s.arg(TINYORM_VERSION_STR));
 
     // Common options used in all commands
     parser.addOptions(saveOptions({
-        {      ansi,           QStringLiteral("Force ANSI output")},
-        {      noansi,         QStringLiteral("Disable ANSI output")},
+        {      ansi,           u"Force ANSI output"_s},
+        {      noansi,         u"Disable ANSI output"_s},
         {      env,            QStringLiteral("The environment the command should run "
                                               "under"), env_up}, // Value
         {{QChar('h'),
@@ -304,11 +304,11 @@ void Application::initializeParser(QCommandLineParser &parser)
                                               "no command is given display help for the "
                                               "<info>list</info> command")},
         {{QChar('n'),
-          nointeraction},      QStringLiteral("Do not ask any interactive question")},
+          nointeraction},      u"Do not ask any interactive question"_s},
         {{QChar('q'),
-          quiet},              QStringLiteral("Do not output any message")},
+          quiet},              u"Do not output any message"_s},
         {{QChar('V'),
-          Version},            QStringLiteral("Display this application version")},
+          Version},            u"Display this application version"_s},
         {{QChar('v'),
           verbose},            QStringLiteral("Increase the verbosity of messages: "
                                               "1 for normal output, "
@@ -424,7 +424,7 @@ void Application::handleEmptyCommandName(const QString &name,
 
     T_UNLIKELY
     case ShowErrorWall:
-        errorWall(QStringLiteral("Command '%1' is not defined.").arg(name));
+        errorWall(u"Command '%1' is not defined."_s.arg(name));
 
         exitApplication(EXIT_FAILURE);
 
@@ -449,14 +449,14 @@ void Application::showVersion() const
 
 void Application::printVersion() const
 {
-    note(QStringLiteral("TinyORM "), false);
+    note(u"TinyORM "_s, false);
 
     info(TINYORM_VERSION_STR);
 }
 
 void Application::printFullVersions() const
 {
-    note(QStringLiteral("tom "), false);
+    note(u"tom "_s, false);
     info(TINYTOM_VERSION_STR);
 
     for (const auto versionsSubsection = createVersionsSubsection();
@@ -514,8 +514,8 @@ namespace
 
 QList<SubSectionItem> Application::createVersionsSubsection()
 {
-    static const auto Debug_   = QStringLiteral("Debug");
-    static const auto Release_ = QStringLiteral("Release");
+    static const auto Debug_   = u"Debug"_s;
+    static const auto Release_ = u"Release"_s;
 
     return {
         {u"Dependencies"_s,

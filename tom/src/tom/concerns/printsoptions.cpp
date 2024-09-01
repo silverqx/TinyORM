@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
 
@@ -37,8 +39,7 @@ PrintsOptions::SizeType
 PrintsOptions::printOptionsSection(const bool commonOptions) const
 {
     io().newLine();
-    io().comment(commonOptions ? QStringLiteral("Common options:")
-                               : QStringLiteral("Options:"));
+    io().comment(commonOptions ? u"Common options:"_s : u"Options:"_s);
 
     // Get max. option size in all options
     const auto optionsMaxSize = this->optionsMaxSize();
@@ -62,8 +63,7 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
         if (name.size() == 1)
             options << ShortOption
                        // Custom logic for the verbose option, good enough 😎
-                       .arg(name == QLatin1Char('v') ? QStringLiteral("v|vv|vvv")
-                                                     : name);
+                       .arg(name == 'v'_L1 ? u"v|vv|vvv"_s : name);
 
         // Long option
         else
@@ -119,8 +119,7 @@ void PrintsOptions::printOptions(const SizeType optionsMaxSize) const
 
         const auto indent = QString(optionsMaxSize - joinedOptions.size(), SPACE);
 
-        io().info(QStringLiteral("  %1%2  ").arg(joinedOptions, indent),
-                  false);
+        io().info(u"  %1%2  "_s.arg(joinedOptions, indent), false);
 
         io().note(option.description(), false);
 
@@ -154,8 +153,7 @@ void PrintsOptions::validateOption(const QCommandLineOption &option)
                                "(options: %1).")
                 .arg(optionNames.join(COMMA)));
 
-    static const auto longOptionTmpl =
-            QStringLiteral("Long option size has to be >1 (option: %1).");
+    static const auto longOptionTmpl = u"Long option size has to be >1 (option: %1)."_s;
 
     // One option name was passed
     if (optionsSize == 1) {
@@ -166,7 +164,7 @@ void PrintsOptions::validateOption(const QCommandLineOption &option)
     else if (optionsSize == 2) {
         if (const auto &shortOption = optionNames.constFirst(); shortOption.size() != 1)
             throw Exceptions::RuntimeError(
-                    QStringLiteral("Short option size has to be 1 (option: %1).")
+                    u"Short option size has to be 1 (option: %1)."_s
                     .arg(shortOption));
 
         if (const auto &longOption = optionNames[1]; longOption.size() <= 1)

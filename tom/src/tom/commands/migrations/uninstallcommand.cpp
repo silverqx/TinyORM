@@ -73,7 +73,7 @@ int UninstallCommand::run()
             m_repository->dropRepositoryIfExists();
         });
 
-        info(QStringLiteral("Migration table dropped successfully."));
+        info(u"Migration table dropped successfully."_s);
 
         // Return success only, if all executed commands were successful
         return exitCode == EXIT_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;

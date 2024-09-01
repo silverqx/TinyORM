@@ -330,8 +330,8 @@ int CompleteCommand::printGuessedCommands(
             continue;
 
 #ifdef _MSC_VER
-        guessedCommands << QStringLiteral("%1;%2;%3").arg(commandName, commandName,
-                                                          command->description());
+        guessedCommands << u"%1;%2;%3"_s.arg(commandName, commandName,
+                                             command->description());
 #else
         guessedCommands << std::move(commandName);
 #endif
@@ -497,9 +497,10 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
 int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentNameArg) const
 {
     static const QStringList allEnvironmentNames {
-        QStringLiteral("dev"),     QStringLiteral("development"), QStringLiteral("local"),
-        QStringLiteral("prod"),    QStringLiteral("production"),  QStringLiteral("test"),
-        QStringLiteral("testing"), QStringLiteral("staging")
+        u"dev"_s,     u"development"_s, u"local"_s,
+        u"prod"_s,    u"production"_s,
+        u"test"_s,    u"testing"_s,
+        u"staging"_s,
     };
 
     QStringList environmentNames;
@@ -511,7 +512,7 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
     for (const auto &environment : allEnvironmentNames)
         if (environment.startsWith(environmentNameArg))
             environmentNames
-                    << QStringLiteral("%1;%2").arg(
+                    << u"%1;%2"_s.arg(
                            NOSPACE.arg(LongOption.arg(Env).append(EQ_C), environment),
                            environment);
 
@@ -555,8 +556,8 @@ int CompleteCommand::printGuessedLongOptions(
                     auto longOption = LongOption.arg(optionName);
 
 #ifdef _MSC_VER
-                    options << QStringLiteral("%1;%2;%3").arg(longOption, longOption,
-                                                              option.description());
+                    options << u"%1;%2;%3"_s.arg(longOption, longOption,
+                                                 option.description());
 #else
                     options << std::move(longOption);
 #endif
@@ -570,9 +571,8 @@ int CompleteCommand::printGuessedLongOptions(
                     const auto longOptionList = LongOptionValue.arg(optionName,
                                                                     valueName);
 
-                    options << QStringLiteral("%1;%2;%3%4")
-                               .arg(longOption, longOptionList,
-                                    option.description(),
+                    options << u"%1;%2;%3%4"_s
+                               .arg(longOption, longOptionList, option.description(),
                                     getOptionDefaultValue(option));
 #else
                     options << std::move(longOption);
@@ -610,23 +610,23 @@ int CompleteCommand::printGuessedShortOptions(
                 // All other short options
                 if (option.names().constFirst() != "v")
 #ifdef _MSC_VER
-                    options << QStringLiteral("-%1;-%2;%3").arg(optionName, optionName,
-                                                                option.description());
+                    options << u"-%1;-%2;%3"_s.arg(optionName, optionName,
+                                                   option.description());
 #else
-                    options << QStringLiteral("-%1").arg(optionName);
+                    options << u"-%1"_s.arg(optionName);
 #endif
                 // Special handling of the -v options, good enough 😎
                 else {
                     /* Has to be v because pwsh parameter names are case-insensitive so
                        it collides with the -V parameter. */
 #ifdef _MSC_VER
-                    options << QStringLiteral("-v;v;%1").arg(option.description())
-                            << QStringLiteral("-vv;-vv;%1").arg(option.description())
-                            << QStringLiteral("-vvv;-vvv;%1").arg(option.description());
+                    options << u"-v;v;%1"_s.arg(option.description())
+                            << u"-vv;-vv;%1"_s.arg(option.description())
+                            << u"-vvv;-vvv;%1"_s.arg(option.description());
 #else
-                    options << QStringLiteral("-v")
-                            << QStringLiteral("-vv")
-                            << QStringLiteral("-vvv");
+                    options << u"-v"_s
+                            << u"-vv"_s
+                            << u"-vvv"_s;
 #endif
                 }
             }

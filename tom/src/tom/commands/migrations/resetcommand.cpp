@@ -55,7 +55,7 @@ int ResetCommand::run()
                 [this]
     {
         if (!m_migrator->repositoryExists()) {
-            comment(QStringLiteral("Migration table not found."));
+            comment(u"Migration table not found."_s);
 
             return EXIT_FAILURE;
         }

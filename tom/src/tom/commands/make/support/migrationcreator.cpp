@@ -11,6 +11,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using fspath = std::filesystem::path;
 
 using StringUtils = Orm::Utils::String;
@@ -85,17 +87,17 @@ MigrationCreator::populateStub(const QString &name, QString &&stub, const QStrin
 {
     const auto className = getClassName(name);
 
-    stub.replace(QStringLiteral("DummyClass"), className)
-        .replace(QStringLiteral("{{ class }}"), className)
-        .replace(QStringLiteral("{{class}}"), className);
+    stub.replace(u"DummyClass"_s,  className)
+        .replace(u"{{ class }}"_s, className)
+        .replace(u"{{class}}"_s,   className);
 
     /* Here we will replace the table place-holders with the table specified by
        the developer, which is useful for quickly creating a tables creation
        or update migration from the console instead of typing it manually. */
     if (!table.isEmpty())
-        stub.replace(QStringLiteral("DummyTable"), table)
-            .replace(QStringLiteral("{{ table }}"), table)
-            .replace(QStringLiteral("{{table}}"), table);
+        stub.replace(u"DummyTable"_s,  table)
+            .replace(u"{{ table }}"_s, table)
+            .replace(u"{{table}}"_s,   table);
 
     return stub.toStdString();
 }

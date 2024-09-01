@@ -95,7 +95,7 @@ void AboutCommand::displayDetail(const QList<SectionItem> &sections) const
             firstSection = false;
         else
             newLine();
-        line(QStringLiteral("<blue>%1</blue>").arg(sectionName));
+        line(u"<blue>%1</blue>"_s.arg(sectionName));
 
         auto firstSubsection = true;
 
@@ -357,7 +357,7 @@ QList<SubSectionItem> AboutCommand::gatherVersionsInformation()
                           // std::nullopt produces -Wmaybe-uninitialized in GCC release builds
     versions.emplaceFront(std::optional<QString> {std::nullopt},
                           std::map<QString, QString> {
-                              {QStringLiteral("tom"), TINYTOM_VERSION_STR},
+                              {u"tom"_s, TINYTOM_VERSION_STR},
                           });
 
     return versions;

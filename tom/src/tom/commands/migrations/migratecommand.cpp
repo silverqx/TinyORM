@@ -70,7 +70,7 @@ int MigrateCommand::run()
                so that migrations may be run for any path within the applications. */
         m_migrator->run({isSet(pretend), isSet(step_)});
 
-        info(QStringLiteral("Database migaration completed successfully."));
+        info(u"Database migaration completed successfully."_s);
 
         int exitCode = EXIT_SUCCESS; // NOLINT(misc-const-correctness)
 
