@@ -18,6 +18,3 @@ SUBDIRS = \
     relations_insrt_updt \
     softdeletes \
     tinybuilder \
-
-model_hidesattributes.depends = model_serialization
-model_appends.depends = model_serialization model_hidesattributes
