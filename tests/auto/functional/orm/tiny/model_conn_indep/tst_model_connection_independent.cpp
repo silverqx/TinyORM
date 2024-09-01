@@ -230,7 +230,7 @@ defaultAttributeValues_WithQDateTime_ListInitializationCtor() const
     /* List initialization using the std::initializer_list<AttributeItem> must throw
        because of the QDateTime. */
     QVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
-                             (Torrent_With_QDateTime {
+                             Torrent_With_QDateTime({
                                  {NAME, "test22"},
                                  {NOTE, "Torrent::instance()"},
                              }));

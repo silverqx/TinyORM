@@ -419,23 +419,23 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
     // Many relation
     QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
-                (torrent.getRelation<TorrentPreviewableFile>("torrentFiles")));
+                torrent.getRelation<TorrentPreviewableFile>("torrentFiles"));
     // One relation, obtained as QList, also possible
     QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
-                (torrent.getRelation<TorrentPeer>("torrentFiles")));
+                torrent.getRelation<TorrentPeer>("torrentFiles"));
     // Many relation
     QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
-                (torrent.getRelation<TorrentPeer, One>("torrentFiles")));
+                torrent.getRelation<TorrentPeer, One>("torrentFiles"));
     // BelongsTo relation
     QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
-                (TorrentPeer().getRelation<Torrent, One>("torrent")));
+                TorrentPeer().getRelation<Torrent, One>("torrent"));
     // BelongsToMany relation
     QVERIFY_THROWS_EXCEPTION(
                 RelationNotLoadedError,
-                (torrent.getRelation<Tag>("tags")));
+                torrent.getRelation<Tag>("tags"));
 }
 
 void tst_Model_Relations::eagerLoad_Failed() const
@@ -935,8 +935,8 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
         // No TorrentPreviewableFileProperty loaded
         QVERIFY_THROWS_EXCEPTION(
                     RuntimeError,
-                    (file->getRelation<TorrentPreviewableFileProperty, One>(
-                         "fileProperty")));
+                    file->getRelation<TorrentPreviewableFileProperty, One>(
+                         "fileProperty"));
     }
 }
 

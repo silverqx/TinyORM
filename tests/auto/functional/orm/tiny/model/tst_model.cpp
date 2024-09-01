@@ -1353,13 +1353,13 @@ void tst_Model::create_Failed() const
 
     Torrent torrent;
     QVERIFY_THROWS_EXCEPTION(QueryError,
-    (torrent = Torrent::create({
+    torrent = Torrent::create({
         {"name-NON_EXISTENT", "test100"},
         {SIZE_,               100},
         {Progress,            333},
         {AddedOn,             addedOn},
         {HASH_,               "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
-    })));
+    }));
 
     QVERIFY(!torrent.exists);
     QVERIFY(torrent.getAttributes().isEmpty());
