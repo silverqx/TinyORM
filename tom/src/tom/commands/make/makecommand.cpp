@@ -183,8 +183,10 @@ void MakeCommand::throwIfFileAlreadyExists(
         // Extract base filename without the extension
         auto entryName = QString::fromStdString(entry.path().stem().string());
 
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
         // Migration specific
-        if (type == QStringLiteral("migration")) {
+        if (type == "migration"_L1) {
             // Nothing to do, check only files with the datetime prefix
             if (!TomUtils::startsWithDatetimePrefix(entryName))
                 continue;

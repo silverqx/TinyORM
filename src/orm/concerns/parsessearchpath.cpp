@@ -8,6 +8,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::COMMA_C;
 
 using Orm::SchemaNs::Constants::TRIM_QUOTES;
@@ -24,11 +26,11 @@ bool ParsesSearchPath::isSearchPathEmpty(const QStringList &searchPath)
     return searchPath.isEmpty() ||
             (searchPath.size() == 1 &&
              // set search_path = ''
-             (searchPath.constFirst() == QStringLiteral("''") ||
+             (searchPath.constFirst() == "''"_L1 ||
               // During set search_path it set it to ''
               searchPath.constFirst().isEmpty() ||
               // Returned by the 'show search_path' query
-              searchPath.constFirst() == QStringLiteral("\"\"")));
+              searchPath.constFirst() == "\"\""_L1));
 }
 
 /* protected */

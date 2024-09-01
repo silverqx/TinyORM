@@ -44,12 +44,14 @@ QStringList PostgresConnection::searchPath(const bool flushCache)
     const auto username = std::as_const(m_config)[username_].value<QString>();
     Q_ASSERT(!username.isEmpty());
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     // Resolve the $user variable
     return ranges::views::move(searchPathRaw)
             | ranges::views::transform([&username](QString &&schema)
     {
         // Don't use the ternary operator here so the std::move() can apply
-        if (schema == QStringLiteral("$user"))
+        if (schema == "$user"_L1)
             return username; // NOLINT(performance-no-automatic-move)
 
         return std::move(schema);
