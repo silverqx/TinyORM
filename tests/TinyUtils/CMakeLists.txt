@@ -26,7 +26,6 @@ add_library(${TinyUtils_target}
     src/databases.hpp
     src/export.hpp
     src/fs.hpp
-    src/macros.hpp
     src/version.hpp
 
     src/databases.cpp

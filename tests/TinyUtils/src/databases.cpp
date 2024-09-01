@@ -12,10 +12,7 @@
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 #ifdef TINYORM_USING_TINYDRIVERS
 using Orm::Drivers::SqlDatabase;
@@ -101,11 +98,11 @@ namespace TestUtils
 /* Global */
 
 const QString AutoTestSkipped =
-        sl("%1 autotest skipped, environment variables for '%2' connection "
-           "have not been defined or the Qt sql driver is not available.");
+        u"%1 autotest skipped, environment variables for '%2' connection "
+         "have not been defined or the Qt sql driver is not available."_s;
 const QString AutoTestSkippedAny =
-        sl("%1 autotest skipped, environment variables for ANY connection "
-           "have not been defined.");
+        u"%1 autotest skipped, environment variables for ANY connection "
+         "have not been defined."_s;
 
 /* Databases */
 
@@ -116,16 +113,16 @@ ConfigurationsType Databases::m_configurations;
 
 /* public */
 
-const QString Databases::MYSQL      = sl("tinyorm_mysql_tests");
-const QString Databases::MARIADB    = sl("tinyorm_maria_tests");
-const QString Databases::SQLITE     = sl("tinyorm_sqlite_tests");
-const QString Databases::POSTGRESQL = sl("tinyorm_postgres_tests");
+const QString Databases::MYSQL      = u"tinyorm_mysql_tests"_s;
+const QString Databases::MARIADB    = u"tinyorm_maria_tests"_s;
+const QString Databases::SQLITE     = u"tinyorm_sqlite_tests"_s;
+const QString Databases::POSTGRESQL = u"tinyorm_postgres_tests"_s;
 
 #ifdef TINYORM_USING_TINYDRIVERS
-const QString Databases::MYSQL_DRIVERS      = sl("tinydrivers_mysql_tests");
-const QString Databases::MARIADB_DRIVERS    = sl("tinydrivers_maria_tests");
-const QString Databases::SQLITE_DRIVERS     = sl("tinydrivers_sqlite_tests");
-const QString Databases::POSTGRESQL_DRIVERS = sl("tinydrivers_postgres_tests");
+const QString Databases::MYSQL_DRIVERS      = u"tinydrivers_mysql_tests"_s;
+const QString Databases::MARIADB_DRIVERS    = u"tinydrivers_maria_tests"_s;
+const QString Databases::SQLITE_DRIVERS     = u"tinydrivers_sqlite_tests"_s;
+const QString Databases::POSTGRESQL_DRIVERS = u"tinydrivers_postgres_tests"_s;
 #endif
 
 /* Create connection/s for the whole unit test case */
@@ -206,8 +203,8 @@ namespace
     connectionNameForTemp(const QString &connection,
                           const Databases::ConnectionNameParts &connectionParts)
     {
-        return sl("%1-%2-%3").arg(connection, connectionParts.className,
-                                              connectionParts.methodName);
+        return u"%1-%2-%3"_s.arg(connection, connectionParts.className,
+                                             connectionParts.methodName);
     }
 } // namespace
 
@@ -481,7 +478,7 @@ void Databases::createDriversConnectionInternal(
 
     else
         throw RuntimeError(
-                sl("Creating of the '%1' connection for TinyDrivers failed in %2().")
+                u"Creating of the '%1' connection for TinyDrivers failed in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 
@@ -654,7 +651,7 @@ Databases::mysqlConfiguration()
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
-        {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+        {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        ConfigUtils::mysqlSslOptions()},
@@ -695,7 +692,7 @@ Databases::mariaConfiguration()
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
-        {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+        {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        ConfigUtils::mariaSslOptions()},
@@ -741,7 +738,7 @@ Databases::postgresConfiguration()
 {
     QVariantHash config {
         {driver_,            QPSQL},
-        {application_name,   sl("TinyORM tests (TinyUtils)")},
+        {application_name,   u"TinyORM tests (TinyUtils)"_s},
         {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
         {port_,              qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
         {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
@@ -759,7 +756,7 @@ Databases::postgresConfiguration()
         {qt_timezone,        QVariant::fromValue(TTimeZone::UTC)},
         {prefix_,            EMPTY},
         {prefix_indexes,     false},
-//        {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//        {isolation_level,    u"REPEATABLE READ"_s}, // Postgres default is READ COMMITTED
 //        {synchronous_commit, off}, // Postgres default is on
         // ConnectionFactory provides a default value for this, this is only for reference
 //        {dont_drop,          QStringList {spatial_ref_sys}},
@@ -921,9 +918,9 @@ void Databases::throwIfNoManagerInstance()
         return;
 
     throw RuntimeError(
-                sl("The DatabaseManager instance has not yet been created, create it "
-                   "by the Databases::createConnections/createConnection methods "
-                   "in %1().")
+                u"The DatabaseManager instance has not yet been created, create it "
+                 "by the Databases::createConnections/createConnection methods "
+                 "in %1()."_s
                 .arg(__tiny_func__));
 }
 
@@ -934,8 +931,8 @@ void Databases::throwIfConnectionsInitialized()
 
     if (initialized)
         throw RuntimeError(
-                sl("Databases::createConnections/createConnection methods can be called "
-                   "only once in %1().")
+                u"Databases::createConnections/createConnection methods can be called "
+                 "only once in %1()."_s
                 .arg(__tiny_func__));
 
     initialized = true;

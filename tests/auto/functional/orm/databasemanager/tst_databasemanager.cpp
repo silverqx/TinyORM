@@ -7,7 +7,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::EMPTY;
 using Orm::Constants::NAME;
@@ -160,7 +161,7 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, QMYSQL},
-        {host_,   sl("example.com")},
+        {host_,   u"example.com"_s},
     });
 
     if (!connectionName)
@@ -231,7 +232,7 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, QPSQL},
-        {host_,   sl("example.com")},
+        {host_,   u"example.com"_s},
     });
 
     if (!connectionName)
@@ -496,13 +497,13 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
 {
     // Prepare SSL configuration
     // Top level
-    const auto sslCertValue = sl("C:/example/mysql-cert.pem");
-    const auto sslKeyValue  = sl("C:/example/mysql-key.pem");
-    const auto sslCaValue   = sl("C:/example/mysql-ca.pem");
+    const auto sslCertValue = u"C:/example/mysql-cert.pem"_s;
+    const auto sslKeyValue  = u"C:/example/mysql-key.pem"_s;
+    const auto sslCaValue   = u"C:/example/mysql-ca.pem"_s;
     const auto sslModeValue = VerifyCA;
     // The 'options' level
-    const auto sslCertOptionsValue = sl("D:/example/client-cert.pem");
-    const auto sslKeyOptionsValue  = sl("D:/example/client-key.pem");
+    const auto sslCertOptionsValue = u"D:/example/client-cert.pem"_s;
+    const auto sslKeyOptionsValue  = u"D:/example/client-key.pem"_s;
 
     const QVariantHash initialConfiguration {
         {driver_,   QMYSQL},
@@ -590,12 +591,12 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
 
     // Prepare SSL configuration
     // Top level
-    const auto sslCertValue = sl("C:/example/maria-cert.pem");
-    const auto sslKeyValue  = sl("C:/example/maria-key.pem");
-    const auto sslCaValue   = sl("C:/example/maria-ca.pem");
+    const auto sslCertValue = u"C:/example/maria-cert.pem"_s;
+    const auto sslKeyValue  = u"C:/example/maria-key.pem"_s;
+    const auto sslCaValue   = u"C:/example/maria-ca.pem"_s;
     // The 'options' level
-    const auto sslCertOptionsValue = sl("D:/example/client-cert.pem");
-    const auto sslKeyOptionsValue  = sl("D:/example/client-key.pem");
+    const auto sslCertOptionsValue = u"D:/example/client-cert.pem"_s;
+    const auto sslKeyOptionsValue  = u"D:/example/client-key.pem"_s;
 
     const QVariantHash initialConfiguration {
         {driver_,   QMYSQL},
@@ -677,12 +678,12 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
     // Prepare SSL configuration
     // Top level
     const auto sslmodeValue        = verify_full;
-    const auto sslcertValue        = sl("C:/example/psql.crt");
-    const auto sslkeyValue         = sl("C:/example/psql.key");
-    const auto sslrootcertValue    = sl("C:/example/ca.crt");
+    const auto sslcertValue        = u"C:/example/psql.crt"_s;
+    const auto sslkeyValue         = u"C:/example/psql.key"_s;
+    const auto sslrootcertValue    = u"C:/example/ca.crt"_s;
     // The 'options' level
-    const auto sslcertOptionsValue = sl("D:/example/pg.crt");
-    const auto sslkeyOptionsValue  = sl("D:/example/pg.key");
+    const auto sslcertOptionsValue = u"D:/example/pg.crt"_s;
+    const auto sslkeyOptionsValue  = u"D:/example/pg.key"_s;
 
     const QVariantHash initialConfiguration({
         {driver_,     QPSQL},
@@ -776,15 +777,15 @@ void tst_DatabaseManager::SQLite_MemoryDriver() const
     auto &connection = m_dm->connection(*connectionName);
 
     // Create the database and insert some records
-    connection.statement(sl("create table tbl1 (one varchar(10), two smallint)"));
-    connection.insert(sl("insert into tbl1 values(?, ?)"), {sl("hello!"), 10});
-    connection.insert(sl("insert into tbl1 values(?, ?)"), {sl("goodbye"), 20});
+    connection.statement(u"create table tbl1 (one varchar(10), two smallint)"_s);
+    connection.insert(u"insert into tbl1 values(?, ?)"_s, {u"hello!"_s, 10});
+    connection.insert(u"insert into tbl1 values(?, ?)"_s, {u"goodbye"_s, 20});
 
-    auto query = connection.selectOne(sl("select * from tbl1 where two = ?"), {10});
+    auto query = connection.selectOne(u"select * from tbl1 where two = ?"_s, {10});
 
     // Verify
     QVERIFY(query.isValid());
-    QCOMPARE(query.value("one").value<QString>(), sl("hello!"));
+    QCOMPARE(query.value("one").value<QString>(), u"hello!"_s);
     QCOMPARE(query.value("two").value<int>(), 10);
 
     // Restore
@@ -814,7 +815,7 @@ void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
     QVERIFY_THROWS_EXCEPTION(
                 SQLiteDatabaseDoesNotExistError,
                 m_dm->connection(*connectionName)
-                .statement(sl("create table tbl1 (one varchar(10), two smallint)")));
+                .statement(u"create table tbl1 (one varchar(10), two smallint)"_s));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -842,7 +843,7 @@ void tst_DatabaseManager::SQLite_CheckDatabaseExists_False() const
     // Verify
     // QSqlDatabase automatically creates a SQLite database file
     m_dm->connection(*connectionName)
-            .statement(sl("create table tbl1 (one varchar(10), two smallint)"));
+            .statement(u"create table tbl1 (one varchar(10), two smallint)"_s);
 
     QVERIFY(QFile::exists(checkDatabaseExistsFile()));
 
@@ -884,15 +885,15 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
         const auto connectionName1 =
             Databases::createConnectionTempFrom(
                 Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                                                          sl("1"))});
+                                                          u"1"_s)});
         const auto connectionName2 =
             Databases::createConnectionTempFrom(
                 Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                                                          sl("2"))});
+                                                          u"2"_s)});
         const auto connectionName3 =
             Databases::createConnectionTempFrom(
                 Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                                                          sl("3"))});
+                                                          u"3"_s)});
 
         if (i == 0 && !connectionName1)
             QSKIP(TestUtils::AutoTestSkipped
@@ -956,7 +957,7 @@ const QString &tst_DatabaseManager::checkDatabaseExistsFile()
         databasePath.truncate(QDir::fromNativeSeparators(databasePath)
                               .lastIndexOf(QChar('/')));
 
-        return databasePath.append(sl("/tinyorm_test-check_exists.sqlite3"));
+        return databasePath.append(u"/tinyorm_test-check_exists.sqlite3"_s);
     }();
 
     return cached;

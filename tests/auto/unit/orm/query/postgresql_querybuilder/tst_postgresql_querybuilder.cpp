@@ -5,7 +5,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::AND;
 using Orm::Constants::ASC;
@@ -529,7 +530,7 @@ void tst_PostgreSQL_QueryBuilder::from() const
 
     QVERIFY(std::holds_alternative<std::monostate>(from));
 
-    const auto tableTorrents = sl("torrents");
+    const auto tableTorrents = u"torrents"_s;
     builder->from(tableTorrents);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -537,7 +538,7 @@ void tst_PostgreSQL_QueryBuilder::from() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\"");
 
-    const auto tableTorrentPeers = sl("torrent_peers");
+    const auto tableTorrentPeers = u"torrent_peers"_s;
     builder->from(tableTorrentPeers);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -553,7 +554,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     const auto &from = builder->getFrom();
 
     {
-        const auto table = sl("some`table");
+        const auto table = u"some`table"_s;
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -563,7 +564,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Protects quotation marks
     {
-        const auto table = sl("some\"table");
+        const auto table = u"some\"table"_s;
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -572,7 +573,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
                  "select * from \"some\"\"table\"");
     }
     {
-        const auto table = sl("some'table");
+        const auto table = u"some'table"_s;
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -582,7 +583,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping as whole constant
     {
-        const auto table = sl("baz");
+        const auto table = u"baz"_s;
         builder->select("x.y as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -592,7 +593,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with space in database name
     {
-        const auto table = sl("baz");
+        const auto table = u"baz"_s;
         builder->select("w x.y.z as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -602,7 +603,7 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = sl("table as alias");
+        const auto table = u"table as alias"_s;
         builder->select("*").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -612,12 +613,12 @@ void tst_PostgreSQL_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = sl("table");
-        const auto alias = sl("alias");
+        const auto table = u"table"_s;
+        const auto alias = u"alias"_s;
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), u"%1 as %2"_s.arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from \"table\" as \"alias\"");
     }
@@ -627,8 +628,8 @@ void tst_PostgreSQL_QueryBuilder::from_WithPrefix() const
 {
     auto builder = createQuery();
 
-    const auto prefix = sl("xyz_");
-    const auto table = sl("table");
+    const auto prefix = u"xyz_"_s;
+    const auto table = u"table"_s;
     builder->from(table);
 
     builder->getConnection().setTablePrefix(prefix);
@@ -650,22 +651,22 @@ void tst_PostgreSQL_QueryBuilder::from_AliasWithPrefix() const
 
     const auto &from = builder->getFrom();
 
-    const auto prefix = sl("xyz_");
+    const auto prefix = u"xyz_"_s;
     builder->getConnection().setTablePrefix(prefix);
 
     {
-        const auto table = sl("table");
-        const auto alias = sl("alias");
+        const auto table = u"table"_s;
+        const auto alias = u"alias"_s;
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), u"%1 as %2"_s.arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from \"xyz_table\" as \"xyz_alias\"");
     }
 
     {
-        const auto table = sl("table as alias");
+        const auto table = u"table as alias"_s;
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));

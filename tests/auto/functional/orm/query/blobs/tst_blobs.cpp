@@ -7,7 +7,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::QMYSQL;
 using Orm::Constants::text_;
@@ -399,7 +400,7 @@ void tst_Blobs::prepareMaxAllowedPacketForMySql(const std::size_t minimumValue,
         return;
 
     // Set the max_allowed_packet GLOBAL variable
-    DB::unprepared(sl("set global `max_allowed_packet` = %1").arg(minimumValue),
+    DB::unprepared(u"set global `max_allowed_packet` = %1"_s.arg(minimumValue),
                    connection);
 
     // Re-connect is needed so a newly set max_allowed_packet can be applied
@@ -413,8 +414,8 @@ void tst_Blobs::prepareMaxAllowedPacketForMySql(const std::size_t minimumValue,
     }
 
     throw std::runtime_error(
-                sl("Setting the max_allowed_packet to '%1' value for '%2' connection "
-                   "failed in %3().")
+                u"Setting the max_allowed_packet to '%1' value for '%2' connection "
+                 "failed in %3()."_s
                 .arg(minimumValue)
                 .arg(connection, __tiny_func__).toUtf8().constData());
 }
@@ -427,7 +428,7 @@ void tst_Blobs::restoreMaxAllowedPacketForMySql(const QString &connection) const
         return;
 
     // Restore the max_allowed_packet GLOBAL variable to the initial value
-    auto query = DB::unprepared(sl("set global `max_allowed_packet` = %1")
+    auto query = DB::unprepared(u"set global `max_allowed_packet` = %1"_s
                                 .arg(*m_initialMaxAllowedPacket),
                                 connection);
 
@@ -439,8 +440,8 @@ void tst_Blobs::restoreMaxAllowedPacketForMySql(const QString &connection) const
         return m_initialMaxAllowedPacket.reset(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     throw std::runtime_error(
-                sl("Restoring the max_allowed_packet to '%1' value for '%2' connection "
-                   "failed in %3().")
+                u"Restoring the max_allowed_packet to '%1' value for '%2' connection "
+                 "failed in %3()."_s
                 .arg(*m_initialMaxAllowedPacket)
                 .arg(connection, __tiny_func__).toUtf8().constData());
 }
@@ -448,15 +449,15 @@ void tst_Blobs::restoreMaxAllowedPacketForMySql(const QString &connection) const
 std::size_t tst_Blobs::getMaxAllowedPacketForMySql(const QString &connection)
 {
     // Obtain the max_allowed_packet SESSION variable value in bytes
-    auto query = DB::unprepared(sl("select @@session.`max_allowed_packet` as `value`"),
+    auto query = DB::unprepared(u"select @@session.`max_allowed_packet` as `value`"_s,
                                 connection);
 
     if (query.first())
-        return query.value(sl("value")).value<std::size_t>();
+        return query.value(u"value"_s).value<std::size_t>();
 
     throw std::runtime_error(
-                sl("Obtaining the @@session.max_allowed_packet variable "
-                   "for '%1' connection failed in %2().")
+                u"Obtaining the @@session.max_allowed_packet variable "
+                 "for '%1' connection failed in %2()."_s
                 .arg(connection, __tiny_func__).toUtf8().constData());
 }
 

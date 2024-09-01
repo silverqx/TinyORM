@@ -14,7 +14,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ID;
 using Orm::Constants::QMYSQL;
@@ -2042,7 +2043,7 @@ void tst_MySql_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() c
         QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
-        const auto timeExpected = sl("17:02:59");
+        const auto timeExpected = u"17:02:59"_s;
         QCOMPARE(timeActual, timeExpected);
     }
 
@@ -3048,7 +3049,7 @@ void tst_MySql_QDateTime::setUtcTimezone(const QString &connection)
 
 void tst_MySql_QDateTime::set0200Timezone(const QString &connection)
 {
-    setTimezone(connection, sl("+02:00"),
+    setTimezone(connection, u"+02:00"_s,
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZone0200)});
 }
 
@@ -3060,8 +3061,8 @@ void tst_MySql_QDateTime::setDontConvertTimezone(const QString &connection)
 void tst_MySql_QDateTime::setTimezone(const QString &connection, const QString &timeZone,
                                       Orm::QtTimeZoneConfig &&qtTimeZone)
 {
-    const auto sqlQuery = DB::unprepared(sl("set time_zone=\"%1\";").arg(timeZone),
-                                        connection);
+    const auto sqlQuery = DB::unprepared(u"set time_zone=\"%1\";"_s.arg(timeZone),
+                                         connection);
 
     QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
 
@@ -3078,8 +3079,8 @@ const QString &tst_MySql_QDateTime::utcTimezoneString(const QString &connection)
 bool
 tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
-    auto sqlQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
-                              connection);
+    auto sqlQuery = DB::select(u"select count(*) from `mysql`.`time_zone_name`"_s, {},
+                               connection);
 
     if (!sqlQuery.first())
         return true;

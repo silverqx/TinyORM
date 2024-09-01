@@ -14,7 +14,6 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
@@ -406,7 +405,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
     actualNullValues.reserve(querySize);
 
     // Column definitions related
-    static const QString Torrents(u"torrents"_s);
+    static const auto Torrents = u"torrents"_s;
     static const QStringList fieldNames({
         ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });
@@ -606,7 +605,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
     actualNullValues2.reserve(querySize);
 
     // Column definitions related
-    static const QString Torrents(u"torrents"_s);
+    static const auto Torrents = u"torrents"_s;
     static const QStringList fieldNames({
         ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });

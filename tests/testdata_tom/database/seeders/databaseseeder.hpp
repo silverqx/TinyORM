@@ -2,13 +2,10 @@
 
 #include <tom/seeder.hpp>
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 namespace Seeders
 {
+
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     /*! Main database seeder. */
     struct DatabaseSeeder : Seeder
@@ -215,25 +212,25 @@ namespace Seeders
            it doesn't increment sequences. */
 
         const std::unordered_map<QString, quint64> sequences {
-            {sl("users_id_seq"),                                6},
-            {sl("roles_id_seq"),                                4},
-            {sl("user_phones_id_seq"),                          4},
-            {sl("torrents_id_seq"),                             8},
-            {sl("torrent_peers_id_seq"),                        7},
-            {sl("torrent_previewable_files_id_seq"),           13},
-            {sl("torrent_previewable_file_properties_id_seq"),  6},
-            {sl("file_property_properties_id_seq"),             9},
-            {sl("torrent_tags_id_seq"),                         6},
-            {sl("tag_properties_id_seq"),                       5},
-            {sl("types_id_seq"),                                4},
-            {sl("albums_id_seq"),                               5},
-            {sl("album_images_id_seq"),                         8},
-            {sl("torrent_states_id_seq"),                       6},
+            {u"users_id_seq"_s,                                6},
+            {u"roles_id_seq"_s,                                4},
+            {u"user_phones_id_seq"_s,                          4},
+            {u"torrents_id_seq"_s,                             8},
+            {u"torrent_peers_id_seq"_s,                        7},
+            {u"torrent_previewable_files_id_seq"_s,           13},
+            {u"torrent_previewable_file_properties_id_seq"_s,  6},
+            {u"file_property_properties_id_seq"_s,             9},
+            {u"torrent_tags_id_seq"_s,                         6},
+            {u"tag_properties_id_seq"_s,                       5},
+            {u"types_id_seq"_s,                                4},
+            {u"albums_id_seq"_s,                               5},
+            {u"album_images_id_seq"_s,                         8},
+            {u"torrent_states_id_seq"_s,                       6},
         };
 
         for (const auto &[sequence, id] : sequences)
             DB::connection().unprepared(
-                    sl(R"(alter sequence "%1" restart with %2)")
+                    uR"(alter sequence "%1" restart with %2)"_s
                     .arg(sequence).arg(id));
     }
 

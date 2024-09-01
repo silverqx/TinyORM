@@ -33,9 +33,7 @@ namespace Migrations
             using Orm::DB;
 
             // Add the table comment (MySQL only)
-            if (DB::getDefaultConnection() ==
-                QStringLiteral("tinyorm_testdata_tom_mysql")
-            )
+            if (DB::getDefaultConnection() == "tinyorm_testdata_tom_mysql"_L1)
                 DB::unprepared("alter table `file_property_properties` comment = "
                                "'used in Builder::chunk() tests, must have exactly 8 "
                                "rows'");

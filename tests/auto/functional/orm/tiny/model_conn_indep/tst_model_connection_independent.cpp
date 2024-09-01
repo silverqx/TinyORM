@@ -4,13 +4,14 @@
 #include "orm/db.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/datetime.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent_includeslist.hpp"
 #include "models/torrent_with_qdatetime.hpp"
 #include "models/torrent_without_qdatetime.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::AddedOn;
@@ -256,8 +257,8 @@ defaultAttributeValues_WithQDateTime_InstanceMethod() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
 {
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     // The Model::instance(attributes) must work well
     auto torrent = Torrent_With_QDateTime::instance({
@@ -282,8 +283,8 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-               "defaultAttributeValues_WithQDateTime");
+            u"tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+             "defaultAttributeValues_WithQDateTime"_s;
 
     // The Model::instance() method must work well (with connection override)
     auto torrent = Torrent_With_QDateTime::instance(connectionForInstance);
@@ -308,11 +309,11 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-               "defaultAttributeValues_WithQDateTime");
+            u"tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+             "defaultAttributeValues_WithQDateTime"_s;
 
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = Torrent_With_QDateTime::instance({
@@ -356,8 +357,8 @@ defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
 {
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     // The converting attributes constructor without QDateTime must work well
     Torrent_Without_QDateTime torrent({
@@ -379,8 +380,8 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
 {
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     /* The list initialization constructor without QDateTime
        using the std::initializer_list<AttributeItem> must work well. */
@@ -420,8 +421,8 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
 {
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     // The Model::instance(attributes) must work well
     auto torrent = Torrent_With_QDateTime::instanceHeap({
@@ -446,8 +447,8 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-               "defaultAttributeValues_WithQDateTime");
+            u"tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+             "defaultAttributeValues_WithQDateTime"_s;
 
     // The Model::instance() method must work well (with connection override)
     auto torrent = Torrent_With_QDateTime::instanceHeap(connectionForInstance);
@@ -472,11 +473,11 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-               "defaultAttributeValues_WithQDateTime");
+            u"tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+             "defaultAttributeValues_WithQDateTime"_s;
 
-    const auto name = sl("test22");
-    const auto note = sl("Torrent::instance()");
+    const auto name = u"test22"_s;
+    const auto note = u"Torrent::instance()"_s;
 
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = Torrent_With_QDateTime::instanceHeap({
@@ -638,7 +639,7 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test2"));
     QCOMPARE(torrent->getAttribute(SIZE_), QVariant(12));
 
-    const auto name = sl("test2 operator[]");
+    const auto name = u"test2 operator[]"_s;
     const auto size = 112;
     (*torrent)[NAME] = name;
     (*torrent)[SIZE_] = size;
@@ -670,7 +671,7 @@ void tst_Model_Connection_Independent::
     QCOMPARE(torrent3->getAttribute(NAME), torrent2->getAttribute(NAME));
 
     // Some more testing
-    const auto name = sl("test2 operator[]");
+    const auto name = u"test2 operator[]"_s;
 
     attributeReference = name;
     (*torrent3)[NAME] = attributeReference;
@@ -723,22 +724,22 @@ void tst_Model_Connection_Independent::isDirty_TimeColumn() const
     QVERIFY(datetime.exists);
 
     QVERIFY(!datetime.isDirty("time"));
-    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+    QCOMPARE(datetime.getAttribute<QString>("time"), u"17:01:05"_s);
 
     // Setting to the same time can't change dirty state
                                   // as QTime()
     datetime.setAttribute("time", QTime(17, 1, 5));
     QVERIFY(!datetime.isDirty("time"));              // Can't have fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+    QCOMPARE(datetime.getAttribute<QString>("time"), u"17:01:05"_s);
                                   // or as QString()
-    datetime.setAttribute("time", sl("17:01:05"));
+    datetime.setAttribute("time", u"17:01:05"_s);
     QVERIFY(!datetime.isDirty("time"));              // Can't have fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+    QCOMPARE(datetime.getAttribute<QString>("time"), u"17:01:05"_s);
 
     // Setting to the new time value must change dirty state
     datetime.setAttribute("time", QTime(17, 1, 6));
     QVERIFY(datetime.isDirty("time"));               // Can't have fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:06"));
+    QCOMPARE(datetime.getAttribute<QString>("time"), u"17:01:06"_s);
 
     // Restore
     const auto affected = Datetime::destroy(datetime.getKey());
@@ -749,7 +750,7 @@ void tst_Model_Connection_Independent::isDirty_TimeColumn_WithFractionalSeconds(
 {
     // Prepare
     auto timeFormatOriginal = Datetime::u_timeFormat;
-    Datetime::u_timeFormat = sl("HH:mm:ss.zzz");
+    Datetime::u_timeFormat = u"HH:mm:ss.zzz"_s;
 
     auto datetime = Datetime::create({{"time_ms", QTime(17, 1, 5, 123)}});
 
@@ -757,22 +758,22 @@ void tst_Model_Connection_Independent::isDirty_TimeColumn_WithFractionalSeconds(
     QVERIFY(datetime.exists);
 
     QVERIFY(!datetime.isDirty("time_ms"));
-    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), u"17:01:05.123"_s);
 
     // Setting to the same time with fractional seconds (ms) can't change dirty state
                                      // as QTime()
     datetime.setAttribute("time_ms", QTime(17, 1, 5, 123));
     QVERIFY(!datetime.isDirty("time_ms"));              // Must have 3 fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), u"17:01:05.123"_s);
                                      // or as QString()
-    datetime.setAttribute("time_ms", sl("17:01:05.123"));
+    datetime.setAttribute("time_ms", u"17:01:05.123"_s);
     QVERIFY(!datetime.isDirty("time_ms"));              // Must have 3 fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), u"17:01:05.123"_s);
 
     // Setting to the new time value with fractional seconds (ms) must change dirty state
     datetime.setAttribute("time_ms", QTime(17, 1, 5, 124));
     QVERIFY(datetime.isDirty("time_ms"));               // Must have 3 fractional seconds (ms)
-    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.124"));
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), u"17:01:05.124"_s);
 
     // Restore
     const auto affected = Datetime::destroy(datetime.getKey());
@@ -1664,7 +1665,7 @@ void tst_Model_Connection_Independent::chunkMap() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = u"%1_mapped"_s.arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -1704,7 +1705,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = u"%1_mapped"_s.arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -1758,7 +1759,7 @@ void tst_Model_Connection_Independent::chunkMap_TemplatedReturnValue() const
                   ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {
@@ -1786,7 +1787,7 @@ tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue()
                       [](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {

@@ -9,7 +9,6 @@
 #include "orm/utils/query.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/torrent_includeslist.hpp"
 #include "models/torrenteager_failed.hpp"

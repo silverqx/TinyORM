@@ -2,9 +2,10 @@
 #include <QTest>
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/torrent_includeslist.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::ID;
@@ -213,7 +214,7 @@ void tst_Relations_BuildsQueries::chunkMap_Relation() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = u"%1_mapped"_s.arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -248,7 +249,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
                   ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {
@@ -751,7 +752,7 @@ void tst_Relations_BuildsQueries::chunkMap() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = u"%1_mapped"_s.arg(nameRef->template value<QString>());
 
         verifyTaggedPivot(model);
 
@@ -792,7 +793,7 @@ void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = u"%1_mapped"_s.arg(nameRef->template value<QString>());
 
         verifyTaggedPivot(model);
 
@@ -857,7 +858,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
         verifyTaggedPivot(model);
 
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {
@@ -886,7 +887,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() 
         Q_ASSERT(!model.relationLoaded("tagged"));
 
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {
@@ -919,7 +920,7 @@ tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() cons
         verifyTaggedPivot(model);
 
         // Return the modify name directly
-        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
+        return u"%1_mapped"_s.arg(model[NAME]->template value<QString>());
     });
 
     QList<QString> expectedResult {

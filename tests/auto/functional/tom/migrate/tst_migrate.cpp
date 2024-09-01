@@ -10,12 +10,13 @@
 #include "tom/commands/migrations/statuscommand.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "migrations/2014_10_12_000000_create_posts_table.hpp"
 #include "migrations/2014_10_12_100000_add_factor_column_to_posts_table.hpp"
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Exceptions::RuntimeError;
 
@@ -99,9 +100,9 @@ private:
     static void throwIfWrongEnvironment(const char *environmentEnvName);
 
     /*! Migrations table name (used by this test case). */
-    inline static const auto MigrationsTable = sl("migrations_unit_testing");
+    inline static const auto MigrationsTable = u"migrations_unit_testing"_s;
     /*! Migrations table name (to cleanup the tom example migrations only). */
-    inline static const auto MigrationsTomTable = sl("migrations_example");
+    inline static const auto MigrationsTomTable = u"migrations_example"_s;
 
     /*! Created database connections (needed by the cleanupTestCase()). */
     QStringList m_connections;
@@ -770,7 +771,7 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
                                const std::vector<const char *> &arguments,
                                const QString &migrationTable)
 {
-    static const auto connectionTmpl = sl("--database=%1");
+    static const auto connectionTmpl = u"--database=%1"_s;
 
     // Prepare fake argc and argv
     const auto nameArr = name.toUtf8();
@@ -902,9 +903,9 @@ void tst_Migrate::throwIfWrongEnvironment(const char *const environmentEnvName)
         return;
 
     throw RuntimeError(
-                sl("The '%1' environment variable can't be 'prod' or 'production' "
-                   "because production environment needs confirmation, please set it "
-                   "to any other supported value as local, development, or testing.")
+                u"The '%1' environment variable can't be 'prod' or 'production' "
+                 "because production environment needs confirmation, please set it "
+                 "to any other supported value as local, development, or testing."_s
                 .arg(environmentEnvName));
 }
 

@@ -8,9 +8,10 @@
 #include "orm/sqliteconnection.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/type.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
@@ -979,7 +980,7 @@ void tst_CastAttributes::defaultCast_string() const
     auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
-    QCOMPARE(attribute.value<QString>(), sl("string text"));
+    QCOMPARE(attribute.value<QString>(), u"string text"_s);
 }
 
 void tst_CastAttributes::defaultCast_text() const
@@ -992,7 +993,7 @@ void tst_CastAttributes::defaultCast_text() const
     auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
-    QCOMPARE(attribute.value<QString>(), sl("text text"));
+    QCOMPARE(attribute.value<QString>(), u"text text"_s);
 }
 
 void tst_CastAttributes::defaultCast_mediumtext() const
@@ -1005,7 +1006,7 @@ void tst_CastAttributes::defaultCast_mediumtext() const
     auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
-    QCOMPARE(attribute.value<QString>(), sl("mediumtext text"));
+    QCOMPARE(attribute.value<QString>(), u"mediumtext text"_s);
 }
 
 void tst_CastAttributes::defaultCast_timestamp() const
@@ -1074,7 +1075,7 @@ void tst_CastAttributes::defaultCast_time() const
     else {
         QCOMPARE(typeId, QMetaType::QString);
 
-        QCOMPARE(attribute.value<QString>(), sl("17:01:05"));
+        QCOMPARE(attribute.value<QString>(), u"17:01:05"_s);
     }
 }
 
@@ -3374,7 +3375,7 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
 
     if (!type)
         throw Orm::Exceptions::RuntimeError(
-                sl("Can't find the Type model with the ID(%1).").arg(id));
+                u"Can't find the Type model with the ID(%1)."_s.arg(id));
 
     // Cache the Type model
     auto [itType, ok] = m_modelsCache.insert({std::move(cacheKey),
@@ -3383,8 +3384,8 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
     // Validate insertion to the cache 😮
     if (!ok)
         throw Orm::Exceptions::RuntimeError(
-                sl("Insertion to the tst_CastAttributes::m_modelCache for the '%1' "
-                   "connection and ID(%3) failed in %2().")
+                u"Insertion to the tst_CastAttributes::m_modelCache for the '%1' "
+                 "connection and ID(%3) failed in %2()."_s
                 .arg(connection, __tiny_func__).arg(id));
 
     /* The u_casts has to be reset everytime since the u_casts is static because

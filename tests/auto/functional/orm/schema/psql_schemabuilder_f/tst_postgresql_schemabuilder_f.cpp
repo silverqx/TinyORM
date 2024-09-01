@@ -8,7 +8,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::PUBLIC;
 using Orm::Constants::search_path;
@@ -69,7 +70,7 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
               .toUtf8().constData(), );
 
     // Verify
-    const auto hasTable = Schema::on(*connectionName).hasTable(sl("users"));
+    const auto hasTable = Schema::on(*connectionName).hasTable(u"users"_s);
 
     /* This check is really weird, our implementation queries the PostgreSQL database
        using the 'show search_path' query to obtain a real search_path if
@@ -101,7 +102,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, sl("''")}});
+                {{search_path, u"''"_s}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -111,7 +112,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     // Verify
     QVERIFY_THROWS_EXCEPTION(
                 SearchPathEmptyError,
-                Schema::on(*connectionName).hasTable(sl("users")));
+                Schema::on(*connectionName).hasTable(u"users"_s));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -124,7 +125,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, sl("''")}});
+                {{search_path, u"''"_s}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -132,7 +133,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
               .toUtf8().constData(), );
 
     // Verify
-    QVERIFY(Schema::on(*connectionName).hasTable(sl("public.users")));
+    QVERIFY(Schema::on(*connectionName).hasTable(u"public.users"_s));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));

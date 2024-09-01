@@ -22,7 +22,6 @@ library.
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 

@@ -17,7 +17,7 @@ namespace Migrations
         T_MIGRATION
 
         /*! The name of the database connection to use. */
-//        QString connection = QStringLiteral("tinyorm_tom");
+//        QString connection = u"tinyorm_tom"_s;
         /*! Wrapping the migration within a transaction, if supported. */
         bool withinTransaction = false;
 

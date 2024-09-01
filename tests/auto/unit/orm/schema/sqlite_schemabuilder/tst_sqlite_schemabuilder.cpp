@@ -14,7 +14,6 @@
 #endif
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/torrent_norelations.hpp"
@@ -24,6 +23,8 @@
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -137,7 +138,7 @@ private:
     static QString getDatabaseFilepath();
 
     /*! Table or database name used in tests. */
-    inline static const auto Firewalls = sl("firewalls");
+    inline static const auto Firewalls = u"firewalls"_s;
 
     /*! Connection name used in this test case. */
     QString m_connection;
@@ -624,7 +625,7 @@ void tst_SQLite_SchemaBuilder::modifyTable_WithComment() const
                 .table(Firewalls, [](Blueprint &table)
         {
             // Can't throw an exception (SQLite doesn't support table comments)
-            table.comment(sl("Example 'table' comment"));
+            table.comment(u"Example 'table' comment"_s);
         });
     });
 
@@ -1681,9 +1682,9 @@ void tst_SQLite_SchemaBuilder::foreignKey_WithModel() const
         {
             table.id();
 
-            table.foreignIdFor(torrent, sl("torrent_id")).constrained()
+            table.foreignIdFor(torrent, u"torrent_id"_s).constrained()
                     .onDelete(Cascade).onUpdate(Restrict);
-            table.foreignIdFor(user, sl("user_id")).nullable().constrained()
+            table.foreignIdFor(user, u"user_id"_s).nullable().constrained()
                     .nullOnDelete().cascadeOnUpdate();
         });
     });
@@ -1725,9 +1726,9 @@ QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
         database.reserve(Firewalls.size() + 32);
 
         return database
-                .append(sl("tmp/tinyorm_tests_"))
+                .append(u"tmp/tinyorm_tests_"_s)
                 .append(Firewalls)
-                .append(sl(".sqlite3"));
+                .append(u".sqlite3"_s);
     }();
 
     return cached;

@@ -13,6 +13,8 @@ namespace Orm::Tiny::Types
 namespace TestUtils::Common
 {
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     /*! Common code for tst_collection_xyz auto tests, library class. */
     class Collection final
     {
@@ -31,11 +33,11 @@ namespace TestUtils::Common
         /*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
         inline static const Orm::Column album_id {std::in_place_index<0>, "album_id"};
         /*! QString constant "album_id" (perf. reason, one time initialization). */
-        inline static const auto album_id_s     = QStringLiteral("album_id");
+        inline static const auto album_id_s  = u"album_id"_s;
         /*! QString constant "albumImages" (perf. reason, one time initialization). */
-        inline static const auto albumImages    = QStringLiteral("albumImages");
+        inline static const auto albumImages = u"albumImages"_s;
         /*! QString constant "ext" (perf. reason, one time initialization). */
-        inline static const auto ext            = QStringLiteral("ext");
+        inline static const auto ext         = u"ext"_s;
 
         /*! Verify primary key IDs in the given collection. */
         template<typename M>

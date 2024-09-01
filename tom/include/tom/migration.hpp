@@ -59,6 +59,9 @@ TINYORM_END_COMMON_NAMESPACE
 // Import the most used constants into Migrations namespace so the user doesn't have to
 namespace Migrations
 {
+
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     /*! Alias for the Schema Blueprint. */
     using TINYORM_PREPEND_NAMESPACE(Orm::SchemaNs::Blueprint); // NOLINT(misc-unused-using-decls)
     /*! Alias for the Tom Migration. */

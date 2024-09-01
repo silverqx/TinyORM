@@ -10,7 +10,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -96,7 +97,7 @@ void tst_DatabaseConnection::pingDatabase() const
     if (const auto driverName = connectionRef.driverName();
         driverName != QMYSQL
     )
-        QSKIP(sl("The '%1' database driver doesn't support ping command.")
+        QSKIP(u"The '%1' database driver doesn't support ping command."_s
               .arg(driverName).toUtf8().constData(), );
 
 #ifndef TINYORM_MYSQL_PING
@@ -116,7 +117,7 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (connection != Databases::MYSQL)
-        QSKIP(sl("The '%1' connection is not the connection to the MySQL database.")
+        QSKIP(u"The '%1' connection is not the connection to the MySQL database."_s
               .arg(connection).toUtf8().constData(), );
 
     const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
@@ -130,7 +131,7 @@ void tst_DatabaseConnection::isMaria_OnMariaConnection() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (connection != Databases::MARIADB)
-        QSKIP(sl("The '%1' connection is not the connection to the MariaDB database.")
+        QSKIP(u"The '%1' connection is not the connection to the MariaDB database."_s
               .arg(connection).toUtf8().constData(), );
 
     const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
@@ -146,8 +147,8 @@ void tst_DatabaseConnection::transaction_Commit() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const auto nameValue = sl("alibaba");
-    const auto noteValue = sl("transation commit");
+    const auto nameValue = u"alibaba"_s;
+    const auto noteValue = u"transation commit"_s;
 
     DB::beginTransaction(connection);
 
@@ -182,8 +183,8 @@ void tst_DatabaseConnection::transaction_RollBack() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const auto nameValue = sl("alibaba");
-    const auto noteValue = sl("transation rollBack");
+    const auto nameValue = u"alibaba"_s;
+    const auto noteValue = u"transation rollBack"_s;
 
     DB::beginTransaction(connection);
 
@@ -228,8 +229,8 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = sl("mařka");
-        const auto noteValue = sl("transation double-commit");
+        const auto nameValue = u"mařka"_s;
+        const auto noteValue = u"transation double-commit"_s;
 
         DB::beginTransaction(connection);
 
@@ -258,8 +259,8 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = sl("venda");
-        const auto noteValue = sl("transation double-commit");
+        const auto nameValue = u"venda"_s;
+        const auto noteValue = u"transation double-commit"_s;
 
         DB::beginTransaction(connection);
 
@@ -299,8 +300,8 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = sl("john");
-        const auto noteValue = sl("transation double-rollBack");
+        const auto nameValue = u"john"_s;
+        const auto noteValue = u"transation double-rollBack"_s;
 
         DB::beginTransaction(connection);
 
@@ -331,8 +332,8 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = sl("franky");
-        const auto noteValue = sl("transation double-rollBack");
+        const auto nameValue = u"franky"_s;
+        const auto noteValue = u"transation double-rollBack"_s;
 
         DB::beginTransaction(connection);
 
@@ -372,7 +373,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
         QLatin1String("robert"),
         QLatin1String("david"),
     };
-    const auto noteValue = sl("transation savepoints commit all success");
+    const auto noteValue = u"transation savepoints commit all success"_s;
 
     // Result ids
     QList<quint64> idsSuccess;
@@ -457,7 +458,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     const QList<QString> nameValuesFailed {
         QLatin1String("robert"),
     };
-    const auto noteValue = sl("transation savepoints commit one failed");
+    const auto noteValue = u"transation savepoints commit one failed"_s;
 
     // Result ids
     QList<quint64> idsSuccess;
@@ -549,7 +550,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
         QLatin1String("robert"),
         QLatin1String("david"),
     };
-    const auto noteValue = sl("transation savepoints commit all failed");
+    const auto noteValue = u"transation savepoints commit all failed"_s;
 
     // Result ids
     QList<quint64> idsFailed;
@@ -644,7 +645,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
             QLatin1String("robert"),
             QLatin1String("david"),
         };
-        const auto noteValue = sl("transation savepoints commit all failed double");
+        const auto noteValue = u"transation savepoints commit all failed double"_s;
 
         // Result ids
         QList<quint64> idsFailed;
@@ -731,7 +732,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
             QLatin1String("robert"),
             QLatin1String("david"),
         };
-        const auto noteValue = sl("transation savepoints commit all failed double");
+        const auto noteValue = u"transation savepoints commit all failed double"_s;
 
         // Result ids
         QList<quint64> idsFailed;

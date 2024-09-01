@@ -2,13 +2,14 @@
 #include <QTest>
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/album_includeslist.hpp"
 #include "models/datetime.hpp"
 #include "models/datetime_serializeoverride.hpp"
 #include "models/torrent_includeslist.hpp"
 #include "models/type.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
@@ -377,7 +378,7 @@ void tst_Model_Serialization::toMap_WithDateModfiers() const
 {
     // Prepare
     auto timeFormatOriginal = Datetime::u_timeFormat;
-    Datetime::u_timeFormat = sl("HH:mm:ss.zzz");
+    Datetime::u_timeFormat = u"HH:mm:ss.zzz"_s;
 
     auto datetime = Datetime::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -415,8 +416,8 @@ void tst_Model_Serialization::toList_WithDateModfiers() const
     auto datetime = Datetime::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
-        {"time",     sl("14:11:15")},
-        {"time_ms",  sl("14:11:15.12")},
+        {"time",     u"14:11:15"_s},
+        {"time_ms",  u"14:11:15.12"_s},
     });
 
     datetime.mergeCasts({
@@ -540,8 +541,8 @@ void tst_Model_Serialization::toMap_CastsOnly_OverrideSerializeDateTime() const
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
-        {"time",     sl("14:11:15")},
-        {"time_ms",  sl("14:11:15.123")},
+        {"time",     u"14:11:15"_s},
+        {"time_ms",  u"14:11:15.123"_s},
     });
 
     datetime.mergeCasts({
@@ -572,7 +573,7 @@ tst_Model_Serialization::toList_CastsOnly_OverrideSerializeDateTime() const
 {
     // Prepare
     auto timeFormatOriginal = Datetime_SerializeOverride::u_timeFormat;
-    Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
+    Datetime_SerializeOverride::u_timeFormat = u"HH:mm:ss.zzz"_s;
 
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -670,7 +671,7 @@ void tst_Model_Serialization::
 {
     // Prepare
     auto timeFormatOriginal = Datetime_SerializeOverride::u_timeFormat;
-    Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
+    Datetime_SerializeOverride::u_timeFormat = u"HH:mm:ss.zzz"_s;
 
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
@@ -710,13 +711,13 @@ void tst_Model_Serialization::
 {
     // Prepare
     auto timeFormatOriginal = Datetime_SerializeOverride::u_timeFormat;
-    Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
+    Datetime_SerializeOverride::u_timeFormat = u"HH:mm:ss.zzz"_s;
 
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
-        {"time",     sl("14:11:15")},
-        {"time_ms",  sl("14:11:15.123")},
+        {"time",     u"14:11:15"_s},
+        {"time_ms",  u"14:11:15.123"_s},
     });
 
     /* The MM and dd are switched here, in this case the user serialize override methods
@@ -864,10 +865,10 @@ void tst_Model_Serialization::toList_WithCasts_DateNullVariants() const
     const auto &serialized3 = serialized.at(3);
     const auto &serialized4 = serialized.at(4);
 
-    QCOMPARE(serialized1.key, sl("date"));
-    QCOMPARE(serialized2.key, sl("datetime"));
-    QCOMPARE(serialized3.key, sl("timestamp"));
-    QCOMPARE(serialized4.key, sl("time"));
+    QCOMPARE(serialized1.key, u"date"_s);
+    QCOMPARE(serialized2.key, u"datetime"_s);
+    QCOMPARE(serialized3.key, u"timestamp"_s);
+    QCOMPARE(serialized4.key, u"time"_s);
 
     QVERIFY(serialized1.value.isValid() && serialized1.value.isNull());
     QVERIFY(serialized2.value.isValid() && serialized2.value.isNull());

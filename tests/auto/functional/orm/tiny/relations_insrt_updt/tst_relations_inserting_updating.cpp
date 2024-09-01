@@ -2,7 +2,6 @@
 #include <QTest>
 
 #include "databases.hpp"
-#include "macros.hpp"
 
 #include "models/torrent_includeslist.hpp"
 

@@ -11,7 +11,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::COMMA;
@@ -536,7 +537,7 @@ void tst_QueryBuilder::insert_select_diacritic() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // UTF-8 1 and 2 byte characters
-    static const auto value = sl("ěščřžýáíéúůôäľĺŕéó");
+    static const auto value = u"ěščřžýáíéúůôäľĺŕéó"_s;
 
     {
         auto builder = createQuery(connection);
@@ -578,7 +579,7 @@ void tst_QueryBuilder::insert_select_emoji() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // UTF-8 3 and 4 byte characters
-    static const auto value = sl("🕺😁🤔😮😅👍😊❗🔥😭😞😔");
+    static const auto value = u"🕺😁🤔😮😅👍😊❗🔥😭😞😔"_s;
 
     {
         auto builder = createQuery(connection);
@@ -678,7 +679,7 @@ void tst_QueryBuilder::whereDate_QString()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereDate(CREATED_AT, LE, sl("2018-08-03"))
+                  .whereDate(CREATED_AT, LE, u"2018-08-03"_s)
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -761,7 +762,7 @@ void tst_QueryBuilder::whereTime_QString()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereTime(CREATED_AT, LE, sl("08:10:23"))
+                  .whereTime(CREATED_AT, LE, u"08:10:23"_s)
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -842,7 +843,7 @@ void tst_QueryBuilder::whereDay_QString()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereDay(CREATED_AT, LE, sl("3"))
+                  .whereDay(CREATED_AT, LE, u"3"_s)
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -950,7 +951,7 @@ void tst_QueryBuilder::whereMonth_QString()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereMonth(CREATED_AT, LE, sl("8"))
+                  .whereMonth(CREATED_AT, LE, u"8"_s)
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -1058,7 +1059,7 @@ void tst_QueryBuilder::whereYear_QString()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereYear(CREATED_AT, LE, sl("2018"))
+                  .whereYear(CREATED_AT, LE, u"2018"_s)
                   .orderBy(CREATED_AT)
                   .get();
 

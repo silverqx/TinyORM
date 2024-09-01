@@ -27,6 +27,8 @@
 
 #include "seeders/databaseseeder.hpp"
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::DatabaseManager;
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
@@ -91,7 +93,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
     return DB::create({
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_MYSQL_DRIVER)
         // MySQL connection
-        {sl("tinyorm_testdata_tom_mysql"), { // shell:connection
+        {u"tinyorm_testdata_tom_mysql"_s, { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
@@ -108,14 +110,14 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mysqlSslOptions()},
         }},
 
         // MariaDB connection
-        {sl("tinyorm_testdata_tom_maria"), { // shell:connection
+        {u"tinyorm_testdata_tom_maria"_s, { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
@@ -134,7 +136,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, u"REPEATABLE READ"_s}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mariaSslOptions()},
@@ -142,9 +144,9 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 #endif
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_PSQL_DRIVER)
         // PostgreSQL connection
-        {sl("tinyorm_testdata_tom_postgres"), { // shell:connection
+        {u"tinyorm_testdata_tom_postgres"_s, { // shell:connection
             {driver_,            QPSQL},
-            {application_name,   sl("tom_testdata")},
+            {application_name,   u"tom_testdata"_s},
             {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
             {port_,              qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
             {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
@@ -159,7 +161,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {qt_timezone,        QVariant::fromValue(QtTimeZoneConfig::utc())},
             {prefix_,            EMPTY},
             {prefix_indexes,     false},
-//            {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//            {isolation_level,    u"REPEATABLE READ"_s}, // Postgres default is READ COMMITTED
 //            {synchronous_commit, off}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,          QStringList {spatial_ref_sys}},
@@ -168,7 +170,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 #endif
 #if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_SQLITE_DRIVER)
         // SQLite connection
-        {sl("tinyorm_testdata_tom_sqlite"), { // shell:connection
+        {u"tinyorm_testdata_tom_sqlite"_s, { // shell:connection
             {driver_,                 QSQLITE},
             {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
             {foreign_key_constraints, true},

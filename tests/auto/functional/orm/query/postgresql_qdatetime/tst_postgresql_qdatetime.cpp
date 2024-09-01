@@ -10,7 +10,8 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
-#include "macros.hpp"
+
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Constants::ID;
 using Orm::Constants::UTC;
@@ -2876,7 +2877,7 @@ void tst_PostgreSQL_QDateTime::setUtcTimezone() const
 
 void tst_PostgreSQL_QDateTime::setEUBratislavaTimezone() const
 {
-    setTimezone(sl("Europe/Bratislava"),
+    setTimezone(u"Europe/Bratislava"_s,
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZoneEUBratislava)});
 }
 
@@ -2888,8 +2889,8 @@ void tst_PostgreSQL_QDateTime::setDontConvertTimezone() const
 void tst_PostgreSQL_QDateTime::setTimezone(const QString &timeZone,
                                            QtTimeZoneConfig &&qtTimeZone) const
 {
-    const auto sqlQuery = DB::unprepared(sl("set time zone '%1';").arg(timeZone),
-                                        m_connection);
+    const auto sqlQuery = DB::unprepared(u"set time zone '%1';"_s.arg(timeZone),
+                                         m_connection);
 
     QVERIFY(!sqlQuery.isValid() && sqlQuery.isActive() && !sqlQuery.isSelect());
 
