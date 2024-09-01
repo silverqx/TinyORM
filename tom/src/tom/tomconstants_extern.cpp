@@ -2,179 +2,181 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Tom::Constants
 {
 
-    const QString DateTimePrefix   = QStringLiteral("yyyy_MM_dd_HHmmss");
+    const QString DateTimePrefix   = u"yyyy_MM_dd_HHmmss"_s;
 
     // Common strings
-    const QString LongOption       = QStringLiteral("--%1");
-    const QString LongOptionOnly   = QStringLiteral("    %1");
-    const QString LongOptionValue  = QStringLiteral("--%1[=%2]");
-    const QString ShortOption      = QStringLiteral("-%1");
-    const QString DoubleDash       = QStringLiteral("--");
+    const QString LongOption       = u"--%1"_s;
+    const QString LongOptionOnly   = u"    %1"_s;
+    const QString LongOptionValue  = u"--%1[=%2]"_s;
+    const QString ShortOption      = u"-%1"_s;
+    const QString DoubleDash       = u"--"_s;
 
-    const QString migration_  = QStringLiteral("migration");
-    const QString batch_      = QStringLiteral("batch");
+    const QString migration_  = u"migration"_s;
+    const QString batch_      = u"batch"_s;
 
     // Common options
-    const QString ansi          = QStringLiteral("ansi");
-    const QString noansi        = QStringLiteral("no-ansi");
-    const QString env           = QStringLiteral("env");
-    const QString help          = QStringLiteral("help");
-    const QString nointeraction = QStringLiteral("no-interaction");
-    const QString quiet         = QStringLiteral("quiet");
-    const QString verbose       = QStringLiteral("verbose");
+    const QString ansi          = u"ansi"_s;
+    const QString noansi        = u"no-ansi"_s;
+    const QString env           = u"env"_s;
+    const QString help          = u"help"_s;
+    const QString nointeraction = u"no-interaction"_s;
+    const QString quiet         = u"quiet"_s;
+    const QString verbose       = u"verbose"_s;
 
     // Commands' positional options
     // help
-    const QString command_name = QStringLiteral("command_name");
+    const QString command_name = u"command_name"_s;
     // list
-    const QString namespace_   = QStringLiteral("namespace");
-    const QString shell_       = QStringLiteral("shell");
+    const QString namespace_   = u"namespace"_s;
+    const QString shell_       = u"shell"_s;
 
     // Commands' options
     // Used by more commands
-    const QString force        = QStringLiteral("force");
-    const QString pretend      = QStringLiteral("pretend");
-    const QString seed         = QStringLiteral("seed");
-    const QString seeder       = QStringLiteral("seeder");
-    const QString step_        = QStringLiteral("step");
-    const QString path_        = QStringLiteral("path");
-    const QString json_        = QStringLiteral("json");
-    const QString pretty       = QStringLiteral("pretty");
-    const QString only_        = QStringLiteral("only");
+    const QString force        = u"force"_s;
+    const QString pretend      = u"pretend"_s;
+    const QString seed         = u"seed"_s;
+    const QString seeder       = u"seeder"_s;
+    const QString step_        = u"step"_s;
+    const QString path_        = u"path"_s;
+    const QString json_        = u"json"_s;
+    const QString pretty       = u"pretty"_s;
+    const QString only_        = u"only"_s;
     // Default value names
-    const QString env_up             = QStringLiteral("ENV");
-    const QString class_up           = QStringLiteral("CLASS");
-    const QString database_up        = QStringLiteral("DATABASE");
-    const QString seeder_up          = QStringLiteral("SEEDER");
-    const QString batch_up           = QStringLiteral("BATCH");
-    const QString step_up            = QStringLiteral("STEP");
-    const QString commandline_up     = QStringLiteral("COMMANDLINE");
-    const QString position_up        = QStringLiteral("POSITION");
-    const QString word_up            = QStringLiteral("WORD");
-    const QString cword_up           = QStringLiteral("CWORD");
-    const QString path_up            = QStringLiteral("PATH");
-    const QString create_up          = QStringLiteral("CREATE");
-    const QString table_up           = QStringLiteral("TABLE");
-    const QString primary_key_up     = QStringLiteral("PRIMARYKEY");
-    const QString connection_up      = QStringLiteral("CONNECTION");
-    const QString with_up            = QStringLiteral("WITH");
-    const QString fillable_up        = QStringLiteral("FILLABLE");
-    const QString guarded_up         = QStringLiteral("GUARDED");
-    const QString dateformat_up      = QStringLiteral("DATEFORMAT");
-    const QString dates_up           = QStringLiteral("DATES");
-    const QString touches_up         = QStringLiteral("TOUCHES");
-    const QString one_to_one_up      = QStringLiteral("OTO");
-    const QString one_to_many_up     = QStringLiteral("OTM");
-    const QString belongs_to_up      = QStringLiteral("BT");
-    const QString belongs_to_many_up = QStringLiteral("BTM");
-    const QString pivot_up           = QStringLiteral("PIVOT");
-    const QString pivot_inverse_up   = QStringLiteral("PIVOTINVERSE");
-    const QString as_up              = QStringLiteral("AS");
-    const QString with_pivot_up      = QStringLiteral("WITHPIVOT");
-    const QString foreign_key_up     = QStringLiteral("FOREIGNKEY");
-    const QString pivot_table_up     = QStringLiteral("PIVOTTABLE");
-    const QString visible_up         = QStringLiteral("VISIBLE");
-    const QString hidden_up          = QStringLiteral("HIDDEN");
-    const QString accessors_up       = QStringLiteral("ACCESSORS");
-    const QString appends_up         = QStringLiteral("APPENDS");
-    const QString only_up            = QStringLiteral("ONLY");
+    const QString env_up             = u"ENV"_s;
+    const QString class_up           = u"CLASS"_s;
+    const QString database_up        = u"DATABASE"_s;
+    const QString seeder_up          = u"SEEDER"_s;
+    const QString batch_up           = u"BATCH"_s;
+    const QString step_up            = u"STEP"_s;
+    const QString commandline_up     = u"COMMANDLINE"_s;
+    const QString position_up        = u"POSITION"_s;
+    const QString word_up            = u"WORD"_s;
+    const QString cword_up           = u"CWORD"_s;
+    const QString path_up            = u"PATH"_s;
+    const QString create_up          = u"CREATE"_s;
+    const QString table_up           = u"TABLE"_s;
+    const QString primary_key_up     = u"PRIMARYKEY"_s;
+    const QString connection_up      = u"CONNECTION"_s;
+    const QString with_up            = u"WITH"_s;
+    const QString fillable_up        = u"FILLABLE"_s;
+    const QString guarded_up         = u"GUARDED"_s;
+    const QString dateformat_up      = u"DATEFORMAT"_s;
+    const QString dates_up           = u"DATES"_s;
+    const QString touches_up         = u"TOUCHES"_s;
+    const QString one_to_one_up      = u"OTO"_s;
+    const QString one_to_many_up     = u"OTM"_s;
+    const QString belongs_to_up      = u"BT"_s;
+    const QString belongs_to_many_up = u"BTM"_s;
+    const QString pivot_up           = u"PIVOT"_s;
+    const QString pivot_inverse_up   = u"PIVOTINVERSE"_s;
+    const QString as_up              = u"AS"_s;
+    const QString with_pivot_up      = u"WITHPIVOT"_s;
+    const QString foreign_key_up     = u"FOREIGNKEY"_s;
+    const QString pivot_table_up     = u"PIVOTTABLE"_s;
+    const QString visible_up         = u"VISIBLE"_s;
+    const QString hidden_up          = u"HIDDEN"_s;
+    const QString accessors_up       = u"ACCESSORS"_s;
+    const QString appends_up         = u"APPENDS"_s;
+    const QString only_up            = u"ONLY"_s;
     // complete
-    const QString commandline        = QStringLiteral("commandline");
-    const QString position_          = QStringLiteral("position");
-    const QString word_              = QStringLiteral("word");
-    const QString cword_             = QStringLiteral("cword");
+    const QString commandline        = u"commandline"_s;
+    const QString position_          = u"position"_s;
+    const QString word_              = u"word"_s;
+    const QString cword_             = u"cword"_s;
     // list
-    const QString raw_               = QStringLiteral("raw");
+    const QString raw_               = u"raw"_s;
     // db:seed
-    const QString class_             = QStringLiteral("class");
+    const QString class_             = u"class"_s;
     // db:wipe
-    const QString drop_views         = QStringLiteral("drop-views");
-    const QString drop_types         = QStringLiteral("drop-types");
+    const QString drop_views         = u"drop-views"_s;
+    const QString drop_types         = u"drop-types"_s;
     // make:migration, make:model, make:seeder
-    const QString create_            = QStringLiteral("create");
-    const QString table_             = QStringLiteral("table");
-    const QString realpath_          = QStringLiteral("realpath");
-    const QString fullpath           = QStringLiteral("fullpath");
-    const QString from_model         = QStringLiteral("from-model");
+    const QString create_            = u"create"_s;
+    const QString table_             = u"table"_s;
+    const QString realpath_          = u"realpath"_s;
+    const QString fullpath           = u"fullpath"_s;
+    const QString from_model         = u"from-model"_s;
     // make:model
-    const QString one_to_one           = QStringLiteral("one-to-one");
-    const QString one_to_many          = QStringLiteral("one-to-many");
-    const QString belongs_to           = QStringLiteral("belongs-to");
-    const QString belongs_to_many      = QStringLiteral("belongs-to-many");
-    const QString foreign_key          = QStringLiteral("foreign-key");
-    const QString pivot_table          = QStringLiteral("pivot-table");
-    const QString primary_key          = QStringLiteral("primary-key");
-    const QString incrementing         = QStringLiteral("incrementing");
-    const QString disable_incrementing = QStringLiteral("disable-incrementing");
-    const QString connection_          = QStringLiteral("connection");
-    const QString with_                = QStringLiteral("with");
-    const QString fillable             = QStringLiteral("fillable");
-    const QString guarded              = QStringLiteral("guarded");
-    const QString disable_timestamps   = QStringLiteral("disable-timestamps");
-    const QString dateformat           = QStringLiteral("dateformat");
-    const QString dates                = QStringLiteral("dates");
-    const QString touches              = QStringLiteral("touches");
-    const QString pivot_model          = QStringLiteral("pivot-model");
-    const QString pivot_inverse        = QStringLiteral("pivot-inverse");
-    const QString as_                  = QStringLiteral("as");
-    const QString with_timestamps      = QStringLiteral("with-timestamps");
-    const QString with_pivot           = QStringLiteral("with-pivot");
-    const QString preserve_order       = QStringLiteral("preserve-order");
-    const QString snake_attributes     = QStringLiteral("snake-attributes");
+    const QString one_to_one           = u"one-to-one"_s;
+    const QString one_to_many          = u"one-to-many"_s;
+    const QString belongs_to           = u"belongs-to"_s;
+    const QString belongs_to_many      = u"belongs-to-many"_s;
+    const QString foreign_key          = u"foreign-key"_s;
+    const QString pivot_table          = u"pivot-table"_s;
+    const QString primary_key          = u"primary-key"_s;
+    const QString incrementing         = u"incrementing"_s;
+    const QString disable_incrementing = u"disable-incrementing"_s;
+    const QString connection_          = u"connection"_s;
+    const QString with_                = u"with"_s;
+    const QString fillable             = u"fillable"_s;
+    const QString guarded              = u"guarded"_s;
+    const QString disable_timestamps   = u"disable-timestamps"_s;
+    const QString dateformat           = u"dateformat"_s;
+    const QString dates                = u"dates"_s;
+    const QString touches              = u"touches"_s;
+    const QString pivot_model          = u"pivot-model"_s;
+    const QString pivot_inverse        = u"pivot-inverse"_s;
+    const QString as_                  = u"as"_s;
+    const QString with_timestamps      = u"with-timestamps"_s;
+    const QString with_pivot           = u"with-pivot"_s;
+    const QString preserve_order       = u"preserve-order"_s;
+    const QString snake_attributes     = u"snake-attributes"_s;
     const QString disable_snake_attributes
-                                       = QStringLiteral("disable-snake-attributes");
-    const QString casts_example        = QStringLiteral("casts-example");
-    const QString visible              = QStringLiteral("visible");
-    const QString hidden               = QStringLiteral("hidden");
-    const QString accessors            = QStringLiteral("accessors");
-    const QString appends              = QStringLiteral("appends");
+                                       = u"disable-snake-attributes"_s;
+    const QString casts_example        = u"casts-example"_s;
+    const QString visible              = u"visible"_s;
+    const QString hidden               = u"hidden"_s;
+    const QString accessors            = u"accessors"_s;
+    const QString appends              = u"appends"_s;
     // migrate:refresh
-    const QString step_migrate         = QStringLiteral("step-migrate");
+    const QString step_migrate         = u"step-migrate"_s;
     // migrate:status
-    const QString pending_             = QStringLiteral("pending");
+    const QString pending_             = u"pending"_s;
     // migrate:uninstall
-    const QString reset                = QStringLiteral("reset");
+    const QString reset                = u"reset"_s;
     // integrate
-    const QString stdout_              = QStringLiteral("stdout");
+    const QString stdout_              = u"stdout"_s;
 
     // Namespace names
-    const QString NsGlobal     = QStringLiteral("global");
-    const QString NsDb         = QStringLiteral("db");
-    const QString NsMake       = QStringLiteral("make");
-    const QString NsMigrate    = QStringLiteral("migrate");
-    const QString NsNamespaced = QStringLiteral("namespaced");
-    const QString NsAll        = QStringLiteral("all");
+    const QString NsGlobal     = u"global"_s;
+    const QString NsDb         = u"db"_s;
+    const QString NsMake       = u"make"_s;
+    const QString NsMigrate    = u"migrate"_s;
+    const QString NsNamespaced = u"namespaced"_s;
+    const QString NsAll        = u"all"_s;
 
     // Shell names
-    const QString ShBash       = QStringLiteral("bash");
-    const QString ShPwsh       = QStringLiteral("pwsh");
-    const QString ShZsh        = QStringLiteral("zsh");
+    const QString ShBash       = u"bash"_s;
+    const QString ShPwsh       = u"pwsh"_s;
+    const QString ShZsh        = u"zsh"_s;
 
     // Command names
-    const QString About            = QStringLiteral("about");
-    const QString Complete         = QStringLiteral("complete");
-    const QString DbSeed           = QStringLiteral("db:seed");
-    const QString DbWipe           = QStringLiteral("db:wipe");
-    const QString Inspire          = QStringLiteral("inspire");
-    const QString List             = QStringLiteral("list");
+    const QString About            = u"about"_s;
+    const QString Complete         = u"complete"_s;
+    const QString DbSeed           = u"db:seed"_s;
+    const QString DbWipe           = u"db:wipe"_s;
+    const QString Inspire          = u"inspire"_s;
+    const QString List             = u"list"_s;
     const QString &Env             = Tom::Constants::env;
     const QString &Help            = Tom::Constants::help;
-    const QString MakeMigration    = QStringLiteral("make:migration");
-    const QString MakeModel        = QStringLiteral("make:model");
-    const QString MakeProject      = QStringLiteral("make:project");
-    const QString MakeSeeder       = QStringLiteral("make:seeder");
+    const QString MakeMigration    = u"make:migration"_s;
+    const QString MakeModel        = u"make:model"_s;
+    const QString MakeProject      = u"make:project"_s;
+    const QString MakeSeeder       = u"make:seeder"_s;
     const QString &Migrate         = Tom::Constants::NsMigrate;
-    const QString MigrateFresh     = QStringLiteral("migrate:fresh");
-    const QString MigrateInstall   = QStringLiteral("migrate:install");
-    const QString MigrateRollback  = QStringLiteral("migrate:rollback");
-    const QString MigrateRefresh   = QStringLiteral("migrate:refresh");
-    const QString MigrateReset     = QStringLiteral("migrate:reset");
-    const QString MigrateStatus    = QStringLiteral("migrate:status");
-    const QString MigrateUninstall = QStringLiteral("migrate:uninstall");
-    const QString Integrate        = QStringLiteral("integrate");
+    const QString MigrateFresh     = u"migrate:fresh"_s;
+    const QString MigrateInstall   = u"migrate:install"_s;
+    const QString MigrateRollback  = u"migrate:rollback"_s;
+    const QString MigrateRefresh   = u"migrate:refresh"_s;
+    const QString MigrateReset     = u"migrate:reset"_s;
+    const QString MigrateStatus    = u"migrate:status"_s;
+    const QString MigrateUninstall = u"migrate:uninstall"_s;
+    const QString Integrate        = u"integrate"_s;
 
 } // namespace Tom::Constants
 
