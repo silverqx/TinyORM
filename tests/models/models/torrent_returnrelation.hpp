@@ -10,7 +10,6 @@ namespace Models
 using Orm::Constants::AddedOn;
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::Pivot;
 
 class Tag_BasicPivot_NoRelations;
 class Tag_CustomPivot_NoRelations;
@@ -22,7 +21,7 @@ class User_NoRelations;
 class Torrent_ReturnRelation final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<Torrent_ReturnRelation, TorrentPreviewableFile_NoRelations,
                      TorrentPeer_NoRelations, Tag_BasicPivot_NoRelations,
-                     Tag_CustomPivot_NoRelations, User_NoRelations, Pivot>
+                     Tag_CustomPivot_NoRelations, User_NoRelations>
 {
     friend Model;
     using Model::Model;
