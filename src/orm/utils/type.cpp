@@ -73,7 +73,7 @@ bool Type::isTrue(const QString &value)
 {
     return !value.isEmpty() &&
            value != '0'_L1 &&
-           value.compare(u"false"_s, Qt::CaseInsensitive) != 0 &&
+           value.compare("false"_L1, Qt::CaseInsensitive) != 0 &&
            // QVariant::value<bool>() doesn't check conditions below
            value.compare(off, Qt::CaseInsensitive) != 0;
 }
@@ -116,16 +116,16 @@ bool Type::isCMakeTrue(const QString &value)
     return !value.isEmpty() &&
            value != '0'_L1 &&
            value.compare(off,              Qt::CaseInsensitive) != 0 &&
-           value.compare(u"no"_s,          Qt::CaseInsensitive) != 0 &&
-           value.compare(u"n"_s,           Qt::CaseInsensitive) != 0 &&
-           value.compare(u"false"_s,       Qt::CaseInsensitive) != 0 &&
-           value.compare(u"ignore"_s,      Qt::CaseInsensitive) != 0 &&
+           value.compare("no"_L1,          Qt::CaseInsensitive) != 0 &&
+           value.compare("n"_L1,           Qt::CaseInsensitive) != 0 &&
+           value.compare("false"_L1,       Qt::CaseInsensitive) != 0 &&
+           value.compare("ignore"_L1,      Qt::CaseInsensitive) != 0 &&
            /* The NOTFOUND and xyz-NOTFOUND are case-sensitive even if CMake documentation
               states that the named boolean constants are case-insensitive.
               We have to take this into account because notfound or xyz-notfound are
               considered TRUE. */
-           value.compare(u"NOTFOUND"_s,    Qt::CaseSensitive)   != 0 &&
-           !value.endsWith(u"-NOTFOUND"_s, Qt::CaseSensitive);
+           value.compare("NOTFOUND"_L1,    Qt::CaseSensitive)   != 0 &&
+           !value.endsWith("-NOTFOUND"_L1, Qt::CaseSensitive);
 }
 
 QString
