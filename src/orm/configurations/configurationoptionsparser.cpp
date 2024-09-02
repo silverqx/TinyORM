@@ -173,7 +173,7 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
         const auto value = itOption.value().value<QString>();
 
         concatenated.emplaceBack(
-                    // Support option flags without a value (are considred as enabled)
+                    // Support option flags without a value (are considered as enabled)
                     value.isEmpty() ? key : u"%1=%2"_s.arg(key, value));
 
         ++itOption;

@@ -194,7 +194,7 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
         {appends,              u"The attributes that should be appended during "
                                 "serialization <comment>(multiple values allowed)"
                                 "</comment>"_s, appends_up}, // Value
-        {pivot_model,          u"Genarate a custom pivot model class"_s},
+        {pivot_model,          u"Generate a custom pivot model class"_s},
 
         // Others
         {{QChar('o'),

@@ -118,7 +118,7 @@ namespace Tom::Commands::Make
         bool snakeAttributes;
         /*! Disable snake_cased attributes during serialization. */
         bool disableSnakeAttributes;
-        /*! Genarate a custom pivot model class. */
+        /*! Generate a custom pivot model class. */
         bool pivotModel;
     };
 
