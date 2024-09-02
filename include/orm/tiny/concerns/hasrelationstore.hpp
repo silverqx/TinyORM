@@ -390,8 +390,8 @@ namespace Orm::Tiny::Concerns
         using namespace Qt::StringLiterals;
 
         static const auto message =
-                u"You can not %1 the %2 model in the middle of any relation store "
-                 "operation."_s;
+                u"You can not %1 the %2 model in the middle of any relation store "_s
+                 "operation.";
         // Don't make it static
         const auto className = TypeUtils::classPureBasename<Derived>();
 

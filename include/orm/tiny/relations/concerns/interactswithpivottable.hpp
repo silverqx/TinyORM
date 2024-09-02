@@ -1125,8 +1125,8 @@ namespace Concerns
             const QVariant &overwrite) const
     {
         static const auto overwriteMessage =
-                u"You can not overwrite '%1' ID key; "
-                 "original value : %2, your value : %3."_s;
+                u"You can not overwrite '%1' ID key; "_s
+                 "original value : %2, your value : %3.";
 
         throw Orm::Exceptions::DomainError(
                     overwriteMessage.arg(

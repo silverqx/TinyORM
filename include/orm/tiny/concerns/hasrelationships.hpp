@@ -1201,17 +1201,17 @@ namespace Concerns
         if constexpr (std::is_same_v<Result, std::optional<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
-                        u"The relation '%1' is many type relation, use the %2<%3>() "
-                         "method overload without an 'Orm::One' tag."_s
+                        u"The relation '%1' is many type relation, use the %2<%3>() "_s
+                         "method overload without an 'Orm::One' tag."
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
 
         } else if constexpr (std::is_same_v<Result, ModelsCollection<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
-                        u"The relation '%1' is one type relation, use "
+                        u"The relation '%1' is one type relation, use "_s
                          "the %2<%3, Orm::One>() method overload with "
-                         "an 'Orm::One' tag."_s
+                         "an 'Orm::One' tag."
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
         } else

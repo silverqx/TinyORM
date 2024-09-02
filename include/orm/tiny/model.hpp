@@ -1900,12 +1900,12 @@ namespace Orm::Tiny
             const QList<AttributeItem> &attributes)
     {
         static const auto message =
-            u"Attributes passed to the '%1' model's constructor or Default Attribute "
+            u"Attributes passed to the '%1' model's constructor or Default Attribute "_s
              "Values defined in the '%1::u_attributes' data member can't contain the "
              "QDateTime attribute, to create a '%1' model instance with attributes that "
              "contain the QDateTime attribute use the %1::instance() method instead "
              "(recommended) or convert the '%2' QDateTime attribute to the QString "
-             "(not recommended)."_s;
+             "(not recommended).";
 
         for (const auto &[key, value] : attributes)
             if (value.isValid() && !value.isNull() &&
@@ -1919,8 +1919,8 @@ namespace Orm::Tiny
     void Model<Derived, AllRelations...>::throwTotallyGuarded(const QString &key)
     {
         throw Exceptions::MassAssignmentError(
-                    u"Add '%1' to u_fillable data member to allow mass assignment "
-                     "on the '%2' model."_s
+                    u"Add '%1' to u_fillable data member to allow mass assignment "_s
+                     "on the '%2' model."
                     .arg(key, TypeUtils::classPureBasename<Derived>()));
     }
 

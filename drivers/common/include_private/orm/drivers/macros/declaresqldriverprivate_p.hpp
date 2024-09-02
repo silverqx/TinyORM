@@ -17,13 +17,13 @@
     /*! Get a pointer to the ClassSqlDriver private implementation, const version. */    \
     inline const Class##Private *drv_d_func() const                                      \
     {                                                                                    \
-        using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */   \
+        using Qt::StringLiterals::operator""_s;                                          \
                                                                                          \
         if (const auto driver = sqldriver.lock(); !driver) T_UNLIKELY                    \
             throw Exceptions::LogicError(                                                \
-                        u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
+                        u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "_s  \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(), for '%1' database connection in %2()."_s     \
+                         "removeDatabase(), for '%1' database connection in %2()."       \
                         .arg(connectionName, __tiny_func__));                            \
                                                                                          \
         else T_LIKELY                                                                    \
@@ -33,13 +33,13 @@
     /*! Get a pointer to the ClassSqlDriver private implementation. */                   \
     inline Class##Private *drv_d_func()                                                  \
     {                                                                                    \
-        using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */   \
+        using Qt::StringLiterals::operator""_s;                                          \
                                                                                          \
         if (const auto driver = sqldriver.lock(); !driver) T_UNLIKELY                    \
             throw Exceptions::LogicError(                                                \
-                        u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
+                        u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "_s  \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(), for '%1' database connection in %2()."_s     \
+                         "removeDatabase(), for '%1' database connection in %2()."       \
                         .arg(connectionName, __tiny_func__));                            \
                                                                                          \
         else T_LIKELY                                                                    \

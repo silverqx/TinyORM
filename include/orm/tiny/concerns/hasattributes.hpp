@@ -1698,8 +1698,8 @@ namespace Orm::Tiny::Concerns
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
             throw Orm::Exceptions::InvalidFormatError(
-                        u"Could not parse the datetime, could not convert the 'value' "
-                         "to the QString in %1()."_s
+                        u"Could not parse the datetime, could not convert the 'value' "_s
+                         "to the QString in %1()."
                         .arg(__tiny_func__));
 
         const auto valueString = value.value<QString>();
@@ -1744,8 +1744,8 @@ namespace Orm::Tiny::Concerns
             return convertTimeZone(std::move(dateIso));
 
         throw Orm::Exceptions::InvalidFormatError(
-                    u"Could not parse the datetime '%1' using the given format '%2' "
-                     "in %3()."_s
+                    u"Could not parse the datetime '%1' using the given format '%2' "_s
+                     "in %3()."
                     .arg(valueString, format, __tiny_func__));
     }
 
@@ -1777,8 +1777,8 @@ namespace Orm::Tiny::Concerns
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
             throw Orm::Exceptions::InvalidFormatError(
-                    u"Could not parse the time, could not convert the 'value' "
-                     "to the QString in %1()."_s
+                    u"Could not parse the time, could not convert the 'value' "_s
+                     "to the QString in %1()."
                     .arg(__tiny_func__));
 
         const auto valueString = value.value<QString>();
@@ -1801,8 +1801,8 @@ namespace Orm::Tiny::Concerns
             return timeIso;
 
         throw Orm::Exceptions::InvalidFormatError(
-                    u"Could not parse the time '%1' using the Qt::ISODateWithMs format "
-                     "in %2()."_s
+                    u"Could not parse the time '%1' using the Qt::ISODateWithMs "_s
+                     "format in %2()."
                     .arg(valueString, __tiny_func__));
     }
 
@@ -2453,8 +2453,8 @@ namespace Orm::Tiny::Concerns
         using namespace Qt::StringLiterals;
 
         throw Orm::Exceptions::InvalidArgumentError(
-                u"The '%1' attribute doesn't exist in the '%2' model's m_attributes "
-                 "vector in %3()."_s
+                u"The '%1' attribute doesn't exist in the '%2' model's m_attributes "_s
+                 "vector in %3()."
                 .arg(attribute, TypeUtils::classPureBasename<Derived>(), functionName));
     }
 
@@ -2471,9 +2471,9 @@ namespace Orm::Tiny::Concerns
         using namespace Qt::StringLiterals;
 
         throw Orm::Exceptions::InvalidArgumentError(
-                    u"Bad cast type was defined in the %1::u_casts hash, the '%2' "
+                    u"Bad cast type was defined in the %1::u_casts hash, the '%2' "_s
                      "attribute can not be cast to the 'CastType::%3' "
-                     "(using the QMetaType::%4) in %5()."_s
+                     "(using the QMetaType::%4) in %5()."
                     .arg(TypeUtils::template classPureBasename<Derived>(), key,
                          castTypeName(castType), metaType.name(), functionName));
     }
@@ -2490,9 +2490,9 @@ namespace Orm::Tiny::Concerns
            the QVariant::convert(), but the convert() return value is still checked
            for the false value and in this case this method will be called. */
         qDebug().noquote()
-                << u"The QVariant::convert() to the 'QMetaType::%1' for the '%2' "
+                << u"The QVariant::convert() to the 'QMetaType::%1' for the '%2' "_s
                     "attribute returned 'false', defined cast type on the "
-                    "'%3::u_casts' model was 'CastType::%4' in %5()."_s
+                    "'%3::u_casts' model was 'CastType::%4' in %5()."
                    .arg(metaType.name(), key, TypeUtils::classPureBasename<Derived>(),
                         castTypeName(castType), functionName);
     }

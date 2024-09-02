@@ -2312,8 +2312,8 @@ namespace Types
         using namespace Qt::StringLiterals;
 
         throw Orm::Exceptions::InvalidArgumentError(
-                    u"The '%1' comparison operator is not allowed in the "
-                     "ModelsCollection::where() related methods in %2()."_s
+                    u"The '%1' comparison operator is not allowed in the "_s
+                     "ModelsCollection::where() related methods in %2()."
                     .arg(comparison, __tiny_func__));
 
     }

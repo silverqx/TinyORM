@@ -239,8 +239,8 @@ namespace Concerns
                to avoid passing invalid data to the user. */
             if (!lastId.isValid() || lastId.isNull())
                 throw Orm::Exceptions::RuntimeError(
-                        u"The chunkById operation was aborted because the [%1] column "
-                         "is not present in the query result."_s
+                        u"The chunkById operation was aborted because the [%1] column "_s
+                         "is not present in the query result."
                         .arg(aliasName));
 
             /* On each chunk result set, we will pass them to the callback and then let
