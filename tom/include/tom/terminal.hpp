@@ -120,6 +120,8 @@ namespace Tom
     template<OStreamConcept O>
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 #ifndef _WIN32
         Q_UNUSED(cout)
 #endif
@@ -127,15 +129,15 @@ namespace Tom
         if (qEnvironmentVariableIsSet("NO_COLOR"))
             return false;
 
-        if (qEnvironmentVariable("TERM_PROGRAM") == QStringLiteral("Hyper"))
+        if (qEnvironmentVariable("TERM_PROGRAM") == "Hyper"_L1)
             return isatty(stream);
 
 #ifdef _WIN32
         return isatty(stream) &&
                 (hasVt100Support(cout) ||
                  qEnvironmentVariableIsSet("ANSICON") ||
-                 qEnvironmentVariable("ConEmuANSI") == QStringLiteral("ON") ||
-                 qEnvironmentVariable("TERM") == QStringLiteral("xterm"));
+                 qEnvironmentVariable("ConEmuANSI") == "ON"_L1 ||
+                 qEnvironmentVariable("TERM") == "xterm"_L1);
 #else
         // Detect character device, in most cases false when the output is redirected
         return isatty(stream);
