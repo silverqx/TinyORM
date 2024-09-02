@@ -2,21 +2,21 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 namespace Orm::Drivers::MySql::Constants
 {
 
-    // Common chars
-    const QChar DOT       = '.'_L1;
-    const QChar SEMICOLON = ';'_L1;
-    const QChar COLON     = ':'_L1;
-    const QChar DASH      = '-'_L1;
-    const QChar EQ_C      = '='_L1;
-    const QChar BACKTICK  = '`'_L1;
+    // Common chars - QChar(u'') is faster than ''_L1
+    const QChar DOT       = QChar(u'.');
+    const QChar SEMICOLON = QChar(u';');
+    const QChar COLON     = QChar(u':');
+    const QChar DASH      = QChar(u'-');
+    const QChar EQ_C      = QChar(u'=');
+    const QChar BACKTICK  = QChar(u'`');
 
     // Common strings
-    const QString EMPTY   = ""_L1;
+    const QString EMPTY   = u""_s; // This is fastest
     const QString COMMA   = u", "_s;
 
     // Database related

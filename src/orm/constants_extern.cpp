@@ -2,32 +2,32 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Qt::StringLiterals::operator""_s;
+
 namespace Orm::Constants
 {
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
-    // Common chars
-    const QChar SPACE      = ' '_L1;
-    const QChar DOT        = '.'_L1;
-    const QChar SEMICOLON  = ';'_L1;
-    const QChar COLON      = ':'_L1;
-    const QChar UNDERSCORE = '_'_L1;
-    const QChar DASH       = '-'_L1;
-    const QChar MINUS      = '-'_L1;
-    const QChar PLUS       = '+'_L1;
-    const QChar ASTERISK_C = '*'_L1;
-    const QChar COMMA_C    = ','_L1;
-    const QChar EQ_C       = '='_L1;
-    const QChar NOT_C      = '!'_L1;
-    const QChar LT_C       = '<'_L1;
-    const QChar GT_C       = '>'_L1;
-    const QChar QUOTE      = '"'_L1;
-    const QChar SQUOTE     = '\''_L1;
+    // Common chars - QChar(u'') is faster than ''_L1
+    const QChar SPACE      = QChar(u' ');
+    const QChar DOT        = QChar(u'.');
+    const QChar SEMICOLON  = QChar(u';');
+    const QChar COLON      = QChar(u':');
+    const QChar UNDERSCORE = QChar(u'_');
+    const QChar DASH       = QChar(u'-');
+    const QChar MINUS      = QChar(u'-');
+    const QChar PLUS       = QChar(u'+');
+    const QChar ASTERISK_C = QChar(u'*');
+    const QChar COMMA_C    = QChar(u',');
+    const QChar EQ_C       = QChar(u'=');
+    const QChar NOT_C      = QChar(u'!');
+    const QChar LT_C       = QChar(u'<');
+    const QChar GT_C       = QChar(u'>');
+    const QChar QUOTE      = QChar(u'"');
+    const QChar SQUOTE     = QChar(u'\'');
 
     // Common strings
     const QString NEWLINE      = u"\n"_s;
-    const QString EMPTY        = QLatin1String("");
+    const QString EMPTY        = u""_s; // This is fastest
     const QString ASTERISK     = u"*"_s;
     const QString COMMA        = u", "_s;
     const QString INNER        = u"inner"_s;

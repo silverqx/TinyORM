@@ -2,15 +2,15 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 namespace Orm::Drivers::Constants
 {
 
-    // Common chars
-    const QChar SPACE = ' '_L1;
-    const QChar DOT   = '.'_L1;
-    const QChar QUOTE = '"'_L1;
+    // Common chars - QChar(u'') is faster than ''_L1
+    const QChar SPACE = QChar(u' ');
+    const QChar DOT   = QChar(u'.');
+    const QChar QUOTE = QChar(u'"');
 
     // Common strings
     const QString NEWLINE = u"\n"_s;

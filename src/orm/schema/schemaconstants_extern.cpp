@@ -2,10 +2,10 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Qt::StringLiterals::operator""_s;
+
 namespace Orm::SchemaNs::Constants
 {
-
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     // Command names
     const QString Create            = u"create"_s;

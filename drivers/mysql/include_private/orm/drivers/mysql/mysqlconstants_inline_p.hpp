@@ -12,22 +12,25 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::MySql::Constants
 {
 
-    // Common chars
-    inline const QChar DOT       = QLatin1Char('.');
-    inline const QChar SEMICOLON = QLatin1Char(';');
-    inline const QChar COLON     = QLatin1Char(':');
-    inline const QChar DASH      = QLatin1Char('-');
-    inline const QChar EQ_C      = QLatin1Char('=');
-    inline const QChar BACKTICK  = QLatin1Char('`');
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
+    // Common chars - QChar(u'') is faster than ''_L1
+    inline const QChar DOT       = QChar(u'.');
+    inline const QChar SEMICOLON = QChar(u';');
+    inline const QChar COLON     = QChar(u':');
+    inline const QChar DASH      = QChar(u'-');
+    inline const QChar EQ_C      = QChar(u'=');
+    inline const QChar BACKTICK  = QChar(u'`');
 
     // Common strings
-    inline const QString EMPTY   = QLatin1String("");
-    inline const QString COMMA   = QStringLiteral(", ");
+    inline const QString EMPTY   = u""_s; // This is fastest
+    inline const QString COMMA   = u", "_s;
 
     // Database related
-    inline const QString QMYSQL  = QStringLiteral("QMYSQL");
-//    inline const QString QPSQL   = QStringLiteral("QPSQL");
-//    inline const QString QSQLITE = QStringLiteral("QSQLITE");
+    inline const QString QMYSQL  = u"QMYSQL"_s;
+//    inline const QString QPSQL   = u"QPSQL"_s;
+//    inline const QString QSQLITE = u"QSQLITE"_s;
 
 } // namespace Orm::Drivers::MySql::Constants
 
