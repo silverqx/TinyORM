@@ -5,6 +5,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm
 {
 
@@ -37,14 +39,14 @@ namespace Orm
 
 const QString &BaseGrammar::getDateFormat() const
 {
-    static const auto cachedFormat = QStringLiteral("yyyy-MM-dd HH:mm:ss");
+    static const auto cachedFormat = u"yyyy-MM-dd HH:mm:ss"_s;
 
     return cachedFormat;
 }
 
 const QString &BaseGrammar::getTimeFormat() const
 {
-    static const auto cachedFormat = QStringLiteral("HH:mm:ss");
+    static const auto cachedFormat = u"HH:mm:ss"_s;
 
     return cachedFormat;
 }
@@ -55,7 +57,7 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
     /* If the value being wrapped has a column alias we will need to separate out
        the pieces so we can wrap each of the segments of the expression on its
        own, and then join these both back together using the "as" connector. */
-    if (value.contains(QStringLiteral(" as "), Qt::CaseInsensitive))
+    if (value.contains(u" as "_s, Qt::CaseInsensitive))
         return wrapAliasedValue(value, prefixAlias);
 
     // FEATURE json columns, this code has to be in the Grammars::Grammar silverqx
@@ -86,8 +88,7 @@ QString BaseGrammar::wrapTable(const FromClause &table) const
     if (std::holds_alternative<std::monostate>(table))
         // Not InvalidArgumentError because table argument was not passed by user
         throw Exceptions::RuntimeError(
-                QStringLiteral("Unexpected std::monostate value in %1().")
-                .arg(__tiny_func__));
+                u"Unexpected std::monostate value in %1()."_s.arg(__tiny_func__));
 
     if (std::holds_alternative<Expression>(table))
         return getValue(std::get<Expression>(table)).value<QString>();
@@ -163,8 +164,7 @@ QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAli
     if (prefixAlias)
         segments[1] = NOSPACE.arg(m_tablePrefix, segments[1]);
 
-    return QStringLiteral("%1 as %2").arg(wrap(segments.constFirst()),
-                                          wrapValue(segments[1]));
+    return u"%1 as %2"_s.arg(wrap(segments.constFirst()), wrapValue(segments[1]));
 }
 
 QString BaseGrammar::wrapValue(QString value) const
@@ -173,7 +173,7 @@ QString BaseGrammar::wrapValue(QString value) const
         return value;
 
     // Don't change to prepend()/append(), no perf. gain, I have tested it
-    return TMPL_DQUOTES.arg(value.replace(QUOTE, QStringLiteral("\"\"")));
+    return TMPL_DQUOTES.arg(value.replace(QUOTE, u"\"\""_s));
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
@@ -195,8 +195,7 @@ QString BaseGrammar::wrapSegments(QStringList segments) const
 QStringList BaseGrammar::getSegmentsFromAlias(const QString &aliasedExpression)
 {
     const auto segmentsView = QStringView(aliasedExpression)
-                              .split(QStringLiteral(" as "), Qt::KeepEmptyParts,
-                                     Qt::CaseInsensitive);
+                              .split(u" as "_s, Qt::KeepEmptyParts, Qt::CaseInsensitive);
 
     Q_ASSERT(!segmentsView.isEmpty() && segmentsView.size() <= 2);
 

@@ -11,6 +11,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::DEFAULT;
 using Orm::Constants::LOCAL;
 using Orm::Constants::NAME;
@@ -83,9 +85,9 @@ void PostgresConnector::configureIsolationLevel(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set session characteristics as "
-                                  "transaction isolation level %1;")
-                   .arg(config[isolation_level].value<QString>())))
+    if (query.exec(u"set session characteristics as transaction isolation level %1;"_s
+                   .arg(config[isolation_level].value<QString>()))
+    )
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -104,8 +106,7 @@ void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set names '%1';")
-                   .arg(config[charset_].value<QString>())))
+    if (query.exec(u"set names '%1';"_s.arg(config[charset_].value<QString>())))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -139,10 +140,10 @@ void PostgresConnector::configureTimezone(const TSqlDatabase &connection,
     const auto timezone = config[timezone_].value<QString>();
 
     if (local.contains(timezone)) {
-        if (query.exec(QStringLiteral("set time zone %1;").arg(timezone)))
+        if (query.exec(u"set time zone %1;"_s.arg(timezone)))
             return;
     } else
-        if (query.exec(QStringLiteral("set time zone '%1';").arg(timezone)))
+        if (query.exec(u"set time zone '%1';"_s.arg(timezone)))
             return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -163,7 +164,7 @@ void PostgresConnector::configureSearchPath(const TSqlDatabase &connection,
 
     // Don't add the searchPath.isEmpty() check here to allow set "" (empty search path)
 
-    if (query.exec(QStringLiteral("set search_path to %1;")
+    if (query.exec(u"set search_path to %1;"_s
                    .arg(quoteSearchPath(
                             parseSearchPath(config[search_path]))))
     )
@@ -181,10 +182,10 @@ QString PostgresConnector::quoteSearchPath(const QStringList &searchPath)
 {
     // Allow to set an empty search_path
     if (isSearchPathEmpty(searchPath))
-        return QStringLiteral("''");
+        return u"''"_s;
 
     // Really nice 😎
-    return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, QStringLiteral("\", \"")));
+    return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, u"\", \""_s));
 }
 
 void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,
@@ -195,7 +196,7 @@ void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set application_name to '%1';")
+    if (query.exec(u"set application_name to '%1';"_s
                    .arg(config["application_name"].value<QString>())))
         return;
 
@@ -215,7 +216,7 @@ void PostgresConnector::configureSynchronousCommit(const TSqlDatabase &connectio
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set synchronous_commit to '%1';")
+    if (query.exec(u"set synchronous_commit to '%1';"_s
                    .arg(config[synchronous_commit].value<QString>())))
         return;
 

@@ -14,6 +14,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::ASTERISK_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::OFF;
@@ -44,13 +46,13 @@ QString Type::prettyFunction(const QString &function)
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression regex(
-                QStringLiteral(R"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"));
+                uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif defined(_MSC_VER)
     static const QRegularExpression regex(
-                QStringLiteral(R"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"));
+                uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw RuntimeError(
-                "Unsupported compiler in Utils::Type::prettyFunction().");
+                u"Unsupported compiler in Utils::Type::prettyFunction()."_s);
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",
@@ -64,14 +66,14 @@ QString Type::prettyFunction(const QString &function)
     Q_ASSERT_X(regex.captureCount() == 2, "regex match",
                "Can not get the function name in Utils::Type::prettyFunction().");
 
-    return QStringLiteral("%1::%2").arg(match.captured(1), match.captured(2));
+    return u"%1::%2"_s.arg(match.captured(1), match.captured(2));
 }
 
 bool Type::isTrue(const QString &value)
 {
     return !value.isEmpty() &&
-           value != QLatin1Char('0') &&
-           value.compare(QStringLiteral("false"), Qt::CaseInsensitive) != 0 &&
+           value != '0'_L1 &&
+           value.compare(u"false"_s, Qt::CaseInsensitive) != 0 &&
            // QVariant::value<bool>() doesn't check conditions below
            value.compare(off, Qt::CaseInsensitive) != 0;
 }
@@ -83,8 +85,8 @@ bool Type::isTrue(const QVariant &value)
 
 QString Type::normalizeCMakeTriStateBool(const QString &value)
 {
-    static const auto NotFoundSuffix = QStringLiteral("-NOTFOUND");
-    static const auto NotFound       = QStringLiteral("NOTFOUND");
+    static const auto NotFoundSuffix = u"-NOTFOUND"_s;
+    static const auto NotFound       = u"NOTFOUND"_s;
 
     /* Is NOTFOUND or xyz-NOTFOUND (just/only return it).
        The NOTFOUND and xyz-NOTFOUND are case-sensitive even if CMake documentation
@@ -112,18 +114,18 @@ bool Type::isCMakeTrue(const QString &value)
        values involves numbers, especially floating point numbers and +- sign before
        a number is more complicated. */
     return !value.isEmpty() &&
-           value != QLatin1Char('0') &&
-           value.compare(off,                           Qt::CaseInsensitive) != 0 &&
-           value.compare(QStringLiteral("no"),          Qt::CaseInsensitive) != 0 &&
-           value.compare(QStringLiteral("n"),           Qt::CaseInsensitive) != 0 &&
-           value.compare(QStringLiteral("false"),       Qt::CaseInsensitive) != 0 &&
-           value.compare(QStringLiteral("ignore"),      Qt::CaseInsensitive) != 0 &&
+           value != '0'_L1 &&
+           value.compare(off,              Qt::CaseInsensitive) != 0 &&
+           value.compare(u"no"_s,          Qt::CaseInsensitive) != 0 &&
+           value.compare(u"n"_s,           Qt::CaseInsensitive) != 0 &&
+           value.compare(u"false"_s,       Qt::CaseInsensitive) != 0 &&
+           value.compare(u"ignore"_s,      Qt::CaseInsensitive) != 0 &&
            /* The NOTFOUND and xyz-NOTFOUND are case-sensitive even if CMake documentation
               states that the named boolean constants are case-insensitive.
               We have to take this into account because notfound or xyz-notfound are
               considered TRUE. */
-           value.compare(QStringLiteral("NOTFOUND"),    Qt::CaseSensitive)   != 0 &&
-           !value.endsWith(QStringLiteral("-NOTFOUND"), Qt::CaseSensitive);
+           value.compare(u"NOTFOUND"_s,    Qt::CaseSensitive)   != 0 &&
+           !value.endsWith(u"-NOTFOUND"_s, Qt::CaseSensitive);
 }
 
 QString
@@ -144,19 +146,20 @@ namespace
         switch (status) {
         case -1:
             throw RuntimeError(
-                        "A memory allocation failure occurred in abi::__cxa_demangle().");
+                        u"A memory allocation failure occurred "
+                         "in abi::__cxa_demangle()."_s);
         case -2:
             throw RuntimeError(
-                        "The mangled_name argument for abi::__cxa_demangle() is not "
-                        "a valid name under the C++ ABI mangling rules.");
+                        u"The mangled_name argument for abi::__cxa_demangle() is not "
+                         "a valid name under the C++ ABI mangling rules."_s);
         case -3:
             throw RuntimeError(
-                        "One of the arguments for abi::__cxa_demangle() is invalid.");
+                        u"One of the arguments for abi::__cxa_demangle() is invalid."_s);
 
         default:
             throw RuntimeError(
-                        QStringLiteral("Unexpected status code '%1' returned "
-                                       "from abi::__cxa_demangle().")
+                        u"Unexpected status code '%1' returned "
+                         "from abi::__cxa_demangle()."_s
                         .arg(status));
         }
     }
@@ -182,7 +185,7 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
     return classPureBasenameGcc(typeNameDemangled, withNamespace);
 #else
     throw RuntimeError(
-                "Unsupported compiler in Utils::Type::classPureBasenameInternal().");
+                u"Unsupported compiler in Utils::Type::classPureBasenameInternal()."_s);
 #endif
 }
 
@@ -210,7 +213,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
     // Block needed to pass Clang-Tidy bugprone-branch-clone
     else {
         // Doesn't contain the namespace
-        if (const qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
+        if (const qptrdiff toBegin = className.lastIndexOf(u"::"_s);
              toBegin == -1
         )
             itBegin += findBeginWithoutNS(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -242,7 +245,7 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 
     if (!withNamespace)
         // Have the namespace and :: found, +2 to point after
-        if (const qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
+        if (const qptrdiff toBegin = className.lastIndexOf(u"::"_s);
             toBegin != -1
         )
             itBegin += toBegin + 2; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)

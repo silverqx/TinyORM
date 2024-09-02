@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::SchemaNs::Grammars
 {
 
@@ -20,74 +22,67 @@ namespace Orm::SchemaNs::Grammars
 QString PostgresSchemaGrammar::compileCreateDatabase(
         const QString &name, DatabaseConnection &connection) const
 {
-    return QStringLiteral("create database %1 encoding %2")
+    return u"create database %1 encoding %2"_s
             .arg(wrapValue(name),
                  wrapValue(connection.getConfig(charset_).value<QString>()));
 }
 
 QString PostgresSchemaGrammar::compileDropDatabaseIfExists(const QString &name) const
 {
-    return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
+    return u"drop database if exists %1"_s.arg(wrapValue(name));
 }
 
 QString PostgresSchemaGrammar::compileDropAllTables(const QList<QString> &tables) const
 {
-    return QStringLiteral("drop table %1 cascade").arg(columnizeWithoutWrap(
-                                                           escapeNames(tables)));
+    return u"drop table %1 cascade"_s.arg(columnizeWithoutWrap(escapeNames(tables)));
 }
 
 QString PostgresSchemaGrammar::compileDropAllViews(const QList<QString> &views) const
 {
-    return QStringLiteral("drop view %1 cascade").arg(columnizeWithoutWrap(
-                                                          escapeNames(views)));
+    return u"drop view %1 cascade"_s.arg(columnizeWithoutWrap(escapeNames(views)));
 }
 
 QString
 PostgresSchemaGrammar::compileGetAllTables(const QList<QString> &databases) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral(
-                "select tablename, "
-                  "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
-                "from pg_catalog.pg_tables "
-                  "where schemaname in (%1)")
+    return u"select tablename, "
+              "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
+            "from pg_catalog.pg_tables "
+              "where schemaname in (%1)"_s
             .arg(quoteString(databases));
 }
 
 QString
 PostgresSchemaGrammar::compileGetAllViews(const QList<QString> &databases) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral(
-                "select viewname, "
-                "concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname "
-                "from pg_catalog.pg_views "
-                  "where schemaname in (%1)")
+    return u"select viewname, "
+              "concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname "
+            "from pg_catalog.pg_views "
+              "where schemaname in (%1)"_s
             .arg(quoteString(databases));
 }
 
 QString PostgresSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("set constraints all immediate");
+    return u"set constraints all immediate"_s;
 }
 
 QString PostgresSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("set constraints all deferred");
+    return u"set constraints all deferred"_s;
 }
 
 QString PostgresSchemaGrammar::compileTableExists() const
 {
-    return QStringLiteral("select * "
-                          "from information_schema.tables "
-                          "where table_catalog = ? and table_schema = ? and "
-                            "table_name = ? and table_type = 'BASE TABLE'");
+    return u"select * from information_schema.tables "
+            "where table_catalog = ? and table_schema = ? and "
+              "table_name = ? and table_type = 'BASE TABLE'"_s;
 }
 
 QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("select column_name "
-                          "from information_schema.columns "
-                          "where table_catalog = ? and table_schema = ? and "
-                            "table_name = ?");
+    return u"select column_name from information_schema.columns "
+            "where table_catalog = ? and table_schema = ? and table_name = ?"_s;
 }
 
 /* Compile methods for commands */
@@ -95,9 +90,8 @@ QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) c
 QList<QString>
 PostgresSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 {
-    return {QStringLiteral("%1 table %2 (%3)")
-                .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
-                                             : Create,
+    return {u"%1 table %2 (%3)"_s
+                .arg(blueprint.isTemporary() ? u"create temporary"_s : Create,
                      wrapTable(blueprint),
                      columnizeWithoutWrap(getColumns(blueprint)))};
 }
@@ -106,7 +100,7 @@ QList<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename to %2")
+    return {u"alter table %1 rename to %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
@@ -114,11 +108,10 @@ QList<QString>
 PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                   const BasicCommand &/*unused*/) const
 {
-    return {QStringLiteral("alter table %1 %2")
+    return {u"alter table %1 %2"_s
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(
-                         prefixArray(QStringLiteral("add column"),
-                                     getColumns(blueprint))))};
+                         prefixArray(u"add column"_s, getColumns(blueprint))))};
 }
 
 QList<QString>
@@ -137,7 +130,7 @@ PostgresSchemaGrammar::compileChange(const Blueprint &blueprint,
         const auto collate = modifyCollate(column);
 
         // The column type with the collate has to be defined at once
-        changes << QStringLiteral("type %1%2")
+        changes << u"type %1%2"_s
                    .arg(getType(column),
                         collate.isEmpty() ? EMPTY : collate.constFirst());
 
@@ -145,19 +138,18 @@ PostgresSchemaGrammar::compileChange(const Blueprint &blueprint,
         changes << getModifiersForChange(column);
 
         columns << columnizeWithoutWrap(
-                       prefixArray(QStringLiteral("alter column %1").arg(wrap(column)),
-                                   changes));
+                       prefixArray(u"alter column %1"_s.arg(wrap(column)), changes));
     }
 
-    return {QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint),
-                                                    columnizeWithoutWrap(columns))};
+    return {u"alter table %1 %2"_s.arg(wrapTable(blueprint),
+                                       columnizeWithoutWrap(columns))};
 }
 
 QList<QString>
 PostgresSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                          const DropColumnsCommand &command) const
 {
-    return {QStringLiteral("alter table %1 %2")
+    return {u"alter table %1 %2"_s
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(prefixArray("drop column",
                                                       wrapArray(command.columns))))};
@@ -167,7 +159,7 @@ QList<QString>
 PostgresSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                            const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename column %2 to %3")
+    return {u"alter table %1 rename column %2 to %3"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
@@ -176,7 +168,7 @@ QList<QString>
 PostgresSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                                       const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 add primary key (%2)")
+    return {u"alter table %1 add primary key (%2)"_s
                 .arg(wrapTable(blueprint), columnize(command.columns))};
 }
 
@@ -184,7 +176,7 @@ QList<QString>
 PostgresSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                      const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 add constraint %2 unique (%3)")
+    return {u"alter table %1 add constraint %2 unique (%3)"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index),
                      columnize(command.columns))};
 }
@@ -195,9 +187,9 @@ PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
 {
     const auto algorithm = command.algorithm.isEmpty()
                            ? QString("")
-                           : QStringLiteral(" using %1").arg(command.algorithm);
+                           : u" using %1"_s.arg(command.algorithm);
 
-    return {QStringLiteral("create index %1 on %2%3 (%4)")
+    return {u"create index %1 on %2%3 (%4)"_s
                 .arg(BaseGrammar::wrap(command.index), wrapTable(blueprint),
                      algorithm, columnize(command.columns))};
 }
@@ -206,9 +198,9 @@ QList<QString>
 PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
                                        const IndexCommand &command) const
 {
-    static const auto TsVectorTmpl = QStringLiteral("to_tsvector(%1, %2)");
+    static const auto TsVectorTmpl = u"to_tsvector(%1, %2)"_s;
 
-    const auto language = command.language.isEmpty() ? QStringLiteral("english")
+    const auto language = command.language.isEmpty() ? u"english"_s
                                                      : command.language;
 
     const auto columns = command.columns
@@ -221,10 +213,10 @@ PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
 
     /* Double (()) described here, simply it's a expression not the column name:
        https://www.postgresql.org/docs/10/indexes-expressional.html */
-    return {QStringLiteral("create index %1 on %2 using gin ((%3))")
+    return {u"create index %1 on %2 using gin ((%3))"_s
                 .arg(BaseGrammar::wrap(command.index),
                      wrapTable(blueprint),
-                     ContainerUtils::join(columns, QStringLiteral(" || ")))};
+                     ContainerUtils::join(columns, u" || "_s))};
 }
 
 QList<QString>
@@ -232,7 +224,7 @@ PostgresSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
                                            const IndexCommand &command) const
 {
     // TODO schema, get rid of all const_cast<> in schema grammars, this is only one from all compileXyz() methods which needs to modify the command, if there will be also another commands that need to modify the command then make the command non-const silverqx
-    const_cast<IndexCommand &>(command).algorithm = QStringLiteral("gist"); // NOLINT(cppcoreguidelines-pro-type-const-cast)
+    const_cast<IndexCommand &>(command).algorithm = u"gist"_s; // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
     return compileIndex(blueprint, command);
 }
@@ -250,15 +242,15 @@ PostgresSchemaGrammar::compileForeign(const Blueprint &blueprint,
     const auto isDeferrable = command.deferrable.has_value();
 
     if (isDeferrable)
-        sql += command.deferrable ? QStringLiteral(" deferrable")
-                                  : QStringLiteral(" not deferrable");
+        sql += command.deferrable ? u" deferrable"_s
+                                  : u" not deferrable"_s;
 
     if (isDeferrable && *command.deferrable && command.initiallyImmediate)
-        sql += command.initiallyImmediate ? QStringLiteral(" initially immediate")
-                                          : QStringLiteral(" initially deferred");
+        sql += command.initiallyImmediate ? u" initially immediate"_s
+                                          : u" initially deferred"_s;
 
     if (command.notValid && *command.notValid)
-        sql += QStringLiteral(" not valid");
+        sql += u" not valid"_s;
 
     return sqlCommands;
 }
@@ -267,10 +259,10 @@ QList<QString>
 PostgresSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                           const IndexCommand &/*unused*/) const
 {
-    const auto index = BaseGrammar::wrap(QStringLiteral("%1_pkey")
+    const auto index = BaseGrammar::wrap(u"%1_pkey"_s
                                          .arg(blueprint.getTable()));
 
-    return {QStringLiteral("alter table %1 drop constraint %2")
+    return {u"alter table %1 drop constraint %2"_s
             .arg(wrapTable(blueprint), index)};
 }
 
@@ -278,14 +270,14 @@ QList<QString>
 PostgresSchemaGrammar::compileDropIndex(const Blueprint &/*unused*/,
                                         const IndexCommand &command) const
 {
-    return {QStringLiteral("drop index %1").arg(BaseGrammar::wrap(command.index))};
+    return {u"drop index %1"_s.arg(BaseGrammar::wrap(command.index))};
 }
 
 QList<QString>
 PostgresSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,
                                           const RenameCommand &command) const
 {
-    return {QStringLiteral("alter index %1 rename to %2")
+    return {u"alter index %1 rename to %2"_s
                 .arg(BaseGrammar::wrap(command.from), BaseGrammar::wrap(command.to))};
 }
 
@@ -298,7 +290,7 @@ PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
     if (isCommentEmpty && !command.change)
         return {};
 
-    return {QStringLiteral("comment on column %1.%2 is %3")
+    return {u"comment on column %1.%2 is %3"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.column),
                                      // Remove a column comment (used during change())
                      isCommentEmpty ? null_
@@ -313,7 +305,7 @@ PostgresSchemaGrammar::compileTableComment(const Blueprint &blueprint,
         return {};
 
     // All escaped special characters will be correctly saved in the comment
-    return {QStringLiteral("comment on table %1 is %2")
+    return {u"comment on table %1 is %2"_s
                 .arg(wrapTable(blueprint),
                      quoteString(escapeString(command.comment)))};
 }
@@ -391,8 +383,8 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     Q_ASSERT_X(cached.contains(name),
                "PostgresSchemaGrammar::invokeCompileMethod",
-               QStringLiteral("Compile methods map doesn't contain the '%1' key "
-                              "(unsupported command).")
+               u"Compile methods map doesn't contain the '%1' key "
+                "(unsupported command)."_s
                .arg(name)
                .toUtf8().constData());
 
@@ -450,7 +442,7 @@ PostgresSchemaGrammar::compileAutoIncrementStartingValue( // NOLINT(readability-
         const Blueprint &blueprint,
         const AutoIncrementStartingValueCommand &command) const
 {
-    return {QStringLiteral(R"(alter sequence "%1_%2_seq" restart with %3)")
+    return {uR"(alter sequence "%1_%2_seq" restart with %3)"_s
                 .arg(blueprint.getTable(), command.column)
                 .arg(command.startingValue)};
 }
@@ -459,7 +451,7 @@ QList<QString>
 PostgresSchemaGrammar::compileDropConstraint(const Blueprint &blueprint,
                                              const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 drop constraint %2")
+    return {u"alter table %1 drop constraint %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
@@ -474,7 +466,7 @@ QString PostgresSchemaGrammar::escapeString(QString value) const
        (especially look at the caution box):
        https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
 
-    return value.replace(SQUOTE, QStringLiteral("''"));
+    return value.replace(SQUOTE, u"''"_s);
 }
 
 QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
@@ -617,8 +609,7 @@ QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
 
     default:
         throw Exceptions::RuntimeError(
-                    QStringLiteral("Unsupported column type in %1().")
-                    .arg(__tiny_func__));
+                    u"Unsupported column type in %1()."_s.arg(__tiny_func__));
     }
 }
 
@@ -627,31 +618,31 @@ PostgresSchemaGrammar::formatPostGisType(const QString &type,
                                          const ColumnDefinition &column)
 {
     if (!column.isGeometry)
-        return QStringLiteral("geography(%1, %2)")
+        return u"geography(%1, %2)"_s
                 .arg(type, column.srid ? QString::number(*column.srid)
-                                       : QStringLiteral("4326"));
+                                       : u"4326"_s);
 
     // NOTE api different, Eloquent uses the column.projection for this, I'm reusing the column.srid silverqx
     if (column.srid)
-        return QStringLiteral("geometry(%1, %2)")
+        return u"geometry(%1, %2)"_s
                 .arg(type, QString::number(*column.srid));
 
-    return QStringLiteral("geometry(%1)").arg(type);
+    return u"geometry(%1)"_s.arg(type);
 }
 
 QString PostgresSchemaGrammar::typeChar(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("char(%1)").arg(column.length);
+    return u"char(%1)"_s.arg(column.length);
 }
 
 QString PostgresSchemaGrammar::typeString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("varchar(%1)").arg(column.length);
+    return u"varchar(%1)"_s.arg(column.length);
 }
 
 QString PostgresSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("varchar(255)");
+    return u"varchar(255)"_s;
 }
 
 QString PostgresSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
@@ -672,15 +663,15 @@ QString PostgresSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) 
 QString PostgresSchemaGrammar::typeBigInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
-            ? QStringLiteral("bigserial")
-            : QStringLiteral("bigint");
+            ? u"bigserial"_s
+            : u"bigint"_s;
 }
 
 QString PostgresSchemaGrammar::typeInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
-            ? QStringLiteral("serial")
-            : QStringLiteral("integer");
+            ? u"serial"_s
+            : u"integer"_s;
 }
 
 QString PostgresSchemaGrammar::typeMediumInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -696,8 +687,8 @@ QString PostgresSchemaGrammar::typeTinyInteger(const ColumnDefinition &column) c
 QString PostgresSchemaGrammar::typeSmallInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
-            ? QStringLiteral("smallserial")
-            : QStringLiteral("smallint");
+            ? u"smallserial"_s
+            : u"smallint"_s;
 }
 
 QString PostgresSchemaGrammar::typeFloat(const ColumnDefinition &column) const
@@ -707,48 +698,48 @@ QString PostgresSchemaGrammar::typeFloat(const ColumnDefinition &column) const
 
 QString PostgresSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("double precision");
+    return u"double precision"_s;
 }
 
 QString PostgresSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("real");
+    return u"real"_s;
 }
 
 QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.total)
-        return QStringLiteral("decimal");
+        return u"decimal"_s;
 
-    return QStringLiteral("decimal(%1, %2)").arg(*column.total)
+    return u"decimal(%1, %2)"_s.arg(*column.total)
                                             // Follow the SQL standard
                                             .arg(column.places ? *column.places : 0);
 }
 
 QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("boolean");
+    return u"boolean"_s;
 }
 
 QString PostgresSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral(R"(varchar(255) check ("%1" in (%2)))")
+    return uR"(varchar(255) check ("%1" in (%2)))"_s
             .arg(column.name, quoteString(column.allowed));
 }
 
 QString PostgresSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("json");
+    return u"json"_s;
 }
 
 QString PostgresSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("jsonb");
+    return u"jsonb"_s;
 }
 
 QString PostgresSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("date");
+    return u"date"_s;
 }
 
 QString PostgresSchemaGrammar::typeDateTime(ColumnDefinition &column) const
@@ -763,50 +754,48 @@ QString PostgresSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 
 QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("time%1 without time zone")
+    return u"time%1 without time zone"_s
             /* The behavior if the precision is omitted (or 0 of course):
                PostgreSQL default is 6 if omitted, from docs: If no precision is
                specified in a constant specification, it defaults to the precision
                of the literal value (but not more than 6 digits).
                So the >-1 is ok, the default will be time(0). */
             .arg(column.precision && *column.precision > -1
-                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 ? u"(%1)"_s.arg(*column.precision)
                  : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("time%1 with time zone")
+    return u"time%1 with time zone"_s
             .arg(column.precision && *column.precision > -1
-                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 ? u"(%1)"_s.arg(*column.precision)
                  : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
+        column.defaultValue = Expression(u"current_timestamp"_s);
 
-    return QStringLiteral("timestamp%1 without time zone")
+    return u"timestamp%1 without time zone"_s
             /* The behavior if the precision is omitted (or 0 of course):
                PostgreSQL default is 6 if omitted, from docs: If no precision is
                specified in a constant specification, it defaults to the precision
                of the literal value (but not more than 6 digits).
                So the >-1 is ok, the default will be timestamp(0). */
             .arg(column.precision && *column.precision > -1
-                 ? QStringLiteral("(%1)").arg(*column.precision)
-                 : QString(""));
+                 ? u"(%1)"_s.arg(*column.precision) : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
+        column.defaultValue = Expression(u"current_timestamp"_s);
 
-    return QStringLiteral("timestamp%1 with time zone")
+    return u"timestamp%1 with time zone"_s
             .arg(column.precision && *column.precision > -1
-                 ? QStringLiteral("(%1)").arg(*column.precision)
-                 : QString(""));
+                 ? u"(%1)"_s.arg(*column.precision) : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const
@@ -836,63 +825,63 @@ QString PostgresSchemaGrammar::typeLongBinary(const ColumnDefinition &/*unused*/
 
 QString PostgresSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("uuid");
+    return u"uuid"_s;
 }
 
 QString PostgresSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("inet");
+    return u"inet"_s;
 }
 
 QString PostgresSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("macaddr");
+    return u"macaddr"_s;
 }
 
 QString PostgresSchemaGrammar::typeGeometry(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("geometry"), column);
+    return formatPostGisType(u"geometry"_s, column);
 }
 
 QString PostgresSchemaGrammar::typePoint(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("point"), column);
+    return formatPostGisType(u"point"_s, column);
 }
 
 QString PostgresSchemaGrammar::typeLineString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("linestring"), column);
+    return formatPostGisType(u"linestring"_s, column);
 }
 
 QString PostgresSchemaGrammar::typePolygon(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("polygon"), column);
+    return formatPostGisType(u"polygon"_s, column);
 }
 
 QString
 PostgresSchemaGrammar::typeGeometryCollection(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("geometrycollection"), column);
+    return formatPostGisType(u"geometrycollection"_s, column);
 }
 
 QString PostgresSchemaGrammar::typeMultiPoint(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("multipoint"), column);
+    return formatPostGisType(u"multipoint"_s, column);
 }
 
 QString PostgresSchemaGrammar::typeMultiLineString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("multilinestring"), column);
+    return formatPostGisType(u"multilinestring"_s, column);
 }
 
 QString PostgresSchemaGrammar::typeMultiPolygon(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("multipolygon"), column);
+    return formatPostGisType(u"multipolygon"_s, column);
 }
 
 QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return formatPostGisType(QStringLiteral("multipolygonz"), column);
+    return formatPostGisType(u"multipolygonz"_s, column);
 }
 
 QList<QString>
@@ -901,7 +890,7 @@ PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
     if (column.collation.isEmpty())
         return {};
 
-    return {QStringLiteral(" collate %1").arg(wrapValue(column.collation))};
+    return {u" collate %1"_s.arg(wrapValue(column.collation))};
 }
 
 QList<QString>
@@ -917,7 +906,7 @@ PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // 
         (serials.contains(column.type) || !column.generatedAs.isNull()) && // Can't be generatedAs.isEmpty()!
         column.autoIncrement
     )
-        return {QStringLiteral(" primary key")};
+        return {u" primary key"_s};
 
     return {};
 }
@@ -926,14 +915,13 @@ QList<QString>
 PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.change)
-        return {column.nullable && *column.nullable ? QStringLiteral("drop not null")
-                                                    : QStringLiteral("set not null")};
+        return {column.nullable && *column.nullable ? u"drop not null"_s
+                                                    : u"set not null"_s};
 
     /* PostgreSQL doesn't need any special logic for generated columns (virtualAs and
        storedAs), it accepts both, null and also not null for generated columns, I have
        tried it. */
-    return {column.nullable && *column.nullable ? QStringLiteral(" null")
-                                                : QStringLiteral(" not null")};
+    return {column.nullable && *column.nullable ? u" null"_s : u" not null"_s};
 }
 
 QList<QString>
@@ -945,14 +933,14 @@ PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     // Default value is already quoted and escaped inside the getDefaultValue()
 
     if (column.change)
-        return {isNotValidOrNull ? QStringLiteral("drop default")
-                                 : QStringLiteral("set default %1")
+        return {isNotValidOrNull ? u"drop default"_s
+                                 : u"set default %1"_s
                                    .arg(getDefaultValue(defaultValue))};
 
     if (isNotValidOrNull)
         return {};
 
-    return {QStringLiteral(" default %1").arg(getDefaultValue(defaultValue))};
+    return {u" default %1"_s.arg(getDefaultValue(defaultValue))};
 }
 
 QList<QString>
@@ -966,12 +954,12 @@ PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // 
 
     if (column.change) {
         if (column.virtualAs->isEmpty())
-            return {QStringLiteral("drop expression if exists")};
+            return {u"drop expression if exists"_s};
 
         throwModifyingGeneratedColumn();
     }
 
-    return {QStringLiteral(" generated always as (%1)").arg(*column.virtualAs)};
+    return {u" generated always as (%1)"_s.arg(*column.virtualAs)};
 }
 
 QList<QString>
@@ -982,12 +970,12 @@ PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // N
 
     if (column.change) {
         if (column.storedAs->isEmpty())
-            return {QStringLiteral("drop expression if exists")};
+            return {u"drop expression if exists"_s};
 
         throwModifyingGeneratedColumn();
     }
 
-    return {QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs)};
+    return {u" generated always as (%1) stored"_s.arg(*column.storedAs)};
 }
 
 QList<QString>
@@ -999,21 +987,19 @@ PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const /
     /* generatedAs.isNull() mean it was not defined at all, and isEmpty() it was called
        like generatedAs(). */
     if (!column.generatedAs.isNull())
-        sql += QStringLiteral(" generated %1 as identity%2")
+        sql += u" generated %1 as identity%2"_s
                .arg(
                    // ALWAYS and BY DEFAULT clause
-                   column.always ? QStringLiteral("always")
-                                 : QStringLiteral("by default"),
+                   column.always ? u"always"_s : u"by default"_s,
                    // Sequence options clause
-                   !column.generatedAs.isEmpty() ? QStringLiteral(" (%1)")
-                                                   .arg(column.generatedAs)
+                   !column.generatedAs.isEmpty() ? u" (%1)"_s.arg(column.generatedAs)
                                                  : QString(""));
 
     if (column.change) {
         QList<QString> changes;
         changes.reserve(2);
 
-        changes << QStringLiteral("drop identity if exists");
+        changes << u"drop identity if exists"_s;
 
         if (!sql.isEmpty())
             changes << std::move(sql.prepend(Add));

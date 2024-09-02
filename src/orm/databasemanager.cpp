@@ -307,14 +307,15 @@ DatabaseConnection &DatabaseManager::connection(const QString &name) // NOLINT(g
 DatabaseManager &
 DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
 {
-    if (m_configuration->contains(name))
-        throw Exceptions::InvalidArgumentError(
-                QStringLiteral("The database connection '%1' already exists.")
-                .arg(name));
+    if (!m_configuration->contains(name)) {
+        m_configuration->emplace(name, config);
+        return *this;
+    }
 
-    m_configuration->emplace(name, config);
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
-    return *this;
+    throw Exceptions::InvalidArgumentError(
+                u"The database connection '%1' already exists."_s.arg(name));
 }
 
 DatabaseManager &
@@ -458,13 +459,14 @@ bool DatabaseManager::isConnectionDriverAvailable(const QString &connection)
 {
     const auto driverName = configuration(connection)[driver_].value<QString>();
 
-    if (!supportedDrivers().contains(driverName))
-        throw Exceptions::LogicError(
-                QStringLiteral("An unsupported driver name '%1' has been defined for "
-                               "the '%2' connection.")
-                .arg(driverName, connection));
+    if (supportedDrivers().contains(driverName))
+        return TSqlDatabase::isDriverAvailable(driverName);
 
-    return TSqlDatabase::isDriverAvailable(driverName);
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    throw Exceptions::LogicError(
+                u"An unsupported driver name '%1' has been defined for "
+                 "the '%2' connection."_s
+                .arg(driverName, connection));
 }
 
 const QString &
@@ -941,9 +943,10 @@ void DatabaseManager::throwIfNoConfiguration(const QString &connection) const
     if (m_configuration->contains(connection))
         return;
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Database connection '%1' is not configured.")
-                .arg(connection));
+                u"Database connection '%1' is not configured."_s.arg(connection));
 }
 
 std::shared_ptr<DatabaseConnection>

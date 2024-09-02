@@ -32,10 +32,11 @@ ForeignIdColumnDefinitionReference::constrained(const QString &table,
         if (column.isEmpty())
             return TMPL_PLURAL.arg(foreignName);
 
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
         // Don's use the Qt6's QString::first() here (the result can be -1)
         return TMPL_PLURAL.arg(foreignName.left(
-                                   foreignName.lastIndexOf(
-                                       QStringLiteral("_%1").arg(column))));
+                                   foreignName.lastIndexOf(u"_%1"_s.arg(column))));
     };
 
     return references(QList<QString> {column})

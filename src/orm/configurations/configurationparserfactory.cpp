@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
@@ -56,8 +58,7 @@ ConfigurationParserFactory::make(const QString &driver)
 //        return std::make_unique<SqlServerConfigurationParser>();
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unsupported driver option '%1' in %2().")
-                .arg(driver, __tiny_func__));
+                u"Unsupported driver option '%1' in %2()."_s.arg(driver, __tiny_func__));
 }
 
 /* private */
@@ -70,8 +71,7 @@ QString ConfigurationParserFactory::getDriverName(const QVariantHash &config)
         return config[driver_].value<QString>().toUpper();
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("A 'driver' configuration parameter must be specified "
-                               "in %1().")
+                u"A 'driver' configuration parameter must be specified in %1()."_s
                 .arg(__tiny_func__));
 }
 

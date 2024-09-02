@@ -9,6 +9,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using ContainerUtils = Orm::Utils::Container;
 
 namespace Orm::SchemaNs
@@ -509,7 +511,7 @@ Blueprint::computed(const QString &column, const QString &expression)
 
 ColumnDefinitionReference<> Blueprint::rememberToken()
 {
-    return string(QStringLiteral("remember_token"), 100).nullable();
+    return string(u"remember_token"_s, 100).nullable();
 }
 
 const TableCommentCommand &Blueprint::comment(QString comment)
@@ -746,7 +748,7 @@ Blueprint::dropIndexCommand(const QString &command, const QString &indexName)
 QString
 Blueprint::createIndexName(const QString &type, const QList<QString> &columns) const
 {
-    auto index = QStringLiteral("%1_%2_%3")
+    auto index = u"%1_%2_%3"_s
                  .arg(NOSPACE.arg(m_prefix, m_table),
                       ContainerUtils::join(columns, UNDERSCORE),
                       type)

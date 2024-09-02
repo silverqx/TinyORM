@@ -15,6 +15,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Utils::Helpers;
 
 using ConfigUtils = Orm::Utils::Configuration;
@@ -311,7 +313,7 @@ TSqlDatabase DatabaseConnection::getSqlConnection()
            connection was resolved by connection resolver. */
         if (!TSqlDatabase::contains(*m_qtConnection))
             throw Exceptions::RuntimeError(
-                    QStringLiteral("QSqlDatabase does not contain '%1' connection.")
+                    u"QSqlDatabase does not contain '%1' connection."_s
                     .arg(*m_qtConnection));
     }
 
@@ -401,8 +403,8 @@ DatabaseConnection::prepareBindings(QList<QVariant> &bindings) const
         /* I have decided to not handle the QMetaType::Bool here, little info:
            - Qt's QMYSQL driver handles bool values internally, it doesn't matter if you
              pass true/false or 0/1
-           - Qt's QPSQL driver calls QVariant(bool).toBool() ? QStringLiteral("TRUE")
-                                                             : QStringLiteral("FALSE")
+           - Qt's QPSQL driver calls QVariant(bool).toBool() ? u"TRUE"_s
+                                                             : u"FALSE"_s
            - Qt's QSQLITE driver calls toInt() on the QVariant(bool):
              sqlite3_bind_int(d->stmt, i + 1, value.toInt()); */
 
@@ -423,7 +425,7 @@ void DatabaseConnection::bindValues(TSqlQuery &query, const QList<QVariant> &bin
 bool DatabaseConnection::pingDatabase()
 {
     throw Exceptions::RuntimeError(
-                QStringLiteral("The '%1' database driver doesn't support ping command.")
+                u"The '%1' database driver doesn't support ping command."_s
                 .arg(driverName()));
 }
 
@@ -464,7 +466,7 @@ void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
         throw Exceptions::LostConnectionError(
-                QStringLiteral("Lost connection and no reconnector available in %1().")
+                u"Lost connection and no reconnector available in %1()."_s
                 .arg(__tiny_func__));
 
     std::invoke(m_reconnector, *this);
@@ -675,7 +677,7 @@ void DatabaseConnection::logConnected()
     /* I still don't know if it's a good idea to log this to the console by default,
        it's a very important log message though. */
     qInfo().noquote()
-            << QStringLiteral("%1 database connected (%2, %3@%4)")
+            << u"%1 database connected (%2, %3@%4)"_s
                .arg(driverNamePrintable(), m_connectionName, m_hostName, m_database);
 #endif
 }
@@ -692,7 +694,7 @@ void DatabaseConnection::logDisconnected()
     m_connectedLogged = false;
 
     qWarning().noquote()
-            << QStringLiteral("%1 database disconnected (%2, %3@%4)")
+            << u"%1 database disconnected (%2, %3@%4)"_s
                .arg(driverNamePrintable(), m_connectionName, m_hostName, m_database);
 #endif
 }

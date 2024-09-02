@@ -6,6 +6,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::NAME;
 using Orm::Constants::dont_drop;
 using Orm::Constants::schema_;
@@ -57,9 +59,8 @@ void PostgresConfigurationParser::throwIfContainsSchemaOption() const
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The PostgreSQL '%1' configuration contains the 'schema' option, "
-                    "please change the option name to the 'search_path', in %2().")
+                u"The PostgreSQL '%1' configuration contains the 'schema' option, "
+                 "please change the option name to the 'search_path', in %2()."_s
                 .arg(config()[NAME].value<QString>(), __tiny_func__));
 }
 
@@ -75,10 +76,9 @@ void PostgresConfigurationParser::throwIfSearchPathHasWrongType() const
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The PostgreSQL 'search_path' configuration option must be "
-                    "the QString or QStringList type in the '%1' connection "
-                    "configuration, in %2().")
+                u"The PostgreSQL 'search_path' configuration option must be "
+                 "the QString or QStringList type in the '%1' connection "
+                 "configuration, in %2()."_s
                 .arg(config()[NAME].value<QString>(), __tiny_func__));
 }
 
@@ -94,10 +94,9 @@ void PostgresConfigurationParser::throwIfDontDropHasWrongType() const
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The PostgreSQL 'dont_drop' configuration option must be "
-                    "the QString or QStringList type in the '%1' connection "
-                    "configuration, in %2().")
+                u"The PostgreSQL 'dont_drop' configuration option must be "
+                 "the QString or QStringList type in the '%1' connection "
+                 "configuration, in %2()."_s
                 .arg(config()[NAME].value<QString>(), __tiny_func__));
 }
 

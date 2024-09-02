@@ -19,8 +19,10 @@ RelationNotLoadedError::RelationNotLoadedError(const QString &model,
 QString RelationNotLoadedError::formatMessage(const QString &model,
                                               const QString &relation)
 {
-    return QStringLiteral("Undefined relation '%1' (in the m_relation data memeber) "
-                          "on model '%2', the relation was not loaded.")
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+    return u"Undefined relation '%1' (in the m_relation data memeber) on model '%2', "
+            "the relation was not loaded."_s
             .arg(relation, model);
 }
 

@@ -107,10 +107,12 @@ SqlQuery::prepareDateTime(const QVariant &value) const
 
 std::optional<QDate> SqlQuery::asDate(const QString &value)
 {
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     /* If the value is in simply year, month, day format, we will instantiate the
        QDate instances from that format. Again, this provides for simple date
        fields on the database, while still supporting QDateTime conversion. */
-    auto date = QDateTime::fromString(value, QStringLiteral("yyyy-M-d"));
+    auto date = QDateTime::fromString(value, u"yyyy-M-d"_s);
 
     if (!date.isValid())
         return std::nullopt;

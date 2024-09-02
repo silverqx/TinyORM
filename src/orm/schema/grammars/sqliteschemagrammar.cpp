@@ -14,6 +14,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::SchemaNs::Grammars
 {
 
@@ -24,73 +26,69 @@ namespace Orm::SchemaNs::Grammars
 QString
 SQLiteSchemaGrammar::compileDropAllTables(const QList<QString> &/*unused*/) const
 {
-    return QStringLiteral("delete from sqlite_master "
-                          "where type in ('table', 'index', 'trigger')");
+    return u"delete from sqlite_master "
+            "where type in ('table', 'index', 'trigger')"_s;
 }
 
 QString
 SQLiteSchemaGrammar::compileDropAllViews(const QList<QString> &/*unused*/) const
 {
-    return QStringLiteral("delete from sqlite_master where type in ('view')");
+    return u"delete from sqlite_master where type in ('view')"_s;
 }
 
 QString
 SQLiteSchemaGrammar::compileGetAllTables(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("select name, type "
-                          "from sqlite_master "
-                          "where type = 'table' and name not like 'sqlite_%'");
+    return u"select name, type from sqlite_master "
+            "where type = 'table' and name not like 'sqlite_%'"_s;
 }
 
 QString SQLiteSchemaGrammar::compileGetAllViews(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("select name, type "
-                          "from sqlite_master where type = 'view'");
+    return u"select name, type from sqlite_master where type = 'view'"_s;
 }
 
 QString SQLiteSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("pragma foreign_keys = on");
+    return u"pragma foreign_keys = on"_s;
 }
 
 QString SQLiteSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("pragma foreign_keys = off");
+    return u"pragma foreign_keys = off"_s;
 }
 
 QString SQLiteSchemaGrammar::compileEnableWriteableSchema()
 {
-    return QStringLiteral("pragma writable_schema = on");
+    return u"pragma writable_schema = on"_s;
 }
 
 QString SQLiteSchemaGrammar::compileDisableWriteableSchema()
 {
-    return QStringLiteral("pragma writable_schema = off");
+    return u"pragma writable_schema = off"_s;
 }
 
 QString SQLiteSchemaGrammar::compileRebuild()
 {
-    return QStringLiteral("vacuum");
+    return u"vacuum"_s;
 }
 
 QString SQLiteSchemaGrammar::compileTableExists() const
 {
-    return QStringLiteral(
-                "select * from sqlite_master where type = 'table' and name = ?");
+    return u"select * from sqlite_master where type = 'table' and name = ?"_s;
 }
 
 QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("pragma table_info(%1)").arg(BaseGrammar::wrap(table));
+    return u"pragma table_info(%1)"_s.arg(BaseGrammar::wrap(table));
 }
 
 /* Compile methods for commands */
 
 QList<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 {
-    return {QStringLiteral("%1 table %2 (%3%4%5)")
-                .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
-                                             : Create,
+    return {u"%1 table %2 (%3%4%5)"_s
+                .arg(blueprint.isTemporary() ? u"create temporary"_s : Create,
                      wrapTable(blueprint),
                      columnizeWithoutWrap(getColumns(blueprint)),
                      addForeignKeys(blueprint),
@@ -100,7 +98,7 @@ QList<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) co
 QList<QString> SQLiteSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                   const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename to %2")
+    return {u"alter table %1 rename to %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
@@ -108,9 +106,9 @@ QList<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                                const BasicCommand &/*unused*/) const
 {
     // TODO regex, avoid it silverqx
-    static const QRegularExpression regex(QStringLiteral(R"(as \(.*\) stored)"));
+    static const QRegularExpression regex(uR"(as \(.*\) stored)"_s);
 
-    const auto columns = prefixArray(QStringLiteral("add column"), getColumns(blueprint));
+    const auto columns = prefixArray(u"add column"_s, getColumns(blueprint));
 
     return columns
             | ranges::views::remove_if([&regex = regex](const auto &column)
@@ -119,7 +117,7 @@ QList<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
     })
             | ranges::views::transform([this, &blueprint](const auto &column) -> QString
     {
-        return QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint), column);
+        return u"alter table %1 %2"_s.arg(wrapTable(blueprint), column);
     })
             | ranges::to<QList<QString>>();
 }
@@ -132,7 +130,7 @@ SQLiteSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
     sql.reserve(command.columns.size());
 
     for (const auto &column : command.columns)
-        sql << QStringLiteral("alter table %1 drop column %2")
+        sql << u"alter table %1 drop column %2"_s
                .arg(wrapTable(blueprint), BaseGrammar::wrap(column));
 
     return sql;
@@ -142,7 +140,7 @@ QList<QString>
 SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                          const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename column %2 to %3")
+    return {u"alter table %1 rename column %2 to %3"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
@@ -150,7 +148,7 @@ SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
 QList<QString> SQLiteSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                                   const IndexCommand &command) const
 {
-    return {QStringLiteral("create unique index %1 on %2 (%3)")
+    return {u"create unique index %1 on %2 (%3)"_s
                 .arg(BaseGrammar::wrap(command.index),
                      wrapTable(blueprint),
                      columnize(command.columns))};
@@ -159,7 +157,7 @@ QList<QString> SQLiteSchemaGrammar::compileUnique(const Blueprint &blueprint,
 QList<QString> SQLiteSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                                  const IndexCommand &command) const
 {
-    return {QStringLiteral("create index %1 on %2 (%3)")
+    return {u"create index %1 on %2 (%3)"_s
                 .arg(BaseGrammar::wrap(command.index),
                      wrapTable(blueprint),
                      columnize(command.columns))};
@@ -186,7 +184,7 @@ SQLiteSchemaGrammar::compileDropPrimary(const Blueprint &/*unused*/,    // NOLIN
 QList<QString> SQLiteSchemaGrammar::compileDropIndex(const Blueprint &/*unused*/,
                                                      const IndexCommand &command) const
 {
-    return {QStringLiteral("drop index %1").arg(BaseGrammar::wrap(command.index))};
+    return {u"drop index %1"_s.arg(BaseGrammar::wrap(command.index))};
 }
 
 QList<QString>
@@ -285,8 +283,8 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     Q_ASSERT_X(cached.contains(name),
                "SQLiteSchemaGrammar::invokeCompileMethod",
-               QStringLiteral("Compile methods map doesn't contain the '%1' key "
-                              "(unsupported command).")
+               u"Compile methods map doesn't contain the '%1' key "
+                "(unsupported command)."_s
                .arg(name)
                .toUtf8().constData());
 
@@ -324,10 +322,10 @@ QString SQLiteSchemaGrammar::addForeignKeys(const Blueprint &blueprint) const
 
         // Append on delete and on update if defined
         if (!foreign.onDelete.isEmpty())
-            sql += QStringLiteral(" on delete %1").arg(foreign.onDelete);
+            sql += u" on delete %1"_s.arg(foreign.onDelete);
 
         if (!foreign.onUpdate.isEmpty())
-            sql += QStringLiteral(" on update %1").arg(foreign.onUpdate);
+            sql += u" on update %1"_s.arg(foreign.onUpdate);
     }
 
     return sql;
@@ -338,7 +336,7 @@ QString SQLiteSchemaGrammar::getForeignKey(const ForeignKeyCommand &foreign) con
     /* We need to columnize the columns that the foreign key is being defined for
        so that it is a properly formatted list. Once we have done this, we can
        return the foreign key SQL declaration to the calling method for use. */
-    return QStringLiteral(", foreign key(%1) references %2(%3)")
+    return u", foreign key(%1) references %2(%3)"_s
             .arg(columnize(foreign.columns),
                  BaseGrammar::wrapTable(foreign.on),
                  columnize(foreign.references));
@@ -351,7 +349,7 @@ QString SQLiteSchemaGrammar::addPrimaryKeys(const Blueprint &blueprint) const
     if (!primary)
         return {};
 
-    return QStringLiteral(", primary key (%1)")
+    return u", primary key (%1)"_s
             .arg(columnize(
                      std::reinterpret_pointer_cast<IndexCommand>(primary)->columns));
 }
@@ -403,7 +401,7 @@ QString SQLiteSchemaGrammar::escapeString(QString value) const // clazy:exclude=
        (especially look at the caution box):
        https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
 
-    return value.replace(SQUOTE, QStringLiteral("''"));
+    return value.replace(SQUOTE, u"''"_s);
 }
 
 QString SQLiteSchemaGrammar::getType(ColumnDefinition &column) const
@@ -546,8 +544,7 @@ QString SQLiteSchemaGrammar::getType(ColumnDefinition &column) const
 
     default:
         throw Exceptions::RuntimeError(
-                    QStringLiteral("Unsupported column type in %1().")
-                    .arg(__tiny_func__));
+                    u"Unsupported column type in %1()."_s.arg(__tiny_func__));
     }
 }
 
@@ -618,22 +615,22 @@ QString SQLiteSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) cons
 
 //QString SQLiteSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) const
 //{
-//    return QStringLiteral("real");
+//    return u"real"_s;
 //}
 
 QString SQLiteSchemaGrammar::typeDecimal(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("numeric");
+    return u"numeric"_s;
 }
 
 QString SQLiteSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("tinyint(1)");
+    return u"tinyint(1)"_s;
 }
 
 QString SQLiteSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral(R"(varchar check ("%1" in (%2)))")
+    return uR"(varchar check ("%1" in (%2)))"_s
             .arg(column.name, quoteString(column.allowed));
 }
 
@@ -655,7 +652,7 @@ QString SQLiteSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const
 
 QString SQLiteSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("date");
+    return u"date"_s;
 }
 
 QString SQLiteSchemaGrammar::typeDateTime(ColumnDefinition &column) const
@@ -670,7 +667,7 @@ QString SQLiteSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 
 QString SQLiteSchemaGrammar::typeTime(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("time");
+    return u"time"_s;
 }
 
 QString SQLiteSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
@@ -681,9 +678,9 @@ QString SQLiteSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
 QString SQLiteSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
+        column.defaultValue = Expression(u"current_timestamp"_s);
 
-    return QStringLiteral("datetime");
+    return u"datetime"_s;
 }
 
 QString SQLiteSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const
@@ -733,48 +730,48 @@ QString SQLiteSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) 
 
 QString SQLiteSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("geometry");
+    return u"geometry"_s;
 }
 
 QString SQLiteSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("point");
+    return u"point"_s;
 }
 
 QString SQLiteSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("linestring");
+    return u"linestring"_s;
 }
 
 QString SQLiteSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("polygon");
+    return u"polygon"_s;
 }
 
 QString
 SQLiteSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("geometrycollection");
+    return u"geometrycollection"_s;
 }
 
 QString SQLiteSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multipoint");
+    return u"multipoint"_s;
 }
 
 QString SQLiteSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multilinestring");
+    return u"multilinestring"_s;
 }
 
 QString SQLiteSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multipolygon");
+    return u"multipolygon"_s;
 }
 
 //QString SQLiteSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column) const
 //{
-//    return QStringLiteral("");
+//    return u""_s;
 //}
 
 QString SQLiteSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) const
@@ -790,7 +787,7 @@ QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) con
     if (!column.virtualAs || column.virtualAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1)").arg(*column.virtualAs);
+    return u" generated always as (%1)"_s.arg(*column.virtualAs);
 }
 
 QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -799,7 +796,7 @@ QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) cons
     if (!column.storedAs || column.storedAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs);
+    return u" generated always as (%1) stored"_s.arg(*column.storedAs);
 }
 
 QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -810,8 +807,7 @@ QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) cons
        it only describes the NOT NULL constraint. I have checked it and it also works
        correctly with the NULL, but it can be ignored behind the scene because the NULL
        is the default behavior. */
-    return column.nullable && *column.nullable ? QString("")
-                                               : QStringLiteral(" not null");
+    return column.nullable && *column.nullable ? QString("") : u" not null"_s;
 }
 
 QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
@@ -829,7 +825,7 @@ QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
         return {};
 
     // Default value is already quoted and escaped inside the getDefaultValue()
-    return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
+    return u" default %1"_s.arg(getDefaultValue(defaultValue));
 }
 
 QString SQLiteSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -840,7 +836,7 @@ QString SQLiteSchemaGrammar::modifyIncrement(const ColumnDefinition &column) con
     };
 
     if (serials.contains(column.type) && column.autoIncrement)
-        return QStringLiteral(" primary key autoincrement");
+        return u" primary key autoincrement"_s;
 
     return {};
 }

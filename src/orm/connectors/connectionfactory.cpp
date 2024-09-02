@@ -13,6 +13,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using ConfigUtils = Orm::Utils::Configuration;
 
 namespace Orm::Connectors
@@ -35,8 +37,7 @@ ConnectionFactory::createConnector(const QVariantHash &config)
     // This method is public, so I left this check here
     if (!config.contains(driver_))
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("A 'driver' configuration parameter must be specified "
-                               "in %1().")
+                u"A 'driver' configuration parameter must be specified in %1()."_s
                 .arg(__tiny_func__));
 
     const auto driver = config[driver_].value<QString>();
@@ -54,8 +55,7 @@ ConnectionFactory::createConnector(const QVariantHash &config)
 //        return std::make_unique<SqlServerConnector>();
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unsupported driver '%1' in %2().")
-                .arg(driver, __tiny_func__));
+                u"Unsupported driver '%1' in %2()."_s.arg(driver, __tiny_func__));
 }
 
 /* protected */
@@ -160,16 +160,14 @@ ConnectionFactory::createConnection(
 //                    std::move(qtTimeZone), std::move(config));
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Unsupported driver '%1' in %2().")
-                .arg(driver, __tiny_func__));
+                u"Unsupported driver '%1' in %2()."_s.arg(driver, __tiny_func__));
 }
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config)
 {
     if (!config.contains(host_))
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Database 'host' configuration parameter is required "
-                               "in %1().")
+                u"Database 'host' configuration parameter is required in %1()."_s
                 .arg(__tiny_func__));
 
     auto hosts = config[host_].value<QStringList>();
@@ -184,9 +182,8 @@ void ConnectionFactory::validateHosts(const QStringList &hosts)
     for (const auto &host : hosts)
         if (host.isEmpty())
             throw Exceptions::InvalidArgumentError(
-                    QStringLiteral(
-                        "Database 'host' configuration parameter can not contain empty "
-                        "value in %1().")
+                    u"Database 'host' configuration parameter can not contain empty "
+                     "value in %1()."_s
                     .arg(__tiny_func__));
 }
 

@@ -29,8 +29,9 @@ ModelNotFoundError::ModelNotFoundError(const QString &model,
 QString ModelNotFoundError::formatMessage(const char *model,
                                           const QList<QVariant> &ids)
 {
-    QString result = QStringLiteral("No query results for model '%1'")
-                     .arg(model);
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+    auto result = u"No query results for model '%1'"_s.arg(model);
 
     if (!ids.isEmpty()) {
         const auto joinIds = [&ids]
@@ -44,7 +45,7 @@ QString ModelNotFoundError::formatMessage(const char *model,
             return idsList.join(COMMA);
         };
 
-        result += QStringLiteral(" with IDs : %2").arg(joinIds());
+        result += u" with IDs : %2"_s.arg(joinIds());
     }
 
     result += DOT;

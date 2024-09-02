@@ -8,6 +8,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::host_;
@@ -23,7 +25,7 @@ namespace Orm::Connectors
 /* protected */
 
 const QString Connector::m_configureErrorMessage =
-        QStringLiteral("Connection configuration statement in %1() failed.");
+        u"Connection configuration statement in %1() failed."_s;
 
 /* public */
 
@@ -72,8 +74,7 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
 #ifdef TINYORM_USING_QTSQLDRIVERS
     if (!db.open())
         throw Exceptions::SqlError(
-                QStringLiteral("Failed to open database connection in %1().")
-                .arg(__tiny_func__),
+                u"Failed to open database connection in %1()."_s.arg(__tiny_func__),
                 db.lastError());
 #elif defined(TINYORM_USING_TINYDRIVERS)
     db.open();

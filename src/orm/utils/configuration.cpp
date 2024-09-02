@@ -9,6 +9,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Utils
 {
 
@@ -97,8 +99,8 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
 
     default:
         throw Exceptions::LogicError(
-                    QStringLiteral("Unsupported 'qt_timezone' value "
-                                   "for '%1' database connection in %2().")
+                    u"Unsupported 'qt_timezone' value for '%1' database connection "
+                     "in %2()."_s
                     .arg(connection, __tiny_func__));
     }
 }
@@ -162,9 +164,9 @@ QVariantHash &Configuration::insertMySqlSslOptions(QVariantHash &options)
 
 QVariantHash &Configuration::minimizeMySqlTimeouts(QVariantHash &options)
 {
-    options.insert({{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
-                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1},
-                    {QStringLiteral("MYSQL_OPT_WRITE_TIMEOUT"),   1}});
+    options.insert({{u"MYSQL_OPT_CONNECT_TIMEOUT"_s, 1},
+                    {u"MYSQL_OPT_READ_TIMEOUT"_s,    1},
+                    {u"MYSQL_OPT_WRITE_TIMEOUT"_s,   1}});
 
     return options;
 }
@@ -278,15 +280,15 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
 
     // Append the :00 if needed (avoid RegEx for performance reasons)
     else if (timezoneIdSize == 6 &&
-             timezoneId[0] == QLatin1Char('U') &&
-             timezoneId[1] == QLatin1Char('T') &&
-             timezoneId[2] == QLatin1Char('C') &&
+             timezoneId[0] == 'U'_L1 &&
+             timezoneId[1] == 'T'_L1 &&
+             timezoneId[2] == 'C'_L1 &&
              (timezoneId[3] == MINUS || timezoneId[3] == PLUS) &&
              // Is numeric != 0
              std::isdigit(timezoneId[4].toLatin1()) != 0 &&
              std::isdigit(timezoneId[5].toLatin1()) != 0
     )
-        timezoneId.append(QStringLiteral(":00"));
+        timezoneId.append(u":00"_s);
 
     // Prepend the UTC and append the :00 if needed (avoid RegEx for performance reasons)
     else if (timezoneIdSize == 3 &&
@@ -295,7 +297,7 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
              std::isdigit(timezoneId[1].toLatin1()) != 0 &&
              std::isdigit(timezoneId[2].toLatin1()) != 0
     )
-        timezoneId.prepend(UTC).append(QStringLiteral(":00"));
+        timezoneId.prepend(UTC).append(u":00"_s);
 
     auto ianaId = timezoneId.toUtf8();
 
@@ -312,9 +314,8 @@ void Configuration::throwIfBadTimeZoneId(const QByteArray &ianaId,
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The 'qt_timezone' configuration option '%1' for the '%2' "
-                    "connection is not available on this system in %3().")
+                u"The 'qt_timezone' configuration option '%1' for the '%2' connection "
+                 "is not available on this system in %3()."_s
                 .arg(QString::fromUtf8(ianaId), connection, __tiny_func__));
 }
 
@@ -329,12 +330,11 @@ void Configuration::throwIfDeprecatedTimeSpec(const int typeId, const QString &c
        future Qt versions. I'm deprecating it from Qt v6.5 because this change was merged
        to all Qt versions >=6.5. */
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "Setting the 'Qt::TimeSpec' value as 'Qt::UTC' or "
-                    "'Qt::LocalTime' for the 'qt_timezone' configuration option "
-                    "was deprecated since Qt v6.5.0, please pass "
-                    "the QTimeZone::Initialization like the QTimeZone::UTC "
-                    "for the '%1' connection instead, in %2().")
+                u"Setting the 'Qt::TimeSpec' value as 'Qt::UTC' or "
+                 "'Qt::LocalTime' for the 'qt_timezone' configuration option "
+                 "was deprecated since Qt v6.5.0, please pass "
+                 "the QTimeZone::Initialization like the QTimeZone::UTC "
+                 "for the '%1' connection instead, in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 

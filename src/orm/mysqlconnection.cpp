@@ -36,6 +36,8 @@ disable the TINYORM_MYSQL_PING preprocessor directive.
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using ConfigUtils = Orm::Utils::Configuration;
 
 namespace Orm
@@ -84,8 +86,7 @@ std::optional<QString> MySqlConnection::version()
         return m_version = std::move(versionConfig);
 
     // Obtain and cache the database version value
-    return m_version = selectOne(QStringLiteral("select version()")).value(0)
-                       .value<QString>();
+    return m_version = selectOne(u"select version()"_s).value(0).value<QString>();
 }
 
 bool MySqlConnection::isMaria()
@@ -108,7 +109,7 @@ bool MySqlConnection::isMaria()
         return false;
 
     // Cache the value
-    m_isMaria = m_version->contains(QStringLiteral("MariaDB"));
+    m_isMaria = m_version->contains(u"MariaDB"_s);
 
     return *m_isMaria;
 }
@@ -241,12 +242,11 @@ bool MySqlConnection::pingDatabase()
     return false;
 #else
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "pingDatabase() method was disabled for the '%1' database driver, "
-                    "if you want to use MySqlConnection::pingDatabase(), then "
-                    "reconfigure the TinyORM project with the MYSQL_PING preprocessor "
-                    "macro ( -DMYSQL_PING ) for cmake or with the 'mysql_ping' "
-                    "configuration option ( \"CONFIG+=mysql_ping\" ) for qmake.")
+                u"The pingDatabase() method was disabled for the '%1' database driver, "
+                 "if you want to use MySqlConnection::pingDatabase(), then "
+                 "reconfigure the TinyORM project with the MYSQL_PING preprocessor "
+                 "macro ( -DMYSQL_PING ) for cmake or with the 'mysql_ping' "
+                 "configuration option ( \"CONFIG+=mysql_ping\" ) for qmake."_s
                 .arg(driverName()));
 #endif
 }

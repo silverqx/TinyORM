@@ -5,6 +5,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Query::Grammars
 {
 
@@ -23,28 +25,27 @@ QString MySqlGrammar::compileInsert(const QueryBuilder &query,
 QString MySqlGrammar::compileInsertOrIgnore(const QueryBuilder &query,
                                             const QList<QVariantMap> &values) const
 {
-    return compileInsert(query, values).replace(0, 6, QStringLiteral("insert ignore"));
+    return compileInsert(query, values).replace(0, 6, u"insert ignore"_s);
 }
 
 QString MySqlGrammar::compileUpsert(
         QueryBuilder &query, const QList<QVariantMap> &values,
         const QStringList &/*unused*/, const QStringList &update) const
 {
-    static const auto TinyOrmUpsertAlias = QStringLiteral("tinyorm_upsert_alias");
+    static const auto TinyOrmUpsertAlias = u"tinyorm_upsert_alias"_s;
 
     // Use an upsert alias on the MySQL >=8.0.19
     const auto useUpsertAlias = dynamic_cast<MySqlConnection &>(query.getConnection())
                                 .useUpsertAlias();
 
     auto sql = compileInsert(query, values);
-    // ~64 is manually counted size of QStringLiteral-s below, exactly it's 49
+    // ~64 is manually counted size of string literals below, exactly it's 49
     sql.reserve(sql.size() + 64);
 
     if (useUpsertAlias)
-        sql += QStringLiteral(" as %1")
-               .arg(wrap(QStringLiteral("tinyorm_upsert_alias")));
+        sql += u" as %1"_s.arg(wrap(u"tinyorm_upsert_alias"_s));
 
-    sql += QStringLiteral(" on duplicate key update ");
+    sql += u" on duplicate key update "_s;
 
     QStringList columns;
     columns.reserve(update.size());
@@ -52,11 +53,11 @@ QString MySqlGrammar::compileUpsert(
     for (const auto &column : update) {
         const auto wrappedColumn = wrap(column);
 
-        columns << (useUpsertAlias ? QStringLiteral("%1 = %2")
+        columns << (useUpsertAlias ? u"%1 = %2"_s
                                      .arg(wrappedColumn,
                                           DOT_IN.arg(wrap(TinyOrmUpsertAlias),
                                                      wrappedColumn))
-                                   : QStringLiteral("%1 = values(%2)")
+                                   : u"%1 = values(%2)"_s
                                      .arg(wrappedColumn, wrappedColumn));
     }
 
@@ -68,21 +69,20 @@ QString MySqlGrammar::compileLock(const QueryBuilder &query) const
     const auto &lock = query.getLock();
 
     if (!std::holds_alternative<QString>(lock))
-        return std::get<bool>(lock) ? QStringLiteral("for update") :
-                                      QStringLiteral("lock in share mode");
+        return std::get<bool>(lock) ? u"for update"_s : u"lock in share mode"_s;
 
     return std::get<QString>(lock);
 }
 
 QString MySqlGrammar::compileRandom(const QString &seed) const
 {
-    return QStringLiteral("RAND(%1)").arg(seed);
+    return u"RAND(%1)"_s.arg(seed);
 }
 
 const std::unordered_set<QString> &MySqlGrammar::getOperators() const
 {
     static const std::unordered_set<QString> cachedOperators {
-        QLatin1String("sounds like"),
+        u"sounds like"_s,
     };
 
     return cachedOperators;
@@ -95,8 +95,7 @@ QString MySqlGrammar::wrapValue(QString value) const
     if (value == ASTERISK_C)
         return value;
 
-    return QStringLiteral("`%1`").arg(value.replace(QStringLiteral("`"),
-                                                    QStringLiteral("``")));
+    return u"`%1`"_s.arg(value.replace(u"`"_s, u"``"_s));
 }
 
 const QList<Grammar::SelectComponentValue> &
@@ -214,10 +213,10 @@ MySqlGrammar::compileUpdateWithoutJoins(
     /* When using MySQL, udpate statements may contain order by statements and limits
        so we will compile both of those here. */
     if (!query.getOrders().isEmpty())
-        sql += QStringLiteral(" %1").arg(compileOrders(query));
+        sql += u" %1"_s.arg(compileOrders(query));
 
     if (query.getLimit() > -1)
-        sql += QStringLiteral(" %1").arg(compileLimit(query));
+        sql += u" %1"_s.arg(compileLimit(query));
 
     return sql;
 }
@@ -233,10 +232,10 @@ MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString
        so we will compile both of those here. Once we have finished compiling this
        we will return the completed SQL statement so it will be executed for us. */
     if (!query.getOrders().isEmpty())
-        sql += QStringLiteral(" %1").arg(compileOrders(query));
+        sql += u" %1"_s.arg(compileOrders(query));
 
     if (query.getLimit() > -1)
-        sql += QStringLiteral(" %1").arg(compileLimit(query));
+        sql += u" %1"_s.arg(compileLimit(query));
 
     return sql;
 }

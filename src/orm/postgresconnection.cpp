@@ -125,7 +125,9 @@ QStringList PostgresConnection::searchPathRawForPretending() const
 
 QStringList PostgresConnection::searchPathRawDb()
 {
-    auto query = unprepared(QStringLiteral("show search_path"));
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+    auto query = unprepared(u"show search_path"_s);
 
     [[maybe_unused]]
     const auto ok = query.first();

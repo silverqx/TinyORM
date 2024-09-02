@@ -14,6 +14,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Utils::Helpers;
 
 using QueryUtils = Orm::Utils::Query;
@@ -29,7 +31,7 @@ SchemaBuilder::SchemaBuilder(std::shared_ptr<DatabaseConnection> connection)
 std::optional<SqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support creating databases.")
+                u"%1 database driver does not support creating databases."_s
                 .arg(m_connection->driverName()));
 }
 
@@ -37,7 +39,7 @@ std::optional<SqlQuery>
 SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support dropping databases.")
+                u"%1 database driver does not support dropping databases."_s
                 .arg(m_connection->driverName()));
 }
 
@@ -116,28 +118,28 @@ void SchemaBuilder::dropAllTables() const
 {
     // CUR schema, solve this logic vs runtime exception silverqx
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support dropping all tables.")
+                u"%1 database driver does not support dropping all tables."_s
                 .arg(m_connection->driverName()));
 }
 
 void SchemaBuilder::dropAllViews() const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support dropping all views.")
+                u"%1 database driver does not support dropping all views."_s
                 .arg(m_connection->driverName()));
 }
 
 void SchemaBuilder::dropAllTypes() const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support dropping all types.")
+                u"%1 database driver does not support dropping all types."_s
                 .arg(m_connection->driverName()));
 }
 
 SqlQuery SchemaBuilder::getAllTables() const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support getting all tables.")
+                u"%1 database driver does not support getting all tables."_s
                 .arg(m_connection->driverName()));
 }
 

@@ -78,13 +78,14 @@ void SQLiteConnector::configureForeignKeyConstraints(const TSqlDatabase &connect
     if (!config.contains(foreign_key_constraints))
         return;
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     const auto foreignKeyConstraints = TypeUtils::isTrue(config[foreign_key_constraints])
                                        ? ON : OFF;
 
     TSqlQuery query(connection);
     // FEATURE schema builder, use DatabaseConnection::statement(), to set recordsHaveBeenModied to true, foreign key constraints silverqx
-    if (query.exec(QStringLiteral("PRAGMA foreign_keys = %1;")
-                   .arg(foreignKeyConstraints)))
+    if (query.exec(u"PRAGMA foreign_keys = %1;"_s.arg(foreignKeyConstraints)))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS

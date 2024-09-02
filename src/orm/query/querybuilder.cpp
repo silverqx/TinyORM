@@ -17,6 +17,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Query
 {
 
@@ -305,9 +307,8 @@ Builder::upsert(const QList<QVariantMap> &values, const QStringList &uniqueBy,
     // If the update is an empty vector then throw and don't insert
     if (update.isEmpty())
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The 'upsert' method doesn't support an empty update argument, "
-                    "please use the 'insert' method instead in %1().")
+                u"The 'upsert' method doesn't support an empty update argument, "
+                 "please use the 'insert' method instead in %1()."_s
                 .arg(__tiny_func__));
 
     return m_connection->affectingStatement(
@@ -364,7 +365,7 @@ QVariant Builder::aggregate(const QString &function,
     if (!resultsQuery.first())
         return {};
 
-    return resultsQuery.value(QStringLiteral("aggregate"));
+    return resultsQuery.value(u"aggregate"_s);
 }
 
 bool Builder::exists()
@@ -377,7 +378,7 @@ bool Builder::exists()
     if (!results.first())
         return false;
 
-    return results.value(QStringLiteral("exists")).template value<bool>();
+    return results.value(u"exists"_s).template value<bool>();
 }
 
 bool Builder::existsOr(const std::function<void()> &callback)
@@ -518,7 +519,7 @@ Builder &Builder::distinct(QStringList &&columns)
 
 Builder &Builder::from(const QString &table, const QString &as)
 {
-    m_from = as.isEmpty() ? table : QStringLiteral("%1 as %2").arg(table, as);
+    m_from = as.isEmpty() ? table : u"%1 as %2"_s.arg(table, as);
 
     return *this;
 }
@@ -805,8 +806,8 @@ Builder::whereRowValues(const QList<Column> &columns, const QString &comparison,
 {
     if (columns.size() != values.size() || columns.isEmpty())
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral("The number of columns must match the number of values "
-                               "and can not be empty in %1().")
+                u"The number of columns must match the number of values and "
+                 "can not be empty in %1()."_s
                 .arg(__tiny_func__));
 
     m_wheres.append({.comparison = comparison, .condition = condition,
@@ -1008,9 +1009,8 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
 
     if (directionLower != ASC && directionLower != DESC)
         throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "Order direction must be \"asc\" or \"desc\", case is not important "
-                    "in %1().)")
+                u"Order direction must be \"asc\" or \"desc\", case is not important "
+                 "in %1().)"_s
                 .arg(__tiny_func__));
 
     m_orders.append({column, directionLower});
@@ -1434,7 +1434,7 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
         default:
 #ifndef TINYORM_DEBUG
             throw Exceptions::RuntimeError(
-                        QStringLiteral("Unexpected value for enum struct PropertyType."));
+                        u"Unexpected value for enum struct PropertyType."_s);
 #else
             Q_UNREACHABLE();
 #endif
@@ -1459,7 +1459,7 @@ Builder Builder::cloneWithoutBindings(
         default:
 #ifndef TINYORM_DEBUG
             throw Exceptions::RuntimeError(
-                        QStringLiteral("Unexpected value for enum struct BindingType."));
+                        u"Unexpected value for enum struct BindingType."_s);
 #else
             Q_UNREACHABLE();
 #endif
@@ -1480,8 +1480,7 @@ void Builder::throwIfInvalidOperator(const QString &comparison) const
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("The '%1' operator is not valid for the '%2' database "
-                               "in %3().")
+                u"The '%1' operator is not valid for the '%2' database in %3()."_s
                 .arg(comparison_, getConnection().driverNamePrintable(), __tiny_func__));
 }
 
@@ -1665,8 +1664,8 @@ void Builder::enforceOrderBy() const
 {
     if (m_orders.isEmpty())
         throw Exceptions::RuntimeError(
-                QStringLiteral("You must specify an orderBy clause when using "
-                               "the '%1()' method in %2().")
+                u"You must specify an orderBy clause when using the '%1()' method "
+                 "in %2()."_s
                 .arg(__func__, __tiny_func__));
 }
 
@@ -1685,7 +1684,7 @@ QList<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
 
 QString Builder::stripTableForPluck(const Column &column)
 {
-    static const auto as = QStringLiteral(" as ");
+    static const auto as = u" as "_s;
 
     const auto columnString = std::holds_alternative<Expression>(column)
                               ? QueryGrammar::getValue(
@@ -1769,8 +1768,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
-                                                            m_grammar->wrapTable(as))),
+    return join(Expression(u"(%1) as %2"_s.arg(queryString, m_grammar->wrapTable(as))),
                 first, comparison, second, type, where);
 }
 
@@ -1783,8 +1781,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
-                                                            m_grammar->wrapTable(as))),
+    return join(Expression(u"(%1) as %2"_s.arg(queryString, m_grammar->wrapTable(as))),
                 callback, type);
 }
 
@@ -1821,7 +1818,7 @@ void Builder::checkBindingType(const BindingType type) const
     const auto typeInt = static_cast<quint8>(type);
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Invalid binding type '%2(%1)' in %3().")
+                u"Invalid binding type '%2(%1)' in %3()."_s
                 .arg(typeInt)
                 .arg(BindingNamesMap->at(typeInt), __tiny_func__));
 }
@@ -1829,13 +1826,13 @@ void Builder::checkBindingType(const BindingType type) const
 const std::unordered_set<QString> &Builder::getOperators()
 {
     static const std::unordered_set<QString> cachedOperators {
-        EQ, LT, GT, LE, GE, NE, NE_, QLatin1String("<=>"),
-        LIKE, QLatin1String("like binary"), NLIKE, ILIKE,
-        B_AND, B_OR, "^", "<<", ">>", "&~",
-        QLatin1String("rlike"),  QLatin1String("not rlike"),
-        QLatin1String("regexp"), QLatin1String("not regexp"),
-        "~", "~*", "!~", "!~*", QLatin1String("similar to"),
-        QLatin1String("not similar to"), QLatin1String("not ilike"), "~~*", "!~~*",
+        EQ, LT, GT, LE, GE, NE, NE_, u"<=>"_s,
+        LIKE, u"like binary"_s, NLIKE, ILIKE,
+        B_AND, B_OR, u"^"_s, u"<<"_s, ">>", u"&~"_s,
+        u"rlike"_s,  u"not rlike"_s,
+        u"regexp"_s, u"not regexp"_s,
+        u"~"_s, u"~*"_s, u"!~"_s, u"!~*"_s, u"similar to"_s,
+        u"not similar to"_s, u"not ilike"_s, u"~~*"_s, u"!~~*"_s,
     };
 
     return cachedOperators;

@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::SchemaNs
@@ -185,10 +187,9 @@ void PostgresSchemaBuilder::throwIfDatabaseDiffers(
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "The database '%1' name in the fully qualified table name differs "
-                    "from the database name '%2' defined in the PostgreSQL "
-                    "configuration '%3' in %4().")
+                u"The database '%1' name in the fully qualified table name differs "
+                 "from the database name '%2' defined in the PostgreSQL "
+                 "configuration '%3' in %4()."_s
                 .arg(std::move(database), databaseConfig, connection, __tiny_func__));
 }
 
@@ -216,12 +217,11 @@ void PostgresSchemaBuilder::throwIfEmptySearchPath(const QStringList &searchPath
         return;
 
     throw Exceptions::SearchPathEmptyError(
-                QStringLiteral(
-                    "The PostgreSQL 'search_path' connection configuration option is "
-                    "empty, please provide the fully qualified table name during "
-                    "the PostgresSchemaBuilder's getColumnListing() or hasTable() "
-                    "method calls or set the 'search_path' option in the PostgreSQL "
-                    "configuration '%1', in %2().")
+                u"The PostgreSQL 'search_path' connection configuration option is "
+                 "empty, please provide the fully qualified table name during "
+                 "the PostgresSchemaBuilder's getColumnListing() or hasTable() "
+                 "method calls or set the 'search_path' option in the PostgreSQL "
+                 "configuration '%1', in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 
@@ -242,8 +242,8 @@ const QSet<QString> &PostgresSchemaBuilder::excludedViews() const
        extension and proposes to delete the postgis extension instead, so exclude them.
        This is happening during dropping of all views. */
     static const auto cached(grammar().escapeNames(
-                                 QSet<QString> {QStringLiteral("geography_columns"),
-                                                QStringLiteral("geometry_columns")}));
+                                 QSet<QString> {u"geography_columns"_s,
+                                                u"geometry_columns"_s}));
     return cached;
 }
 
@@ -251,8 +251,7 @@ std::tuple<QString, QString>
 PostgresSchemaBuilder::columnValuesForDrop(TSqlQuery &query)
 {
     return {query.value(0).value<QString>(),
-            query.value(QStringLiteral("qualifiedname"))
-                 .value<QString>()};
+            query.value(u"qualifiedname"_s).value<QString>()};
 }
 
 QStringList PostgresSchemaBuilder::searchPath() const

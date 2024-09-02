@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Utils
 {
 
@@ -28,7 +30,7 @@ QString Query::parseExecutedQuery(const TSqlQuery &query)
 #ifndef TINYORM_NO_DEBUG
 void Query::logExecutedQuery(const TSqlQuery &query)
 {
-    qDebug().noquote() << QStringLiteral("Executed Query :")
+    qDebug().noquote() << u"Executed Query :"_s
                        << Query::parseExecutedQuery(query);
 }
 #else
@@ -51,8 +53,8 @@ Query::zipForInsert(const QList<QString> &columns,
 
         if (columnsSize != valuesList.size())
             throw Exceptions::InvalidArgumentError(
-                QStringLiteral("A columns and values arguments don't have the same "
-                               "number of items in %1().")
+                u"A columns and values arguments don't have the same number of items "
+                 "in %1()."_s
                 .arg(__tiny_func__));
 
         QVariantMap zipped;

@@ -5,6 +5,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
@@ -49,10 +51,10 @@ MySqlConfigurationParser::throwIfContainsUnsupportedOption(const QVariantHash &o
     // This connection options are banned
     static const std::unordered_map<QString, BannedValue> bannedMap {
         // We have our own reconnector
-        {QStringLiteral("MYSQL_OPT_RECONNECT"),
-            {1, QStringLiteral("TinyORM uses its own reconnector. Also, be aware that "
-                               "the MYSQL_OPT_RECONNECT is deprecated from MySQL >=8.1 "
-                               "and >=8.0.24 and will be removed in future versions.")}},
+        {u"MYSQL_OPT_RECONNECT"_s,
+            {1, u"TinyORM uses its own reconnector. Also, be aware that "
+                 "the MYSQL_OPT_RECONNECT is deprecated from MySQL >=8.1 "
+                 "and >=8.0.24 and will be removed in future versions."_s}},
     };
 
     for (const auto &[key, banned] : bannedMap) {
@@ -60,8 +62,7 @@ MySqlConfigurationParser::throwIfContainsUnsupportedOption(const QVariantHash &o
 
         if (options.contains(key) && options[key] == value)
             throw Exceptions::InvalidArgumentError(
-                    QStringLiteral(
-                        "The '%1' connection option is not allowed in the TinyORM.%2")
+                    u"The '%1' connection option is not allowed in the TinyORM.%2"_s
                     .arg(key, errorMessage));
     }
 }

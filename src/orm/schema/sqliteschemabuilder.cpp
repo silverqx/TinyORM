@@ -13,6 +13,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
@@ -28,7 +30,7 @@ std::optional<SqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name)
 
     if (fs::exists(databaseName))
         throw Exceptions::RuntimeError(
-                    QStringLiteral("SQLite database '%1' already exists in %2().")
+                    u"SQLite database '%1' already exists in %2()."_s
                     .arg(QString::fromStdString(databaseName.string()), __tiny_func__));
 
     const std::ofstream fs(databaseName,
@@ -38,7 +40,7 @@ std::optional<SqlQuery> SQLiteSchemaBuilder::createDatabase(const QString &name)
         return std::nullopt;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral("Creation of SQLite database '%1' failed in %2().")
+                u"Creation of SQLite database '%1' failed in %2()."_s
                 .arg(QString::fromStdString(databaseName.string()), __tiny_func__));
 }
 
@@ -108,7 +110,7 @@ void SQLiteSchemaBuilder::refreshDatabaseFile() const
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral("Truncation of SQLite database '%1' failed in %2().")
+                u"Truncation of SQLite database '%1' failed in %2()."_s
                 .arg(databaseName, __tiny_func__));
 }
 

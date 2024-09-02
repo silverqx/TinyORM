@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::SchemaNs::Grammars
 {
 
@@ -22,7 +24,7 @@ QString SchemaGrammar::compileCreateDatabase(const QString &/*unused*/,
                                              DatabaseConnection &connection) const
 {
     throw Exceptions::LogicError(
-                QStringLiteral("%1 database driver does not support creating databases.")
+                u"%1 database driver does not support creating databases."_s
                 .arg(connection.driverName()));
 }
 
@@ -71,14 +73,14 @@ QList<QString>
 SchemaGrammar::compileDrop(const Blueprint &blueprint,
                            const BasicCommand &/*unused*/) const
 {
-    return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
+    return {u"drop table %1"_s.arg(wrapTable(blueprint))};
 }
 
 QList<QString>
 SchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
                                    const BasicCommand &/*unused*/) const
 {
-    return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
+    return {u"drop table if exists %1"_s.arg(wrapTable(blueprint))};
 }
 
 QList<QString>
@@ -97,13 +99,13 @@ SchemaGrammar::compileForeign(const Blueprint &blueprint,
     /* We need to prepare several of the elements of the foreign key definition
        before we can create the SQL, such as wrapping the tables and convert
        an array of columns to comma-delimited strings for the SQL queries. */
-    auto sql = QStringLiteral("alter table %1 add constraint %2 ")
+    auto sql = u"alter table %1 add constraint %2 "_s
                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index));
 
     /* Once we have the initial portion of the SQL statement we will add on the
        key name, table name, and referenced columns. These will complete the
        main portion of the SQL statement and this SQL will almost be done. */
-    sql += QStringLiteral("foreign key (%1) references %2 (%3)")
+    sql += u"foreign key (%1) references %2 (%3)"_s
            .arg(columnize(command.columns),
                 BaseGrammar::wrapTable(command.on),
                 columnize(command.references));
@@ -112,10 +114,10 @@ SchemaGrammar::compileForeign(const Blueprint &blueprint,
        build out the syntax for what should happen on an update or delete of
        the affected columns, which will get something like "cascade", etc. */
     if (!command.onDelete.isEmpty())
-        sql += QStringLiteral(" on delete %1").arg(command.onDelete);
+        sql += u" on delete %1"_s.arg(command.onDelete);
 
     if (!command.onUpdate.isEmpty())
-        sql += QStringLiteral(" on update %1").arg(command.onUpdate);
+        sql += u" on update %1"_s.arg(command.onUpdate);
 
     return {sql};
 }

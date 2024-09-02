@@ -44,9 +44,11 @@ QStringList ParsesSearchPath::parseSearchPath(const QString &searchPath)
     QStringList list;
     list.reserve(searchPath.count(COMMA_C));
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     for (auto &&path : searchPath.split(COMMA_C, Qt::SkipEmptyParts))
         // Trim also spaces
-        list << StringUtils::trim(path, QStringLiteral(" '\""));
+        list << StringUtils::trim(path, u" '\""_s);
 
     return list;
 }

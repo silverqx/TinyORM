@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using StringUtils = Orm::Utils::String;
 using TypeUtils = Orm::Utils::Type;
 
@@ -26,9 +28,9 @@ void Helpers::logException(const std::exception &e, const bool fatal)
        QSqlError(Driver not loaded, Driver not loaded). */
     logPluginsPath(exceptionMessage);
 
-    const auto message = QStringLiteral("\nCaught '")
+    const auto message = u"\nCaught '"_s
                          .append(TypeUtils::classPureBasename(e, true))
-                         .append(QStringLiteral("' Exception:\n"))
+                         .append(u"' Exception:\n"_s)
                          .append(exceptionMessage)
                          .append(QChar(QChar::LineFeed));
 
@@ -189,13 +191,13 @@ QDateTime Helpers::setTimeZone(QDateTime &&datetime, const QString &connection) 
 void Helpers::logPluginsPath(const QString &exceptionMessage)
 {
     const static auto
-    DriverNotFound = QStringLiteral("QSqlError(Driver not loaded, Driver not loaded)");
+    DriverNotFound = u"QSqlError(Driver not loaded, Driver not loaded)"_s;
 
     // Nothing to do
     if (!exceptionMessage.contains(DriverNotFound, Qt::CaseInsensitive))
         return;
 
-    qInfo().nospace() << "Plugins Path: "
+    qInfo().nospace() << u"Plugins Path: "_s
                       << QLibraryInfo::path(QLibraryInfo::PluginsPath);
 }
 

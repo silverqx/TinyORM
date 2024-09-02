@@ -48,6 +48,8 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
     auto driverText = error.driverText().trimmed();
     auto databaseText = error.databaseText().trimmed();
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     QString result;
     // +32 as a reserve; +4 : 2 * ', '
     result.reserve(messageStr.size() + 11 +
@@ -55,7 +57,7 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
                    4 + 32);
 
     result += messageStr;
-    result += QStringLiteral("\nQSqlError(");
+    result += u"\nQSqlError("_s;
 
     QStringList errorText;
     errorText.reserve(3);
@@ -71,7 +73,7 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
 
     result += errorText.join(COMMA);
 
-    result += QLatin1Char(')');
+    result += ')'_L1;
 
     return result;
 }

@@ -8,22 +8,22 @@ namespace Orm::Constants
     using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     // Common chars
-    const QChar SPACE      = QLatin1Char(' ');
-    const QChar DOT        = QLatin1Char('.');
-    const QChar SEMICOLON  = QLatin1Char(';');
-    const QChar COLON      = QLatin1Char(':');
-    const QChar UNDERSCORE = QLatin1Char('_');
-    const QChar DASH       = QLatin1Char('-');
-    const QChar MINUS      = QLatin1Char('-');
-    const QChar PLUS       = QLatin1Char('+');
-    const QChar ASTERISK_C = QLatin1Char('*');
-    const QChar COMMA_C    = QLatin1Char(',');
-    const QChar EQ_C       = QLatin1Char('=');
-    const QChar NOT_C      = QLatin1Char('!');
-    const QChar LT_C       = QLatin1Char('<');
-    const QChar GT_C       = QLatin1Char('>');
-    const QChar QUOTE      = QLatin1Char('"');
-    const QChar SQUOTE     = QLatin1Char('\'');
+    const QChar SPACE      = ' '_L1;
+    const QChar DOT        = '.'_L1;
+    const QChar SEMICOLON  = ';'_L1;
+    const QChar COLON      = ':'_L1;
+    const QChar UNDERSCORE = '_'_L1;
+    const QChar DASH       = '-'_L1;
+    const QChar MINUS      = '-'_L1;
+    const QChar PLUS       = '+'_L1;
+    const QChar ASTERISK_C = '*'_L1;
+    const QChar COMMA_C    = ','_L1;
+    const QChar EQ_C       = '='_L1;
+    const QChar NOT_C      = '!'_L1;
+    const QChar LT_C       = '<'_L1;
+    const QChar GT_C       = '>'_L1;
+    const QChar QUOTE      = '"'_L1;
+    const QChar SQUOTE     = '\''_L1;
 
     // Common strings
     const QString NEWLINE      = u"\n"_s;

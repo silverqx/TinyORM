@@ -6,6 +6,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Query::Grammars
 {
 
@@ -14,8 +16,7 @@ namespace Orm::Query::Grammars
 QString SQLiteGrammar::compileInsertOrIgnore(const QueryBuilder &query,
                                              const QList<QVariantMap> &values) const
 {
-    return compileInsert(query, values)
-            .replace(0, 6, QStringLiteral("insert or ignore"));
+    return compileInsert(query, values).replace(0, 6, u"insert or ignore"_s);
 }
 
 QString SQLiteGrammar::compileUpdate(QueryBuilder &query,
@@ -33,16 +34,15 @@ QString SQLiteGrammar::compileUpsert(
 {
     auto sql = compileInsert(query, values);
 
-    sql += QStringLiteral(" on conflict (%1) do update set ").arg(columnize(uniqueBy));
+    sql += u" on conflict (%1) do update set "_s.arg(columnize(uniqueBy));
 
     QStringList columns;
     columns.reserve(update.size());
 
     for (const auto &column : update)
-        columns << QStringLiteral("%1 = %2")
+        columns << u"%1 = %2"_s
                    .arg(wrap(column),
-                        DOT_IN.arg(wrapValue(QStringLiteral("excluded")),
-                                   wrap(column)));
+                        DOT_IN.arg(wrapValue(u"excluded"_s), wrap(column)));
 
     return NOSPACE.arg(sql, columns.join(COMMA));
 }
@@ -61,8 +61,8 @@ SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
     const auto table = wrapTable(query.getFrom());
 
     return {
-        {QStringLiteral("delete from sqlite_sequence where name = ?"), {table}},
-        {QStringLiteral("delete from %1").arg(table), {}},
+        {u"delete from sqlite_sequence where name = ?"_s, {table}},
+        {u"delete from %1"_s.arg(table), {}},
     };
 }
 
@@ -76,7 +76,7 @@ const std::unordered_set<QString> &SQLiteGrammar::getOperators() const
     static const std::unordered_set<QString> cachedOperators {
         EQ, LT, GT, LE, GE, NE, NE_,
         LIKE, NLIKE, ILIKE,
-        B_AND, B_OR, QLatin1String("<<"), QLatin1String(">>"),
+        B_AND, B_OR, u"<<"_s, u">>"_s,
     };
 
     return cachedOperators;
@@ -189,33 +189,33 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
 
 QString SQLiteGrammar::whereDate(const WhereConditionItem &where) const
 {
-    return dateBasedWhere(QStringLiteral("%Y-%m-%d"), where);
+    return dateBasedWhere(u"%Y-%m-%d"_s, where);
 }
 
 QString SQLiteGrammar::whereTime(const WhereConditionItem &where) const
 {
-    return dateBasedWhere(QStringLiteral("%H:%M:%S"), where);
+    return dateBasedWhere(u"%H:%M:%S"_s, where);
 }
 
 QString SQLiteGrammar::whereDay(const WhereConditionItem &where) const
 {
-    return dateBasedWhere(QStringLiteral("%d"), where);
+    return dateBasedWhere(u"%d"_s, where);
 }
 
 QString SQLiteGrammar::whereMonth(const WhereConditionItem &where) const
 {
-    return dateBasedWhere(QStringLiteral("%m"), where);
+    return dateBasedWhere(u"%m"_s, where);
 }
 
 QString SQLiteGrammar::whereYear(const WhereConditionItem &where) const
 {
-    return dateBasedWhere(QStringLiteral("%Y"), where);
+    return dateBasedWhere(u"%Y"_s, where);
 }
 
 QString SQLiteGrammar::dateBasedWhere(const QString &type,
                                       const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1 %2 %3")
+    return u"%1 %2 %3"_s
             .arg(dateBasedWhereColumn(type, where), where.comparison,
                  parameter(where.value));
 }
@@ -229,7 +229,7 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
     case WhereType::TIME:
         Q_ASSERT(where.value.typeId() == QMetaType::QString);
 
-        return QStringLiteral("strftime('%1', %2)").arg(type, wrap(where.column));
+        return u"strftime('%1', %2)"_s.arg(type, wrap(where.column));
 
     // Compare as integral types
     case WhereType::DAY:
@@ -237,12 +237,11 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
     case WhereType::YEAR:
         Q_ASSERT(where.value.typeId() == QMetaType::Int);
 
-        return QStringLiteral("cast(strftime('%1', %2) as integer)")
-                .arg(type, wrap(where.column));
+        return u"cast(strftime('%1', %2) as integer)"_s.arg(type, wrap(where.column));
 
     default:
         throw Exceptions::InvalidArgumentError(
-                    QStringLiteral("Wrong value for enum struct WhereType in %1().")
+                    u"Wrong value for enum struct WhereType in %1()."_s
                     .arg(__tiny_func__));
     }
 }
@@ -253,9 +252,8 @@ QString SQLiteGrammar::compileUpdateColumns(const QList<UpdateItem> &values) con
     compiledAssignments.reserve(values.size());
 
     for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   wrap(unqualifyColumn(assignment.column)),
-                                   parameter(assignment.value));
+        compiledAssignments << u"%1 = %2"_s.arg(wrap(unqualifyColumn(assignment.column)),
+                                                parameter(assignment.value));
 
     return columnizeWithoutWrap(compiledAssignments);
 }
@@ -274,11 +272,10 @@ SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(
-                               query.select(QStringLiteral("%1.rowid").arg(alias)));
+    const auto selectSql = compileSelect(query.select(u"%1.rowid"_s.arg(alias)));
 
-    return QStringLiteral("update %1 set %2 where %3 in (%4)")
-            .arg(tableWrapped, columns, wrap(QStringLiteral("rowid")), selectSql);
+    return u"update %1 set %2 where %3 in (%4)"_s
+            .arg(tableWrapped, columns, wrap(u"rowid"_s), selectSql);
 }
 
 QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
@@ -289,11 +286,10 @@ QString SQLiteGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(
-                               query.select(QStringLiteral("%1.rowid").arg(alias)));
+    const auto selectSql = compileSelect(query.select(u"%1.rowid"_s.arg(alias)));
 
-    return QStringLiteral("delete from %1 where %2 in (%3)")
-            .arg(tableWrapped, wrap(QStringLiteral("rowid")), selectSql);
+    return u"delete from %1 where %2 in (%3)"_s
+            .arg(tableWrapped, wrap(u"rowid"_s), selectSql);
 }
 
 } // namespace Orm::Query::Grammars

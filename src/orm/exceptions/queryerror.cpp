@@ -38,9 +38,11 @@ QString QueryError::formatMessage(const QString &connectionName, const char *mes
     const auto sqlError = SqlError::formatMessage(message, query.lastError());
     const auto executedQuery = QueryUtils::parseExecutedQuery(query);
 
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     // Format SQL error message
     QString result;
-    // +14 and +7 are QStringLiteral-s and +32 as a reserve
+    // +14 and +7 are string literals and +32 as a reserve
     result.reserve(sqlError.size() +
                    14 + connectionName.size() +
                     7 + executedQuery.size() + 32);
@@ -48,11 +50,11 @@ QString QueryError::formatMessage(const QString &connectionName, const char *mes
     result += sqlError;
 
     // Connection name
-    result += QStringLiteral(", Connection: %1").arg(connectionName);
+    result += u", Connection: %1"_s.arg(connectionName);
 
     // Executed SQL query
     if (!executedQuery.isEmpty())
-        result += QStringLiteral(", SQL: %1").arg(executedQuery);
+        result += u", SQL: %1"_s.arg(executedQuery);
 
     return result;
 }

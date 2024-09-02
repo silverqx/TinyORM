@@ -18,6 +18,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::charset_;
 using Orm::Constants::collation_;
 using Orm::Constants::COMMA;
@@ -82,8 +84,9 @@ void MySqlConnector::configureIsolationLevel(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
-                   .arg(config[isolation_level].value<QString>())))
+    if (query.exec(u"SET SESSION TRANSACTION ISOLATION LEVEL %1;"_s
+                   .arg(config[isolation_level].value<QString>()))
+    )
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -102,8 +105,9 @@ void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set names '%1'%2;")
-                   .arg(config[charset_].value<QString>(), getCollation(config))))
+    if (query.exec(u"set names '%1'%2;"_s.arg(config[charset_].value<QString>(),
+                                              getCollation(config)))
+    )
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -117,7 +121,7 @@ void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
 QString MySqlConnector::getCollation(const QVariantHash &config)
 {
     return config.contains(collation_)
-            ? QStringLiteral(" collate '%1'").arg(config[collation_].value<QString>())
+            ? u" collate '%1'"_s.arg(config[collation_].value<QString>())
             : QString("");
 }
 
@@ -129,8 +133,7 @@ void MySqlConnector::configureTimezone(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set time_zone=\"%1\";")
-                   .arg(config[timezone_].value<QString>())))
+    if (query.exec(u"set time_zone=\"%1\";"_s.arg(config[timezone_].value<QString>())))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -168,7 +171,7 @@ void MySqlConnector::setModes(const TSqlDatabase &connection,
     }
 
     // Set defaults, no strict mode
-    if (query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
+    if (query.exec(u"set session sql_mode='NO_ENGINE_SUBSTITUTION'"_s))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -186,14 +189,13 @@ QString MySqlConnector::strictMode(const TSqlDatabase &connection,
 
     /* NO_AUTO_CREATE_USER was removed in 8.0.11 */
     if (QVersionNumber::fromString(version) >= QVersionNumber(8, 0, 11))
-        return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
-                              "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
-                              "ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'");
+        return u"set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+                "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+                "NO_ENGINE_SUBSTITUTION'"_s;
 
-    return QStringLiteral("set session sql_mode='ONLY_FULL_GROUP_BY,"
-                          "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,"
-                          "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,"
-                          "NO_ENGINE_SUBSTITUTION'");
+    return u"set session sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,"
+            "NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,"
+            "NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"_s;
 }
 
 QString MySqlConnector::getMySqlVersion(const TSqlDatabase &connection,
@@ -222,7 +224,7 @@ void MySqlConnector::setCustomModes(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes)))
+    if (query.exec(u"set session sql_mode='%1';"_s.arg(modes)))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -240,25 +242,25 @@ QString MySqlConnector::getMySqlVersionFromDatabase(const TSqlDatabase &connecti
     TSqlQuery query(connection);
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
-    if (!query.exec(QStringLiteral("select version()")))
+    if (!query.exec(u"select version()"_s))
         throw Exceptions::QueryError(connection.connectionName(),
                                      m_configureErrorMessage.arg(__tiny_func__), query);
 #elif defined(TINYORM_USING_TINYDRIVERS)
-    query.exec(QStringLiteral("select version()"));
+    query.exec(u"select version()"_s);
 #endif
 
     if (!query.first())
         throw Exceptions::RuntimeError(
-                QStringLiteral("Error during connection configuration, can not "
-                               "obtain the first record in %1().")
+                u"Error during connection configuration, can not obtain "
+                 "the first record in %1()."_s
                 .arg(__tiny_func__));
 
     auto version = query.value(0).value<QString>();
 
     if (version.isEmpty())
         throw Exceptions::RuntimeError(
-                QStringLiteral("The MySQL or MariaDB server returned an empty database "
-                               "version number in %1().")
+                u"The MySQL or MariaDB server returned an empty database "
+                 "version number in %1()."_s
                 .arg(__tiny_func__));
 
     return version;

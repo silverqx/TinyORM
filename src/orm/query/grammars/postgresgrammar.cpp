@@ -4,6 +4,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Query::Grammars
 {
 
@@ -12,14 +14,14 @@ namespace Orm::Query::Grammars
 QString PostgresGrammar::compileInsertOrIgnore(const QueryBuilder &query,
                                                const QList<QVariantMap> &values) const
 {
-    return QStringLiteral("%1 on conflict do nothing").arg(compileInsert(query, values));
+    return u"%1 on conflict do nothing"_s.arg(compileInsert(query, values));
 }
 
 QString PostgresGrammar::compileInsertGetId(const QueryBuilder &query,
                                             const QList<QVariantMap> &values,
                                             const QString &sequence) const
 {
-    return QStringLiteral("%1 returning %2")
+    return u"%1 returning %2"_s
             .arg(compileInsert(query, values),
                  wrap(sequence.isEmpty() ? ID : sequence));
 }
@@ -39,16 +41,15 @@ QString PostgresGrammar::compileUpsert(
 {
     auto sql = compileInsert(query, values);
 
-    sql += QStringLiteral(" on conflict (%1) do update set ").arg(columnize(uniqueBy));
+    sql += u" on conflict (%1) do update set "_s.arg(columnize(uniqueBy));
 
     QStringList columns;
     columns.reserve(update.size());
 
     for (const auto &column : update)
-        columns << QStringLiteral("%1 = %2")
+        columns << u"%1 = %2"_s
                    .arg(wrap(column),
-                        DOT_IN.arg(wrapValue(QStringLiteral("excluded")),
-                                   wrap(column)));
+                        DOT_IN.arg(wrapValue(u"excluded"_s), wrap(column)));
 
     return NOSPACE.arg(sql, columns.join(COMMA));
 }
@@ -64,8 +65,7 @@ QString PostgresGrammar::compileDelete(QueryBuilder &query) const
 std::unordered_map<QString, QList<QVariant>>
 PostgresGrammar::compileTruncate(const QueryBuilder &query) const
 {
-    return {{QStringLiteral("truncate %1 restart identity cascade")
-                    .arg(wrapTable(query.getFrom())),
+    return {{u"truncate %1 restart identity cascade"_s.arg(wrapTable(query.getFrom())),
             {}}};
 }
 
@@ -74,8 +74,7 @@ QString PostgresGrammar::compileLock(const QueryBuilder &query) const
     const auto &lock = query.getLock();
 
     if (!std::holds_alternative<QString>(lock))
-        return std::get<bool>(lock) ? QStringLiteral("for update")
-                                    : QStringLiteral("for share");
+        return std::get<bool>(lock) ? u"for update"_s : u"for share"_s;
 
     return std::get<QString>(lock);
 }
@@ -84,10 +83,11 @@ const std::unordered_set<QString> &PostgresGrammar::getOperators() const
 {
     static const std::unordered_set<QString> cachedOperators {
         EQ, LT, GT, LE, GE, NE, NE_,
-        LIKE, NLIKE, QLatin1String("between"), ILIKE, QLatin1String("not ilike"),
-        "~", B_AND, B_OR, "#", "<<", ">>", "<<=", ">>=",
-        AND_, "@>", "<@", "?", "?|", "?&", OR_, MINUS, "@?", "@@", "#-",
-        QLatin1String("is distinct from"), QLatin1String("is not distinct from"),
+        LIKE, NLIKE, u"between"_s, ILIKE, u"not ilike"_s,
+        u"~"_s, B_AND, B_OR, u"#"_s, u"<<"_s, u">>"_s, u"<<="_s, u">>="_s,
+        AND_, u"@>"_s, u"<@"_s, u"?"_s, u"?|"_s, u"?&"_s, OR_, MINUS, u"@?"_s, u"@@"_s,
+              u"#-"_s,
+        u"is distinct from"_s, u"is not distinct from"_s,
     };
 
     return cachedOperators;
@@ -98,9 +98,9 @@ QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
     if (!where.comparison.contains(LIKE, Qt::CaseInsensitive))
         return Grammar::whereBasic(where);
 
-    return QStringLiteral("%1::text %2 %3").arg(wrap(where.column),
-                                                where.comparison,
-                                                parameter(where.value));
+    return u"%1::text %2 %3"_s.arg(wrap(where.column),
+                                   where.comparison,
+                                   parameter(where.value));
 }
 
 /* protected */
@@ -215,39 +215,39 @@ QString PostgresGrammar::compileColumns(const QueryBuilder &query) const
     const auto &distinct = query.getDistinct();
 
     if (std::holds_alternative<QStringList>(distinct))
-        select += QStringLiteral("select distinct on (%1) ")
+        select += u"select distinct on (%1) "_s
                   .arg(columnize(std::get<QStringList>(distinct)));
 
     else if (std::holds_alternative<bool>(distinct) && std::get<bool>(distinct))
-        select += QStringLiteral("select distinct ");
+        select += u"select distinct "_s;
 
     else
-        select += QStringLiteral("select ");
+        select += u"select "_s;
 
     return select += columnize(query.getColumns());
 }
 
 QString PostgresGrammar::whereDate(const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1::date %3 %4").arg(wrap(where.column),
-                                                where.comparison,
-                                                parameter(where.value));
+    return u"%1::date %3 %4"_s.arg(wrap(where.column),
+                                   where.comparison,
+                                   parameter(where.value));
 }
 
 QString PostgresGrammar::whereTime(const WhereConditionItem &where) const
 {
-    return QStringLiteral("%1::time %3 %4").arg(wrap(where.column),
-                                                where.comparison,
-                                                parameter(where.value));
+    return u"%1::time %3 %4"_s.arg(wrap(where.column),
+                                   where.comparison,
+                                   parameter(where.value));
 }
 
 QString PostgresGrammar::dateBasedWhere(const QString &type,
                                         const WhereConditionItem &where) const
 {
-    return QStringLiteral("extract(%1 from %2) %3 %4").arg(type,
-                                                           wrap(where.column),
-                                                           where.comparison,
-                                                           parameter(where.value));
+    return u"extract(%1 from %2) %3 %4"_s.arg(type,
+                                              wrap(where.column),
+                                              where.comparison,
+                                              parameter(where.value));
 }
 
 QString PostgresGrammar::compileUpdateColumns(const QList<UpdateItem> &values) const
@@ -256,9 +256,8 @@ QString PostgresGrammar::compileUpdateColumns(const QList<UpdateItem> &values) c
     compiledAssignments.reserve(values.size());
 
     for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   wrap(unqualifyColumn(assignment.column)),
-                                   parameter(assignment.value));
+        compiledAssignments << u"%1 = %2"_s.arg(wrap(unqualifyColumn(assignment.column)),
+                                                parameter(assignment.value));
 
     return columnizeWithoutWrap(compiledAssignments);
 }
@@ -276,11 +275,10 @@ QString PostgresGrammar::compileUpdateWithJoinsOrLimit(
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(
-                               query.select(QStringLiteral("%1.ctid").arg(alias)));
+    const auto selectSql = compileSelect(query.select(u"%1.ctid"_s.arg(alias)));
 
-    return QStringLiteral("update %1 set %2 where %3 in (%4)")
-            .arg(tableWrapped, columns, wrap(QStringLiteral("ctid")), selectSql);
+    return u"update %1 set %2 where %3 in (%4)"_s
+            .arg(tableWrapped, columns, wrap(u"ctid"_s), selectSql);
 }
 
 QString PostgresGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) const
@@ -291,11 +289,10 @@ QString PostgresGrammar::compileDeleteWithJoinsOrLimit(QueryBuilder &query) cons
 
     const auto alias = getAliasFromFrom(table);
 
-    const auto selectSql = compileSelect(
-                               query.select(QStringLiteral("%1.ctid").arg(alias)));
+    const auto selectSql = compileSelect(query.select(u"%1.ctid"_s.arg(alias)));
 
-    return QStringLiteral("delete from %1 where %2 in (%3)")
-            .arg(tableWrapped, wrap(QStringLiteral("ctid")), selectSql);
+    return u"delete from %1 where %2 in (%3)"_s
+            .arg(tableWrapped, wrap(u"ctid"_s), selectSql);
 }
 
 } // namespace Orm::Query::Grammars

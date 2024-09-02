@@ -7,6 +7,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using Orm::Constants::COMMA_C;
 using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
@@ -84,10 +86,9 @@ void ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
         return;
 
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral(
-                    "Passed an unsupported 'options' type in the connection "
-                    "configuration, it has to be the QString or QVariantHash type "
-                    "in %1().")
+                u"Passed an unsupported 'options' type in the connection "
+                 "configuration, it has to be the QString or QVariantHash type "
+                 "in %1()."_s
                 .arg(__tiny_func__));
 }
 
@@ -173,7 +174,7 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
 
         concatenated.emplaceBack(
                     // Support option flags without a value (are considred as enabled)
-                    value.isEmpty() ? key : QStringLiteral("%1=%2").arg(key, value));
+                    value.isEmpty() ? key : u"%1=%2"_s.arg(key, value));
 
         ++itOption;
     }

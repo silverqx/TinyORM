@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::Concerns
@@ -62,8 +64,7 @@ void LogsQueries::logTransactionQuery(
     qDebug("Executed transaction query (%llims%s) : %s", // NOLINT(cppcoreguidelines-pro-type-vararg)
            elapsed ? *elapsed : -1,
            connectionName.isEmpty() ? ""
-                                    : QStringLiteral(", %1").arg(connectionName)
-                                      .toUtf8().constData(),
+                                    : u", %1"_s.arg(connectionName).toUtf8().constData(),
            query.toUtf8().constData());
 #endif
 }
@@ -178,8 +179,7 @@ void LogsQueries::logQueryInternal(
            QueryUtils::queryResultSize(query),
            query.isActive() ? query.numRowsAffected() : -1,
            connectionName.isEmpty() ? ""
-                                    : QStringLiteral(", %1").arg(connectionName)
-                                      .toUtf8().constData(),
+                                    : u", %1"_s.arg(connectionName).toUtf8().constData(),
            QueryUtils::parseExecutedQuery(query).toUtf8().constData());
 #endif
 }

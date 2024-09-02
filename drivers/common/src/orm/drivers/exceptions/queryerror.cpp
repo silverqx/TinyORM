@@ -49,7 +49,7 @@ QString QueryError::formatMessage(
                                         ::replaceBindingsInSql(query, bindings).first;
     // Format SQL error message
     QString result;
-    // +14 and +7 are QStringLiteral-s and +32 as a reserve
+    // +14 and +7 are string literals and +32 as a reserve
     result.reserve(mysqlErrorStr.size() + 14 + connectionName.size() +
                                            7 + executedQuery.size() + 32);
 

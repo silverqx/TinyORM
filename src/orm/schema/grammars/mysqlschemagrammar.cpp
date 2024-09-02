@@ -9,6 +9,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::SchemaNs::Grammars
 {
 
@@ -19,8 +21,7 @@ namespace Orm::SchemaNs::Grammars
 QString MySqlSchemaGrammar::compileCreateDatabase(
         const QString &name, DatabaseConnection &connection) const
 {
-    return QStringLiteral("create database %1 "
-                          "default character set %2 default collate %3")
+    return u"create database %1 default character set %2 default collate %3"_s
             .arg(wrapValue(name),
                  wrapValue(connection.getConfig(charset_).value<QString>()),
                  wrapValue(connection.getConfig(collation_).value<QString>()));
@@ -28,54 +29,52 @@ QString MySqlSchemaGrammar::compileCreateDatabase(
 
 QString MySqlSchemaGrammar::compileDropDatabaseIfExists(const QString &name) const
 {
-    return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
+    return u"drop database if exists %1"_s.arg(wrapValue(name));
 }
 
 QString MySqlSchemaGrammar::compileDropAllTables(const QList<QString> &tables) const
 {
-    return QStringLiteral("drop table %1").arg(columnize(tables));
+    return u"drop table %1"_s.arg(columnize(tables));
 }
 
 QString MySqlSchemaGrammar::compileDropAllViews(const QList<QString> &views) const
 {
-    return QStringLiteral("drop view %1").arg(columnize(views));
+    return u"drop view %1"_s.arg(columnize(views));
 }
 
 QString
 MySqlSchemaGrammar::compileGetAllTables(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("show full tables where table_type = 'BASE TABLE'");
+    return u"show full tables where table_type = 'BASE TABLE'"_s;
 }
 
 QString
 MySqlSchemaGrammar::compileGetAllViews(const QList<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("show full tables where table_type = 'VIEW'");
+    return u"show full tables where table_type = 'VIEW'"_s;
 }
 
 QString MySqlSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("set foreign_key_checks = on");
+    return u"set foreign_key_checks = on"_s;
 }
 
 QString MySqlSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("set foreign_key_checks = off");
+    return u"set foreign_key_checks = off"_s;
 }
 
 QString MySqlSchemaGrammar::compileTableExists() const
 {
-    return QStringLiteral("select * "
-                          "from `information_schema`.`tables` "
-                          "where `table_schema` = ? and `table_name` = ? and "
-                            "`table_type` = 'BASE TABLE'");
+    return u"select * from `information_schema`.`tables` "
+            "where `table_schema` = ? and `table_name` = ? and "
+              "`table_type` = 'BASE TABLE'"_s;
 }
 
 QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const // NOLINT(google-default-arguments)
 {
-    return QStringLiteral("select `column_name` as `column_name` "
-                          "from `information_schema`.`columns` "
-                            "where `table_schema` = ? and `table_name` = ?");
+    return u"select `column_name` as `column_name` from `information_schema`.`columns` "
+            "where `table_schema` = ? and `table_name` = ?"_s;
 }
 
 /* Compile methods for commands */
@@ -99,18 +98,17 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
 QList<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                  const RenameCommand &command) const
 {
-    return {QStringLiteral("rename table %1 to %2")
+    return {u"rename table %1 to %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
 }
 
 QList<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                               const BasicCommand &/*unused*/) const
 {
-    return {QStringLiteral("alter table %1 %2")
+    return {u"alter table %1 %2"_s
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(
-                         prefixArray(QStringLiteral("add column"),
-                                     getColumns(blueprint))))};
+                         prefixArray(u"add column"_s, getColumns(blueprint))))};
 }
 
 QList<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
@@ -125,26 +123,24 @@ QList<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
         const auto isRenaming = !column.renameTo.isEmpty();
 
         columns << addModifiers(
-                       QStringLiteral("%1 %2%3 %4")
-                       .arg(isRenaming ? QStringLiteral("change column")
-                                       : QStringLiteral("modify column"),
+                       u"%1 %2%3 %4"_s
+                       .arg(isRenaming ? u"change column"_s : u"modify column"_s,
                             wrap(column),
-                            isRenaming ? QStringLiteral(" %1")
-                                         .arg(BaseGrammar::wrap(column.renameTo))
+                            isRenaming ? u" %1"_s.arg(BaseGrammar::wrap(column.renameTo))
                                        : QString(""),
                             getType(column)),
                        column);
     }
 
-    return {QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint),
-                                                    columnizeWithoutWrap(columns))};
+    return {u"alter table %1 %2"_s.arg(wrapTable(blueprint),
+                                       columnizeWithoutWrap(columns))};
 }
 
 QList<QString>
 MySqlSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                       const DropColumnsCommand &command) const
 {
-    return {QStringLiteral("alter table %1 %2")
+    return {u"alter table %1 %2"_s
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(prefixArray(Drop,
                                                       wrapArray(command.columns))))};
@@ -154,7 +150,7 @@ QList<QString>
 MySqlSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                         const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename column %2 to %3")
+    return {u"alter table %1 rename column %2 to %3"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
@@ -163,11 +159,10 @@ QList<QString>
 MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                                    const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 add primary key %2(%3)")
+    return {u"alter table %1 add primary key %2(%3)"_s
                 .arg(wrapTable(blueprint),
                      command.algorithm.isEmpty() ? QString("")
-                                                 : QStringLiteral("using %1")
-                                                   .arg(command.algorithm),
+                                                 : u"using %1"_s.arg(command.algorithm),
                      columnize(command.columns))};
 }
 
@@ -175,7 +170,7 @@ QList<QString>
 MySqlSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                   const IndexCommand &command) const
 {
-    return {compileKey(blueprint, command, QStringLiteral("unique index"))};
+    return {compileKey(blueprint, command, u"unique index"_s)};
 }
 
 QList<QString>
@@ -189,21 +184,21 @@ QList<QString>
 MySqlSchemaGrammar::compileFullText(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
-    return {compileKey(blueprint, command, QStringLiteral("fulltext index"))};
+    return {compileKey(blueprint, command, u"fulltext index"_s)};
 }
 
 QList<QString>
 MySqlSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
                                         const IndexCommand &command) const
 {
-    return {compileKey(blueprint, command, QStringLiteral("spatial index"))};
+    return {compileKey(blueprint, command, u"spatial index"_s)};
 }
 
 QList<QString>
 MySqlSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                        const IndexCommand &/*unused*/) const
 {
-    return {QStringLiteral("alter table %1 drop primary key")
+    return {u"alter table %1 drop primary key"_s
                 .arg(wrapTable(blueprint))};
 }
 
@@ -211,7 +206,7 @@ QList<QString>
 MySqlSchemaGrammar::compileDropIndex(const Blueprint &blueprint,
                                      const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 drop index %2")
+    return {u"alter table %1 drop index %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
@@ -219,7 +214,7 @@ QList<QString>
 MySqlSchemaGrammar::compileDropForeign(const Blueprint &blueprint,
                                        const IndexCommand &command) const
 {
-    return {QStringLiteral("alter table %1 drop foreign key %2")
+    return {u"alter table %1 drop foreign key %2"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.index))};
 }
 
@@ -227,7 +222,7 @@ QList<QString>
 MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
                                        const RenameCommand &command) const
 {
-    return {QStringLiteral("alter table %1 rename index %2 to %3")
+    return {u"alter table %1 rename index %2 to %3"_s
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
 }
@@ -240,7 +235,7 @@ MySqlSchemaGrammar::compileTableComment(const Blueprint &blueprint,
         return {};
 
     // All escaped special characters will be correctly saved in the comment
-    return {QStringLiteral("alter table %1 comment = %2")
+    return {u"alter table %1 comment = %2"_s
                 .arg(wrapTable(blueprint),
                      quoteString(escapeString(command.comment)))};
 }
@@ -322,8 +317,8 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
     Q_ASSERT_X(cached.contains(name),
                "MySqlSchemaGrammar::invokeCompileMethod",
-               QStringLiteral("Compile methods map doesn't contain the '%1' key "
-                              "(unsupported command).")
+               u"Compile methods map doesn't contain the '%1' key "
+                "(unsupported command)."_s
                .arg(name)
                .toUtf8().constData());
 
@@ -344,8 +339,8 @@ MySqlSchemaGrammar::getFluentCommands() const
 
 QString MySqlSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 {
-    return QStringLiteral("%1 table %2 (%3)")
-            .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
+    return u"%1 table %2 (%3)"_s
+            .arg(blueprint.isTemporary() ? u"create temporary"_s
                                          : Create,
                  wrapTable(blueprint),
                  columnizeWithoutWrap(getColumns(blueprint)));
@@ -373,8 +368,8 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
 void MySqlSchemaGrammar::compileCreateEncoding(
         QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
-    static const auto charsetTmpl = QStringLiteral(" default character set %1");
-    static const auto collateTmpl = QStringLiteral(" collate %1");
+    static const auto charsetTmpl = u" default character set %1"_s;
+    static const auto collateTmpl = u" collate %1"_s;
 
     /* First we will set the character set if one has been set on either the create
        blueprint itself or on the root configuration for the connection that the
@@ -401,7 +396,7 @@ void MySqlSchemaGrammar::compileCreateEncoding(
 void MySqlSchemaGrammar::compileCreateEngine(
         QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
-    static const auto engineTmpl = QStringLiteral(" engine = %1");
+    static const auto engineTmpl = u" engine = %1"_s;
 
     if (!blueprint.engine.isEmpty())
         sql += engineTmpl.arg(blueprint.engine);
@@ -417,7 +412,7 @@ MySqlSchemaGrammar::compileAutoIncrementStartingValue(
         const Blueprint &blueprint,
         const AutoIncrementStartingValueCommand &command) const
 {
-    return {QStringLiteral("alter table %1 auto_increment = %2")
+    return {u"alter table %1 auto_increment = %2"_s
                 .arg(wrapTable(blueprint))
                 .arg(command.startingValue)};
 }
@@ -426,11 +421,10 @@ QString
 MySqlSchemaGrammar::compileKey(const Blueprint &blueprint, const IndexCommand &command,
                                const QString &type) const
 {
-    return QStringLiteral("alter table %1 add %2 %3%4(%5)")
+    return u"alter table %1 add %2 %3%4(%5)"_s
             .arg(wrapTable(blueprint), type, BaseGrammar::wrap(command.index),
                  command.algorithm.isEmpty() ? QString("")
-                                             : QStringLiteral(" using %1")
-                                               .arg(command.algorithm),
+                                             : u" using %1"_s.arg(command.algorithm),
                  columnize(command.columns));
 }
 
@@ -440,8 +434,7 @@ QString MySqlSchemaGrammar::wrapValue(QString value) const
     if (value == ASTERISK_C)
         return value;
 
-    return QStringLiteral("`%1`").arg(value.replace(QStringLiteral("`"),
-                                                    QStringLiteral("``")));
+    return u"`%1`"_s.arg(value.replace(u"`"_s, u"``"_s));
 }
 
 QString MySqlSchemaGrammar::escapeString(QString value) const
@@ -457,15 +450,15 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
 
     return value
             // No need to escape these
-//            .replace(QChar(QChar::LineFeed), "\\n")
-//            .replace(QChar(QChar::Tabulation), "\\t")
-//            .replace(QChar(0x0008), "\\b")
-//            .replace(QChar(QChar::CarriageReturn), "\\r")
-//            .replace(QUOTE, "\\\"")
-            .replace(QChar(0x001a), QStringLiteral("^Z"))
-            .replace(QLatin1Char('\\'), QStringLiteral("\\\\"))
-            .replace(QChar(QChar::Null), QStringLiteral("\\0"))
-            .replace(SQUOTE, "''");
+//            .replace(QChar(QChar::LineFeed), u"\\n"_s)
+//            .replace(QChar(QChar::Tabulation), u"\\t"_s)
+//            .replace(QChar(0x0008), u"\\b"_s)
+//            .replace(QChar(QChar::CarriageReturn), u"\\r"_s)
+//            .replace(QUOTE, u"\\\""_s)
+            .replace(QChar(0x001a), u"^Z"_s)
+            .replace('\\'_L1, u"\\\\"_s)
+            .replace(QChar(QChar::Null), u"\\0"_s)
+            .replace(SQUOTE, u"''"_s);
 }
 
 QString MySqlSchemaGrammar::getType(ColumnDefinition &column) const
@@ -608,24 +601,23 @@ QString MySqlSchemaGrammar::getType(ColumnDefinition &column) const
 
     default:
         throw Exceptions::RuntimeError(
-                    QStringLiteral("Unsupported column type in %1().")
-                    .arg(__tiny_func__));
+                    u"Unsupported column type in %1()."_s.arg(__tiny_func__));
     }
 }
 
 QString MySqlSchemaGrammar::typeChar(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("char(%1)").arg(column.length);
+    return u"char(%1)"_s.arg(column.length);
 }
 
 QString MySqlSchemaGrammar::typeString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("varchar(%1)").arg(column.length);
+    return u"varchar(%1)"_s.arg(column.length);
 }
 
 QString MySqlSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("tinytext");
+    return u"tinytext"_s;
 }
 
 QString MySqlSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
@@ -635,37 +627,37 @@ QString MySqlSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const /
 
 QString MySqlSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("mediumtext");
+    return u"mediumtext"_s;
 }
 
 QString MySqlSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("longtext");
+    return u"longtext"_s;
 }
 
 QString MySqlSchemaGrammar::typeBigInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("bigint");
+    return u"bigint"_s;
 }
 
 QString MySqlSchemaGrammar::typeInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("int");
+    return u"int"_s;
 }
 
 QString MySqlSchemaGrammar::typeMediumInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("mediumint");
+    return u"mediumint"_s;
 }
 
 QString MySqlSchemaGrammar::typeTinyInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("tinyint");
+    return u"tinyint"_s;
 }
 
 QString MySqlSchemaGrammar::typeSmallInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("smallint");
+    return u"smallint"_s;
 }
 
 QString MySqlSchemaGrammar::typeFloat(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -676,49 +668,49 @@ QString MySqlSchemaGrammar::typeFloat(const ColumnDefinition &column) const // N
 QString MySqlSchemaGrammar::typeDouble(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.total && column.places)
-        return QStringLiteral("double(%1, %2)").arg(*column.total).arg(*column.places);
+        return u"double(%1, %2)"_s.arg(*column.total).arg(*column.places);
 
-    return QStringLiteral("double");
+    return u"double"_s;
 }
 
 QString MySqlSchemaGrammar::typeDecimal(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.total)
-        return QStringLiteral("decimal");
+        return u"decimal"_s;
 
-    return QStringLiteral("decimal(%1, %2)").arg(*column.total)
-                                            // Follow the SQL standard
-                                            .arg(column.places ? *column.places : 0);
+    return u"decimal(%1, %2)"_s.arg(*column.total)
+                               // Follow the SQL standard
+                               .arg(column.places ? *column.places : 0);
 }
 
 QString MySqlSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("tinyint(1)");
+    return u"tinyint(1)"_s;
 }
 
 QString MySqlSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("enum(%1)").arg(quoteString(column.allowed));
+    return u"enum(%1)"_s.arg(quoteString(column.allowed));
 }
 
 QString MySqlSchemaGrammar::typeSet(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("set(%1)").arg(quoteString(column.allowed));
+    return u"set(%1)"_s.arg(quoteString(column.allowed));
 }
 
 QString MySqlSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("json");
+    return u"json"_s;
 }
 
 QString MySqlSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("json");
+    return u"json"_s;
 }
 
 QString MySqlSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("date");
+    return u"date"_s;
 }
 
 QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -726,8 +718,8 @@ QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLI
     const auto precision = column.precision.value_or(0);
 
     const auto current = precision > 0
-                         ? QStringLiteral("current_timestamp(%1)").arg(precision)
-                         : QStringLiteral("current_timestamp");
+                         ? u"current_timestamp(%1)"_s.arg(precision)
+                         : u"current_timestamp"_s;
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);
@@ -735,8 +727,8 @@ QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLI
     if (column.useCurrentOnUpdate)
         column.onUpdate = Expression(current);
 
-    return precision > 0 ? QStringLiteral("datetime(%1)").arg(precision)
-                         : QStringLiteral("datetime");
+    return precision > 0 ? u"datetime(%1)"_s.arg(precision)
+                         : u"datetime"_s;
 }
 
 QString MySqlSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
@@ -747,8 +739,8 @@ QString MySqlSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 QString MySqlSchemaGrammar::typeTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.precision && *column.precision > 0
-            ? QStringLiteral("time(%1)").arg(*column.precision)
-            : QStringLiteral("time");
+            ? u"time(%1)"_s.arg(*column.precision)
+            : u"time"_s;
 }
 
 QString MySqlSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
@@ -761,8 +753,8 @@ QString MySqlSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOL
     const auto precision = column.precision.value_or(0);
 
     const auto current = precision > 0
-                         ? QStringLiteral("current_timestamp(%1)").arg(precision)
-                         : QStringLiteral("current_timestamp");
+                         ? u"current_timestamp(%1)"_s.arg(precision)
+                         : u"current_timestamp"_s;
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);
@@ -775,8 +767,8 @@ QString MySqlSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOL
        (This differs from the standard SQL default of 6, for compatibility with previous
        MySQL versions.)
        So the >0 is ok, the default will be timestamp aka timestamp(0). */
-    return precision > 0 ? QStringLiteral("timestamp(%1)").arg(precision)
-                         : QStringLiteral("timestamp");
+    return precision > 0 ? u"timestamp(%1)"_s.arg(precision)
+                         : u"timestamp"_s;
 }
 
 QString MySqlSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const
@@ -786,12 +778,12 @@ QString MySqlSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const
 
 QString MySqlSchemaGrammar::typeYear(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("year");
+    return u"year"_s;
 }
 
 QString MySqlSchemaGrammar::typeTinyBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("tinyblob");
+    return u"tinyblob"_s;
 }
 
 QString MySqlSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
@@ -801,68 +793,68 @@ QString MySqlSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const
 
 QString MySqlSchemaGrammar::typeMediumBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("mediumblob");
+    return u"mediumblob"_s;
 }
 
 QString MySqlSchemaGrammar::typeLongBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("longblob");
+    return u"longblob"_s;
 }
 
 QString MySqlSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("char(36)");
+    return u"char(36)"_s;
 }
 
 QString MySqlSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("varchar(45)");
+    return u"varchar(45)"_s;
 }
 
 QString MySqlSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("varchar(17)");
+    return u"varchar(17)"_s;
 }
 
 QString MySqlSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("geometry");
+    return u"geometry"_s;
 }
 
 QString MySqlSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("point");
+    return u"point"_s;
 }
 
 QString MySqlSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("linestring");
+    return u"linestring"_s;
 }
 
 QString MySqlSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("polygon");
+    return u"polygon"_s;
 }
 
 QString
 MySqlSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("geometrycollection");
+    return u"geometrycollection"_s;
 }
 
 QString MySqlSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multipoint");
+    return u"multipoint"_s;
 }
 
 QString MySqlSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multilinestring");
+    return u"multilinestring"_s;
 }
 
 QString MySqlSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("multipolygon");
+    return u"multipolygon"_s;
 }
 
 QString MySqlSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) const
@@ -877,7 +869,7 @@ QString MySqlSchemaGrammar::modifyUnsigned(const ColumnDefinition &column) const
     if (!column.isUnsigned)
         return {};
 
-    return QStringLiteral(" unsigned");
+    return u" unsigned"_s;
 }
 
 QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -886,7 +878,7 @@ QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const 
         return {};
 
     // Quotes are not used in the MySQL docs
-    return QStringLiteral(" character set %1").arg(quoteString(column.charset));
+    return u" character set %1"_s.arg(quoteString(column.charset));
 }
 
 QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -894,7 +886,7 @@ QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const 
     if (column.collation.isEmpty())
         return {};
 
-    return QStringLiteral(" collate %1").arg(quoteString(column.collation));
+    return u" collate %1"_s.arg(quoteString(column.collation));
 }
 
 QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -902,7 +894,7 @@ QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) cons
     if (!column.virtualAs || column.virtualAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1)").arg(*column.virtualAs);
+    return u" generated always as (%1)"_s.arg(*column.virtualAs);
 }
 
 QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -910,7 +902,7 @@ QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
     if (!column.storedAs || column.storedAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs);
+    return u" generated always as (%1) stored"_s.arg(*column.storedAs);
 }
 
 QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -923,8 +915,8 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
         ((!column.virtualAs || column.virtualAs->isEmpty()) &&
          (!column.storedAs  || column.storedAs->isEmpty()))
     )
-        return column.nullable && *column.nullable ? QStringLiteral(" null")
-                                                   : QStringLiteral(" not null");
+        return column.nullable && *column.nullable ? u" null"_s
+                                                   : u" not null"_s;
 
     /* MariaDB doesn't support setting a nullable modifier (NULL or NOT NULL)
        on generated columns, a query fails if nullable is set. The best that can be done
@@ -937,7 +929,7 @@ QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) cons
     if (!column.invisible)
         return {};
 
-    return QStringLiteral(" invisible");
+    return u" invisible"_s;
 }
 
 QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -945,7 +937,7 @@ QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const // 
     if (const auto &srid = column.srid;
         srid && *srid > 0
     )
-        return QStringLiteral(" srid %1").arg(*srid);
+        return u" srid %1"_s.arg(*srid);
 
     return {};
 }
@@ -958,7 +950,7 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
         return {};
 
     // Default value is already quoted and escaped inside the getDefaultValue()
-    return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
+    return u" default %1"_s.arg(getDefaultValue(defaultValue));
 }
 
 QString MySqlSchemaGrammar::modifyOnUpdate(const ColumnDefinition &column) const
@@ -969,7 +961,7 @@ QString MySqlSchemaGrammar::modifyOnUpdate(const ColumnDefinition &column) const
         return {};
 
     // Default value is already quoted and escaped inside the getDefaultValue()
-    return QStringLiteral(" on update %1").arg(getDefaultValue(onUpdate));
+    return u" on update %1"_s.arg(getDefaultValue(onUpdate));
 }
 
 QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -983,7 +975,7 @@ QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) cons
     if (!column.autoIncrement || !serials.contains(column.type))
         return {};
 
-    return QStringLiteral(" auto_increment primary key");
+    return u" auto_increment primary key"_s;
 }
 
 QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
@@ -992,7 +984,7 @@ QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
         return {};
 
     // All escaped special characters will be correctly saved in the comment
-    return QStringLiteral(" comment %1").arg(quoteString(escapeString(column.comment)));
+    return u" comment %1"_s.arg(quoteString(escapeString(column.comment)));
 }
 
 QString MySqlSchemaGrammar::modifyAfter(const ColumnDefinition &column) const
@@ -1000,7 +992,7 @@ QString MySqlSchemaGrammar::modifyAfter(const ColumnDefinition &column) const
     if (column.after.isEmpty())
         return {};
 
-    return QStringLiteral(" after %1").arg(BaseGrammar::wrap(column.after));
+    return u" after %1"_s.arg(BaseGrammar::wrap(column.after));
 }
 
 QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -1008,7 +1000,7 @@ QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const //
     if (!column.first)
         return {};
 
-    return QStringLiteral(" first");
+    return u" first"_s;
 }
 
 } // namespace Orm::SchemaNs::Grammars
