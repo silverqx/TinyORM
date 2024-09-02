@@ -276,7 +276,8 @@ namespace Concerns
 
         /*! Current environment. */
         QString m_environment = QStringLiteral("local");
-        /*! Environment variable name that holds a current environment value. */
+        /*! Environment variable name that holds a current environment value
+            (passed to the qEnvironmentVariable() so the type is const char *). */
         const char *m_environmentEnvName;
         /*! Migration repository table name. */
         QString m_migrationTable;

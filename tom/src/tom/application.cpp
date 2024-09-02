@@ -370,14 +370,17 @@ void Application::parseCommandLine()
 
 void Application::initializeEnvironment()
 {
-    /*! Order is as follow, the default value is local, can be overridden by
-        a env. variable which name is in the m_environmentEnvName data member, the --env
-        command-line argument has highest priority. */
+    /*! The default value is local, can be overridden by an environment variable which
+        name is in the m_environmentEnvName data member, the --env command-line argument
+        has the highest priority. */
+
+    // A value from the --env command-line argument
     if (auto environmentOpt = m_parser.value(env);
         !environmentOpt.isEmpty()
     )
         m_environment = std::move(environmentOpt);
 
+    // Resolve an environment variable set in the m_environmentEnvName data member
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
                                    ? QString("")
                                    : qEnvironmentVariable(m_environmentEnvName);
