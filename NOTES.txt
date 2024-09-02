@@ -3183,8 +3183,10 @@ QLibrary debugging:
 
 QString converting constructors performance with 1'000'000 loop:
 
- - there is the only one case when ""_L1 is faster and that is in comparisons:
+ - these are the cases when the ""_L1 is faster (especially in comparisons):
    QString("xyz") == "s1"_L1
+   QString("xyz").startsWith/endsWith("s1"_L1)
+   QString("xyz").compare("s1"_L1, Qt::CaseInsensitive/CaseSensitive) == 0
 
  - even construction from an empty string is fastest with u""_s
    -  17ms - QString s(u""_s);
