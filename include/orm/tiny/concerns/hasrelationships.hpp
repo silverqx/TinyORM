@@ -280,6 +280,11 @@ namespace Concerns
         std::unordered_set<QString> m_pivots;
 
     private:
+        /*! Source method name for the exception (in checkRelationType()). */
+        inline static const auto GetRelation      = u"getRelation"_s;
+        /*! Source method name for the exception (in checkRelationType()). */
+        inline static const auto GetRelationValue = u"getRelationValue"_s;
+
         /*! Alias for the enum struct RelationMappingNotFoundError::From. */
         using RelationFrom = Tiny::Exceptions::RelationMappingNotFoundError::From;
 
@@ -649,8 +654,7 @@ namespace Concerns
            by using the snake_case name of the relationship, which when combined
            with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
-            foreignKey = QStringLiteral("%1_%2").arg(StringUtils::snake(relation),
-                                                     relatedKeyName);
+            foreignKey = UNDERSCORE_IN.arg(StringUtils::snake(relation), relatedKeyName);
 
         /* Once we have the foreign key names, we return the relationship instance,
            which will actually be responsible for retrieving and hydrating every
@@ -1121,8 +1125,8 @@ namespace Concerns
         auto &relationVariant = m_relations.find(relation)->second;
 
         // Check relation type to avoid std::bad_variant_access
-        checkRelationType<ModelsCollection<Related>, Related>(
-                    relationVariant, relation, QStringLiteral("getRelation"));
+        checkRelationType<ModelsCollection<Related>, Related>(relationVariant, relation,
+                                                              GetRelation);
 
         /* Obtain related models from data member hash as the ModelsCollection,
            it is internal format and transform it into a Container of pointers
@@ -1143,8 +1147,8 @@ namespace Concerns
         auto &relationVariant = m_relations.find(relation)->second;
 
         // Check relation type to avoid std::bad_variant_access
-        checkRelationType<std::optional<Related>, Related>(
-                    relationVariant, relation, QStringLiteral("getRelation"));
+        checkRelationType<std::optional<Related>, Related>(relationVariant, relation,
+                                                           GetRelation);
 
         /* Obtain related model from data member hash and return it as a pointer or
            nullptr if no model is associated, so a user can directly modify this
@@ -1175,8 +1179,7 @@ namespace Concerns
         this->resetRelationStore();
 
         // Check relation type to avoid std::bad_variant_access
-        checkRelationType<Result, Related>(lazyResult, relation,
-                                           QStringLiteral("getRelationValue"));
+        checkRelationType<Result, Related>(lazyResult, relation, GetRelationValue);
 
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(push)
@@ -1206,8 +1209,9 @@ namespace Concerns
         } else if constexpr (std::is_same_v<Result, ModelsCollection<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
-                        u"The relation '%1' is one type relation, use the %2<%3, "
-                         "Orm::One>() method overload with an 'Orm::One' tag."_s
+                        u"The relation '%1' is one type relation, use "
+                         "the %2<%3, Orm::One>() method overload with "
+                         "an 'Orm::One' tag."_s
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
         } else

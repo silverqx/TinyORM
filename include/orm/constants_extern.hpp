@@ -71,6 +71,7 @@ namespace Orm::Constants
     TINYORM_EXPORT extern const QString PARENTH_ONE;
     TINYORM_EXPORT extern const QString DOT_IN;
     TINYORM_EXPORT extern const QString SPACE_IN;
+    TINYORM_EXPORT extern const QString UNDERSCORE_IN;
     TINYORM_EXPORT extern const QString NOSPACE;
     TINYORM_EXPORT extern const QString NOSPACE3;
     TINYORM_EXPORT extern const QString TMPL_PLURAL;

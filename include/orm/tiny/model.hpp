@@ -1584,8 +1584,9 @@ namespace Orm::Tiny
     {
         using namespace Qt::StringLiterals;
 
-        return u"%1_%2"_s.arg(StringUtils::snake(TypeUtils::classPureBasename<Derived>()),
-                              getKeyName());
+        return UNDERSCORE_IN.arg(StringUtils::snake(
+                                     TypeUtils::classPureBasename<Derived>()),
+                                 getKeyName());
     }
 
     /* Others */

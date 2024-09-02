@@ -73,6 +73,7 @@ namespace Orm::Constants
     inline const QString PARENTH_ONE  = u"(%1)"_s;
     inline const QString DOT_IN       = u"%1.%2"_s;
     inline const QString SPACE_IN     = u"%1 %2"_s;
+    inline const QString UNDERSCORE_IN = u"%1_%2"_s;
     inline const QString NOSPACE      = u"%1%2"_s;
     inline const QString NOSPACE3     = u"%1%2%3"_s;
     inline const QString TMPL_PLURAL  = u"%1s"_s;
