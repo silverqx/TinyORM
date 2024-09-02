@@ -65,6 +65,12 @@ namespace Constants
     // Common strings
     TINYORM_EXPORT extern const QString TRIM_QUOTES;
 
+    // Column names
+    TINYORM_EXPORT extern const QString Uuid;
+    TINYORM_EXPORT extern const QString IpAddress;
+    TINYORM_EXPORT extern const QString MacAddress;
+    TINYORM_EXPORT extern const QString RememberToken;
+
 } // namespace Constants
 
 // NOLINTNEXTLINE(google-build-using-namespace)

@@ -69,6 +69,12 @@ namespace Constants
     // Common strings
     inline const QString TRIM_QUOTES  = u"'\""_s;
 
+    // Column names
+    inline const auto Uuid          = u"uuid"_s;
+    inline const auto IpAddress     = u"ip_address"_s;
+    inline const auto MacAddress    = u"mac_address"_s;
+    inline const auto RememberToken = u"remember_token"_s;
+
 } // namespace Constants
 
 // NOLINTNEXTLINE(google-build-using-namespace)

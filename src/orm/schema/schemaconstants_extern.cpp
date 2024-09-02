@@ -55,6 +55,12 @@ namespace Orm::SchemaNs::Constants
     // Common strings
     const QString TRIM_QUOTES = u"'\""_s;
 
+    // Column names
+    const QString Uuid          = u"uuid"_s;
+    const QString IpAddress     = u"ip_address"_s;
+    const QString MacAddress    = u"mac_address"_s;
+    const QString RememberToken = u"remember_token"_s;
+
 } // namespace Orm::SchemaNs::Constants
 
 TINYORM_END_COMMON_NAMESPACE

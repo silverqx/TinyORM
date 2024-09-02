@@ -368,15 +368,12 @@ namespace Grammars
         ColumnDefinitionReference<> longBinary(const QString &column);
 
         /*! Create a new uuid column on the table. */
-        ColumnDefinitionReference<>
-        uuid(const QString &column = QStringLiteral("uuid"));
+        ColumnDefinitionReference<> uuid(const QString &column = Uuid);
 
         /*! Create a new IP address column on the table. */
-        ColumnDefinitionReference<>
-        ipAddress(const QString &column = QStringLiteral("ip_address"));
+        ColumnDefinitionReference<> ipAddress(const QString &column = IpAddress);
         /*! Create a new MAC address column on the table. */
-        ColumnDefinitionReference<>
-        macAddress(const QString &column = QStringLiteral("mac_address"));
+        ColumnDefinitionReference<> macAddress(const QString &column = MacAddress);
 
         /*! Create a new geometry column on the table. */
         ColumnDefinitionReference<> geometry(const QString &column);
@@ -555,7 +552,7 @@ namespace Grammars
 
     void Blueprint::dropRememberToken()
     {
-        dropColumns({QStringLiteral("remember_token")});
+        dropColumns({RememberToken});
     }
 
     template<typename>
