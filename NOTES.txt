@@ -3946,3 +3946,21 @@ Would be good to also test preprocessor vs compilation.
 So doesn't matter if LLD or BFD is used as the difference is counting in seconds.
 Much better would be to use BFD because of LTO, but LTO doesn't work even with BFD, on MinGW
 LTO fails in all cases. 😞
+
+
+Find out Private Headers:
+-------------------------
+tags: pwsh, headers, private
+--
+
+The following commands can be used to select all header files eg. in orm/include/ folder and
+the second command selects all the used #include-s in these header files, comparing these
+two lists shows header files which can be made Private.
+
+Get-ChildItem -File -Recurse *.hpp | select -ExpandProperty FullName | sort | Set-Clipboard
+Get-ChildItem -File -Recurse *.hpp
+    | Get-Content
+    | where { $_ -cmatch 'include "(?<includes>.*)"' }
+    | % { $_ -cmatch 'include "(?<inc>.*)"' | Out-Null; $Matches.includes }
+    | sort -Unique
+    | Set-Clipboard
