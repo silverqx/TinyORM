@@ -53,7 +53,7 @@ namespace Orm::SchemaNs::Constants
     const QString bytea_   = u"bytea"_s;
 
     // Common strings
-    const QString TRIM_QUOTES  = u"'\""_s;
+    const QString TRIM_QUOTES = u"'\""_s;
 
 } // namespace Orm::SchemaNs::Constants
 
