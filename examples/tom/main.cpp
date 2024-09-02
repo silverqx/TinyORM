@@ -152,7 +152,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,            EMPTY},
             {prefix_indexes,     false},
 //            {isolation_level,    u"REPEATABLE READ"_s}, // Postgres default is READ COMMITTED
-//            {synchronous_commit, u"off"_s}, // Postgres default is on
+//            {synchronous_commit, off}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,          QStringList {spatial_ref_sys}},
             {options_,           ConfigUtils::postgresSslOptions()},
