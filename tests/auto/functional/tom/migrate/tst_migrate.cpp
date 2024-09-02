@@ -801,7 +801,7 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv,
                             const QString &migrationTable)
 {
     // Current environment variable name
-    const auto *const environmentEnvName = "TOM_TESTS_ENV";
+    static const auto *const environmentEnvName = "TOM_TESTS_ENV";
 
     try {
         // Throw if the environment is production because it needs confirmation
