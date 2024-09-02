@@ -28,8 +28,8 @@ namespace Tom::Constants
     inline const QString ShortOption     = u"-%1"_s;
     inline const QString DoubleDash      = u"--"_s;
 
-    inline const QString migration_  = u"migration"_s;
-    inline const QString batch_      = u"batch"_s;
+    inline const QString migration_    = u"migration"_s;
+    inline const QString batch_        = u"batch"_s;
 
     // Common options
     inline const QString ansi          = u"ansi"_s;
