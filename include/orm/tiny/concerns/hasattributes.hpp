@@ -1961,9 +1961,12 @@ namespace Orm::Tiny::Concerns
         const auto convertAttribute = [&key, &value_, castType]
                                       (const QMetaType metaType)
         {
+            // BUG msvc the using Qt::StringLiterals::operator""_s; doesn't work here, it even doesn't work outside this lambda in the castAttribute() method silverqx
+            using namespace Qt::StringLiterals;
+
             // Throw if the given attribute can not be converted to the given cast type
             throwIfCanNotCastAttribute(key, castType, metaType, value_,
-                                       QLatin1String("HasAttributes::castAttribute"));
+                                       u"HasAttributes::castAttribute"_s);
 
 #ifdef TINYORM_DEBUG
             /* Still check for the false value and log to the debug stream, but not if
@@ -1973,7 +1976,7 @@ namespace Orm::Tiny::Concerns
                 // Log if the QVariant::convert() for the given attribute failed
                 logIfConvertAttributeFailed(
                             key, castType, metaType,
-                            QLatin1String("HasAttributes::castAttribute"));
+                            u"HasAttributes::castAttribute"_s);
 #else
             value_.convert(metaType);
 #endif

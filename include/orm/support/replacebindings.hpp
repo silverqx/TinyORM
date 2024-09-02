@@ -88,7 +88,9 @@ namespace Orm::Support
             else
                 bindingValue = binding.template value<QString>();
 
-            queryString.replace(queryString.indexOf(QLatin1Char('?')), 1, bindingValue);
+            using Qt::StringLiterals::operator""_L1;
+
+            queryString.replace(queryString.indexOf('?'_L1), 1, bindingValue);
 
             if (simpleBindings)
                 simpleBindingsList << std::move(bindingValue); // clazy:exclude=reserve-candidates
