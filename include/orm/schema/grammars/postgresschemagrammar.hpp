@@ -313,6 +313,8 @@ namespace Grammars
     template<QStringContainer T>
     T PostgresSchemaGrammar::escapeNames(const T &names) const
     {
+        using namespace Qt::StringLiterals;
+
         return names
                 | ranges::views::transform([](const auto &name)
         {
@@ -321,9 +323,9 @@ namespace Grammars
 
             for (auto &&segment : name.split(DOT, Qt::KeepEmptyParts))
                 // Don't use the TRIM_QUOTES here to avoid include of schema constants
-                nameList << StringUtils::trim(segment, QStringLiteral("'\""));
+                nameList << StringUtils::trim(segment, u"'\""_s);
 
-            return TMPL_DQUOTES.arg(nameList.join(QStringLiteral("\".\"")));
+            return TMPL_DQUOTES.arg(nameList.join(u"\".\""_s));
         })
                 | ranges::to<T>();
     }

@@ -16,6 +16,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Support
 {
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! Database configuration class. */
     class DatabaseConfiguration
@@ -34,7 +36,7 @@ namespace Orm::Support
         /*! Default Database Connection Name, used as default value in method declarations
             only. */
         T_THREAD_LOCAL
-        inline static QString defaultConnectionName = QStringLiteral("tinyorm_default");
+        inline static QString defaultConnectionName = u"tinyorm_default"_s;
 
         /*! Currently set Default Database Connection Name for a current thread. */
         T_THREAD_LOCAL
@@ -42,8 +44,7 @@ namespace Orm::Support
 
         /*! Default namespace prefix for MySQL savepoints in a current thread. */
         T_THREAD_LOCAL
-        inline static
-        QString defaultSavepointNamespace = QStringLiteral("tinyorm_savepoint");
+        inline static QString defaultSavepointNamespace = u"tinyorm_savepoint"_s;
 
         /*! Return a pointer to the database connection configurations map. */
         inline ConfigurationsType *operator->() noexcept;

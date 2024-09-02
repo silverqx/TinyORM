@@ -1442,8 +1442,10 @@ namespace Orm::Tiny
     bool Builder<Model>::isNestedUnder(const QString &topRelation,
                                        const QString &nestedRelation) const
     {
+        using namespace Qt::StringLiterals;
+
         return nestedRelation.contains(DOT) &&
-               nestedRelation.startsWith(QStringLiteral("%1.").arg(topRelation));
+               nestedRelation.startsWith(u"%1."_s.arg(topRelation));
     }
 
     template<typename Model>

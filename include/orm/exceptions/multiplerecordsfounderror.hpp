@@ -11,6 +11,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Exceptions
 {
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! Found more that one record (used by Builder::sole()). */
     class MultipleRecordsFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic
@@ -35,7 +37,7 @@ namespace Orm::Exceptions
 
     MultipleRecordsFoundError::MultipleRecordsFoundError(const int count,
                                                          QString &&functionName)
-        : RuntimeError(QStringLiteral("%1 records were found in %2().")
+        : RuntimeError(u"%1 records were found in %2()."_s
                        .arg(count).arg(functionName)
                        .toUtf8().constData())
         , m_count(count)

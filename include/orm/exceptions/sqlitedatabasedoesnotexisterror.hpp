@@ -11,6 +11,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Exceptions
 {
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! TinyORM SQLite database doesn't exist exception. */
     class SQLiteDatabaseDoesNotExistError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
@@ -30,9 +32,8 @@ namespace Orm::Exceptions
     /* public */
 
     SQLiteDatabaseDoesNotExistError::SQLiteDatabaseDoesNotExistError(const QString &path)
-        : InvalidArgumentError(QStringLiteral(
-                                   "SQLite Database file '%1' does not exist, please "
-                                   "insert an absolute path to the database.")
+        : InvalidArgumentError(u"SQLite Database file '%1' does not exist, please "
+                                "insert an absolute path to the database."_s
                                .arg(path).toUtf8().constData())
         , m_path(path)
     {}

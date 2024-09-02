@@ -12,7 +12,18 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Utils
+namespace Orm
+{
+
+namespace Constants
+{
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
+    inline const auto TrimCharacters = u" \n\r\t\v\f"_s;
+} // namespace Constants
+
+namespace Utils
 {
 
     /*! String related library class. */
@@ -34,15 +45,15 @@ namespace Orm::Utils
             of a string. */
         inline static QString
         trim(const QString &string,
-             const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+             const QString &characters = Constants::TrimCharacters);
         /*! Strip whitespaces (or other characters) from the beginning of a string. */
         static QString
         ltrim(const QString &string,
-              const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+              const QString &characters = Constants::TrimCharacters);
         /*! Strip whitespaces (or other characters) from the end of a string. */
         static QString
         rtrim(const QString &string,
-              const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+              const QString &characters = Constants::TrimCharacters);
 
         /*! Remove tags from the given string. */
         [[maybe_unused]]
@@ -112,7 +123,8 @@ namespace Orm::Utils
     }
 #endif
 
-} // namespace Orm::Utils
+} // namespace Utils
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 

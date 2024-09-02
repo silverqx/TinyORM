@@ -185,9 +185,11 @@ namespace Query
             ++it;
         }
 
+        using namespace Qt::StringLiterals;
+
         while (it != end) {
             // These append-s() are better for performance
-            quoted.append(QStringLiteral(", '"))
+            quoted.append(u", '"_s)
                   .append(*it)
                   .append(SQUOTE);
             ++it;

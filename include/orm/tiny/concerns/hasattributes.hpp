@@ -1556,13 +1556,14 @@ namespace Orm::Tiny::Concerns
     Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttributes(
             const QStringList &attributes)
     {
+        using namespace Qt::StringLiterals;
+
         const auto &modelAttributes = getAttributes();
         const auto &modelAttributesHash = getAttributesHash();
 
         for (const auto &attribute : attributes) {
             // Initialize as late as possible
-            static const auto functionName = QStringLiteral(
-                                                 "HasAttributes::syncOriginalAttributes");
+            static const auto functionName = u"HasAttributes::syncOriginalAttributes"_s;
             throwIfNoAttributeInHash(modelAttributesHash, attribute, functionName);
 
             const auto &modelAttributeValue =
@@ -1692,11 +1693,13 @@ namespace Orm::Tiny::Concerns
         if (value.typeId() == QMetaType::QDateTime)
             return convertTimeZone(value.value<QDateTime>());
 
+        using namespace Qt::StringLiterals;
+
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
             throw Orm::Exceptions::InvalidFormatError(
-                        QStringLiteral("Could not parse the datetime, could not convert "
-                                       "the 'value' to the QString in %1().")
+                        u"Could not parse the datetime, could not convert the 'value' "
+                         "to the QString in %1()."_s
                         .arg(__tiny_func__));
 
         const auto valueString = value.value<QString>();
@@ -1715,8 +1718,7 @@ namespace Orm::Tiny::Concerns
            QDate instances from that format. Again, this provides for simple date
            fields on the database, while still supporting QDateTime conversion. */
         if (Helpers::isStandardDateFormat(valueString))
-            if (auto dateSimple = QDateTime::fromString(valueString,
-                                                        QStringLiteral("yyyy-M-d"));
+            if (auto dateSimple = QDateTime::fromString(valueString, u"yyyy-M-d"_s);
                 dateSimple.isValid()
             )
                 return setTimeZone(dateSimple);
@@ -1742,8 +1744,8 @@ namespace Orm::Tiny::Concerns
             return convertTimeZone(std::move(dateIso));
 
         throw Orm::Exceptions::InvalidFormatError(
-                    QStringLiteral("Could not parse the datetime '%1' using "
-                                   "the given format '%2' in %3().")
+                    u"Could not parse the datetime '%1' using the given format '%2' "
+                     "in %3()."_s
                     .arg(valueString, format, __tiny_func__));
     }
 
@@ -1770,12 +1772,14 @@ namespace Orm::Tiny::Concerns
         if (value.typeId() == QMetaType::QTime)
             return value.template value<QTime>();
 
+        using namespace Qt::StringLiterals;
+
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
             throw Orm::Exceptions::InvalidFormatError(
-                        QStringLiteral("Could not parse the time, could not convert "
-                                       "the 'value' to the QString in %1().")
-                        .arg(__tiny_func__));
+                    u"Could not parse the time, could not convert the 'value' "
+                     "to the QString in %1()."_s
+                    .arg(__tiny_func__));
 
         const auto valueString = value.value<QString>();
 
@@ -1797,8 +1801,8 @@ namespace Orm::Tiny::Concerns
             return timeIso;
 
         throw Orm::Exceptions::InvalidFormatError(
-                    QStringLiteral("Could not parse the time '%1' using "
-                                   "the Qt::ISODateWithMs format in %2().")
+                    u"Could not parse the time '%1' using the Qt::ISODateWithMs format "
+                     "in %2()."_s
                     .arg(valueString, __tiny_func__));
     }
 
@@ -1974,9 +1978,8 @@ namespace Orm::Tiny::Concerns
                false and the QVariant type will be changed anyway. */
             if (!value_.convert(metaType) && !value_.isNull())
                 // Log if the QVariant::convert() for the given attribute failed
-                logIfConvertAttributeFailed(
-                            key, castType, metaType,
-                            u"HasAttributes::castAttribute"_s);
+                logIfConvertAttributeFailed(key, castType, metaType,
+                                            u"HasAttributes::castAttribute"_s);
 #else
             value_.convert(metaType);
 #endif
@@ -2447,11 +2450,12 @@ namespace Orm::Tiny::Concerns
         if (attributesHash.contains(attribute))
             return;
 
+        using namespace Qt::StringLiterals;
+
         throw Orm::Exceptions::InvalidArgumentError(
-                QStringLiteral("The '%1' attribute doesn't exist in the '%2' "
-                               "model's m_attributes vector in %3().")
-                .arg(attribute, TypeUtils::classPureBasename<Derived>(),
-                     functionName));
+                u"The '%1' attribute doesn't exist in the '%2' model's m_attributes "
+                 "vector in %3()."_s
+                .arg(attribute, TypeUtils::classPureBasename<Derived>(), functionName));
     }
 
     /* Casting Attributes */
@@ -2464,11 +2468,12 @@ namespace Orm::Tiny::Concerns
         if (value.canConvert(metaType))
             return;
 
+        using namespace Qt::StringLiterals;
+
         throw Orm::Exceptions::InvalidArgumentError(
-                    QStringLiteral(
-                        "Bad cast type was defined in the %1::u_casts hash, the '%2' "
-                        "attribute can not be cast to the 'CastType::%3' "
-                        "(using the QMetaType::%4) in %5().")
+                    u"Bad cast type was defined in the %1::u_casts hash, the '%2' "
+                     "attribute can not be cast to the 'CastType::%3' "
+                     "(using the QMetaType::%4) in %5()."_s
                     .arg(TypeUtils::template classPureBasename<Derived>(), key,
                          castTypeName(castType), metaType.name(), functionName));
     }
@@ -2479,17 +2484,17 @@ namespace Orm::Tiny::Concerns
             const QString &key, const CastType castType, const QMetaType metaType,
             const QString &functionName)
     {
+        using namespace Qt::StringLiterals;
+
         /* This should not happen because the QVariant::canConvert() is called before
            the QVariant::convert(), but the convert() return value is still checked
            for the false value and in this case this method will be called. */
         qDebug().noquote()
-                << QStringLiteral(
-                        "The QVariant::convert() to the 'QMetaType::%1' for the '%2' "
-                        "attribute returned 'false', defined cast type on the "
-                        "'%3::u_casts' model was 'CastType::%4' in %5().")
-                    .arg(metaType.name(), key,
-                         TypeUtils::template classPureBasename<Derived>(),
-                         castTypeName(castType), functionName);
+                << u"The QVariant::convert() to the 'QMetaType::%1' for the '%2' "
+                    "attribute returned 'false', defined cast type on the "
+                    "'%3::u_casts' model was 'CastType::%4' in %5()."_s
+                   .arg(metaType.name(), key, TypeUtils::classPureBasename<Derived>(),
+                        castTypeName(castType), functionName);
     }
 #endif
 
@@ -2497,64 +2502,66 @@ namespace Orm::Tiny::Concerns
     QString
     HasAttributes<Derived, AllRelations...>::castTypeName(const CastType type)
     {
+        using namespace Qt::StringLiterals;
+
         switch (type) {
         // Int 64-bit
         case CastType::LongLong:
-            return QStringLiteral("LongLong");
+            return u"LongLong"_s;
         case CastType::ULongLong:
-            return QStringLiteral("ULongLong");
+            return u"ULongLong"_s;
 
         // QString
         case CastType::QString:
-            return QStringLiteral("QString");
+            return u"QString"_s;
 
         // Int 32-bit
         case CastType::Int:
         case CastType::Integer:
-            return QStringLiteral("Integer");
+            return u"Integer"_s;
         case CastType::UInt:
         case CastType::UInteger:
-            return QStringLiteral("UInteger");
+            return u"UInteger"_s;
 
         // QDateTime
         case CastType::QDate:
-            return QStringLiteral("QDate");
+            return u"QDate"_s;
         case CastType::QDateTime:
-            return QStringLiteral("QDateTime");
+            return u"QDateTime"_s;
         case CastType::QTime:
-            return QStringLiteral("QTime");
+            return u"QTime"_s;
         case CastType::Timestamp:
-            return QStringLiteral("Timestamp");
+            return u"Timestamp"_s;
 
         // Bool
         case CastType::Bool:
         case CastType::Boolean:
-            return QStringLiteral("Boolean");
+            return u"Boolean"_s;
 
         // Int 16-bit
         case CastType::Short:
-            return QStringLiteral("Short");
+            return u"Short"_s;
         case CastType::UShort:
-            return QStringLiteral("UShort");
+            return u"UShort"_s;
 
         // Float
         case CastType::Real:
-            return QStringLiteral("Real");
+            return u"Real"_s;
         case CastType::Float:
-            return QStringLiteral("Float");
+            return u"Float"_s;
         case CastType::Double:
-            return QStringLiteral("Double");
+            return u"Double"_s;
         case CastType::Decimal:
-            return QStringLiteral("Decimal");
+            return u"Decimal"_s;
 
         // Others
         case CastType::QByteArray:
-            return QStringLiteral("QByteArray");
+            return u"QByteArray"_s;
         default:
             Q_UNREACHABLE();
         }
 
-        return QStringLiteral("<Unknown>");
+        return u"<Unknown>"_s;
     }
 
     /* Serialization */

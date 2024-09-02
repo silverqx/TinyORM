@@ -28,6 +28,9 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::convertible_to<T, Query::Expression>;
 
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
     // TODO querybuilder, whereFullText, whereBitwise silverqx
     // FUTURE querybuilder, paginator silverqx
     // FUTURE querybuilder, index hint silverqx
@@ -1074,8 +1077,7 @@ namespace Orm::Query
            ID to let developers to simply and quickly remove a single row from this
            database without manually specifying the "where" clauses on the query.
            m_from will be wrapped in the Grammar. */
-        where(QStringLiteral("%1.id").arg(std::get<QString>(m_from)), EQ,
-              std::forward<T>(id), AND);
+        where(u"%1.id"_s.arg(std::get<QString>(m_from)), EQ, std::forward<T>(id), AND);
 
         return remove();
     }
@@ -1084,28 +1086,28 @@ namespace Orm::Query
 
     quint64 Builder::count(const QList<Column> &columns) const
     {
-        return aggregate(QStringLiteral("count"), columns).template value<quint64>();
+        return aggregate(u"count"_s, columns).template value<quint64>();
     }
 
     template<typename>
     quint64 Builder::count(const Column &column)
     {
-        return aggregate(QStringLiteral("count"), {column}).template value<quint64>();
+        return aggregate(u"count"_s, {column}).template value<quint64>();
     }
 
     QVariant Builder::min(const Column &column) const
     {
-        return aggregate(QStringLiteral("min"), {column});
+        return aggregate(u"min"_s, {column});
     }
 
     QVariant Builder::max(const Column &column) const
     {
-        return aggregate(QStringLiteral("max"), {column});
+        return aggregate(u"max"_s, {column});
     }
 
     QVariant Builder::sum(const Column &column) const
     {
-        auto result = aggregate(QStringLiteral("sum"), {column});
+        auto result = aggregate(u"sum"_s, {column});
 
         if (!result.isValid() || result.isNull())
             result = 0;
@@ -1115,7 +1117,7 @@ namespace Orm::Query
 
     QVariant Builder::avg(const Column &column) const
     {
-        return aggregate(QStringLiteral("avg"), {column});
+        return aggregate(u"avg"_s, {column});
     }
 
     QVariant Builder::average(const Column &column) const
@@ -1156,8 +1158,7 @@ namespace Orm::Query
     Builder &Builder::addSelect(T &&query, const QString &as)
     {
         if (m_columns.isEmpty())
-            select(QList<Column> {QStringLiteral("%1.*")
-                                  .arg(std::get<QString>(m_from))});
+            select(QList<Column> {u"%1.*"_s.arg(std::get<QString>(m_from))});
 
         return selectSub(std::forward<T>(query), as);
     }
@@ -1167,8 +1168,7 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
-        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
-                                                          m_grammar->wrap(as)),
+        return selectRaw(u"(%1) as %2"_s.arg(queryString, m_grammar->wrap(as)),
                          bindings);
     }
 
@@ -1178,8 +1178,7 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
-        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
-                                                        m_grammar->wrapTable(as)),
+        return fromRaw(u"(%1) as %2"_s.arg(queryString, m_grammar->wrapTable(as)),
                        bindings);
     }
 
@@ -1623,8 +1622,7 @@ namespace Orm::Query
     Builder::increment(const QString &column, const T amount,
                        const QList<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 + %2").arg(m_grammar->wrap(column))
-                                .arg(amount);
+        const auto expression = u"%1 + %2"_s.arg(m_grammar->wrap(column)).arg(amount);
 
         QList<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
@@ -1637,8 +1635,7 @@ namespace Orm::Query
     Builder::decrement(const QString &column, const T amount,
                        const QList<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 - %2").arg(m_grammar->wrap(column))
-                                .arg(amount);
+        const auto expression = u"%1 - %2"_s.arg(m_grammar->wrap(column)).arg(amount);
 
         QList<UpdateItem> columns {{column, raw(expression)}};
         std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));

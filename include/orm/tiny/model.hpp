@@ -1582,9 +1582,10 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
-        return QStringLiteral("%1_%2").arg(
-                    StringUtils::snake(TypeUtils::classPureBasename<Derived>()),
-                    getKeyName());
+        using namespace Qt::StringLiterals;
+
+        return u"%1_%2"_s.arg(StringUtils::snake(TypeUtils::classPureBasename<Derived>()),
+                              getKeyName());
     }
 
     /* Others */
@@ -1897,13 +1898,13 @@ namespace Orm::Tiny
     void Model<Derived, AllRelations...>::throwIfQDateTimeAttribute(
             const QList<AttributeItem> &attributes)
     {
-        static const auto message = QStringLiteral(
-            "Attributes passed to the '%1' model's constructor or Default Attribute "
-            "Values defined in the '%1::u_attributes' data member can't contain the "
-            "QDateTime attribute, to create a '%1' model instance with attributes that "
-            "contain the QDateTime attribute use the %1::instance() method instead "
-            "(recommended) or convert the '%2' QDateTime attribute to the QString "
-            "(not recommended).");
+        static const auto message =
+            u"Attributes passed to the '%1' model's constructor or Default Attribute "
+             "Values defined in the '%1::u_attributes' data member can't contain the "
+             "QDateTime attribute, to create a '%1' model instance with attributes that "
+             "contain the QDateTime attribute use the %1::instance() method instead "
+             "(recommended) or convert the '%2' QDateTime attribute to the QString "
+             "(not recommended)."_s;
 
         for (const auto &[key, value] : attributes)
             if (value.isValid() && !value.isNull() &&
@@ -1917,8 +1918,8 @@ namespace Orm::Tiny
     void Model<Derived, AllRelations...>::throwTotallyGuarded(const QString &key)
     {
         throw Exceptions::MassAssignmentError(
-                    QStringLiteral("Add '%1' to u_fillable data member to allow "
-                                   "mass assignment on the '%2' model.")
+                    u"Add '%1' to u_fillable data member to allow mass assignment "
+                     "on the '%2' model."_s
                     .arg(key, TypeUtils::classPureBasename<Derived>()));
     }
 

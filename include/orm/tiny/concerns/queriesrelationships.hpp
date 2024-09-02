@@ -622,11 +622,13 @@ namespace Private
         // Ownership of a unique_ptr()
         const auto hasQuery = getHasQueryByExistenceCheck(comparison, count, *relation);
 
-        if (relations.isEmpty())
+        if (relations.isEmpty()) {
+            using namespace Qt::StringLiterals;
+
             throw Orm::Exceptions::RuntimeError(
-                    QStringLiteral(
-                        "wtf, this should never happen :/, 'relations.size() == %1'.")
-                    .arg(relations.size()));
+                        u"wtf, this should never happen :/, 'relations.size() == %1'."_s
+                        .arg(relations.size()));
+        }
 
         hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
 
@@ -713,15 +715,16 @@ namespace Private
         if (typeid (Related) == Private::HasNestedStore::STORE_TYPEID.top())
             return;
 
+        using namespace Qt::StringLiterals;
+
         throw Orm::Exceptions::InvalidTemplateArgumentError(
-                QStringLiteral(
-                    "Bad template argument passed to the has() related method with "
-                    "nested relations. Actual '<Related> = %1', expected '<Related> "
-                    "= %2', <Related> has to be of the same type as the 'last' "
-                    "relation name passed to the has() related method.")
-                .arg(TypeUtils::classPureBasename(
-                         Private::HasNestedStore::STORE_TYPEID.top()),
-                     TypeUtils::classPureBasename<Related>()));
+                    u"Bad template argument passed to the has() related method with "
+                     "nested relations. Actual '<Related> = %1', expected '<Related> "
+                     "= %2', <Related> has to be of the same type as the 'last' "
+                     "relation name passed to the has() related method."_s
+                    .arg(TypeUtils::classPureBasename(
+                             Private::HasNestedStore::STORE_TYPEID.top()),
+                         TypeUtils::classPureBasename<Related>()));
     }
 
 } // namespace Concerns

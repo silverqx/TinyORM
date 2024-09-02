@@ -1198,23 +1198,21 @@ namespace Concerns
         if constexpr (std::is_same_v<Result, std::optional<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
-                        QStringLiteral(
-                            "The relation '%1' is many type relation, use the "
-                            "%2<%3>() method overload without an 'Orm::One' tag.")
+                        u"The relation '%1' is many type relation, use the %2<%3>() "
+                         "method overload without an 'Orm::One' tag."_s
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
 
         } else if constexpr (std::is_same_v<Result, ModelsCollection<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
-                        QStringLiteral(
-                            "The relation '%1' is one type relation, use the "
-                            "%2<%3, Orm::One>() method overload with an 'Orm::One' tag.")
+                        u"The relation '%1' is one type relation, use the %2<%3, "
+                         "Orm::One>() method overload with an 'Orm::One' tag."_s
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
         } else
             throw Orm::Exceptions::InvalidTemplateArgumentError(
-                    "Unexpected 'Result' template argument.");
+                    u"Unexpected 'Result' template argument."_s);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

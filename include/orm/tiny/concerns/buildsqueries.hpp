@@ -207,6 +207,8 @@ namespace Concerns
             const std::function<bool(ModelsCollection<Model> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
     {
+        using namespace Qt::StringLiterals;
+
         const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
         const auto aliasName = alias.isEmpty() ? columnName : alias;
 
@@ -237,9 +239,8 @@ namespace Concerns
                to avoid passing invalid data to the user. */
             if (!lastId.isValid() || lastId.isNull())
                 throw Orm::Exceptions::RuntimeError(
-                        QStringLiteral(
-                            "The chunkById operation was aborted because the "
-                            "[%1] column is not present in the query result.")
+                        u"The chunkById operation was aborted because the [%1] column "
+                         "is not present in the query result."_s
                         .arg(aliasName));
 
             /* On each chunk result set, we will pass them to the callback and then let
@@ -290,9 +291,12 @@ namespace Concerns
 
         const auto modelsSize = static_cast<int>(models.size());
 
-        if (modelsSize == 0)
+        if (modelsSize == 0) {
+            using namespace Qt::StringLiterals;
+
             throw Orm::Exceptions::RecordsNotFoundError(
-                    QStringLiteral("No records found in %1().").arg(__tiny_func__));
+                    u"No records found in %1()."_s.arg(__tiny_func__));
+        }
 
         if (modelsSize > 1)
             throw Orm::Exceptions::MultipleRecordsFoundError(modelsSize, __tiny_func__);

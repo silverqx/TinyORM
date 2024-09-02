@@ -44,13 +44,15 @@ namespace Orm::Support
     ReplaceBindings::replaceBindingsInSql(QString queryString, const T &bindings,
                                           const bool simpleBindings)
     {
+        using namespace Qt::StringLiterals;
+
         // Can't use orm/constants.hpp because this class will be also used in TinyDrivers
-        static const auto Invalid     = QStringLiteral("INVALID");
-        static const auto Null_       = QStringLiteral("null");
-        static const auto Binary      = QStringLiteral("<binary(%1)>");
-        static const auto HexBinary   = QStringLiteral("hex-binary(%1)'%2'");
-        static const auto TextAlt     = QStringLiteral("<text(%1)>");
-        static const auto TmplSQuotes = QStringLiteral("'%1'");
+        static const auto Invalid     = u"INVALID"_s;
+        static const auto Null_       = u"null"_s;
+        static const auto Binary      = u"<binary(%1)>"_s;
+        static const auto HexBinary   = u"hex-binary(%1)'%2'"_s;
+        static const auto TextAlt     = u"<text(%1)>"_s;
+        static const auto TmplSQuotes = u"'%1'"_s;
 
         QString bindingValue;
 

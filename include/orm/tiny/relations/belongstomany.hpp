@@ -1340,7 +1340,9 @@ namespace Orm::Tiny::Relations
     const QString &
     BelongsToMany<Model, Related, PivotType>::relationTypeName() const
     {
-        static const auto cached = QStringLiteral("BelongsToMany");
+        using namespace Qt::StringLiterals;
+
+        static const auto cached = u"BelongsToMany"_s;
         return cached;
     }
 
@@ -1410,9 +1412,11 @@ namespace Orm::Tiny::Relations
     QList<Column>
     BelongsToMany<Model, Related, PivotType>::shouldSelect(QList<Column> columns) const
     {
-        if (columns == QList<Column> {ASTERISK})
-            columns = QList<Column> {QStringLiteral("%1.*")
-                                     .arg(this->m_related->getTable())};
+        if (columns == QList<Column> {ASTERISK}) {
+            using namespace Qt::StringLiterals;
+
+            columns = QList<Column> {u"%1.*"_s.arg(this->m_related->getTable())};
+        }
 
         // Obtain aliased pivot columns
         auto aliasedPivotColumns = this->aliasedPivotColumns();
@@ -1451,11 +1455,12 @@ namespace Orm::Tiny::Relations
 
         columns.removeDuplicates();
 
+        using namespace Qt::StringLiterals;
+
         return columns
                 | ranges::views::transform([this](const QString &column)
         {
-            return QStringLiteral("%1 as pivot_%2").arg(qualifyPivotColumn(column),
-                                                        column);
+            return u"%1 as pivot_%2"_s.arg(qualifyPivotColumn(column), column);
         })
                 | ranges::to<QStringList>();
     }
@@ -1484,11 +1489,13 @@ namespace Orm::Tiny::Relations
         QList<AttributeItem> values;
         values.reserve(modelAttributes.size());
 
+        using namespace Qt::StringLiterals;
+
         for (const auto &attribute : modelAttributes)
             /* To get the pivots attributes we will just take any of the attributes which
                begin with "pivot_" and add those to this vector, as well as unsetting
                them from the parent's models since they exist in a different table. */
-            if (attribute.key.startsWith(QStringLiteral("pivot_"))) {
+            if (attribute.key.startsWith(u"pivot_"_s)) {
                 // Remove the 'pivot_' part from an attribute key
                 values.append({attribute.key.sliced(6), attribute.value});
 

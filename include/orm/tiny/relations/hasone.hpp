@@ -175,7 +175,9 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     const QString &HasOne<Model, Related>::relationTypeName() const
     {
-        static const auto cached = QStringLiteral("HasOne");
+        using namespace Qt::StringLiterals;
+
+        static const auto cached = u"HasOne"_s;
         return cached;
     }
 

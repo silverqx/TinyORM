@@ -248,10 +248,11 @@ auto IntegralCast(const V value)
     if (Private::InRange<T>(value))
         return static_cast<T>(value);
 
+    using namespace Qt::StringLiterals;
+
     throw Exceptions::OutOfRangeError(
-                QStringLiteral(
-                    "The given value %1 of '%2' integer type can't be cast "
-                    "to the '%3' integer type with range [%4..%5].")
+                // BUG msvc string literal can't be divided to multiple lines silverqx
+                u"The given value %1 of '%2' integer type can't be cast to the '%3' integer type with range [%4..%5]."_s
                 .arg(Private::formatNumber(value))
                 .arg(Private::IntegralTypeName<V>(),
                      Private::IntegralTypeName<T>())

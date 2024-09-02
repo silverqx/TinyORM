@@ -64,9 +64,10 @@ namespace Orm::Tiny::Exceptions
     MutatorMappingNotFoundError::formatMessage(const QString &model,
                                                const QString &mutator)
     {
-        return QStringLiteral(
-                    "The mutator mapping '%1' doesn't exist in the 'u_mutators' map "
-                    "static data member for the '%2' model.")
+        using namespace Qt::StringLiterals;
+
+        return u"The mutator mapping '%1' doesn't exist in the 'u_mutators' map "
+                "static data member for the '%2' model."_s
                 .arg(mutator, model);
     }
 

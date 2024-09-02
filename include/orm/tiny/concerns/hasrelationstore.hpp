@@ -387,18 +387,21 @@ namespace Orm::Tiny::Concerns
 #endif
     {
 #ifdef TINYORM_DEBUG
+        using namespace Qt::StringLiterals;
+
         static const auto message =
-                QStringLiteral(
-                    "You can not %1 the %2 model in the middle of any relation store "
-                    "operation.");
+                u"You can not %1 the %2 model in the middle of any relation store "
+                 "operation."_s;
         // Don't make it static
         const auto className = TypeUtils::classPureBasename<Derived>();
 
+        using namespace Qt::StringLiterals;
+
         switch (type) {
         case CopyMoveTemplateType::COPY:
-            return message.arg(QStringLiteral("copy"), className);
+            return message.arg(u"copy"_s, className);
         case CopyMoveTemplateType::MOVE:
-            return message.arg(QStringLiteral("move"), className);
+            return message.arg(u"move"_s, className);
         default:
             Q_UNREACHABLE();
         }

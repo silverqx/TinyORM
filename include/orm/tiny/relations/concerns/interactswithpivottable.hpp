@@ -1125,8 +1125,8 @@ namespace Concerns
             const QVariant &overwrite) const
     {
         static const auto overwriteMessage =
-                QStringLiteral("You can not overwrite '%1' ID key; "
-                               "original value : %2, your value : %3.");
+                u"You can not overwrite '%1' ID key; "
+                 "original value : %2, your value : %3."_s;
 
         throw Orm::Exceptions::DomainError(
                     overwriteMessage.arg(

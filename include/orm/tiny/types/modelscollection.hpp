@@ -2309,10 +2309,11 @@ namespace Types
         if (allowedOperators.contains(comparison))
             return;
 
+        using namespace Qt::StringLiterals;
+
         throw Orm::Exceptions::InvalidArgumentError(
-                    QStringLiteral(
-                        "The '%1' comparison operator is not allowed in the "
-                        "ModelsCollection::where() related methods in %2().")
+                    u"The '%1' comparison operator is not allowed in the "
+                     "ModelsCollection::where() related methods in %2()."_s
                     .arg(comparison, __tiny_func__));
 
     }
