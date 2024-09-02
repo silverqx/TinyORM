@@ -104,7 +104,9 @@ namespace Tom::Commands
 
     QString IntegrateCommand::description() const
     {
-        return QStringLiteral("Enable tab-completion for the given shell");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Enable tab-completion for the given shell"_s;
     }
 
 } // namespace Tom::Commands

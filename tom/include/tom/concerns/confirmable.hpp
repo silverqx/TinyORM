@@ -23,6 +23,9 @@ namespace Commands
 namespace Concerns
 {
 
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
     /*! Prints alert and asks for the confirmation (Y/N). */
     class Confirmable
     {
@@ -36,7 +39,7 @@ namespace Concerns
 
         /*! Confirm before proceeding with the action (only in production environment). */
         bool confirmToProceed(
-                    const QString &warning = QStringLiteral("Application In Production!"),
+                    const QString &warning = u"Application In Production!"_s,
                     const std::function<bool()> &callback = nullptr) const;
 
     private:

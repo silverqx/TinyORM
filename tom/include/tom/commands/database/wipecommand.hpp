@@ -64,7 +64,9 @@ namespace Tom::Commands::Database
 
     QString WipeCommand::description() const
     {
-        return QStringLiteral("Drop all tables, views, and types");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Drop all tables, views, and types"_s;
     }
 
 } // namespace Tom::Commands::Database

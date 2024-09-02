@@ -99,7 +99,9 @@ namespace Tom::Commands
 
     QString ListCommand::description() const
     {
-        return QStringLiteral("List commands");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"List commands"_s;
     }
 
 } // namespace Tom::Commands

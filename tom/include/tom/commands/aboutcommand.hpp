@@ -120,7 +120,9 @@ namespace Commands
 
     QString AboutCommand::description() const
     {
-        return QStringLiteral("Display basic information about the tom application");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Display basic information about the tom application"_s;
     }
 
 } // namespace Commands

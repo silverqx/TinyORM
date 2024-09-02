@@ -58,7 +58,9 @@ namespace Commands::Migrations
 
     QString ResetCommand::description() const
     {
-        return QStringLiteral("Rollback all database migrations");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Rollback all database migrations"_s;
     }
 
 } // namespace Commands::Migrations

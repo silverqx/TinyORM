@@ -48,6 +48,9 @@ namespace Concerns
     class Migrator;
     class Seeder;
 
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
     /*! Tom application. */
     class TINYORM_EXPORT Application : public Concerns::InteractsWithIO,
                                        public Concerns::GuessCommandName
@@ -80,7 +83,7 @@ namespace Concerns
         /*! Constructor. */
         Application(int &argc, char *argv[], std::shared_ptr<DatabaseManager> db, // NOLINT(modernize-avoid-c-arrays)
                     const char *environmentEnvName = "TOM_ENV",
-                    QString migrationTable = QStringLiteral("migrations"),
+                    QString migrationTable = u"migrations"_s,
                     std::vector<std::shared_ptr<Migration>> migrations = {},
                     std::vector<std::shared_ptr<Seeder>> seeders = {});
         /*! Virtual destructor. */
@@ -275,7 +278,7 @@ namespace Concerns
         QCommandLineParser m_parser;
 
         /*! Current environment. */
-        QString m_environment = QStringLiteral("local");
+        QString m_environment = u"local"_s;
         /*! Environment variable name that holds a current environment value
             (passed to the qEnvironmentVariable() so the type is const char *). */
         const char *m_environmentEnvName;

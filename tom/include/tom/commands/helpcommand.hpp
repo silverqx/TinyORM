@@ -79,7 +79,9 @@ namespace Tom::Commands
 
     QString HelpCommand::description() const
     {
-        return QStringLiteral("Display help for a command");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Display help for a command"_s;
     }
 
 } // namespace Tom::Commands

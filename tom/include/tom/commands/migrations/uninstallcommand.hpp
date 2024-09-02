@@ -63,7 +63,9 @@ namespace Commands::Migrations
 
     QString UninstallCommand::description() const
     {
-        return QStringLiteral("Drop the migration repository with an optional reset");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Drop the migration repository with an optional reset"_s;
     }
 
 } // namespace Commands::Migrations

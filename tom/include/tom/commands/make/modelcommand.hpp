@@ -27,6 +27,9 @@ namespace Support
 
 } // namespace Support
 
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
     /*! Create a new model class. */
     class ModelCommand : public MakeCommand,
                          public Concerns::PrepareOptionValues
@@ -134,11 +137,11 @@ namespace Support
         /*! Throw if the model name contains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
                 const std::vector<QStringList> &classNames, const QString &source,
-                const QString &commandType = QStringLiteral("model"));
+                const QString &commandType = u"model"_s);
         /*! Throw if the model name contains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
                 const QStringList &classNames, const QString &source,
-                const QString &commandType = QStringLiteral("model"));
+                const QString &commandType = u"model"_s);
     };
 
     /* public */
@@ -150,7 +153,7 @@ namespace Support
 
     QString ModelCommand::description() const
     {
-        return QStringLiteral("Create a new model class");
+        return u"Create a new model class"_s;
     }
 
 } // namespace Tom::Commands::Make

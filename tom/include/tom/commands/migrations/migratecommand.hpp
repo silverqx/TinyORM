@@ -66,7 +66,9 @@ namespace Commands::Migrations
 
     QString MigrateCommand::description() const
     {
-        return QStringLiteral("Run the database migrations");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Run the database migrations"_s;
     }
 
 } // namespace Commands::Migrations
