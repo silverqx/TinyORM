@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QtTypes>
+#include <QString> // IWYU pragma: export
 
 #include <orm/macros/commonnamespace.hpp>
 
@@ -13,6 +13,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Drivers
 {
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! Result set cursor position type. */
     enum CursorPosition : qint8

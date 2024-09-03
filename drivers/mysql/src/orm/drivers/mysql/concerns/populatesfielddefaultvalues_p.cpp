@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Drivers::MySql::Constants::EMPTY;
 using Orm::Drivers::MySql::MySqlResultPrivate;
 

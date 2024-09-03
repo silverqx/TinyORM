@@ -219,8 +219,6 @@ void SqlRecord::throwIfNotContains(const size_type index) const
     if (contains(index))
         return;
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     static const auto
     MessageTmpl = u"The field index '%1' is out of bounds, the index must be "
                    "between 0-%2 in %3()."_s;

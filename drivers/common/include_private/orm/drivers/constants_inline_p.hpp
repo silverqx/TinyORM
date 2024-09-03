@@ -8,12 +8,14 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Namespace contains common chars and strings used in the TinyDrivers project. */
-namespace Orm::Drivers::Constants
+namespace Orm::Drivers
 {
-
     /*! Alias for the literal operator that creates a QString. */
     using Qt::StringLiterals::operator""_s;
+
+/*! Namespace contains common chars and strings used in the TinyDrivers project. */
+namespace Constants
+{
 
     // Common chars - QChar(u'') is faster than ''_L1
     inline const QChar SPACE = QChar(u' ');
@@ -33,7 +35,8 @@ namespace Orm::Drivers::Constants
     // Others
     inline const QString NotImplemented = u"Not implemented :/."_s;
 
-} // namespace Orm::Drivers::Constants
+} // namespace Constants
+} // namespace Orm::Drivers
 
 TINYORM_END_COMMON_NAMESPACE
 

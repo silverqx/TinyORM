@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Drivers::MySql::Constants::COMMA;
 using Orm::Drivers::MySql::Constants::EMPTY;
 using Orm::Drivers::MySql::Constants::EQ_C;
@@ -421,8 +419,6 @@ void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option) const
 
 bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     // _L1 is correct here
     return value.isEmpty() ||
            value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||

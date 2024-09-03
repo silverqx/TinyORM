@@ -5,11 +5,13 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QString>
+#include <QtGlobal>
 
 #include <orm/macros/commonnamespace.hpp>
 
 #include "orm/drivers/macros/export.hpp"
+
+class QString;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

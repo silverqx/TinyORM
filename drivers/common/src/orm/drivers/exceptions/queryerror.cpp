@@ -6,10 +6,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-#ifdef TINYDRIVERS_MYSQL_DRIVER
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-#endif
-
 namespace Orm::Drivers::Exceptions
 {
 
@@ -42,6 +38,8 @@ QString QueryError::formatMessage(
         const MySqlErrorType &mysqlError, const QString &query,
         const QList<QVariant> &bindings)
 {
+    using Qt::StringLiterals::operator""_s;
+
     const auto mysqlErrorStr = SqlError::formatMessage(message, mysqlError);
     const auto executedQuery = bindings.isEmpty()
                                ? query

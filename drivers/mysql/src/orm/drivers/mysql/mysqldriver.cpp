@@ -12,8 +12,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Drivers::MySql::Constants::BACKTICK;
 using Orm::Drivers::MySql::Constants::DOT;
 using Orm::Drivers::MySql::Constants::QMYSQL;

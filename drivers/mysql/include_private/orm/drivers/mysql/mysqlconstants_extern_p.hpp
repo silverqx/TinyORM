@@ -8,8 +8,15 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+namespace Orm::Drivers::MySql
+{
+    /*! Alias for the literal operator that creates a QLatin1Char/StringView. */
+    using Qt::StringLiterals::operator""_L1;
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
 /*! Namespace contains common chars and strings used in the TinyMySql project. */
-namespace Orm::Drivers::MySql::Constants
+namespace Constants
 {
 
     // Common chars
@@ -29,7 +36,8 @@ namespace Orm::Drivers::MySql::Constants
 //    extern const QString QPSQL;
 //    extern const QString QSQLITE;
 
-} // namespace Orm::Drivers::MySql::Constants
+} // namespace Constants
+} // namespace Orm::Drivers::MySql
 
 TINYORM_END_COMMON_NAMESPACE
 
