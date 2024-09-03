@@ -12,7 +12,7 @@
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 #ifdef TINYORM_USING_TINYDRIVERS
 using Orm::Drivers::SqlDatabase;

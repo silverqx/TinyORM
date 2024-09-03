@@ -12,8 +12,8 @@ namespace Orm::Tiny::Types
 
 namespace TestUtils::Common
 {
-
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! Common code for tst_collection_xyz auto tests, library class. */
     class Collection final
