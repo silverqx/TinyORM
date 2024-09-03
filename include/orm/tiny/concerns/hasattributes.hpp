@@ -1030,7 +1030,7 @@ namespace Orm::Tiny::Concerns
             return nullFor_fromDateTime(value, format);
 
         // Support Unix timestamps
-        if (format == QLatin1Char('U')) T_UNLIKELY
+        if (format == UnixTimestamp) T_UNLIKELY
             return asTimestamp(value);
 
         // Convert a QDateTime, QDate, or QTime to a storable string
@@ -1064,7 +1064,7 @@ namespace Orm::Tiny::Concerns
            the getDateFormat() outside, so I will simply return QString, it's not a big
            deal, INSERT/UPDATE clauses with '1604xxx' for the bigint columns are totaly
            ok, instead of 1604xxx as integer type. */
-        if (format == QLatin1Char('U')) T_UNLIKELY
+        if (format == UnixTimestamp) T_UNLIKELY
             return asTimestamp(value);
 
         else T_LIKELY
@@ -1884,7 +1884,7 @@ namespace Orm::Tiny::Concerns
     {
         const auto typeId = value.typeId();
 
-        if (format == QLatin1Char('U')) T_UNLIKELY
+        if (format == UnixTimestamp) T_UNLIKELY
             return NullVariant::LongLong();
 
         else if (typeId == QMetaType::QDate) T_UNLIKELY
@@ -2630,7 +2630,7 @@ namespace Orm::Tiny::Concerns
             const auto castModifier = castItem.modifier().template value<QString>();
 
             // Support Unix timestamps
-            if (castModifier == QLatin1Char('U')) {
+            if (castModifier == UnixTimestamp) {
                 value = asTimestamp(value);
                 return;
             }

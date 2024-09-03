@@ -33,6 +33,7 @@ namespace Orm::Constants
     TINYORM_EXPORT extern const QChar GT_C;
     TINYORM_EXPORT extern const QChar QUOTE;
     TINYORM_EXPORT extern const QChar SQUOTE;
+    TINYORM_EXPORT extern const QChar UnixTimestamp;
 
     // Common strings
     TINYORM_EXPORT extern const QString NEWLINE;

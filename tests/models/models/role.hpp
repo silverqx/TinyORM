@@ -9,6 +9,7 @@ namespace Models
 
 using Orm::Constants::AddedOn;
 using Orm::Constants::NAME;
+using Orm::Constants::UnixTimestamp;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
@@ -51,7 +52,7 @@ private:
     bool u_timestamps = false;
 
     /*! The storage format of the model's date columns. */
-    inline static QString u_dateFormat {QLatin1Char('U')};
+    inline static QString u_dateFormat {UnixTimestamp};
 
     /*! The attributes that should be mutated to dates. */
     inline static const QStringList u_dates {AddedOn};

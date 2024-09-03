@@ -35,6 +35,7 @@ namespace Orm::Constants
     inline const QChar GT_C       = QChar(u'>');
     inline const QChar QUOTE      = QChar(u'"');
     inline const QChar SQUOTE     = QChar(u'\'');
+    inline const QChar UnixTimestamp = QChar(u'U');
 
     // Common strings
     inline const QString NEWLINE      = u"\n"_s;
