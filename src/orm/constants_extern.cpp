@@ -2,8 +2,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Qt::StringLiterals::operator""_s;
-
 namespace Orm::Constants
 {
 

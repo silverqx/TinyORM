@@ -392,8 +392,6 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     const QString &BelongsTo<Model, Related>::relationTypeName() const
     {
-        using namespace Qt::StringLiterals;
-
         static const auto cached = u"BelongsTo"_s;
         return cached;
     }

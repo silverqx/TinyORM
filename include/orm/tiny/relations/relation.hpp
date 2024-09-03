@@ -321,8 +321,6 @@ namespace Relations
     template<class Model, class Related>
     QString Relation<Model, Related>::getExistenceCompareKey() const
     {
-        using namespace Qt::StringLiterals;
-
         throw Orm::Exceptions::RuntimeError(
                     u"Method %1() is not implemented for '%2' relation type in %3()."_s
                     /* Don't use the __tiny_func__ here, use the __func__ to only show
@@ -452,8 +450,6 @@ namespace Relations
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &parentQuery) const
     {
-        using namespace Qt::StringLiterals;
-
         // Ownership of a unique_ptr()
         query = getRelationExistenceQuery(std::move(query), parentQuery,
                                           {Expression(u"count(*)"_s)});

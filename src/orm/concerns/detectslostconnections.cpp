@@ -9,7 +9,7 @@ namespace Orm::Concerns
 
 bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    using Qt::StringLiterals::operator""_s;
 
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
     static const QList<QString> lostMessagesCache {

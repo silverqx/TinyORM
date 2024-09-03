@@ -9,7 +9,7 @@ namespace Orm::Utils
 
 QString Fs::resolveHome(QString filepath)
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    using Qt::StringLiterals::operator""_L1;
 
     if (filepath == u'~' || filepath.startsWith("~/"_L1))
         filepath.replace (0, 1, QDir::homePath());

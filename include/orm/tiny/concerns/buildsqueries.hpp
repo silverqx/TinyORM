@@ -207,8 +207,6 @@ namespace Concerns
             const std::function<bool(ModelsCollection<Model> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
     {
-        using namespace Qt::StringLiterals;
-
         const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
         const auto aliasName = alias.isEmpty() ? columnName : alias;
 
@@ -291,12 +289,9 @@ namespace Concerns
 
         const auto modelsSize = static_cast<int>(models.size());
 
-        if (modelsSize == 0) {
-            using namespace Qt::StringLiterals;
-
+        if (modelsSize == 0)
             throw Orm::Exceptions::RecordsNotFoundError(
                     u"No records found in %1()."_s.arg(__tiny_func__));
-        }
 
         if (modelsSize > 1)
             throw Orm::Exceptions::MultipleRecordsFoundError(modelsSize, __tiny_func__);

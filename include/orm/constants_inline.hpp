@@ -11,12 +11,16 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Namespace contains common chars and strings used in the TinyOrm project. */
-namespace Orm::Constants
+namespace Orm
 {
-
+    /*! Alias for the literal operator that creates a QLatin1Char/StringView. */
+    using Qt::StringLiterals::operator""_L1;
     /*! Alias for the literal operator that creates a QString. */
     using Qt::StringLiterals::operator""_s;
+
+/*! Namespace contains common chars and strings used in the TinyOrm project. */
+namespace Constants
+{
 
     // Common chars - QChar(u'') is faster than ''_L1
     inline const QChar SPACE         = QChar(u' ');
@@ -202,7 +206,8 @@ namespace Orm::Constants
     inline const QString NotImplemented    = u"Not implemented :/."_s;
     inline const QString dummy_NONEXISTENT = u"dummy-NON_EXISTENT"_s;
 
-} // namespace Orm::Constants
+} // namespace Constants
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 

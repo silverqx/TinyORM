@@ -1582,8 +1582,6 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString Model<Derived, AllRelations...>::getForeignKey() const
     {
-        using namespace Qt::StringLiterals;
-
         return UNDERSCORE_IN.arg(StringUtils::snake(
                                      TypeUtils::classPureBasename<Derived>()),
                                  getKeyName());

@@ -278,8 +278,6 @@ namespace Orm::Tiny::Concerns
     QString
     GuardsAttributes<Derived, AllRelations...>::getKeyForGuardableHash() const
     {
-        using namespace Qt::StringLiterals;
-
         return u"%1-%2"_s.arg(model().getConnectionName(),
                               TypeUtils::classPureBasename<Derived>());
     }

@@ -313,8 +313,6 @@ namespace Grammars
     template<QStringContainer T>
     T PostgresSchemaGrammar::escapeNames(const T &names) const
     {
-        using namespace Qt::StringLiterals;
-
         return names
                 | ranges::views::transform([](const auto &name)
         {

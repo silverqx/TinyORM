@@ -10,8 +10,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Constants::DASH;
 using Orm::Constants::DOT;
 using Orm::Constants::EMPTY;

@@ -1340,8 +1340,6 @@ namespace Orm::Tiny::Relations
     const QString &
     BelongsToMany<Model, Related, PivotType>::relationTypeName() const
     {
-        using namespace Qt::StringLiterals;
-
         static const auto cached = u"BelongsToMany"_s;
         return cached;
     }
@@ -1412,11 +1410,8 @@ namespace Orm::Tiny::Relations
     QList<Column>
     BelongsToMany<Model, Related, PivotType>::shouldSelect(QList<Column> columns) const
     {
-        if (columns == QList<Column> {ASTERISK}) {
-            using namespace Qt::StringLiterals;
-
+        if (columns == QList<Column> {ASTERISK})
             columns = QList<Column> {u"%1.*"_s.arg(this->m_related->getTable())};
-        }
 
         // Obtain aliased pivot columns
         auto aliasedPivotColumns = this->aliasedPivotColumns();
@@ -1455,8 +1450,6 @@ namespace Orm::Tiny::Relations
 
         columns.removeDuplicates();
 
-        using namespace Qt::StringLiterals;
-
         return columns
                 | ranges::views::transform([this](const QString &column)
         {
@@ -1488,8 +1481,6 @@ namespace Orm::Tiny::Relations
 
         QList<AttributeItem> values;
         values.reserve(modelAttributes.size());
-
-        using namespace Qt::StringLiterals;
 
         for (const auto &attribute : modelAttributes)
             /* To get the pivots attributes we will just take any of the attributes which

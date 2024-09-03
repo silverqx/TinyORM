@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QString>
-
 #include <stdexcept>
 
 #include "orm/exceptions/ormerror.hpp"

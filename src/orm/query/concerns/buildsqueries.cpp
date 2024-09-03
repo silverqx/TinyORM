@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::Query::Concerns

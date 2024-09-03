@@ -36,8 +36,6 @@ disable the TINYORM_MYSQL_PING preprocessor directive.
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using ConfigUtils = Orm::Utils::Configuration;
 
 namespace Orm

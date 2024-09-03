@@ -22,7 +22,7 @@ QString
 RelationMappingNotFoundError::formatMessage(
         const QString &model, const QString &relation, const From from)
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    using Qt::StringLiterals::operator""_s;
 
     /* I was confused when I looked at this method after some time, but it's correct,
        it shows two kind of messages, one for the belongsTo/belongsToMany and one

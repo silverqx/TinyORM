@@ -11,8 +11,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Exceptions
 {
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
 
     /*! Found more that one record (used by Builder::sole()). */
     class MultipleRecordsFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic

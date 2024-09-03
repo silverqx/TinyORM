@@ -44,8 +44,6 @@ QStringList PostgresConnection::searchPath(const bool flushCache)
     const auto username = std::as_const(m_config)[username_].value<QString>();
     Q_ASSERT(!username.isEmpty());
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     // Resolve the $user variable
     return ranges::views::move(searchPathRaw)
             | ranges::views::transform([&username](QString &&schema)
@@ -125,8 +123,6 @@ QStringList PostgresConnection::searchPathRawForPretending() const
 
 QStringList PostgresConnection::searchPathRawDb()
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     auto query = unprepared(u"show search_path"_s);
 
     [[maybe_unused]]

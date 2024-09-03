@@ -17,9 +17,6 @@ namespace Orm
 
 namespace Constants
 {
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
-
     inline const auto TrimCharacters = u" \n\r\t\v\f"_s;
 } // namespace Constants
 

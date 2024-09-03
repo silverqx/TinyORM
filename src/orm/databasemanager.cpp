@@ -312,8 +312,6 @@ DatabaseManager::addConnection(const QVariantHash &config, const QString &name)
         return *this;
     }
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     throw Exceptions::InvalidArgumentError(
                 u"The database connection '%1' already exists."_s.arg(name));
 }
@@ -462,7 +460,6 @@ bool DatabaseManager::isConnectionDriverAvailable(const QString &connection)
     if (supportedDrivers().contains(driverName))
         return TSqlDatabase::isDriverAvailable(driverName);
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
     throw Exceptions::LogicError(
                 u"An unsupported driver name '%1' has been defined for "
                  "the '%2' connection."_s
@@ -942,8 +939,6 @@ void DatabaseManager::throwIfNoConfiguration(const QString &connection) const
        If the configuration doesn't exist, we'll throw an exception and bail. */
     if (m_configuration->contains(connection))
         return;
-
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     throw Exceptions::InvalidArgumentError(
                 u"Database connection '%1' is not configured."_s.arg(connection));

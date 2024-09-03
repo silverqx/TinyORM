@@ -5,8 +5,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;

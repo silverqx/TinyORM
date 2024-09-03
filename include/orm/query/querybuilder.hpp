@@ -28,9 +28,6 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::convertible_to<T, Query::Expression>;
 
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
-
     // TODO querybuilder, whereFullText, whereBitwise silverqx
     // FUTURE querybuilder, paginator silverqx
     // FUTURE querybuilder, index hint silverqx

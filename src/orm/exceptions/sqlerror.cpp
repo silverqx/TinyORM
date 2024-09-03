@@ -48,8 +48,6 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
     auto driverText = error.driverText().trimmed();
     auto databaseText = error.databaseText().trimmed();
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     QString result;
     // +32 as a reserve; +4 : 2 * ', '
     result.reserve(messageStr.size() + 11 +

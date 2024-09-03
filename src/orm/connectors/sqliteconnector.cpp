@@ -78,8 +78,6 @@ void SQLiteConnector::configureForeignKeyConstraints(const TSqlDatabase &connect
     if (!config.contains(foreign_key_constraints))
         return;
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     const auto foreignKeyConstraints = TypeUtils::isTrue(config[foreign_key_constraints])
                                        ? ON : OFF;
 

@@ -622,13 +622,10 @@ namespace Private
         // Ownership of a unique_ptr()
         const auto hasQuery = getHasQueryByExistenceCheck(comparison, count, *relation);
 
-        if (relations.isEmpty()) {
-            using namespace Qt::StringLiterals;
-
+        if (relations.isEmpty())
             throw Orm::Exceptions::RuntimeError(
                         u"wtf, this should never happen :/, 'relations.size() == %1'."_s
                         .arg(relations.size()));
-        }
 
         hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
 
@@ -714,8 +711,6 @@ namespace Private
            HasNestedStore::STORE<Related>.top() call. */
         if (typeid (Related) == Private::HasNestedStore::STORE_TYPEID.top())
             return;
-
-        using namespace Qt::StringLiterals;
 
         throw Orm::Exceptions::InvalidTemplateArgumentError(
                     u"Bad template argument passed to the has() related method with "_s

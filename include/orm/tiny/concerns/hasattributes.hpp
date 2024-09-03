@@ -1556,8 +1556,6 @@ namespace Orm::Tiny::Concerns
     Derived &HasAttributes<Derived, AllRelations...>::syncOriginalAttributes(
             const QStringList &attributes)
     {
-        using namespace Qt::StringLiterals;
-
         const auto &modelAttributes = getAttributes();
         const auto &modelAttributesHash = getAttributesHash();
 
@@ -1693,8 +1691,6 @@ namespace Orm::Tiny::Concerns
         if (value.typeId() == QMetaType::QDateTime)
             return convertTimeZone(value.value<QDateTime>());
 
-        using namespace Qt::StringLiterals;
-
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
             throw Orm::Exceptions::InvalidFormatError(
@@ -1771,8 +1767,6 @@ namespace Orm::Tiny::Concerns
            it already is one. */
         if (value.typeId() == QMetaType::QTime)
             return value.template value<QTime>();
-
-        using namespace Qt::StringLiterals;
 
         // The value has to be convertible to the QString so we can work with it
         if (!value.canConvert<QString>())
@@ -1965,9 +1959,6 @@ namespace Orm::Tiny::Concerns
         const auto convertAttribute = [&key, &value_, castType]
                                       (const QMetaType metaType)
         {
-            // BUG msvc the using Qt::StringLiterals::operator""_s; doesn't work here, it even doesn't work outside this lambda in the castAttribute() method silverqx
-            using namespace Qt::StringLiterals;
-
             // Throw if the given attribute can not be converted to the given cast type
             throwIfCanNotCastAttribute(key, castType, metaType, value_,
                                        u"HasAttributes::castAttribute"_s);
@@ -2450,8 +2441,6 @@ namespace Orm::Tiny::Concerns
         if (attributesHash.contains(attribute))
             return;
 
-        using namespace Qt::StringLiterals;
-
         throw Orm::Exceptions::InvalidArgumentError(
                 u"The '%1' attribute doesn't exist in the '%2' model's m_attributes "_s
                  "vector in %3()."
@@ -2468,8 +2457,6 @@ namespace Orm::Tiny::Concerns
         if (value.canConvert(metaType))
             return;
 
-        using namespace Qt::StringLiterals;
-
         throw Orm::Exceptions::InvalidArgumentError(
                     u"Bad cast type was defined in the %1::u_casts hash, the '%2' "_s
                      "attribute can not be cast to the 'CastType::%3' "
@@ -2484,8 +2471,6 @@ namespace Orm::Tiny::Concerns
             const QString &key, const CastType castType, const QMetaType metaType,
             const QString &functionName)
     {
-        using namespace Qt::StringLiterals;
-
         /* This should not happen because the QVariant::canConvert() is called before
            the QVariant::convert(), but the convert() return value is still checked
            for the false value and in this case this method will be called. */
@@ -2502,8 +2487,6 @@ namespace Orm::Tiny::Concerns
     QString
     HasAttributes<Derived, AllRelations...>::castTypeName(const CastType type)
     {
-        using namespace Qt::StringLiterals;
-
         switch (type) {
         // Int 64-bit
         case CastType::LongLong:

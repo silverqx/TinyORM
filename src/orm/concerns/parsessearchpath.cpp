@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Constants::COMMA_C;
 
 using Orm::SchemaNs::Constants::TRIM_QUOTES;
@@ -43,8 +41,6 @@ QStringList ParsesSearchPath::parseSearchPath(const QString &searchPath)
 
     QStringList list;
     list.reserve(searchPath.count(COMMA_C));
-
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     for (auto &&path : searchPath.split(COMMA_C, Qt::SkipEmptyParts))
         // Trim also spaces

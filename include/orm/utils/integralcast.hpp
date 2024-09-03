@@ -248,8 +248,6 @@ auto IntegralCast(const V value)
     if (Private::InRange<T>(value))
         return static_cast<T>(value);
 
-    using namespace Qt::StringLiterals;
-
     throw Exceptions::OutOfRangeError(
                 // BUG msvc user defined string literal can't be divided to multiple lines IN TEMPLATED methods/functions, it only fails when the method/function is instantiated!!! Which means it can compile but will fail when user invokes/uses/instantiates this function; thx god is very simply reproducible; I found out that they can but the user defined string literal ""_s must be on the first line and it only fails on some places and not everywhere, now I'm fucked and confused, I'm refactoring it 2 days and have everything done 😔; I'll risk it, this is very bad silverqx
                 u"The given value %1 of '%2' integer type can't be cast to the '%3' "_s

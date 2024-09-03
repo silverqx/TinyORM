@@ -26,11 +26,8 @@ ModelNotFoundError::ModelNotFoundError(const QString &model,
 
 /* private */
 
-QString ModelNotFoundError::formatMessage(const char *model,
-                                          const QList<QVariant> &ids)
+QString ModelNotFoundError::formatMessage(const char *model, const QList<QVariant> &ids)
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     auto result = u"No query results for model '%1'"_s.arg(model);
 
     if (!ids.isEmpty()) {

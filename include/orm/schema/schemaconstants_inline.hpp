@@ -16,7 +16,6 @@ namespace Orm::SchemaNs
 {
 namespace Constants
 {
-
     /*! Alias for the literal operator that creates a QString. */
     using Qt::StringLiterals::operator""_s;
 

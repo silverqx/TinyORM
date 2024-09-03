@@ -38,8 +38,6 @@ QString QueryError::formatMessage(const QString &connectionName, const char *mes
     const auto sqlError = SqlError::formatMessage(message, query.lastError());
     const auto executedQuery = QueryUtils::parseExecutedQuery(query);
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     // Format SQL error message
     QString result;
     // +14 and +7 are string literals and +32 as a reserve
