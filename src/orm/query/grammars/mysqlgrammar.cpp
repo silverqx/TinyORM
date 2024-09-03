@@ -1,7 +1,7 @@
 #include "orm/query/grammars/mysqlgrammar.hpp"
 
 #include "orm/mysqlconnection.hpp"
-#include "orm/query/querybuilder.hpp"
+#include "orm/query/querybuilder.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

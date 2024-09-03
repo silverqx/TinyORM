@@ -1,6 +1,6 @@
 #include "orm/query/grammars/postgresgrammar.hpp"
 
-#include "orm/query/querybuilder.hpp"
+#include "orm/query/querybuilder.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
