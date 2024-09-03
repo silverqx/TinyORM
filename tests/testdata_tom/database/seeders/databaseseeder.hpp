@@ -5,8 +5,6 @@
 namespace Seeders
 {
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     /*! Main database seeder. */
     struct DatabaseSeeder : Seeder
     {

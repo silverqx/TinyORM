@@ -27,8 +27,6 @@
 
 #include "seeders/databaseseeder.hpp"
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::DatabaseManager;
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
