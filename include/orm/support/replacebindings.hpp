@@ -44,7 +44,7 @@ namespace Orm::Support
     ReplaceBindings::replaceBindingsInSql(QString queryString, const T &bindings,
                                           const bool simpleBindings)
     {
-        using Qt::StringLiterals::operator""_s;
+        using namespace Qt::StringLiterals;
 
         // Can't use orm/constants.hpp because this class will be also used in TinyDrivers
         static const auto Invalid     = u"INVALID"_s;
