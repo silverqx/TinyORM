@@ -12,8 +12,15 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+namespace Tom
+{
+    /*! Alias for the literal operator that creates a QLatin1Char/StringView. */
+    using Qt::StringLiterals::operator""_L1;
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+
 /*! Namespace contains common strings used in the Tom namespace (migrations). */
-namespace Tom::Constants
+namespace Constants
 {
 
     /*! Migration files datetime prefix format. */
@@ -187,7 +194,8 @@ namespace Tom::Constants
     TINYORM_EXPORT extern const QString MigrateUninstall;
     TINYORM_EXPORT extern const QString Integrate;
 
-} // namespace Tom::Constants
+} // namespace Constants
+} // namespace Tom
 
 TINYORM_END_COMMON_NAMESPACE
 

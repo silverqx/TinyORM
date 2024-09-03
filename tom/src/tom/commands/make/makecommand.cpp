@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
@@ -184,8 +182,6 @@ void MakeCommand::throwIfFileAlreadyExists(
 
         // Extract base filename without the extension
         auto entryName = QString::fromStdString(entry.path().stem().string());
-
-        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         // Migration specific
         if (type == "migration"_L1) {

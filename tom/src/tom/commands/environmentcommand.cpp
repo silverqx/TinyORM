@@ -18,8 +18,6 @@ int EnvironmentCommand::run()
 {
     Command::run();
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     info(u"Current application environment: "_s, false);
 
     comment(application().environment());

@@ -63,8 +63,6 @@ namespace Commands::Migrations
 
     QString FreshCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Drop all tables and re-run all migrations"_s;
     }
 

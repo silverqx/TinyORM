@@ -57,8 +57,6 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
 
 QString Utils::defaultValueText(const QString &value)
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     // Quote the string type
     const auto defaultValue = StringUtils::isNumber(value, true, true)
                               ? value

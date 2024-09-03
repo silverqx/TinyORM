@@ -83,8 +83,6 @@ namespace Commands::Database
 
     QString SeedCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Seed the database with records"_s;
     }
 

@@ -63,8 +63,6 @@ namespace Commands::Migrations
 
     QString InstallCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Create the migration repository"_s;
     }
 

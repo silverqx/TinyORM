@@ -59,8 +59,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using fspath = std::filesystem::path;
 
 #ifdef TINYORM_USING_TINYDRIVERS

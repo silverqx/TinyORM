@@ -27,9 +27,6 @@ namespace Support
 
 } // namespace Support
 
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
-
     /*! Create a new model class. */
     class ModelCommand : public MakeCommand,
                          public Concerns::PrepareOptionValues

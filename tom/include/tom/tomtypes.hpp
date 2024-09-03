@@ -15,6 +15,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {
+    /*! Alias for the literal operator that creates a QLatin1Char/StringView. */
+    using Qt::StringLiterals::operator""_L1;
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
 
     /*! Hydrated migration item from the database. */
     struct MigrationItem

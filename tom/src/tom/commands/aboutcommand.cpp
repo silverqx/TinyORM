@@ -20,8 +20,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 #ifdef TINYORM_USING_TINYDRIVERS
 using DriversLibraryInfo = Orm::Drivers::LibraryInfo;
 #endif

@@ -65,8 +65,6 @@ namespace Tom::Commands::Make
 
     QString SeederCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Create a new seeder class"_s;
     }
 

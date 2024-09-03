@@ -87,8 +87,6 @@ QStringList CallsCommands::getCommonArguments(const QStringList &arguments)
         return LongOption.arg(optionName);
     };
 
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
     static const std::unordered_set<QString> allowed {
         o(ansi),
         o(noansi),

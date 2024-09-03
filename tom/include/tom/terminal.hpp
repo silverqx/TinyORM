@@ -120,7 +120,7 @@ namespace Tom
     template<OStreamConcept O>
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
-        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+        using namespace Qt::StringLiterals;
 
 #ifndef _WIN32
         Q_UNUSED(cout)

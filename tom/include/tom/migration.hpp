@@ -60,6 +60,7 @@ TINYORM_END_COMMON_NAMESPACE
 namespace Migrations
 {
 
+    /*! Expose all Qt user-defined literals. */
     using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     /*! Alias for the Schema Blueprint. */

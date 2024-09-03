@@ -48,9 +48,6 @@ namespace Concerns
     class Migrator;
     class Seeder;
 
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
-
     /*! Tom application. */
     class TINYORM_EXPORT Application : public Concerns::InteractsWithIO,
                                        public Concerns::GuessCommandName

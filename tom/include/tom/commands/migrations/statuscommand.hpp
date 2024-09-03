@@ -89,8 +89,6 @@ namespace Commands::Migrations
 
     QString StatusCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Show the status of each migration"_s;
     }
 

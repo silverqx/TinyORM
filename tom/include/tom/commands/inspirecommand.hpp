@@ -42,8 +42,6 @@ namespace Tom::Commands
 
     QString InspireCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Display an inspiring quote"_s;
     }
 

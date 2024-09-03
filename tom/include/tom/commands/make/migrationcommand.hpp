@@ -84,8 +84,6 @@ namespace Tom::Commands::Make
 
     QString MigrationCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Create a new migration file"_s;
     }
 

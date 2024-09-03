@@ -176,6 +176,10 @@ TINYORM_END_COMMON_NAMESPACE
 // Import the most used constants into the Seeders namespace so the user doesn't have to
 namespace Seeders
 {
+
+    /*! Expose all Qt user-defined literals. */
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
     /*! Alias for the DB facade. */
     using TINYORM_PREPEND_NAMESPACE(Orm::DB); // NOLINT(misc-unused-using-decls)
     /*! Alias for the null QVariant-s utils. */

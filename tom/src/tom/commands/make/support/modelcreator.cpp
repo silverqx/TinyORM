@@ -22,7 +22,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 using fspath = std::filesystem::path;
 

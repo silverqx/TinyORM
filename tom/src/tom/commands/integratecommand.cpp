@@ -17,8 +17,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Constants::COMMA;
 #if defined(__linux__) || defined(__MINGW32__)
 using Orm::Constants::TMPL_SQUOTES;

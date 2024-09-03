@@ -42,8 +42,6 @@ namespace Tom::Commands
 
     QString EnvironmentCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Display the current framework environment"_s;
     }
 

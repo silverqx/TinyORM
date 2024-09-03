@@ -68,7 +68,7 @@ void Pretendable::optionalPretendInternal(
         QList<Orm::Log> &&queriesLog, const std::optional<QString> &title, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const bool newline) const
 {
-    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+    using Qt::StringLiterals::operator""_s;
 
     // Log gathered queries to the console
     for (auto &&query : queriesLog) {

@@ -63,8 +63,6 @@ namespace Commands::Migrations
 
     QString RefreshCommand::description() const
     {
-        using Qt::StringLiterals::operator""_s;
-
         return u"Rollback and re-run all migrations"_s;
     }
 
