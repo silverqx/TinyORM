@@ -104,7 +104,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QString, CopyRight, ("Copyright (©) 2024 Silver
 namespace
 {
     /*! QChar constant '.'. */
-    constexpr QChar DOT(QLatin1Char('.'));
+    constexpr QChar DOT = u'.';
 } // namespace
 
 /* private slots */
@@ -148,7 +148,7 @@ void tst_Versions::versions_TinyDrivers() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    QCOMPARE(TINYDRIVERS_VERSION_STR_2, QLatin1Char('v') + versionStr);
+    QCOMPARE(TINYDRIVERS_VERSION_STR_2, u'v' + versionStr);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -199,7 +199,7 @@ void tst_Versions::versions_TinyMySql() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    QCOMPARE(TINYMYSQL_VERSION_STR_2, QLatin1Char('v') + versionStr);
+    QCOMPARE(TINYMYSQL_VERSION_STR_2, u'v' + versionStr);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -249,7 +249,7 @@ void tst_Versions::versions_TinyOrm() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    QCOMPARE(TINYORM_VERSION_STR_2, QLatin1Char('v') + versionStr);
+    QCOMPARE(TINYORM_VERSION_STR_2, u'v' + versionStr);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
@@ -286,7 +286,7 @@ void tst_Versions::versions_TinyUtils() const
 
     QCOMPARE(TINYUTILS_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYUTILS_VERSION_STR, versionStr);
-    QCOMPARE(TINYUTILS_VERSION_STR_2, QLatin1Char('v') + versionStr);
+    QCOMPARE(TINYUTILS_VERSION_STR_2, u'v' + versionStr);
 
     // Project Version number, to check API compatibility
     const auto version = TINYUTILS_VERSION_MAJOR * 10000 +
@@ -322,7 +322,7 @@ void tst_Versions::versions_TomExample() const
 
     QCOMPARE(TINYTOM_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYTOM_VERSION_STR, versionStr);
-    QCOMPARE(TINYTOM_VERSION_STR_2, QLatin1Char('v') + versionStr);
+    QCOMPARE(TINYTOM_VERSION_STR_2, u'v' + versionStr);
 
     // Project Version number, to check API compatibility
     const auto version = TINYTOM_VERSION_MAJOR * 10000 +
