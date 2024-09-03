@@ -72,7 +72,7 @@ QString Type::prettyFunction(const QString &function)
 bool Type::isTrue(const QString &value)
 {
     return !value.isEmpty() &&
-           value != '0'_L1 &&
+           value != u'0' &&
            value.compare("false"_L1, Qt::CaseInsensitive) != 0 &&
            // QVariant::value<bool>() doesn't check conditions below
            value.compare(off, Qt::CaseInsensitive) != 0;
@@ -114,7 +114,7 @@ bool Type::isCMakeTrue(const QString &value)
        values involves numbers, especially floating point numbers and +- sign before
        a number is more complicated. */
     return !value.isEmpty() &&
-           value != '0'_L1 &&
+           value != u'0' &&
            value.compare(off,              Qt::CaseInsensitive) != 0 &&
            value.compare("no"_L1,          Qt::CaseInsensitive) != 0 &&
            value.compare("n"_L1,           Qt::CaseInsensitive) != 0 &&

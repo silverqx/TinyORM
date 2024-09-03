@@ -171,11 +171,11 @@ QString String::snake(QString string, const QChar delimiter)
             const auto previousChar = string.at(i - 1);
 
                 // xY to x_y or 0Y to 0_y
-            if ((ch >= 'A'_L1 && ch <= 'Z'_L1 &&
-                 ((previousChar >= 'a'_L1 &&
-                   previousChar <= 'z'_L1) ||
-                  (previousChar >= '0'_L1 &&
-                   previousChar <= '9'_L1))) ||
+            if ((ch >= u'A' && ch <= u'Z' &&
+                 ((previousChar >= u'a' &&
+                   previousChar <= u'z') ||
+                  (previousChar >= u'0' &&
+                   previousChar <= u'9'))) ||
                 // x y to x_y                       Avoid more underscores __
                 (i >= 2 && previousChar == SPACE && string.at(i - 2) != SPACE)
             )
@@ -447,7 +447,7 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
 #  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return QStringList(count, lorem511).join(NEWLINE);
             // Insert the s character before the last . to make it 512, 1024, ...
-            // .insert(-1, 's'_L1);
+            // .insert(-1, u's');
 #  else
     QStringList result;
     result.reserve(count);
@@ -470,21 +470,21 @@ bool String::allTagCharsAllowed(const QString &string, const QString::size_type 
     const auto firstAllowedPos = posStart + 1;
     // Compute the start position skipping the / char if it's a first char
     const auto allowdPosStart = firstAllowedPos < posEnd &&
-                                string.at(firstAllowedPos) == '/'_L1 ? posStart + 2
-                                                                     : firstAllowedPos;
+                                string.at(firstAllowedPos) == u'/' ? posStart + 2
+                                                                   : firstAllowedPos;
 
     for (QString::size_type i = allowdPosStart; i < posEnd; ++i) {
         const auto ch = string.at(i);
 
         // All allowed chars
             // A-Z a-z 0-9
-        if ((ch >= 'A'_L1 && ch <= 'Z'_L1) ||
-            (ch >= 'a'_L1 && ch <= 'z'_L1) ||
-            (ch >= '0'_L1 && ch <= '9'_L1) ||
+        if ((ch >= u'A' && ch <= u'Z') ||
+            (ch >= u'a' && ch <= u'z') ||
+            (ch >= u'0' && ch <= u'9') ||
             // space ! " # $ % & '
             (ch >= SPACE && ch <= SQUOTE) ||
             // - = ? _ @
-            ch == MINUS || ch == EQ_C || ch == '?'_L1 || ch == UNDERSCORE || ch == '@'_L1
+            ch == MINUS || ch == EQ_C || ch == u'?' || ch == UNDERSCORE || ch == u'@'
         )
             continue;
 

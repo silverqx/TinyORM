@@ -66,7 +66,7 @@ SqlError::formatMessage(const char *const message, const MySqlErrorType &mysqlEr
 
     result += errorText.join(COMMA);
 
-    result += ')'_L1;
+    result += u')';
 
     return result;
 }

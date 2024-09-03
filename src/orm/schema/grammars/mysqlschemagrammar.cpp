@@ -456,7 +456,7 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
 //            .replace(QChar(QChar::CarriageReturn), u"\\r"_s)
 //            .replace(QUOTE, u"\\\""_s)
             .replace(QChar(0x001a), u"^Z"_s)
-            .replace('\\'_L1, u"\\\\"_s)
+            .replace(u'\\', u"\\\\"_s)
             .replace(QChar(QChar::Null), u"\\0"_s)
             .replace(SQUOTE, u"''"_s);
 }

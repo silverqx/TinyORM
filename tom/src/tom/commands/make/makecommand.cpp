@@ -43,8 +43,8 @@ void MakeCommand::throwIfContainsNamespaceOrPath(
             const QString &type, const QString &className, const QString &source)
 {
     if (!className.contains(u"::"_s) &&
-        !className.contains('/'_L1) &&
-        !className.contains('\\'_L1)
+        !className.contains(u'/') &&
+        !className.contains(u'\\')
     )
         return;
 

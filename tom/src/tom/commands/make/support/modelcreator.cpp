@@ -613,7 +613,7 @@ QString ModelCreator::createRelationCalls(
                               withPivot.size() == 1
                               ? withPivotWrapped.constFirst()
                               : StringUtils::wrapValue(withPivotWrapped.join(COMMA),
-                                                       '{'_L1, '}'_L1));
+                                                       u'{', u'}'));
     }
 
     // Pivot table with timestamps
@@ -631,7 +631,7 @@ QString ModelCreator::guessSingularComment(const QString &className)
 
 QString ModelCreator::guessPluralComment(const QString &className)
 {
-    return StringUtils::snake(className, SPACE).append('s'_L1);
+    return StringUtils::snake(className, SPACE).append(u's');
 }
 
 QString ModelCreator::guessOneTypeRelationName(const QString &className)
@@ -641,7 +641,7 @@ QString ModelCreator::guessOneTypeRelationName(const QString &className)
 
 QString ModelCreator::guessManyTypeRelationName(const QString &className)
 {
-    return guessOneTypeRelationName(className).append('s'_L1);
+    return guessOneTypeRelationName(className).append(u's');
 }
 
 /* Protected model section */

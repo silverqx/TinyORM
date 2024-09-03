@@ -144,7 +144,7 @@ namespace
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameVersion + 'd'_L1, // TinyMySql0d.dll
+            driverBasenameVersion + u'd', // TinyMySql0d.dll
 #endif
             driverBasenameVersion, // TinyMySql0.dll
             /* As the last, try to load from the raw basename without any postfixes,
@@ -163,11 +163,11 @@ namespace
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameLib + 'd'_L1, // libTinyMySqld.so
+            driverBasenameLib + u'd', // libTinyMySqld.so
 #endif
             driverBasenameLib, // libTinyMySql.so
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameRaw + 'd'_L1, // TinyMySqld.so
+            driverBasenameRaw + u'd', // TinyMySqld.so
 #endif
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
@@ -195,7 +195,7 @@ namespace
             // CMake builds only (or any other build system that prepends lib prefix)
 #ifndef TINY_QMAKE_BUILD_PRIVATE
 #  ifdef TINYDRIVERS_DEBUG
-            driverBasenameVersion + 'd'_L1, // libTinyMySql0d.dll
+            driverBasenameVersion + u'd', // libTinyMySql0d.dll
 #  endif
             driverBasenameVersion, // libTinyMySql0.dll
             driverBasename, // libTinyMySql.dll
@@ -203,7 +203,7 @@ namespace
             // Also, try all other combinations without the lib prefix
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameRawVersion + 'd'_L1,
+            driverBasenameRawVersion + u'd',
 #endif
             driverBasenameRawVersion,
             /* As the last, try to load from the raw basename without any postfixes,

@@ -428,7 +428,7 @@ bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
            value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||
            value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
            value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
-           value == '1'_L1;
+           value == u'1';
 }
 
 void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,

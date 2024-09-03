@@ -170,7 +170,7 @@ void HelpCommand::printUsageSection(
                 usage += u" <%1>"_s.arg(syntax);
         }
 
-        usage += QString(optionalCounter, ']'_L1);
+        usage += QString(optionalCounter, u']');
     }
 
     note(usage);

@@ -280,9 +280,9 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
 
     // Append the :00 if needed (avoid RegEx for performance reasons)
     else if (timezoneIdSize == 6 &&
-             timezoneId[0] == 'U'_L1 &&
-             timezoneId[1] == 'T'_L1 &&
-             timezoneId[2] == 'C'_L1 &&
+             timezoneId[0] == u'U' &&
+             timezoneId[1] == u'T' &&
+             timezoneId[2] == u'C' &&
              (timezoneId[3] == MINUS || timezoneId[3] == PLUS) &&
              // Is numeric != 0
              std::isdigit(timezoneId[4].toLatin1()) != 0 &&

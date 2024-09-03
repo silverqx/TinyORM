@@ -361,7 +361,7 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     const auto answer = QString::fromStdString(answerRaw).toLower();
 #endif
 
-    return answer == 'y'_L1 || answer == "ye"_L1 || answer == "yes"_L1;
+    return answer == u'y' || answer == "ye"_L1 || answer == "yes"_L1;
 }
 
 QString InteractsWithIO::stripAnsiTags(QString string)

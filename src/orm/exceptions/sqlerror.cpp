@@ -73,7 +73,7 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
 
     result += errorText.join(COMMA);
 
-    result += ')'_L1;
+    result += u')';
 
     return result;
 }

@@ -624,12 +624,12 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
        depending on whether the function is used in string or numeric context,
        eg. NOW() + 0 will return in this format, so this if condition makes sense. */
     if (value.size() == 14 && MySqlUtils::isNumber(value))
-        value.insert(4, DASH).insert(7, DASH).insert(10, 'T'_L1).insert(13, COLON)
+        value.insert(4, DASH).insert(7, DASH).insert(10, u'T').insert(13, COLON)
              .insert(16, COLON);
 
     // tinymysql_lib_utc_qdatetime 20240618L
-    if (!value.endsWith('Z'_L1))
-        value.append('Z'_L1);
+    if (!value.endsWith(u'Z'))
+        value.append(u'Z');
 
     return QDateTime::fromString(value, Qt::ISODateWithMs);
 }

@@ -590,7 +590,7 @@ void ModelCommand::createMigration(const QString &className) const
 
     // Plural for a non-pivot models
     if (!isSet(pivot_model))
-        table += 's'_L1;
+        table += u's';
 
     call(MakeMigration, {longOption(create_, table),
                          boolCmd(force),

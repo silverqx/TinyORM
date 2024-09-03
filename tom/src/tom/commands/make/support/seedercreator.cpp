@@ -68,8 +68,8 @@ QString SeederCreator::getTableName(QString className)
         className.truncate(className.lastIndexOf(Seeder));
 
     // Pluralize
-    if (!className.endsWith('s'_L1))
-        className.append('s'_L1);
+    if (!className.endsWith(u's'))
+        className.append(u's');
 
     return StringUtils::snake(className);
 }

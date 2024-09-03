@@ -101,7 +101,7 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
         return std::move(className.append(Seeder));
 
     // Change Xyzseeder to XyzSeeder
-    className[className.size() - Seeder_lc_size] = 'S'_L1;
+    className[className.size() - Seeder_lc_size] = u'S';
 
     return std::move(className);
 }

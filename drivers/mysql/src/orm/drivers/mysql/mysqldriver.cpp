@@ -203,7 +203,7 @@ QString MySqlDriver::escapeIdentifier(const QString &identifier,
     // It should have the same implementation as BaseGrammar::wrap()
     // NOTE API different, we are also escaping an empty identifier and we checking * silverqx
     // Nothing to do, already escaped or * column shorthand used
-    if ((type == FieldName && identifier == '*'_L1) ||
+    if ((type == FieldName && identifier == u'*') ||
         isIdentifierEscaped(identifier, type)
     )
         return identifier;
