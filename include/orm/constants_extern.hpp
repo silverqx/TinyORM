@@ -19,7 +19,7 @@ namespace Orm
     /*! Alias for the literal operator that creates a QString. */
     using Qt::StringLiterals::operator""_s;
 
-/*! Namespace contains common chars and strings used in the TinyOrm project. */
+/*! Namespace contains common chars and strings used in the TinyORM project. */
 namespace Constants
 {
 
