@@ -214,8 +214,8 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
 
 QString ModelCommand::help() const
 {
-    return QStringLiteral(
-R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to-one</info>, and <info>one-to-many</info> relationships. The <info>belongs-to-many</info> can be used to define <comment>many-to-many</comment> relationship and also to define the inverse of a <comment>many-to-many</comment> relationship.
+    return
+uR"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to-one</info>, and <info>one-to-many</info> relationships. The <info>belongs-to-many</info> can be used to define <comment>many-to-many</comment> relationship and also to define the inverse of a <comment>many-to-many</comment> relationship.
 
   The <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> options can be defined more than once:
 
@@ -242,7 +242,7 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
   The <info>pivot-inverse</info> option adds the pivot type to the Model's <gray>AllRelations</gray> template parameter pack but beware this template parameter is needed by the inverse belongs-to-many relation! It has nothing to do with relationships in the currently generated model. Closer explanation in the documentation. https://bit.ly/44Kk3aC
 
   The <info>appends</info> values are internally merged into the <info>accessors</info>, which ensures that the accessor methods for <info>appends</info> will be generated automatically.
-)");
+)"_s;
 }
 
 int ModelCommand::run()
@@ -357,10 +357,10 @@ void ModelCommand::showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions)
         return;
 
     // Warning message templates
-    static const auto singular = QStringLiteral("Unused option %1; it depends on the "
-                                                "--belongs-to-many= option.");
-    static const auto plural =   QStringLiteral("Unused options %1; they depend on the "
-                                                "--belongs-to-many= option.");
+    static const auto singular = u"Unused option %1; it depends on the "
+                                  "--belongs-to-many= option."_s;
+    static const auto plural =   u"Unused options %1; they depend on the "
+                                  "--belongs-to-many= option."_s;
 
     comment((m_unusedBtmOptions.size() == 1 ? singular : plural)
             .arg(ContainerUtils::join(m_unusedBtmOptions)));
@@ -411,12 +411,10 @@ void ModelCommand::showUnusedPivotModelOptionsWarnings()
         return;
 
     // Warning message templates
-    static const auto singular = QStringLiteral(
-                                     "Unused option %1; it's not supported along with "
-                                     "the --pivot-model option.");
-    static const auto plural =   QStringLiteral(
-                                     "Unused options %1; they are not supported along "
-                                     "with the --pivot-model option.");
+    static const auto singular = u"Unused option %1; it's not supported along with "
+                                  "the --pivot-model option."_s;
+    static const auto plural =   u"Unused options %1; they are not supported along "
+                                  "with the --pivot-model option."_s;
 
     comment((m_unusedPivotModelOptions.size() == 1 ? singular : plural)
             .arg(ContainerUtils::join(m_unusedPivotModelOptions)));
@@ -428,9 +426,8 @@ void ModelCommand::showUnusedIncrementingWarning()
     if (!(isSet(incrementing) && isSet(disable_incrementing)))
         return;
 
-    comment(QStringLiteral(
-                "Unused --disable-incrementing option; the --incrementing option "
-                "has always precedence if both options were given."));
+    comment(u"Unused --disable-incrementing option; the --incrementing option "
+             "has always precedence if both options were given."_s);
 
     m_shownUnusedIncrementing = true;
 }
@@ -441,9 +438,8 @@ void ModelCommand::showUnusedSnakeAttributesWarning()
     if (!(isSet(snake_attributes) && isSet(disable_snake_attributes)))
         return;
 
-    comment(QStringLiteral(
-                "Unused --disable-snake-attributes option; the --snake-attributes option "
-                "has always precedence if both options were given."));
+    comment(u"Unused --disable-snake-attributes option; the --snake-attributes option "
+             "has always precedence if both options were given."_s);
 
     m_shownUnusedSnakeAttribtues = true;
 }

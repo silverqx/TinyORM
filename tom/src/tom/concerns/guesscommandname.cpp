@@ -101,8 +101,7 @@ void GuessCommandName::printAmbiguousCommands(
             | ranges::to<QStringList>();
 
     application().errorWall(
-                QStringLiteral(
-                    "Command \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2")
+                u"Command \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2"_s
                 .arg(commandName, formattedCommands.join(NEWLINE)));
 
     Application::exitApplication(EXIT_FAILURE);

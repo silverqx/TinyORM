@@ -146,8 +146,9 @@ namespace Tom::Commands
 
     QString CompleteCommand::description() const
     {
-        return QStringLiteral(
-                    "Complete command names and parameters (for tab-completion only)");
+        using Qt::StringLiterals::operator""_s;
+
+        return u"Complete command names and parameters (for tab-completion only)"_s;
     }
 
     /* protected */

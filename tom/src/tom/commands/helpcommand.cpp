@@ -39,12 +39,12 @@ const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 
 QString HelpCommand::help() const
 {
-    return QStringLiteral(
-R"(  The <info>help</info> command displays help for a given command:
+    return
+uR"(  The <info>help</info> command displays help for a given command:
 
     <info>tom</info> help list
 
-  To display the list of available commands, please use the <info>list</info> command.)");
+  To display the list of available commands, please use the <info>list</info> command.)"_s;
 }
 
 int HelpCommand::run()
@@ -94,8 +94,7 @@ bool HelpCommand::validateRequiredArguments(
         const auto &right = arguments.at(i);
 
         if (left.optional && !right.optional) {
-            errorWall(QStringLiteral("Cannot add a required argument '%1' after "
-                                     "an optional one '%2'.")
+            errorWall(u"Cannot add a required argument '%1' after an optional one '%2'."_s
                       .arg(right.name, left.name));
 
             return false;
@@ -109,8 +108,7 @@ bool HelpCommand::validateRequiredArguments(
                                          !argument.defaultValue.isEmpty();
 
         if (requiredWithDefault)
-            errorWall(QStringLiteral("The required argument '%1' has a default value "
-                                     "'%2'.")
+            errorWall(u"The required argument '%1' has a default value '%2'."_s
                       .arg(argument.name, argument.defaultValue));
 
         return requiredWithDefault;

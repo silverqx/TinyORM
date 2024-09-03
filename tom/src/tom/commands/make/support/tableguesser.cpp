@@ -4,19 +4,18 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Qt::StringLiterals::operator""_s;
+
 namespace Tom::Commands::Make::Support
 {
 
 /* private */
 
 const QString
-TableGuesser::CreatePatterns =
-        QStringLiteral(
-            R"(^create(?:_|-)(\w+?)(?:(?:_|-)table)?$)");
+TableGuesser::CreatePatterns = uR"(^create(?:_|-)(\w+?)(?:(?:_|-)table)?$)"_s;
 const QString
 TableGuesser::ChangePatterns =
-        QStringLiteral(
-            R"((?:_|-)(?:to|from|in)(?:_|-)(\w+?)(?:(?:_|-)table)?$)");
+        uR"((?:_|-)(?:to|from|in)(?:_|-)(\w+?)(?:(?:_|-)table)?$)"_s;
 
 /* public */
 

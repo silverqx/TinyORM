@@ -297,12 +297,10 @@ void Application::initializeParser(QCommandLineParser &parser)
     parser.addOptions(saveOptions({
         {      ansi,           u"Force ANSI output"_s},
         {      noansi,         u"Disable ANSI output"_s},
-        {      env,            QStringLiteral("The environment the command should run "
-                                              "under"), env_up}, // Value
+        {      env,            u"The environment the command should run under"_s, env_up}, // Value
         {{QChar('h'),
-          help},               QStringLiteral("Display help for the given command. When "
-                                              "no command is given display help for the "
-                                              "<info>list</info> command")},
+          help},               u"Display help for the given command. When no command is "
+                                "given display help for the <info>list</info> command"_s},
         {{QChar('n'),
           nointeraction},      u"Do not ask any interactive question"_s},
         {{QChar('q'),
@@ -310,10 +308,10 @@ void Application::initializeParser(QCommandLineParser &parser)
         {{QChar('V'),
           Version},            u"Display this application version"_s},
         {{QChar('v'),
-          verbose},            QStringLiteral("Increase the verbosity of messages: "
-                                              "1 for normal output, "
-                                              "2 for more verbose output and "
-                                              "3 for debug")},
+          verbose},            u"Increase the verbosity of messages: "
+                                "1 for normal output, "
+                                "2 for more verbose output and "
+                                "3 for debug"_s},
     }));
 }
 

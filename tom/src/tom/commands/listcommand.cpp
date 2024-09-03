@@ -50,8 +50,8 @@ QList<CommandLineOption> ListCommand::optionsSignature() const
 
 QString ListCommand::help() const
 {
-    return QStringLiteral(
-R"(  The <info>list</info> command lists all commands:
+    return
+uR"(  The <info>list</info> command lists all commands:
 
     <info>tom list</info>
 
@@ -61,7 +61,7 @@ R"(  The <info>list</info> command lists all commands:
 
   It's also possible to get raw list of commands (useful for embedding command runner):
 
-    <info>tom list --raw</info>)");
+    <info>tom list --raw</info>)"_s;
 }
 
 int ListCommand::run()
@@ -147,8 +147,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
     // No namespace found
     if (namespaces.empty()) {
         application().errorWall(
-                    QStringLiteral(
-                        "There are no commands defined in the \"%1\" namespace.")
+                    u"There are no commands defined in the \"%1\" namespace."_s
                     .arg(namespaceArg));
 
         Application::exitApplication(EXIT_FAILURE);
@@ -181,8 +180,8 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
             | ranges::to<QStringList>();
 
     application().errorWall(
-                QStringLiteral("The namespace \"%1\" is ambiguous.\n\n"
-                               "Did you mean one of these?\n%2")
+                u"The namespace \"%1\" is ambiguous.\n\n"
+                 "Did you mean one of these?\n%2"_s
                 .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
 
     Application::exitApplication(EXIT_FAILURE);

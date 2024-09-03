@@ -397,7 +397,7 @@ void Command::validateRequiredArguments() const
     if (static_cast<RequiredStdSizeType>(passedArgsSize) >= requiredArgsSize)
         return;
 
-    errorWall(QStringLiteral(R"(Not enough arguments (missing: "%1").)")
+    errorWall(uR"(Not enough arguments (missing: "%1").)"_s
               .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
 
     Application::exitApplication(EXIT_FAILURE);

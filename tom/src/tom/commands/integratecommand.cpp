@@ -140,8 +140,7 @@ namespace
 
         // BUG __tiny_func__ fails in this type of functions silverqx
         throw Exceptions::RuntimeError(
-                    QStringLiteral("Can not create '%1' directory "
-                                   "in preparePowerShellFolder().")
+                    u"Can not create '%1' directory in preparePowerShellFolder()."_s
                     .arg(u"%1/%2"_s.arg(documentsFolder, powershellFolder)));
     }
 } // namespace
@@ -237,9 +236,8 @@ bool IntegrateCommand::writeToPwshProfile(
         return true;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Write operation of the tom pwsh tab-completion code to the '%1' "
-                    "file failed in %2().")
+                u"Write operation of the tom pwsh tab-completion code to the '%1' "
+                 "file failed in %2()."_s
                 .arg(pwshProfileFilepath, __tiny_func__));
 
     return true;
@@ -323,9 +321,8 @@ bool IntegrateCommand::writeTomBashCompletion()
         return true;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Write operation of the tom bash tab-completion file '%1' failed "
-                    "in %2().")
+                u"Write operation of the tom bash tab-completion file '%1' failed "
+                 "in %2()."_s
                 .arg(*TomBashCompletionFilepath, __tiny_func__));
 }
 
@@ -400,9 +397,8 @@ bool IntegrateCommand::writeTomZshCompletionWrapper() const
     }
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Write operation of the tom zsh tab-completion files %1 failed "
-                    "in %2(), please run with sudo.")
+                u"Write operation of the tom zsh tab-completion files %1 failed in %2(), "
+                 "please run with sudo."_s
                 .arg(getCompletionFilepaths().join(COMMA), __tiny_func__));
 }
 
@@ -471,8 +467,7 @@ void IntegrateCommand::createZshCompletionFolder()
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral("Can not create '%1' directory in %2(), please run "
-                               "with sudo.")
+                u"Can not create '%1' directory in %2(), please run with sudo."_s
                 .arg(TomZshCompletionPaths->constFirst().dirPath, __tiny_func__));
 }
 

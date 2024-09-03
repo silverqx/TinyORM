@@ -203,10 +203,9 @@ void PrepareForeignKeyValues::showUnusedForeignKeyWarning()
         return;
 
     modelCommand().comment(
-                QStringLiteral(
-                    "Unused --foreign-key= option, it has to follow after any relation "
-                    "option and should be defined only once for every relation option "
-                    "or can be defined twice for the --belongs-to-many= option."));
+                u"Unused --foreign-key= option, it has to follow after any relation "
+                 "option and should be defined only once for every relation option "
+                 "or can be defined twice for the --belongs-to-many= option."_s);
 
     modelCommand().m_shownUnusedForeignKey = true;
 }

@@ -423,9 +423,8 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
         return;
 
     throw Exceptions::InvalidTemplateArgumentError(
-                QStringLiteral(
-                    "The template arguments passed to the TomApplication::migrations() "
-                    "must always be sorted alphabetically (%1 < %2).")
+                u"The template arguments passed to the TomApplication::migrations() "
+                 "must always be sorted alphabetically (%1 < %2)."_s
                 .arg(previousMigrationName, migrationName));
 }
 
@@ -435,10 +434,9 @@ void Migrator::throwIfContainMigration(const QString &migrationName) const
         return;
 
     throw Exceptions::InvalidTemplateArgumentError(
-                QStringLiteral(
-                    "The '%1' migration has already been added, the template arguments "
-                    "passed to the TomApplication::migrations() can't contain the same "
-                    "migration more times.")
+                u"The '%1' migration has already been added, the template arguments "
+                 "passed to the TomApplication::migrations() can't contain the same "
+                 "migration more times."_s
                 .arg(migrationName));
 }
 
@@ -448,8 +446,7 @@ void Migrator::throwIfMigrationFileNameNotValid(const QString &migrationName)
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Migration filename '%1' has to start with the datetime prefix.")
+                u"Migration filename '%1' has to start with the datetime prefix."_s
                 .arg(migrationName));
 
 }
@@ -463,11 +460,10 @@ void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationNameOri
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Migration class name '%1' has to start with the datetime prefix, "
-                    "eg. _2014_10_12_000000_create_xyz_table, another accepted format "
-                    "is StudlyCase eg. CreateXyzTable with the T_MIGRATION macro (it "
-                    "extracts this datetime prefix from a file name).")
+                u"Migration class name '%1' has to start with the datetime prefix, "
+                 "eg. _2014_10_12_000000_create_xyz_table, another accepted format "
+                 "is StudlyCase eg. CreateXyzTable with the T_MIGRATION macro (it "
+                 "extracts this datetime prefix from a file name)."_s
                 .arg(migrationNameOriginal));
 }
 

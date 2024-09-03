@@ -149,8 +149,7 @@ void PrintsOptions::validateOption(const QCommandLineOption &option)
     // This is may be too much, but whatever after 14 hours of coding 😎
     if (optionsSize > 2)
         throw Exceptions::RuntimeError(
-                QStringLiteral("Only two option names per option are allowed "
-                               "(options: %1).")
+                u"Only two option names per option are allowed (options: %1)."_s
                 .arg(optionNames.join(COMMA)));
 
     static const auto longOptionTmpl = u"Long option size has to be >1 (option: %1)."_s;

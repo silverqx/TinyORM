@@ -369,9 +369,9 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
     // Prepare data
     const QList<QString> nameValues {
-        QLatin1String("james"),
-        QLatin1String("robert"),
-        QLatin1String("david"),
+        u"james"_s,
+        u"robert"_s,
+        u"david"_s,
     };
     const auto noteValue = u"transation savepoints commit all success"_s;
 
@@ -452,11 +452,11 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
     // Prepare data
     const QList<QString> nameValuesSuccess {
-        QLatin1String("james"),
-        QLatin1String("david"),
+        u"james"_s,
+        u"david"_s,
     };
     const QList<QString> nameValuesFailed {
-        QLatin1String("robert"),
+        u"robert"_s,
     };
     const auto noteValue = u"transation savepoints commit one failed"_s;
 
@@ -546,9 +546,9 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     // Prepare data
     const QList<QString> nameValues {
-        QLatin1String("james"),
-        QLatin1String("robert"),
-        QLatin1String("david"),
+        u"james"_s,
+        u"robert"_s,
+        u"david"_s,
     };
     const auto noteValue = u"transation savepoints commit all failed"_s;
 
@@ -641,9 +641,9 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         // Prepare data
         const QList<QString> nameValues {
-            QLatin1String("james"),
-            QLatin1String("robert"),
-            QLatin1String("david"),
+            u"james"_s,
+            u"robert"_s,
+            u"david"_s,
         };
         const auto noteValue = u"transation savepoints commit all failed double"_s;
 
@@ -728,9 +728,9 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
         // Prepare data
         const QList<QString> nameValues {
-            QLatin1String("james"),
-            QLatin1String("robert"),
-            QLatin1String("david"),
+            u"james"_s,
+            u"robert"_s,
+            u"david"_s,
         };
         const auto noteValue = u"transation savepoints commit all failed double"_s;
 
