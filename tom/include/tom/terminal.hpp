@@ -120,6 +120,7 @@ namespace Tom
     template<OStreamConcept O>
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
+        // BUG msvc the using Qt::StringLiterals::operator""_L1; doesn't work here, compilation fails silverqx
         using namespace Qt::StringLiterals;
 
 #ifndef _WIN32

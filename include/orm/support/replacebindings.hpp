@@ -44,6 +44,7 @@ namespace Orm::Support
     ReplaceBindings::replaceBindingsInSql(QString queryString, const T &bindings,
                                           const bool simpleBindings)
     {
+        // BUG msvc the using Qt::StringLiterals::operator""_s; doesn't work here, compilation fails silverqx
         using namespace Qt::StringLiterals;
 
         // Can't use orm/constants.hpp because this class will be also used in TinyDrivers
