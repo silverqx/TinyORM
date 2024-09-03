@@ -1273,7 +1273,7 @@ void tst_Model::refresh_OnlyAttributes() const
 
     ConnectionOverride::connection = connection;
 
-    // Doens't exist
+    // Doesn't exist
     {
         Torrent torrent;
         QVERIFY(&torrent.refresh() == &torrent);

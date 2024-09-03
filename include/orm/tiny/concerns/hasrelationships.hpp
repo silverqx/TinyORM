@@ -56,7 +56,7 @@ namespace Concerns
         // To access private serializeRelationVisited()
         template<SerializedAttributes C, typename Derived_,
                  AllRelationsConcept ...AllRelations_>
-        friend class Support::Stores::SerializeRelationStore; // Partial specialization doens't work with friend
+        friend class Support::Stores::SerializeRelationStore; // Partial specialization doesn't work with friend
         // To access eagerLoadRelationWithVisitor()
         friend class Tiny::Builder<Derived>;
 
@@ -485,9 +485,9 @@ namespace Concerns
         return getRelationFromHash<Related, Container>(relation);
     }
 
-    /* Returning shared_ptr for getRelation()-related methods would be unperformant,
+    /* Returning shared_ptr for getRelation()-related methods would be inefficient,
        imagine 100 models with 2 relations and every relation would have another 100
-       models, it's houndreds of shared_ptr-s which would have to be counted. */
+       models, it's hundreds of shared_ptr-s which would have to be counted. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::same_as<Tag, One>
     Related *
