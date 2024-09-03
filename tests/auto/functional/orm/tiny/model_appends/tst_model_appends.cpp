@@ -6,8 +6,6 @@
 #include "models/datetime_serializeoverride.hpp"
 #include "models/torrent_includeslist.hpp"
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::HASH_;
@@ -489,7 +487,7 @@ void tst_Model_Appends::toMap_WithAppends_OverrideSerializeDateTime() const
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
-        {"time",     u"14:11:15"_s},
+        {"time",     "14:11:15"},
     });
 
     // Prepare

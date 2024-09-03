@@ -11,7 +11,7 @@
 #include "models/torrent_with_qdatetime.hpp"
 #include "models/torrent_without_qdatetime.hpp"
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::AddedOn;

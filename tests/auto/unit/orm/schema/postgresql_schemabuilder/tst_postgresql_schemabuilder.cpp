@@ -13,7 +13,7 @@
 #  include "models/user_norelations.hpp"
 #endif
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 using Orm::Constants::AddedOn;
 using Orm::Constants::ID;

@@ -42,8 +42,6 @@
 #  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
 #endif
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 #ifdef _WIN32
 using TestUtils::Fs;
 #endif
@@ -518,6 +516,8 @@ tst_Versions::getExeVersionString(const QString &fileName)
         qWarning() << "Error in VerQueryValue() for the version-information resource.";
         return {};
     }
+
+    using Qt::StringLiterals::operator""_s;
 
     return {
         // Product Version

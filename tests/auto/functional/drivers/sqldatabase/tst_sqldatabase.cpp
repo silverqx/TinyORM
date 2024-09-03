@@ -9,7 +9,7 @@
 
 #include "databases.hpp"
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 using Orm::Constants::AddedOn;
 using Orm::Constants::ID;

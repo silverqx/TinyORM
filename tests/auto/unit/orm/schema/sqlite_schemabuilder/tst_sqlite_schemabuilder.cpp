@@ -24,7 +24,7 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+using Qt::StringLiterals::operator""_s;
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;

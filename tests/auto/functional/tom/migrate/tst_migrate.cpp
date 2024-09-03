@@ -16,8 +16,6 @@
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
 
-using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 using Orm::Exceptions::RuntimeError;
 
 using TypeUtils = Orm::Utils::Type;
