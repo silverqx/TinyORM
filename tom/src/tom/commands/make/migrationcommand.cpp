@@ -223,7 +223,7 @@ fspath MigrationCommand::getMigrationsPath() const
        path based on the pwd and if not found use the default path which is set
        by the TINYTOM_MIGRATIONS_DIR macro. */
     auto migrationsPath = isSet(path_)
-                          // User defined path
+                          // User-defined path
                           ? getUserMigrationsPath()
                           // Try to guess or use the default path
                           : guessMigrationsPath();

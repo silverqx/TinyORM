@@ -1115,7 +1115,7 @@ namespace Orm::Tiny
            on the query so we can add our eager constraints, this is done
            in the EagerRelationStore::visited() using the Relation::noConstraints().
            Following is true for the relationItem.constraints (Constraining Eager Loads):
-           Then we will merge the user defined constraints that were on the query
+           Then we will merge the user-defined constraints that were on the query
            back to it, this ensures that a user can specify any where constraints or
            ordering (where, orderBy, and maybe more). */
         auto nested = relationsNestedUnder(relationItem.name);

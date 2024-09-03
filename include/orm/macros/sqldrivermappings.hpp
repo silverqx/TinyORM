@@ -103,7 +103,7 @@ C preprocessor macro to select the SQL drivers to use.
 // User namespace is not defined
 #  if !defined(QT_NAMESPACE) || defined(Q_MOC_RUN)
 #    define TINY_FORWARD_DECLARE_TClass(name) class name;
-// User defined namespace
+// User-defined namespace
 #  else
 #    define TINY_FORWARD_DECLARE_TClass(name) \
 namespace QT_NAMESPACE { class name; }
@@ -143,7 +143,7 @@ namespace QT_NAMESPACE { class name; }
 // User namespace is not defined
 #  ifndef TINYORM_COMMON_NAMESPACE
 #    define TINY_FORWARD_DECLARE_TClass(name) namespace Orm::Drivers { class name; }
-// User defined namespace
+// User-defined namespace
 #  else
 #    define TINY_FORWARD_DECLARE_TClass(name) \
 namespace TINYORM_COMMON_NAMESPACE::Orm::Drivers { class name; }

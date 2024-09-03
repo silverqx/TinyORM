@@ -63,7 +63,7 @@ ConfigurationParserFactory::make(const QString &driver)
 
 QString ConfigurationParserFactory::getDriverName(const QVariantHash &config)
 {
-    // This method works with the user defined data, so I left this check here
+    // This method works with the user-defined data, so I left this check here
     if (config.contains(driver_))
         // Normalized driver name (using the toUpper())
         return config[driver_].value<QString>().toUpper();

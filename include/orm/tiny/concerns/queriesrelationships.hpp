@@ -53,7 +53,7 @@ namespace Private
             NotNull<const QString *> comparison;
             /*! Number value to compare against. */
             /*const*/ qint64 count;
-            /*! User defined callback. */
+            /*! User-defined callback. */
             NotNull<const std::function<void(TinyBuilder<Related> &)> *> callback;
         };
 

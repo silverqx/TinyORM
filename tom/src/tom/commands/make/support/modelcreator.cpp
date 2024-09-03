@@ -549,7 +549,7 @@ void ModelCreator::handlePivotClass(const QString &pivotClass,
     if (isPivotClassEmpty)
         return;
 
-    // User defined Pivot
+    // User-defined Pivot
     m_includesList.emplace(QString(ModelIncludeItemStub).arg(pivotClass.toLower()));
 }
 

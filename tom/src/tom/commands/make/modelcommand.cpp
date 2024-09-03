@@ -542,7 +542,7 @@ fspath ModelCommand::getModelsPath() const
        path based on the pwd and if not found use the default path which is set
        by the TINYTOM_MODELS_DIR macro. */
     auto modelsPath = isSet(path_)
-                      // User defined path
+                      // User-defined path
                       ? getUserModelsPath()
                       // Try to guess or use the default path
                       : guessModelsPath();

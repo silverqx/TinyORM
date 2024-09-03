@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-// User defined namespace
+// User-defined namespace
 #ifdef TINYORM_COMMON_NAMESPACE
 #  define TINYORM_BEGIN_COMMON_NAMESPACE namespace TINYORM_COMMON_NAMESPACE {
 #  define TINYORM_END_COMMON_NAMESPACE }

@@ -124,7 +124,7 @@ fspath SeederCommand::getSeedersPath() const
        path based on the pwd and if not found use the default path which is set
        by the TINYTOM_SEEDERS_DIR macro. */
     auto seedersPath = isSet(path_)
-                       // User defined path
+                       // User-defined path
                        ? getUserSeedersPath()
                        // Try to guess or use the default path
                        : guessSeedersPath();
