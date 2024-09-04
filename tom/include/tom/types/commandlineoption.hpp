@@ -7,7 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QCommandLineOption>
 
-#include "orm/macros/commonnamespace.hpp"
+#include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
