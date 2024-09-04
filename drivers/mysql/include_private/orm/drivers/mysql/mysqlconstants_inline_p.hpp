@@ -19,9 +19,6 @@ namespace Orm::Drivers::MySql
 namespace Constants
 {
 
-    /*! Alias for the literal operator that creates a QString. */
-    using Qt::StringLiterals::operator""_s;
-
     // Common chars - QChar(u'') is faster than ''_L1
     inline const QChar DOT       = QChar(u'.');
     inline const QChar SEMICOLON = QChar(u';');
