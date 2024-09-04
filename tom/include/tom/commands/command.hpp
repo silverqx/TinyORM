@@ -102,7 +102,7 @@ namespace Commands
         QStringList passedArguments() const;
 
         /* Parser helpers */
-        /*! Returns a list of option names found by the parser (addes , support). */
+        /*! Returns a list of option names found by the parser (add , support). */
         QStringList optionNames() const;
 
         /*! Check whether the option name was set in the parser. */
@@ -112,7 +112,7 @@ namespace Commands
 
         /*! Returns a option value found for the given option name or empty string. */
         QString value(const QString &name) const;
-        /*! Returns a option values found for the given option name (addes , support). */
+        /*! Returns a option values found for the given option name (add , support). */
         QStringList values(const QString &name,
                            Qt::SplitBehavior behavior = Qt::KeepEmptyParts) const;
 
