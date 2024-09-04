@@ -5,12 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QStringList>
-
 #include <filesystem>
 #include <set>
-
-#include <orm/macros/commonnamespace.hpp>
 
 #include "tom/commands/make/modelcommandtypes.hpp"
 

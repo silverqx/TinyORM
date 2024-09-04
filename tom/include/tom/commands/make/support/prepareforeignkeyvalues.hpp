@@ -5,15 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QStringList>
-
-#include <optional>
-#include <unordered_set>
-
-#include <orm/constants.hpp>
-
 #include "tom/commands/make/modelcommandtypes.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

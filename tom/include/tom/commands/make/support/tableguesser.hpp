@@ -7,8 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
-#include <optional>
-
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE

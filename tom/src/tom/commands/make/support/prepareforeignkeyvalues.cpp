@@ -1,7 +1,5 @@
 #include "tom/commands/make/support/prepareforeignkeyvalues.hpp"
 
-#include <QCommandLineParser>
-
 #include "tom/commands/make/modelcommand.hpp"
 
 #ifndef TINYTOM_DEBUG

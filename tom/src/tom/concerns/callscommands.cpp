@@ -5,7 +5,6 @@
 #include <range/v3/action/remove_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
-#include <range/v3/view/move.hpp>
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"

@@ -5,10 +5,6 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <optional>
-
-#include <orm/macros/commonnamespace.hpp>
-
 #include "tom/types/commandlineoption.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
