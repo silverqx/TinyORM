@@ -245,7 +245,7 @@ MySqlDriverPrivate::getMySqlOptionsHash()
     /* These options are for mysql_options() function, they are set before the MySQL
        connection is established. */
 
-    /* The u""_s is correct here, don't use latin1 because we need to use
+    /* The u""_s is correct here, don't use latin1 literal because we need to use
        the hash.contains(QStringView) as our option names are QStrinView-s
        after the split() method call. So this is the best solution. */
     static const MySqlOptionsHash cachedOptions = {
