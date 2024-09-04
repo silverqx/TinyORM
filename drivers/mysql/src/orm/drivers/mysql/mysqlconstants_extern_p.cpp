@@ -14,7 +14,7 @@ namespace Orm::Drivers::MySql::Constants
     const QChar BACKTICK  = QChar(u'`');
 
     // Common strings
-    const QString EMPTY   = u""_s; // This is fastest
+    const QString EMPTY   = u""_s; // This is the fastest
     const QString COMMA   = u", "_s;
 
     // Database related

@@ -31,7 +31,7 @@ namespace Constants
     inline const QChar BACKTICK  = QChar(u'`');
 
     // Common strings
-    inline const QString EMPTY   = u""_s; // This is fastest
+    inline const QString EMPTY   = u""_s; // This is the fastest
     inline const QString COMMA   = u", "_s;
 
     // Database related

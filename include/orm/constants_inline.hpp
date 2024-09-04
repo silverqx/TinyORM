@@ -43,7 +43,7 @@ namespace Constants
 
     // Common strings
     inline const QString NEWLINE       = u"\n"_s;
-    inline const QString EMPTY         = u""_s; // This is fastest
+    inline const QString EMPTY         = u""_s; // This is the fastest
     inline const QString ASTERISK      = u"*"_s;
     inline const QString COMMA         = u", "_s;
     inline const QString INNER         = u"inner"_s;

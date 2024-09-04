@@ -26,7 +26,7 @@ namespace Orm::Constants
 
     // Common strings
     const QString NEWLINE       = u"\n"_s;
-    const QString EMPTY         = u""_s; // This is fastest
+    const QString EMPTY         = u""_s; // This is the fastest
     const QString ASTERISK      = u"*"_s;
     const QString COMMA         = u", "_s;
     const QString INNER         = u"inner"_s;

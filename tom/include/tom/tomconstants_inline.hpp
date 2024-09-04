@@ -26,7 +26,7 @@ namespace Constants
     inline const QString DateTimePrefix  = u"yyyy_MM_dd_HHmmss"_s;
 
     // Common strings
-    inline const QString EMPTY           = u""_s; // This is fastest
+    inline const QString EMPTY           = u""_s; // This is the fastest
     inline const QString LongOption      = u"--%1"_s;
     inline const QString LongOptionOnly  = u"    %1"_s;
     inline const QString LongOptionValue = u"--%1[=%2]"_s;
