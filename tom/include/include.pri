@@ -31,7 +31,7 @@ headersList += \
     $$PWD/tom/commands/make/seedercommand.hpp \
     $$PWD/tom/commands/make/stubs/migrationstubs.hpp \
     $$PWD/tom/commands/make/stubs/modelstubs.hpp \
-    $$PWD/tom/commands/make/stubs/projectstubs.hpp \
+#    $$PWD/tom/commands/make/stubs/projectstubs.hpp \
     $$PWD/tom/commands/make/stubs/seederstubs.hpp \
     $$PWD/tom/commands/make/support/migrationcreator.hpp \
     $$PWD/tom/commands/make/support/modelcreator.hpp \

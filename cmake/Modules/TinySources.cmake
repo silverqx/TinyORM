@@ -501,7 +501,7 @@ function(tinytom_sources out_headers out_sources)
         commands/make/seedercommand.hpp
         commands/make/stubs/migrationstubs.hpp
         commands/make/stubs/modelstubs.hpp
-        commands/make/stubs/projectstubs.hpp
+#        commands/make/stubs/projectstubs.hpp
         commands/make/stubs/seederstubs.hpp
         commands/make/support/migrationcreator.hpp
         commands/make/support/modelcreator.hpp
