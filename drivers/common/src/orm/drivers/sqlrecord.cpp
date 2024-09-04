@@ -272,12 +272,12 @@ QDebug operator<<(QDebug debug,
     using SizeType = std::remove_cvref_t<decltype (record)>::size_type;
 
     const auto count = record.count();
-    debug << "SqlRecord(" << count << ')';
+    debug << u"SqlRecord(" << count << u')';
 
     for (SizeType index = 0; index < count; ++index) {
-        debug << '\n' << qSetFieldWidth(2) << Qt::right << index
+        debug << u'\n' << qSetFieldWidth(2) << Qt::right << index
               // Reset alignment
-              << Qt::left << qSetFieldWidth(0) << ": "
+              << Qt::left << qSetFieldWidth(0) << u": "
 
               << record.field(index);
     }

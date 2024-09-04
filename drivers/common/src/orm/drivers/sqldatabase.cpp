@@ -372,27 +372,27 @@ QDebug operator<<(QDebug debug,
     debug.noquote().nospace();
 
     if (!connection.isValid()) {
-        debug << "SqlDatabase(invalid)";
+        debug << u"SqlDatabase(invalid)";
         return debug;
     }
 
     /* The SqlDatabase output format is different from SqlRecord or SqlField that use
        ': ' instead of = but this is correct, it's much better to print these connection
        arguments with = because psql or mysql client applications use this format too. */
-    debug << "SqlDatabase("
-          << "driver=\""   << connection.driverName()   << "\", "
-          << "database=\"" << connection.databaseName() << "\", "
-          << "host=\""     << connection.hostName()     << "\", "
-          << "port="       << connection.port()         << ", "
-          << "user=\""     << connection.userName()     << "\", "
-          << "open="       << connection.isOpen()       << '"';
+    debug << u"SqlDatabase("
+          << u"driver=\""   << connection.driverName()   << u"\", "
+          << u"database=\"" << connection.databaseName() << u"\", "
+          << u"host=\""     << connection.hostName()     << u"\", "
+          << u"port="       << connection.port()         << u", "
+          << u"user=\""     << connection.userName()     << u"\", "
+          << u"open="       << connection.isOpen()       << u'"';
 
     if (const auto connectOptions = connection.connectOptions();
         !connectOptions.isEmpty()
     )
-        debug << ", options=\"" << connectOptions << '"';
+        debug << u", options=\"" << connectOptions << u'"';
 
-    debug << ')';
+    debug << u')';
 
     return debug;
 }

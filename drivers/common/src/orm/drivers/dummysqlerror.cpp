@@ -9,7 +9,8 @@ QDebug
 operator<<(QDebug debug,
            const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::DummySqlError) &/*unused*/)
 {
-    debug << "DummySqlError(errorType: NoError)";
+    debug << u"DummySqlError(errorType: NoError)";
+
     return debug;
 }
 #endif

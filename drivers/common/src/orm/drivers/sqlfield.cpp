@@ -88,40 +88,40 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     const QDebugStateSaver saver(debug);
     debug.nospace();
 
-    debug << "SqlField(name: " << field.name()
-          << ", type: "        << field.metaType().name();
+    debug << u"SqlField(name: " << field.name()
+          << u", type: "        << field.metaType().name();
 
     // Log the SqlField QVariant value to the QDebug stream
     logSqlFieldValue(debug, field.value());
 
-    debug.quote() << ", isNull: "  << field.isNull();
-    debug.quote() << ", isValid: " << field.isValid();
+    debug.quote() << u", isNull: "  << field.isNull();
+    debug.quote() << u", isValid: " << field.isValid();
 
     if (field.length() >= 0)
-        debug << ", length: " << field.length();
+        debug << u", length: " << field.length();
 
     if (field.precision() >= 0)
-        debug << ", precision: " << field.precision();
+        debug << u", precision: " << field.precision();
 
     if (field.requiredStatus() != SqlFieldType::Unknown)
-        debug << ", required: " << field.isRequired();
+        debug << u", required: " << field.isRequired();
 
     // CUR drivers finish defaultValue(), look at the bottom of this file for more info silverqx
     if (!field.defaultValue().isNull())
-        debug << ", defaultValue: " << field.defaultValue();
+        debug << u", defaultValue: " << field.defaultValue();
 
     if (field.sqlType() >= 0)
-        debug << ", sqlType: " << field.sqlType();
+        debug << u", sqlType: " << field.sqlType();
 
     if (!field.sqlTypeName().isEmpty())
-        debug.noquote() << ", sqlTypeName: " << field.sqlTypeName();
+        debug.noquote() << u", sqlTypeName: " << field.sqlTypeName();
 
-    debug.quote() << ", autoIncrement: " << field.isAutoIncrement()
+    debug.quote() << u", autoIncrement: " << field.isAutoIncrement()
 
-                  << ", tableName: "
+                  << u", tableName: "
                   << (field.tableName().isEmpty() ? u"(not specified)"_s
                                                   : field.tableName())
-                  << ')';
+                  << u')';
 
     return debug;
 }
