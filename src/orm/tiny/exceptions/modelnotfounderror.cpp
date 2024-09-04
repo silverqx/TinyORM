@@ -12,15 +12,13 @@ namespace Orm::Tiny::Exceptions
 
 /* public */
 
-ModelNotFoundError::ModelNotFoundError(const char *model,
-                                       const QList<QVariant> &ids)
+ModelNotFoundError::ModelNotFoundError(const char *model, const QList<QVariant> &ids)
     : RuntimeError(formatMessage(model, ids))
     , m_model(model)
     , m_ids(ids)
 {}
 
-ModelNotFoundError::ModelNotFoundError(const QString &model,
-                                       const QList<QVariant> &ids)
+ModelNotFoundError::ModelNotFoundError(const QString &model, const QList<QVariant> &ids)
     : ModelNotFoundError(model.toUtf8().constData(), ids)
 {}
 
