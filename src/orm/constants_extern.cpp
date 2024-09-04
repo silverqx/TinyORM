@@ -133,9 +133,9 @@ namespace Orm::Constants
     const QString P5432     = u"5432"_s;
     const QString ROOT      = u"root"_s;
     const QString UTC       = u"UTC"_s;
-    const QString LOCAL     = u"LOCAL"_s; // PostgreSQL time zone
+    const QString LOCAL     = u"LOCAL"_s;   // PostgreSQL time zone
     const QString DEFAULT   = u"DEFAULT"_s; // PostgreSQL time zone
-    const QString SYSTEM    = u"SYSTEM"_s; // MySQL time zone
+    const QString SYSTEM    = u"SYSTEM"_s;  // MySQL time zone
     const QString TZ00      = u"+00:00"_s;
     const QString PUBLIC    = u"public"_s;
     const QString UTF8      = u"utf8"_s;

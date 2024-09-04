@@ -151,9 +151,9 @@ namespace Constants
     TINYORM_EXPORT extern const QString P5432;
     TINYORM_EXPORT extern const QString ROOT;
     TINYORM_EXPORT extern const QString UTC;
-    TINYORM_EXPORT extern const QString LOCAL; // PostgreSQL time zone
+    TINYORM_EXPORT extern const QString LOCAL;   // PostgreSQL time zone
     TINYORM_EXPORT extern const QString DEFAULT; // PostgreSQL time zone
-    TINYORM_EXPORT extern const QString SYSTEM; // MySQL time zone
+    TINYORM_EXPORT extern const QString SYSTEM;  // MySQL time zone
     TINYORM_EXPORT extern const QString TZ00;
     TINYORM_EXPORT extern const QString PUBLIC;
     TINYORM_EXPORT extern const QString UTF8;

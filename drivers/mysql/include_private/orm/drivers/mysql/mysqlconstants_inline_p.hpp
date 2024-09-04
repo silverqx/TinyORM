@@ -36,8 +36,8 @@ namespace Constants
 
     // Database related
     inline const QString QMYSQL  = u"QMYSQL"_s;
-//    inline const QString QPSQL   = u"QPSQL"_s;
-//    inline const QString QSQLITE = u"QSQLITE"_s;
+//  inline const QString QPSQL   = u"QPSQL"_s;
+//  inline const QString QSQLITE = u"QSQLITE"_s;
 
 } // namespace Constants
 } // namespace Orm::Drivers::MySql

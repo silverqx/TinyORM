@@ -158,9 +158,9 @@ namespace Constants
     inline const QString P5432     = u"5432"_s;
     inline const QString ROOT      = u"root"_s;
     inline const QString UTC       = u"UTC"_s;
-    inline const QString LOCAL     = u"LOCAL"_s; // PostgreSQL time zone
+    inline const QString LOCAL     = u"LOCAL"_s;   // PostgreSQL time zone
     inline const QString DEFAULT   = u"DEFAULT"_s; // PostgreSQL time zone
-    inline const QString SYSTEM    = u"SYSTEM"_s; // MySQL time zone
+    inline const QString SYSTEM    = u"SYSTEM"_s;  // MySQL time zone
     inline const QString TZ00      = u"+00:00"_s;
     inline const QString PUBLIC    = u"public"_s;
     inline const QString UTF8      = u"utf8"_s;

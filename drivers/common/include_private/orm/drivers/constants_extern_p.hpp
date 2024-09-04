@@ -29,8 +29,8 @@ namespace Constants
 
     // Database related
     extern const QString QMYSQL;
-//    extern const QString QPSQL;
-//    extern const QString QSQLITE;
+//  extern const QString QPSQL;
+//  extern const QString QSQLITE;
 
     // Others
     extern const QString NotImplemented;

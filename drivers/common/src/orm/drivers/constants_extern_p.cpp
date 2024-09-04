@@ -17,8 +17,8 @@ namespace Orm::Drivers::Constants
 
     // Database related
     const QString QMYSQL  = u"QMYSQL"_s;
-//    const QString QPSQL   = u"QPSQL"_s;
-//    const QString QSQLITE = u"QSQLITE"_s;
+//  const QString QPSQL   = u"QPSQL"_s;
+//  const QString QSQLITE = u"QSQLITE"_s;
 
     // Others
     const QString NotImplemented = u"Not implemented :/."_s;
