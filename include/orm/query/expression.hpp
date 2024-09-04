@@ -55,8 +55,7 @@ namespace Orm::Query
 
     /* public */
 
-    // NOLINTNEXTLINE(modernize-pass-by-value)
-    Expression::Expression(const QVariant &value)
+    Expression::Expression(const QVariant &value) // NOLINT(modernize-pass-by-value)
         : m_value(value)
     {}
 

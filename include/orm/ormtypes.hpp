@@ -20,8 +20,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-    // NOLINTNEXTLINE(google-build-using-namespace)
-    using namespace Orm::Constants;
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
     class DatabaseConnection;
 

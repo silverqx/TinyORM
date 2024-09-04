@@ -483,8 +483,7 @@ tst_Versions::getExeVersionString(const QString &fileName)
     }
 
     // GetFileVersionInfo
-    // NOLINTNEXTLINE(modernize-avoid-c-arrays)
-    auto lpData = std::make_unique<BYTE[]>(dwLen);
+    auto lpData = std::make_unique<BYTE[]>(dwLen); // NOLINT(modernize-avoid-c-arrays)
     if (!GetFileVersionInfo(fileName.toStdWString().c_str(), 0, dwLen,
                             static_cast<LPVOID>(lpData.get()))) {
         qWarning() << "Error in GetFileVersionInfo().";

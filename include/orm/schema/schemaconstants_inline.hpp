@@ -76,8 +76,7 @@ namespace Constants
 
 } // namespace Constants
 
-// NOLINTNEXTLINE(google-build-using-namespace)
-using namespace Orm::SchemaNs::Constants;
+using namespace Orm::SchemaNs::Constants; // NOLINT(google-build-using-namespace)
 
 } // namespace Orm::SchemaNs
 

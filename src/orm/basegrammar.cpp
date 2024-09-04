@@ -49,8 +49,7 @@ const QString &BaseGrammar::getTimeFormat() const
     return cachedFormat;
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
-QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
+QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const // NOLINT(misc-no-recursion)
 {
     /* If the value being wrapped has a column alias we will need to separate out
        the pieces so we can wrap each of the segments of the expression on its
@@ -75,8 +74,7 @@ QString BaseGrammar::wrap(const Column &value) const
             : wrap(std::get<QString>(value));
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
-QString BaseGrammar::wrapTable(const QString &table) const
+QString BaseGrammar::wrapTable(const QString &table) const // NOLINT(misc-no-recursion)
 {
     return wrap(NOSPACE.arg(m_tablePrefix, table), true);
 }
@@ -151,8 +149,7 @@ QString BaseGrammar::parameter(const QVariant &value)
                                : QChar::fromLatin1('?');
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
-QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const
+QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const // NOLINT(misc-no-recursion)
 {
     auto segments = getSegmentsFromAlias(value);
 
@@ -174,8 +171,7 @@ QString BaseGrammar::wrapValue(QString value) const
     return TMPL_DQUOTES.arg(value.replace(QUOTE, u"\"\""_s));
 }
 
-// NOLINTNEXTLINE(misc-no-recursion)
-QString BaseGrammar::wrapSegments(QStringList segments) const
+QString BaseGrammar::wrapSegments(QStringList segments) const // NOLINT(misc-no-recursion)
 {
     const auto size = segments.size();
     // eg. table_name.column is qualified

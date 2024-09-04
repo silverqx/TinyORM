@@ -25,8 +25,7 @@ namespace Models
 
 {{ usingsSection }}
 {{ forwardsSection }}
-// NOLINTNEXTLINE(misc-no-recursion)
-class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}>
+class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}> // NOLINT(misc-no-recursion)
 {
     friend Model;
     using Model::Model;{{ publicSection }}{{ protectedSection }}{{ privateSection }}

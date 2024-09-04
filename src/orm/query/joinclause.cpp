@@ -5,29 +5,25 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-// NOLINTNEXTLINE(modernize-pass-by-value)
-JoinClause::JoinClause(const Builder &query, const QString &type, const QString &table)
+JoinClause::JoinClause(const Builder &query, const QString &type, const QString &table) // NOLINT(modernize-pass-by-value)
     : Builder(query.getConnectionShared(), query.getGrammarShared())
     , m_type(type)
     , m_table(table)
 {}
 
-// NOLINTNEXTLINE(modernize-pass-by-value)
-JoinClause::JoinClause(const Builder &query, const QString &type, const Expression &table)
+JoinClause::JoinClause(const Builder &query, const QString &type, const Expression &table) // NOLINT(modernize-pass-by-value)
     : Builder(query.getConnectionShared(), query.getGrammarShared())
     , m_type(type)
     , m_table(table)
 {}
 
-// NOLINTNEXTLINE(modernize-pass-by-value)
-JoinClause::JoinClause(const Builder &query, const QString &type, Expression &&table)
+JoinClause::JoinClause(const Builder &query, const QString &type, Expression &&table) // NOLINT(modernize-pass-by-value)
     : Builder(query.getConnectionShared(), query.getGrammarShared())
     , m_type(type)
     , m_table(std::move(table))
 {}
 
-// NOLINTNEXTLINE(modernize-pass-by-value)
-JoinClause::JoinClause(const Builder &query, const QString &type, const JoinTable &table)
+JoinClause::JoinClause(const Builder &query, const QString &type, const JoinTable &table) // NOLINT(modernize-pass-by-value)
     : Builder(query.getConnectionShared(), query.getGrammarShared())
     , m_type(type)
     , m_table(table)
