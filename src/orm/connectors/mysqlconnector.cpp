@@ -19,6 +19,7 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA;
+using Orm::Constants::EMPTY;
 using Orm::Constants::NAME;
 using Orm::Constants::charset_;
 using Orm::Constants::collation_;
@@ -120,7 +121,7 @@ QString MySqlConnector::getCollation(const QVariantHash &config)
 {
     return config.contains(collation_)
             ? u" collate '%1'"_s.arg(config[collation_].value<QString>())
-            : QString("");
+            : EMPTY;
 }
 
 void MySqlConnector::configureTimezone(const TSqlDatabase &connection,

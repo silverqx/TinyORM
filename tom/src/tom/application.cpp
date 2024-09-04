@@ -378,7 +378,7 @@ void Application::initializeEnvironment()
 
     // Resolve an environment variable set in the m_environmentEnvName data member
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
-                                   ? QString("")
+                                   ? EMPTY
                                    : qEnvironmentVariable(m_environmentEnvName);
              !environmentEnv.isEmpty()
     )

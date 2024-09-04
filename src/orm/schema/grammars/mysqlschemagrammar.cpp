@@ -125,7 +125,7 @@ QList<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
                        .arg(isRenaming ? u"change column"_s : u"modify column"_s,
                             wrap(column),
                             isRenaming ? u" %1"_s.arg(BaseGrammar::wrap(column.renameTo))
-                                       : QString(""),
+                                       : EMPTY,
                             getType(column)),
                        column);
     }
@@ -159,7 +159,7 @@ MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
 {
     return {u"alter table %1 add primary key %2(%3)"_s
                 .arg(wrapTable(blueprint),
-                     command.algorithm.isEmpty() ? QString("")
+                     command.algorithm.isEmpty() ? EMPTY
                                                  : u"using %1"_s.arg(command.algorithm),
                      columnize(command.columns))};
 }
@@ -421,7 +421,7 @@ MySqlSchemaGrammar::compileKey(const Blueprint &blueprint, const IndexCommand &c
 {
     return u"alter table %1 add %2 %3%4(%5)"_s
             .arg(wrapTable(blueprint), type, BaseGrammar::wrap(command.index),
-                 command.algorithm.isEmpty() ? QString("")
+                 command.algorithm.isEmpty() ? EMPTY
                                              : u" using %1"_s.arg(command.algorithm),
                  columnize(command.columns));
 }

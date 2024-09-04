@@ -222,7 +222,7 @@ Blueprint SchemaBuilder::createBlueprint(
 {
     auto prefix = m_connection->getConfig(prefix_indexes).value<bool>()
                   ? m_connection->getConfig(prefix_).value<QString>()
-                  : QString("");
+                  : EMPTY;
 
     return Blueprint(table, callback, std::move(prefix));
 }

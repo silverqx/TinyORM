@@ -366,7 +366,7 @@ QString Grammar::compileBasicHaving(const HavingConditionItem &having) const
 QString Grammar::compileOrders(const QueryBuilder &query) const
 {
     if (query.getOrders().isEmpty())
-        return QLatin1String("");
+        return EMPTY;
 
     return u"order by %1"_s.arg(columnizeWithoutWrap(compileOrdersToVector(query)));
 }
@@ -405,7 +405,7 @@ QString Grammar::compileLock(const QueryBuilder &query) const
     if (std::holds_alternative<QString>(lock))
         return std::get<QString>(lock);
 
-    return QLatin1String("");
+    return EMPTY;
 }
 
 QString Grammar::whereBasic(const WhereConditionItem &where) const

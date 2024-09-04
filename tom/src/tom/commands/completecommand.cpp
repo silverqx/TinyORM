@@ -39,6 +39,7 @@ using Orm::Constants::database_;
 using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::DoubleDash;
+using Tom::Constants::EMPTY;
 using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
@@ -643,7 +644,7 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
     Q_ASSERT(defaultValues.size() <= 1);
 
     return defaultValues.isEmpty()
-            ? QString("")
+            ? EMPTY
             : TomUtils::defaultValueText(defaultValues.constFirst());
 }
 

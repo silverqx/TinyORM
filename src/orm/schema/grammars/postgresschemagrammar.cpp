@@ -184,7 +184,7 @@ PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
     const auto algorithm = command.algorithm.isEmpty()
-                           ? QString("")
+                           ? EMPTY
                            : u" using %1"_s.arg(command.algorithm);
 
     return {u"create index %1 on %2%3 (%4)"_s
@@ -760,7 +760,7 @@ QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const //
                So the >-1 is ok, the default will be time(0). */
             .arg(column.precision && *column.precision > -1
                  ? u"(%1)"_s.arg(*column.precision)
-                 : QString(""));
+                 : EMPTY);
 }
 
 QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -768,7 +768,7 @@ QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const 
     return u"time%1 with time zone"_s
             .arg(column.precision && *column.precision > -1
                  ? u"(%1)"_s.arg(*column.precision)
-                 : QString(""));
+                 : EMPTY);
 }
 
 QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -783,7 +783,7 @@ QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // 
                of the literal value (but not more than 6 digits).
                So the >-1 is ok, the default will be timestamp(0). */
             .arg(column.precision && *column.precision > -1
-                 ? u"(%1)"_s.arg(*column.precision) : QString(""));
+                 ? u"(%1)"_s.arg(*column.precision) : EMPTY);
 }
 
 QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -793,7 +793,7 @@ QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const /
 
     return u"timestamp%1 with time zone"_s
             .arg(column.precision && *column.precision > -1
-                 ? u"(%1)"_s.arg(*column.precision) : QString(""));
+                 ? u"(%1)"_s.arg(*column.precision) : EMPTY);
 }
 
 QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const
@@ -991,7 +991,7 @@ PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const /
                    column.always ? u"always"_s : u"by default"_s,
                    // Sequence options clause
                    !column.generatedAs.isEmpty() ? u" (%1)"_s.arg(column.generatedAs)
-                                                 : QString(""));
+                                                 : EMPTY);
 
     if (column.change) {
         QList<QString> changes;

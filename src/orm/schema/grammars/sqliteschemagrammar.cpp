@@ -805,7 +805,7 @@ QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) cons
        it only describes the NOT NULL constraint. I have checked it and it also works
        correctly with the NULL, but it can be ignored behind the scene because the NULL
        is the default behavior. */
-    return column.nullable && *column.nullable ? QString("") : u" not null"_s;
+    return column.nullable && *column.nullable ? EMPTY : u" not null"_s;
 }
 
 QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
