@@ -69,10 +69,10 @@ namespace Constants
     inline const QString TRIM_QUOTES  = u"'\""_s;
 
     // Column names
-    inline const auto Uuid          = u"uuid"_s;
-    inline const auto IpAddress     = u"ip_address"_s;
-    inline const auto MacAddress    = u"mac_address"_s;
-    inline const auto RememberToken = u"remember_token"_s;
+    inline const QString Uuid          = u"uuid"_s;
+    inline const QString IpAddress     = u"ip_address"_s;
+    inline const QString MacAddress    = u"mac_address"_s;
+    inline const QString RememberToken = u"remember_token"_s;
 
 } // namespace Constants
 
