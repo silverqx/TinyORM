@@ -28,7 +28,7 @@ QString Query::parseExecutedQuery(const TSqlQuery &query)
 #ifndef TINYORM_NO_DEBUG
 void Query::logExecutedQuery(const TSqlQuery &query)
 {
-    qDebug().noquote() << u"Executed Query :"_s
+    qDebug().noquote() << u"Executed Query :"
                        << Query::parseExecutedQuery(query);
 }
 #else
@@ -46,6 +46,8 @@ Query::zipForInsert(const QList<QString> &columns,
     zippedValues.reserve(columnsSize);
 
     using SizeType = std::remove_cvref_t<decltype (columns)>::size_type;
+
+    using Qt::StringLiterals::operator""_s;
 
     for (const auto &valuesList : values) {
 

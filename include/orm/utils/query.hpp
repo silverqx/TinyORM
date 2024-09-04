@@ -7,7 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QVariant>
 
-#include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 #include "orm/macros/sqldrivermappings.hpp"
