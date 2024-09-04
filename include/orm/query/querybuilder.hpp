@@ -682,12 +682,10 @@ namespace Orm::Query
 
         /*! Constrain the query to the previous "page" of results before a given ID. */
         Builder &forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
-                                 const QString &column = Orm::Constants::ID,
-                                 bool prependOrder = false);
+                                 const QString &column = ID, bool prependOrder = false);
         /*! Constrain the query to the next "page" of results after a given ID. */
         Builder &forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
-                                const QString &column = Orm::Constants::ID,
-                                bool prependOrder = false);
+                                const QString &column = ID, bool prependOrder = false);
 
         /* Others */
         /*! Increment a column's value by a given amount. */

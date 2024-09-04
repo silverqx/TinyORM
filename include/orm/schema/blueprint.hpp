@@ -19,6 +19,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
+#ifdef TINYORM_DISABLE_ORM
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+#endif
+
     class DatabaseConnection;
 
 namespace SchemaNs
@@ -82,12 +86,11 @@ namespace Grammars
         inline void dropDatetimes();
 
         /*! Indicates that the soft delete column should be dropped. */
-        inline void dropSoftDeletes(const QString &column = Orm::Constants::DELETED_AT);
+        inline void dropSoftDeletes(const QString &column = DELETED_AT);
         /*! Indicates that the soft delete column should be dropped. */
-        inline void dropSoftDeletesTz(const QString &column = Orm::Constants::DELETED_AT);
+        inline void dropSoftDeletesTz(const QString &column = DELETED_AT);
         /*! Indicates that the soft delete column should be dropped. */
-        inline void
-        dropSoftDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT);
+        inline void dropSoftDeletesDatetime(const QString &column = DELETED_AT);
 
         /*! Indicates that the remember token column should be dropped. */
         inline void dropRememberToken();
@@ -190,7 +193,7 @@ namespace Grammars
         const RenameCommand &renameIndex(const QString &from, const QString &to);
 
         /*! Create a new auto-incrementing big integer (8-byte) column on the table. */
-        inline ColumnDefinitionReference<> id(const QString &column = Orm::Constants::ID);
+        inline ColumnDefinitionReference<> id(const QString &column = ID);
 
         /*! Create a new unsigned big integer (8-byte) column on the table. */
         ForeignIdColumnDefinitionReference foreignId(const QString &column);
@@ -343,16 +346,16 @@ namespace Grammars
 
         /*! Add a "deleted at" timestamp for the table. */
         ColumnDefinitionReference<>
-        softDeletes(const QString &column = Orm::Constants::DELETED_AT,
+        softDeletes(const QString &column = DELETED_AT,
                     std::optional<int> precision = 0);
         /*! Add a "deleted at" timestampTz for the table. */
         ColumnDefinitionReference<>
-        softDeletesTz(const QString &column = Orm::Constants::DELETED_AT,
+        softDeletesTz(const QString &column = DELETED_AT,
                       std::optional<int> precision = 0);
 
         /*! Add a "deleted at" datetime column to the table. */
         inline ColumnDefinitionReference<>
-        softDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT,
+        softDeletesDatetime(const QString &column = DELETED_AT,
                             std::optional<int> precision = 0);
 
         /*! Create a new year column on the table. */
@@ -725,9 +728,9 @@ namespace Grammars
 
     void Blueprint::datetimes(const std::optional<int> precision)
     {
-        datetime(Orm::Constants::CREATED_AT, precision).nullable();
+        datetime(CREATED_AT, precision).nullable();
 
-        datetime(Orm::Constants::UPDATED_AT, precision).nullable();
+        datetime(UPDATED_AT, precision).nullable();
     }
 
     ColumnDefinitionReference<>

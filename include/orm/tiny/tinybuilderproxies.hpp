@@ -649,13 +649,11 @@ namespace Tiny
         /*! Constrain the query to the previous "page" of results before a given ID. */
         TinyBuilder<Model> &
         forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
-                        const QString &column = Orm::Constants::ID,
-                        bool prependOrder = false);
+                        const QString &column = ID, bool prependOrder = false);
         /*! Constrain the query to the next "page" of results after a given ID. */
         TinyBuilder<Model> &
         forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
-                       const QString &column = Orm::Constants::ID,
-                       bool prependOrder = false);
+                       const QString &column = ID, bool prependOrder = false);
 
         /* Pessimistic Locking */
         /*! Lock the selected rows in the table for updating. */

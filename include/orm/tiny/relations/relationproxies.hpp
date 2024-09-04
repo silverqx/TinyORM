@@ -816,13 +816,11 @@ namespace Tiny::Relations
         /*! Constrain the query to the previous "page" of results before a given ID. */
         const Relation<Model, Related> &
         forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
-                        const QString &column = Orm::Constants::ID,
-                        bool prependOrder = false) const;
+                        const QString &column = ID, bool prependOrder = false) const;
         /*! Constrain the query to the next "page" of results after a given ID. */
         const Relation<Model, Related> &
         forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
-                       const QString &column = Orm::Constants::ID,
-                       bool prependOrder = false) const;
+                       const QString &column = ID, bool prependOrder = false) const;
 
         /* Others */
         /*! Increment a column's value by a given amount. */
