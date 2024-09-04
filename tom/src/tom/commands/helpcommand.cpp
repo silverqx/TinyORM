@@ -5,7 +5,6 @@
 #include <orm/constants.hpp>
 
 #include "tom/application.hpp"
-#include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

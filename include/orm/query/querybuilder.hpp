@@ -105,7 +105,7 @@ namespace Orm::Query
         std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
         /*! Concatenate values of the given column as a string. */
-        QString implode(const QString &column, const QString &glue = "");
+        QString implode(const QString &column, const QString &glue = EMPTY);
 
         /*! Get the SQL representation of the query. */
         QString toSql();
@@ -122,7 +122,7 @@ namespace Orm::Query
         insert(const QList<QString> &columns, const QList<QList<QVariant>> &values);
 
         /*! Insert a new record and get the value of the primary key. */
-        quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
+        quint64 insertGetId(const QVariantMap &values, const QString &sequence = EMPTY);
 
         /*! Insert new records into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
@@ -243,7 +243,7 @@ namespace Orm::Query
         Builder &distinct(QStringList &&columns);
 
         /*! Set the table which the query is targeting. */
-        Builder &from(const QString &table, const QString &as = "");
+        Builder &from(const QString &table, const QString &as = EMPTY);
         /*! Set the table which the query is targeting. */
         Builder &from(const Expression &table);
         /*! Set the table which the query is targeting. */
@@ -399,17 +399,17 @@ namespace Orm::Query
         /*! Add a vector of basic where clauses to the query. */
         Builder &where(const QList<WhereItem> &values,
                        const QString &condition = AND,
-                       const QString &defaultCondition = "");
+                       const QString &defaultCondition = EMPTY);
         /*! Add a vector of basic "or where" clauses to the query. */
         Builder &orWhere(const QList<WhereItem> &values,
-                         const QString &defaultCondition = "");
+                         const QString &defaultCondition = EMPTY);
         /*! Add a vector of basic "where not" clauses to the query. */
         Builder &whereNot(const QList<WhereItem> &values,
                           const QString &condition = AND,
-                          const QString &defaultCondition = "");
+                          const QString &defaultCondition = EMPTY);
         /*! Add a vector of basic "or where not" clauses to the query. */
         Builder &orWhereNot(const QList<WhereItem> &values,
-                            const QString &defaultCondition = "");
+                            const QString &defaultCondition = EMPTY);
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -656,7 +656,7 @@ namespace Orm::Query
         inline Builder &orderByDesc(T &&query);
 
         /*! Put the query's results in random order. */
-        Builder &inRandomOrder(const QString &seed = "");
+        Builder &inRandomOrder(const QString &seed = EMPTY);
         /*! Add a raw "order by" clause to the query. */
         Builder &orderByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
@@ -849,7 +849,7 @@ namespace Orm::Query
         Builder &
         addArrayOfWheres(const QList<WhereItem> &values,
                          const QString &condition = AND,
-                         const QString &defaultCondition = "");
+                         const QString &defaultCondition = EMPTY);
         /*! Add a vector of where clauses comparing two columns to the query. */
         Builder &
         addArrayOfWheres(const QList<WhereColumnItem> &values,

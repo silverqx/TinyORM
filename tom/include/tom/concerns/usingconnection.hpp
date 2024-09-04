@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 #include <memory>
 #include <optional>
 
-#include <orm/macros/commonnamespace.hpp>
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -86,7 +86,8 @@ namespace Concerns
                             const std::function<int()> &callback);
 
         /*! Resolve the database connection instance. */
-        DatabaseConnection &resolveConnection(const QString &name = "") const;
+        DatabaseConnection &
+        resolveConnection(const QString &name = Constants::EMPTY) const;
 
         /* Getters */
         /*! Get the currently used connection name. */

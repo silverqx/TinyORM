@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
-#include "tom/tomconstants.hpp"
 
 class QTextStream;
 

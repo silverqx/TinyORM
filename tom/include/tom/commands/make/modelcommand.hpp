@@ -11,7 +11,6 @@ TINY_SYSTEM_HEADER
 #include "tom/commands/make/makecommand.hpp"
 #include "tom/commands/make/modelcommandconcepts.hpp"
 #include "tom/commands/make/support/modelcreator.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

@@ -48,11 +48,11 @@ namespace Orm::Query::Concerns
         bool chunkById(qint64 count,
                        const std::function<
                            bool(SqlQuery &results, qint64 page)> &callback,
-                       const QString &column = "", const QString &alias = "");
+                       const QString &column = EMPTY, const QString &alias = EMPTY);
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(SqlQuery &row, qint64 index)> &callback,
-                      qint64 count = 1000, const QString &column = "",
-                      const QString &alias = "");
+                      qint64 count = 1000, const QString &column = EMPTY,
+                      const QString &alias = EMPTY);
 
 
         /*! Execute the query and get the first result if it's the sole matching

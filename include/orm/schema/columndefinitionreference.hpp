@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/constants.hpp"
 #include "orm/schema/columndefinition.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -72,7 +73,7 @@ namespace Orm::SchemaNs
             alias for the 'startingValue'. */
         ColumnReferenceType &from(int startingValue);
         /*! Create a SQL compliant identity column (PostgreSQL). */
-        ColumnReferenceType &generatedAs(QString expression = "");
+        ColumnReferenceType &generatedAs(QString expression = Orm::Constants::EMPTY);
         /*! Specify that the column should be invisible to "SELECT *" (MySQL). */
         ColumnReferenceType &invisible();
         /*! Determine whether to use the geography (default, false) or
@@ -108,15 +109,15 @@ namespace Orm::SchemaNs
         ColumnReferenceType &virtualAs(QString expression);
 
         /*! Add an index. */
-        ColumnReferenceType &index(QString indexName = "");
+        ColumnReferenceType &index(QString indexName = Orm::Constants::EMPTY);
         /*! Add a primary index. */
         ColumnReferenceType &primary();
         /*! Add a fulltext index. */
-        ColumnReferenceType &fulltext(QString indexName = "");
+        ColumnReferenceType &fulltext(QString indexName = Orm::Constants::EMPTY);
         /*! Add a spatial index. */
-        ColumnReferenceType &spatialIndex(QString indexName = "");
+        ColumnReferenceType &spatialIndex(QString indexName = Orm::Constants::EMPTY);
         /*! Add a unique index. */
-        ColumnReferenceType &unique(QString indexName = "");
+        ColumnReferenceType &unique(QString indexName = Orm::Constants::EMPTY);
 
     protected:
         /*! Reference to a column definition. */

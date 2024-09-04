@@ -64,11 +64,11 @@ namespace Concerns
         bool chunkById(qint64 count,
                        const std::function<
                            bool(ModelsCollection<Model> &&models, qint64 page)> &callback,
-                       const QString &column = "", const QString &alias = "") const;
+                       const QString &column = EMPTY, const QString &alias = EMPTY) const;
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(Model &&model, qint64 index)> &callback,
-                      qint64 count = 1000, const QString &column = "",
-                      const QString &alias = "") const;
+                      qint64 count = 1000, const QString &column = EMPTY,
+                      const QString &alias = EMPTY) const;
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */

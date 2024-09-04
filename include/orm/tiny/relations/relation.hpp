@@ -44,7 +44,7 @@ namespace Relations
     protected:
         /*! Protected constructor. */
         Relation(std::unique_ptr<Related> &&related, Model &parent,
-                 const QString &relatedKey = "");
+                 const QString &relatedKey = EMPTY);
 
         /*! Relation's copy constructor (used by BelongsToMany::clone()). */
         Relation(const Relation &) = default;
@@ -158,7 +158,7 @@ namespace Relations
         template<SameDerivedCollectionModel<Model> CollectionModel>
         QList<QVariant>
         getKeys(const ModelsCollection<CollectionModel> &models,
-                const QString &key = "") const;
+                const QString &key = EMPTY) const;
 
         /*! Convert the Model pointer to the pointer (no-op). */
         constexpr static Model *toPointer(Model *model);

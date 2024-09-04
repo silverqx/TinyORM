@@ -4,8 +4,6 @@
 
 #include <orm/databaseconnection.hpp>
 
-#include "tom/tomconstants.hpp"
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;

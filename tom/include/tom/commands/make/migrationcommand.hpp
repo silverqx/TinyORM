@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/make/makecommand.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

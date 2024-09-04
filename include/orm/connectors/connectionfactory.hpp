@@ -65,7 +65,7 @@ namespace Connectors
         static std::shared_ptr<DatabaseConnection>
         createConnection(
                 const QString &driver, std::function<ConnectionName()> &&connection,
-                QString &&database, QString &&tablePrefix = "",
+                QString &&database, QString &&tablePrefix = u""_s,
                 QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 QVariantHash &&config = {},
                 std::optional<bool> returnQDateTime = std::nullopt);

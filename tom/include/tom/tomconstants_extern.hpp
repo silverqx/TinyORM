@@ -27,6 +27,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString DateTimePrefix;
 
     // Common strings
+    TINYORM_EXPORT extern const QString EMPTY;
     TINYORM_EXPORT extern const QString LongOption;
     TINYORM_EXPORT extern const QString LongOptionOnly;
     TINYORM_EXPORT extern const QString LongOptionValue;

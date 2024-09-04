@@ -208,7 +208,7 @@ namespace Orm::Tiny
 
         /*! Update the column's update timestamp. */
         std::tuple<int, std::optional<TSqlQuery>>
-        touch(const QString &column = "");
+        touch(const QString &column = EMPTY);
 
         /* QueryBuilder proxy methods that need modifications */
         /*! Update records in the database. */

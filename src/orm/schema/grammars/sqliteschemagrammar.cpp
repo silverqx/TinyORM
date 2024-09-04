@@ -769,7 +769,7 @@ QString SQLiteSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/
 
 //QString SQLiteSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column) const
 //{
-//    return u""_s;
+//    return EMPTY;
 //}
 
 QString SQLiteSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) const

@@ -59,88 +59,88 @@ namespace Query
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
         std::shared_ptr<QueryBuilder>
-        table(const QString &table, const QString &connection = "");
+        table(const QString &table, const QString &connection = EMPTY);
         /*! Begin a fluent query against a database table for the connection. */
         std::shared_ptr<QueryBuilder>
-        tableAs(const QString &table, const QString &as = "",
-                const QString &connection = "");
+        tableAs(const QString &table, const QString &as = EMPTY,
+                const QString &connection = EMPTY);
 
         /*! Get a new query builder instance for the connection. */
-        std::shared_ptr<QueryBuilder> query(const QString &connection = "");
+        std::shared_ptr<QueryBuilder> query(const QString &connection = EMPTY);
         /*! Get a new Q/SqlQuery instance for the connection. */
-        TSqlQuery sqlQuery(const QString &connection = "");
+        TSqlQuery sqlQuery(const QString &connection = EMPTY);
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
         SqlQuery
         select(const QString &query, QList<QVariant> bindings = {},
-               const QString &connection = "");
+               const QString &connection = EMPTY);
         /*! Run a select statement against the database. */
         SqlQuery
         selectFromWriteConnection(const QString &query, QList<QVariant> bindings = {},
-                                  const QString &connection = "");
+                                  const QString &connection = EMPTY);
 
         /*! Run a select statement and return a single result. */
         SqlQuery
         selectOne(const QString &query, QList<QVariant> bindings = {},
-                  const QString &connection = "");
+                  const QString &connection = EMPTY);
         /*! Run a select statement and return the first column of the first row. */
         QVariant
         scalar(const QString &query, QList<QVariant> bindings = {},
-               const QString &connection = "");
+               const QString &connection = EMPTY);
 
         /*! Run an insert statement against the database. */
         SqlQuery
         insert(const QString &query, QList<QVariant> bindings = {},
-               const QString &connection = "");
+               const QString &connection = EMPTY);
         /*! Run an update statement against the database. */
         std::tuple<int, TSqlQuery>
         update(const QString &query, QList<QVariant> bindings = {},
-               const QString &connection = "");
+               const QString &connection = EMPTY);
         /*! Run a delete statement against the database. */
         std::tuple<int, TSqlQuery>
         remove(const QString &query, QList<QVariant> bindings = {},
-               const QString &connection = "");
+               const QString &connection = EMPTY);
 
         /*! Execute an SQL statement and return the boolean result and SqlQuery. */
         SqlQuery
         statement(const QString &query, QList<QVariant> bindings = {},
-                  const QString &connection = "");
+                  const QString &connection = EMPTY);
         /*! Run an SQL statement and get the number of rows affected. */
         std::tuple<int, TSqlQuery>
         affectingStatement(const QString &query, QList<QVariant> bindings = {},
-                           const QString &connection = "");
+                           const QString &connection = EMPTY);
 
         /*! Run a raw, unprepared query against the database. */
-        SqlQuery unprepared(const QString &query, const QString &connection = "");
+        SqlQuery unprepared(const QString &query, const QString &connection = EMPTY);
 
         /*! Start a new database transaction. */
-        bool beginTransaction(const QString &connection = "");
+        bool beginTransaction(const QString &connection = EMPTY);
         /*! Commit the active database transaction. */
-        bool commit(const QString &connection = "");
+        bool commit(const QString &connection = EMPTY);
         /*! Rollback the active database transaction. */
-        bool rollBack(const QString &connection = "");
+        bool rollBack(const QString &connection = EMPTY);
         /*! Start a new named transaction savepoint. */
-        bool savepoint(const QString &id, const QString &connection = "");
+        bool savepoint(const QString &id, const QString &connection = EMPTY);
         /*! Start a new named transaction savepoint. */
-        bool savepoint(std::size_t id, const QString &connection = "");
+        bool savepoint(std::size_t id, const QString &connection = EMPTY);
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(const QString &id, const QString &connection = "");
+        bool rollbackToSavepoint(const QString &id, const QString &connection = EMPTY);
         /*! Rollback to a named transaction savepoint. */
-        bool rollbackToSavepoint(std::size_t id, const QString &connection = "");
+        bool rollbackToSavepoint(std::size_t id, const QString &connection = EMPTY);
         /*! Get the number of active transactions. */
-        std::size_t transactionLevel(const QString &connection = "");
+        std::size_t transactionLevel(const QString &connection = EMPTY);
 
         /*! Determine whether the database connection is currently open. */
-        bool isOpen(const QString &connection = "");
+        bool isOpen(const QString &connection = EMPTY);
         /*! Check database connection and show warnings when the state changed. */
-        bool pingDatabase(const QString &connection = "");
+        bool pingDatabase(const QString &connection = EMPTY);
 
         /*! Get the SQL database driver used to access the database connection (const). */
-        const TSqlDriver *driver(const QString &connection = "");
+        const TSqlDriver *driver(const QString &connection = EMPTY);
 #ifdef TINYORM_USING_TINYDRIVERS
         /*! Get the SQL database driver used to access the database connection (const). */
-        std::weak_ptr<const TSqlDriver> driverWeak(const QString &connection = "");
+        std::weak_ptr<const TSqlDriver> driverWeak(const QString &connection = EMPTY);
 #endif
 
         /* DatabaseManager */
@@ -153,7 +153,7 @@ namespace Query
         static void free() noexcept;
 
         /*! Get a database connection instance. */
-        DatabaseConnection &connection(const QString &name = "") final; // NOLINT(google-default-arguments)
+        DatabaseConnection &connection(const QString &name = EMPTY) final; // NOLINT(google-default-arguments)
         /*! Begin a fluent query against the database on a given connection (alias for
             the connection() method). */
         inline DatabaseConnection &on(const QString &connection);
@@ -169,17 +169,17 @@ namespace Query
         addConnections(const ConfigurationsType &configs,
                        const QString &defaultConnection);
         /*! Remove the given connection from the manager. */
-        bool removeConnection(const QString &name = "");
+        bool removeConnection(const QString &name = EMPTY);
         /*! Determine whether a given connection is already registered. */
-        bool containsConnection(const QString &name = "");
+        bool containsConnection(const QString &name = EMPTY);
 
         /*! Reconnect to the given database. */
-        DatabaseConnection &reconnect(const QString &name = "");
+        DatabaseConnection &reconnect(const QString &name = EMPTY);
         /*! Disconnect from the given database. */
-        void disconnect(const QString &name = "") const;
+        void disconnect(const QString &name = EMPTY) const;
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */
-        void connectEagerly(const QString &name = "");
+        void connectEagerly(const QString &name = EMPTY);
 
         /*! Returns a list containing the names of all connections. */
         QStringList connectionNames() const;
@@ -209,89 +209,90 @@ namespace Query
 
         /* Getters / Setters */
         /*! Return the connection's driver name. */
-        QString driverName(const QString &connection = "");
+        QString driverName(const QString &connection = EMPTY);
         /*! Return connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        const QString &driverNamePrintable(const QString &connection = "");
+        const QString &driverNamePrintable(const QString &connection = EMPTY);
         /*! Return the name of the connected database. */
-        const QString &databaseName(const QString &connection = "");
+        const QString &databaseName(const QString &connection = EMPTY);
         /*! Return the hostname of the connected database. */
-        const QString &hostName(const QString &connection = "");
+        const QString &hostName(const QString &connection = EMPTY);
 
         /*! Get the QtTimeZoneConfig for the current connection. */
         const QtTimeZoneConfig &
-        qtTimeZone(const QString &connection = "");
+        qtTimeZone(const QString &connection = EMPTY);
         /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
         DatabaseConnection &
-        setQtTimeZone(const QVariant &timezone, const QString &connection = "");
+        setQtTimeZone(const QVariant &timezone, const QString &connection = EMPTY);
         /*! Set the QtTimeZoneConfig for the current connection (override qt_timezone). */
         DatabaseConnection &
-        setQtTimeZone(QtTimeZoneConfig &&timezone, const QString &connection = "");
+        setQtTimeZone(QtTimeZoneConfig &&timezone, const QString &connection = EMPTY);
         /*! Determine whether the QDateTime time zone should be converted. */
-        bool isConvertingTimeZone(const QString &connection = "");
+        bool isConvertingTimeZone(const QString &connection = EMPTY);
 
         /* Connection configurations - saved in the DatabaseManager */
         /*! Get an original configuration option value for the given connection
             (passed to the DB::create, original/unchanged). */
         QVariant originalConfigValue(const QString &option,
-                                     const QString &connection = "") const;
+                                     const QString &connection = EMPTY) const;
         /*! Get an original configuration for the given connection
             (passed to the DB::create, original/unchanged). */
-        const QVariantHash &originalConfig(const QString &connection = "") const;
+        const QVariantHash &originalConfig(const QString &connection = EMPTY) const;
         /*! Get the number of registered connection configurations. */
         std::size_t originalConfigsSize() const;
 
         /* Connection configurations - proxies to the DatabaseConnection */
         /*! Get an option value from the configuration options. */
-        QVariant getConfigValue(const QString &option, const QString &connection = "");
+        QVariant getConfigValue(const QString &option, const QString &connection = EMPTY);
         /*! Get the configuration for the current connection. */
-        const QVariantHash &getConfig(const QString &connection = "");
+        const QVariantHash &getConfig(const QString &connection = EMPTY);
         /*! Check whether the configuration contains the given option. */
-        bool hasConfigValue(const QString &option, const QString &connection = "");
+        bool hasConfigValue(const QString &option, const QString &connection = EMPTY);
 
         /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
         QList<Log> pretend(const std::function<void()> &callback,
-                           const QString &connection = "");
+                           const QString &connection = EMPTY);
         /*! Execute the given callback in "dry run" mode. */
         QList<Log> pretend(const std::function<void(DatabaseConnection &)> &callback,
-                           const QString &connection = "");
+                           const QString &connection = EMPTY);
 
         /* Records were modified */
         /*! Check if any records have been modified. */
-        bool getRecordsHaveBeenModified(const QString &connection = "");
+        bool getRecordsHaveBeenModified(const QString &connection = EMPTY);
         /*! Indicates if any records have been modified. */
-        void recordsHaveBeenModified(bool value = true, const QString &connection = "");
+        void recordsHaveBeenModified(bool value = true,
+                                     const QString &connection = EMPTY);
         /*! Reset the record modification state. */
-        void forgetRecordModificationState(const QString &connection = "");
+        void forgetRecordModificationState(const QString &connection = EMPTY);
 
         /* Logging */
         /*! Get the connection query log. */
         std::shared_ptr<QList<Log>>
-        getQueryLog(const QString &connection = "");
+        getQueryLog(const QString &connection = EMPTY);
         /*! Clear the query log. */
-        void flushQueryLog(const QString &connection = "");
+        void flushQueryLog(const QString &connection = EMPTY);
         /*! Enable the query log on the connection. */
-        void enableQueryLog(const QString &connection = "");
+        void enableQueryLog(const QString &connection = EMPTY);
         /*! Disable the query log on the connection. */
-        void disableQueryLog(const QString &connection = "");
+        void disableQueryLog(const QString &connection = EMPTY);
         /*! Determine whether we're logging queries. */
-        bool logging(const QString &connection = "");
+        bool logging(const QString &connection = EMPTY);
         /*! The current order value for a query log record. */
         std::size_t getQueryLogOrder() const noexcept;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */
-        bool countingElapsed(const QString &connection = "");
+        bool countingElapsed(const QString &connection = EMPTY);
         /*! Enable counting queries execution time on the current connection. */
-        DatabaseConnection &enableElapsedCounter(const QString &connection = "");
+        DatabaseConnection &enableElapsedCounter(const QString &connection = EMPTY);
         /*! Disable counting queries execution time on the current connection. */
-        DatabaseConnection &disableElapsedCounter(const QString &connection = "");
+        DatabaseConnection &disableElapsedCounter(const QString &connection = EMPTY);
         /*! Obtain queries execution time. */
-        qint64 getElapsedCounter(const QString &connection = "");
+        qint64 getElapsedCounter(const QString &connection = EMPTY);
         /*! Obtain and reset queries execution time. */
-        qint64 takeElapsedCounter(const QString &connection = "");
+        qint64 takeElapsedCounter(const QString &connection = EMPTY);
         /*! Reset queries execution time. */
-        DatabaseConnection &resetElapsedCounter(const QString &connection = "");
+        DatabaseConnection &resetElapsedCounter(const QString &connection = EMPTY);
 
         /*! Determine whether any connection is counting queries execution time. */
         bool anyCountingElapsed();
@@ -319,22 +320,22 @@ namespace Query
 
         /* Queries executed counter */
         /*! Determine whether we're counting the number of executed queries. */
-        bool countingStatements(const QString &connection = "");
+        bool countingStatements(const QString &connection = EMPTY);
         /*! Enable counting the number of executed queries on the current connection. */
         DatabaseConnection &
-        enableStatementsCounter(const QString &connection = "");
+        enableStatementsCounter(const QString &connection = EMPTY);
         /*! Disable counting the number of executed queries on the current connection. */
         DatabaseConnection &
-        disableStatementsCounter(const QString &connection = "");
+        disableStatementsCounter(const QString &connection = EMPTY);
         /*! Obtain the number of executed queries. */
         const StatementsCounter &
-        getStatementsCounter(const QString &connection = "");
+        getStatementsCounter(const QString &connection = EMPTY);
         /*! Obtain and reset the number of executed queries. */
         StatementsCounter
-        takeStatementsCounter(const QString &connection = "");
+        takeStatementsCounter(const QString &connection = EMPTY);
         /*! Reset the number of executed queries. */
         DatabaseConnection &
-        resetStatementsCounter(const QString &connection = "");
+        resetStatementsCounter(const QString &connection = EMPTY);
 
         /*! Determine whether any connection is counting the number of executed
             queries. */

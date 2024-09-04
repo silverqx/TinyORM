@@ -184,7 +184,8 @@ namespace Orm::Tiny
         /*! Begin querying the model. */
         static std::unique_ptr<TinyBuilder<Derived>> query();
         /*! Begin querying the model on a given connection. */
-        static std::unique_ptr<TinyBuilder<Derived>> on(const QString &connection = "");
+        static std::unique_ptr<TinyBuilder<Derived>>
+        on(const QString &connection = EMPTY);
 
         /*! Get all of the models from the database. */
         static ModelsCollection<Derived> all(const QList<Column> &columns = {ASTERISK});

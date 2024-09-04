@@ -50,7 +50,7 @@ namespace Tiny
         static std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
         /*! Concatenate values of the given column as a string. */
-        static QString implode(const QString &column, const QString &glue = "");
+        static QString implode(const QString &column, const QString &glue = EMPTY);
 
         /*! Find a model by its primary key. */
         static std::optional<Derived>
@@ -206,7 +206,7 @@ namespace Tiny
         /*! Insert a new record and get the value of the primary key. */
         static quint64
         insertGetId(const QList<AttributeItem> &values,
-                    const QString &sequence = "");
+                    const QString &sequence = EMPTY);
 
         /*! Insert a new record into the database while ignoring errors. */
         static std::tuple<int, std::optional<TSqlQuery>>
@@ -233,7 +233,7 @@ namespace Tiny
         /* Touching timestamps */
         /*! Update the column's update timestamp on all Models. */
         static std::tuple<int, std::optional<TSqlQuery>>
-        touchAll(const QString &column = "");
+        touchAll(const QString &column = EMPTY);
 
         /* Select */
         /*! Retrieve the "count" result of the query. */
@@ -486,11 +486,11 @@ namespace Tiny
         /*! Add a vector of basic "where not" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         whereNot(const QList<WhereItem> &values, const QString &condition = AND,
-                 const QString &defaultCondition = "");
+                 const QString &defaultCondition = EMPTY);
         /*! Add a vector of basic "or where not" clauses to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orWhereNot(const QList<WhereItem> &values,
-                   const QString &defaultCondition = "");
+                   const QString &defaultCondition = EMPTY);
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -800,17 +800,17 @@ namespace Tiny
 
         /*! Put the query's results in random order. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        inRandomOrder(const QString &seed = "");
+        inRandomOrder(const QString &seed = EMPTY);
         /*! Add a raw "order by" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
         orderByRaw(const QString &sql, const QList<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        latest(const Column &column = "");
+        latest(const Column &column = EMPTY);
         /*! Add an "order by" clause for a timestamp to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        oldest(const Column &column = "");
+        oldest(const Column &column = EMPTY);
         /*! Remove all existing orders. */
         static std::unique_ptr<TinyBuilder<Derived>>
         reorder();
@@ -890,12 +890,12 @@ namespace Tiny
         chunkById(qint64 count,
                   const std::function<
                       bool(ModelsCollection<Derived> &&models, qint64 page)> &callback,
-                  const QString &column = "", const QString &alias = "");
+                  const QString &column = EMPTY, const QString &alias = EMPTY);
         /*! Execute a callback over each item while chunking by ID. */
         static bool
         eachById(const std::function<bool(Derived &&model, qint64 index)> &callback,
-                 qint64 count = 1000, const QString &column = "",
-                 const QString &alias = "");
+                 qint64 count = 1000, const QString &column = EMPTY,
+                 const QString &alias = EMPTY);
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */

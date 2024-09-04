@@ -53,7 +53,7 @@ namespace Tiny
         /* Proxy methods that internally call the toBase() (applySoftDeletes) */
         /* Retrieving results */
         /*! Concatenate values of the given column as a string. */
-        QString implode(const QString &column, const QString &glue = "");
+        QString implode(const QString &column, const QString &glue = EMPTY);
 
         /* Aggregates */
         /*! Retrieve the "count" result of the query. */
@@ -126,7 +126,7 @@ namespace Tiny
 
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QList<AttributeItem> &values,
-                            const QString &sequence = "") const;
+                            const QString &sequence = EMPTY) const;
 
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
@@ -338,10 +338,10 @@ namespace Tiny
         /*! Add a vector of basic "where not" clauses to the query. */
         TinyBuilder<Model> &whereNot(const QList<WhereItem> &values,
                                      const QString &condition = AND,
-                                     const QString &defaultCondition = "");
+                                     const QString &defaultCondition = EMPTY);
         /*! Add a vector of basic "or where not" clauses to the query. */
         TinyBuilder<Model> &orWhereNot(const QList<WhereItem> &values,
-                                       const QString &defaultCondition = "");
+                                       const QString &defaultCondition = EMPTY);
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -620,15 +620,15 @@ namespace Tiny
         TinyBuilder<Model> &orderByDesc(T &&query);
 
         /*! Put the query's results in random order. */
-        TinyBuilder<Model> &inRandomOrder(const QString &seed = "");
+        TinyBuilder<Model> &inRandomOrder(const QString &seed = EMPTY);
         /*! Add a raw "order by" clause to the query. */
         TinyBuilder<Model> &orderByRaw(const QString &sql,
                                        const QList<QVariant> &bindings = {});
 
         /*! Add an "order by" clause for a timestamp to the query. */
-        TinyBuilder<Model> &latest(const Column &column = "");
+        TinyBuilder<Model> &latest(const Column &column = EMPTY);
         /*! Add an "order by" clause for a timestamp to the query. */
-        TinyBuilder<Model> &oldest(const Column &column = "");
+        TinyBuilder<Model> &oldest(const Column &column = EMPTY);
         /*! Remove all existing orders. */
         TinyBuilder<Model> &reorder();
         /*! Remove all existing orders and optionally add a new order. */

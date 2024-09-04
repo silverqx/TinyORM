@@ -9,7 +9,6 @@
 #include "tom/commands/make/support/migrationcreator.hpp"
 #include "tom/commands/make/support/tableguesser.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
-#include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

@@ -73,13 +73,13 @@ namespace Orm
         /*! Protected constructor. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                QString &&database = "", QString &&tablePrefix = "",
+                QString &&database = u""_s, QString &&tablePrefix = u""_s,
                 QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 QVariantHash &&config = {});
         /*! Protected constructor for SQLite connection. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                QString &&database = "", QString &&tablePrefix = "",
+                QString &&database = u""_s, QString &&tablePrefix = u""_s,
                 QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 std::optional<bool> returnQDateTime = true,
                 QVariantHash &&config = {});
@@ -90,7 +90,7 @@ namespace Orm
 
         /*! Begin a fluent query against a database table. */
         std::shared_ptr<QueryBuilder>
-        table(const QString &table, const QString &as = "");
+        table(const QString &table, const QString &as = EMPTY);
 
         /*! Get the table prefix for the connection. */
         inline QString getTablePrefix() const;

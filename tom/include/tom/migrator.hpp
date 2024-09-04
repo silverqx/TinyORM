@@ -9,6 +9,7 @@
 #include <orm/types/log.hpp>
 
 #include "tom/concerns/interactswithio.hpp"
+#include "tom/tomconstants.hpp"
 #include "tom/tomtypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -77,7 +78,8 @@ namespace Tom
     protected:
         /* Database connection related */
         /*! Resolve the database connection instance. */
-        DatabaseConnection &resolveConnection(const QString &name = "") const;
+        DatabaseConnection &
+        resolveConnection(const QString &name = Constants::EMPTY) const;
 
         /* Migration instances lists and hashes */
         /*! Create a map that maps migration names by migrations type-id (type_index). */

@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/concerns/callscommands.hpp"
 #include "tom/concerns/interactswithio.hpp"
+#include "tom/tomconstants.hpp"
 #include "tom/types/commandlineoption.hpp"
 
 class QCommandLineOption;
@@ -112,9 +113,12 @@ namespace Commands
         QStringList values(const QString &name,
                            Qt::SplitBehavior behavior = Qt::KeepEmptyParts) const;
         /*! Get a full command-line value option if value is set in the parser. */
-        QString valueCmd(const QString &name, const QString &key = "") const;
+        QString valueCmd(const QString &name,
+                         const QString &key = Constants::EMPTY) const;
         /*! Get a full command-line boolean option if it's set in the parser. */
-        QString boolCmd(const QString &name, const QString &key = "") const;
+        QString boolCmd(const QString &name,
+                        const QString &key = Constants::EMPTY) const;
+
         /*! Get a long option name by the given name (prepend -- before the name). */
         static QString longOption(const QString &name);
         /*! Create the long option with value (--database=xyz). */

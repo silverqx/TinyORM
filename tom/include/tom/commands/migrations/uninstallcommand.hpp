@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 #include "tom/concerns/confirmable.hpp"
 #include "tom/concerns/pretendable.hpp"
 #include "tom/concerns/usingconnection.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

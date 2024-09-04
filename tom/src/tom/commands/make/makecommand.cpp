@@ -3,7 +3,6 @@
 #include <range/v3/view/reverse.hpp>
 
 #include "tom/exceptions/invalidargumenterror.hpp"
-#include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

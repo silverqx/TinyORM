@@ -60,7 +60,7 @@ namespace Grammars
         /*! Compile the query to determine the list of tables. */
         QString compileTableExists() const override;
         /*! Compile the query to determine the list of columns. */
-        QString compileColumnListing(const QString &table = "") const override; // NOLINT(google-default-arguments)
+        QString compileColumnListing(const QString &table = EMPTY) const override; // NOLINT(google-default-arguments)
 
         /* Compile methods for commands */
         /*! Compile a create table command. */

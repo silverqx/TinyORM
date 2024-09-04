@@ -46,7 +46,7 @@ namespace Grammars
         /*! Constructor. */
         explicit Blueprint(QString table,
                            const std::function<void(Blueprint &)> &callback = nullptr,
-                           QString &&prefix = "");
+                           QString &&prefix = u""_s);
         /*! Default destructor. */
         ~Blueprint() = default;
 
@@ -100,57 +100,57 @@ namespace Grammars
 
         /*! Specify the primary key(s) for the table. */
         IndexDefinitionReference
-        primary(const QList<QString> &columns, const QString &indexName = "",
-                const QString &algorithm = "");
+        primary(const QList<QString> &columns, const QString &indexName = EMPTY,
+                const QString &algorithm = EMPTY);
         /*! Specify the primary key(s) for the table. */
         template<typename = void>
         IndexDefinitionReference
-        primary(const QString &column, const QString &indexName = "",
-                const QString &algorithm = "");
+        primary(const QString &column, const QString &indexName = EMPTY,
+                const QString &algorithm = EMPTY);
         /*! Specify a unique index for the table. */
         IndexDefinitionReference
-        unique(const QList<QString> &columns, const QString &indexName = "",
-               const QString &algorithm = "");
+        unique(const QList<QString> &columns, const QString &indexName = EMPTY,
+               const QString &algorithm = EMPTY);
         /*! Specify a unique index for the table. */
         template<typename = void>
         IndexDefinitionReference
-        unique(const QString &column, const QString &indexName = "",
-               const QString &algorithm = "");
+        unique(const QString &column, const QString &indexName = EMPTY,
+               const QString &algorithm = EMPTY);
         /*! Specify an index for the table. */
         IndexDefinitionReference
-        index(const QList<QString> &columns, const QString &indexName = "",
-              const QString &algorithm = "");
+        index(const QList<QString> &columns, const QString &indexName = EMPTY,
+              const QString &algorithm = EMPTY);
         /*! Specify an index for the table. */
         template<typename = void>
         IndexDefinitionReference
-        index(const QString &column, const QString &indexName = "",
-              const QString &algorithm = "");
+        index(const QString &column, const QString &indexName = EMPTY,
+              const QString &algorithm = EMPTY);
         /*! Specify an fulltext for the table. */
         IndexDefinitionReference
-        fullText(const QList<QString> &columns, const QString &indexName = "",
-                 const QString &algorithm = "", const QString &language = "");
+        fullText(const QList<QString> &columns, const QString &indexName = EMPTY,
+                 const QString &algorithm = EMPTY, const QString &language = EMPTY);
         /*! Specify an fulltext for the table. */
         template<typename = void>
         IndexDefinitionReference
-        fullText(const QString &column, const QString &indexName = "",
-                 const QString &algorithm = "", const QString &language = "");
+        fullText(const QString &column, const QString &indexName = EMPTY,
+                 const QString &algorithm = EMPTY, const QString &language = EMPTY);
         /*! Specify a spatial index for the table. */
         IndexDefinitionReference
-        spatialIndex(const QList<QString> &columns, const QString &indexName = "");
+        spatialIndex(const QList<QString> &columns, const QString &indexName = EMPTY);
         /*! Specify a spatial index for the table. */
         template<typename = void>
         IndexDefinitionReference
-        spatialIndex(const QString &column, const QString &indexName = "");
+        spatialIndex(const QString &column, const QString &indexName = EMPTY);
         /*! Specify a raw index for the table. */
         IndexDefinitionReference
         rawIndex(const Expression &expression, const QString &indexName);
         /*! Specify a foreign key for the table. */
         ForeignKeyDefinitionReference
-        foreign(const QList<QString> &columns, const QString &indexName = "");
+        foreign(const QList<QString> &columns, const QString &indexName = EMPTY);
         /*! Specify a foreign key for the table. */
         template<typename = void>
         ForeignKeyDefinitionReference
-        foreign(const QString &column, const QString &indexName = "");
+        foreign(const QString &column, const QString &indexName = EMPTY);
 
         /*! Drop primary key by the given column names. */
         const IndexCommand &dropPrimary(const QList<QString> &columns = {});
@@ -169,7 +169,7 @@ namespace Grammars
 
         /*! Drop primary key by the given index name. */
         template<typename = void>
-        const IndexCommand &dropPrimary(const QString &indexName = "");
+        const IndexCommand &dropPrimary(const QString &indexName = EMPTY);
         /*! Drop unique key by the given index name. */
         template<typename = void>
         const IndexCommand &dropUnique(const QString &indexName);
@@ -198,7 +198,7 @@ namespace Grammars
         /*! Create a foreign ID column for the given model. */
         template<Tiny::ModelConcept Model>
         ForeignIdColumnDefinitionReference foreignIdFor(const Model &model,
-                                                        const QString &column = "");
+                                                        const QString &column = EMPTY);
 #endif
         /*! Create a new UUID column on the table with a foreign key constraint. */
         ForeignIdColumnDefinitionReference foreignUuid(const QString &column);
@@ -473,8 +473,8 @@ namespace Grammars
         /*! Add a new index command to the blueprint. */
         IndexDefinitionReference
         indexCommand(const QString &type, const QList<QString> &columns,
-                     const QString &indexName, const QString &algorithm = "",
-                     const QString &language = "");
+                     const QString &indexName, const QString &algorithm = EMPTY,
+                     const QString &language = EMPTY);
         /*! Create a new drop index command on the blueprint. */
         const IndexCommand &
         dropIndexCommand(const QString &command, const QString &type,

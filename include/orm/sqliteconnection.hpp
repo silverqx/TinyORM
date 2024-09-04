@@ -20,7 +20,7 @@ namespace Orm
         /*! Private constructor. */
         explicit SQLiteConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                QString &&database = "", QString &&tablePrefix = "",
+                QString &&database = u""_s, QString &&tablePrefix = u""_s,
                 QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 std::optional<bool> returnQDateTime = true,
                 QVariantHash &&config = {});
@@ -33,7 +33,7 @@ namespace Orm
         [[nodiscard]] inline static
         std::shared_ptr<SQLiteConnection>
         create(std::function<Connectors::ConnectionName()> &&connection,
-               QString &&database = "", QString &&tablePrefix = "",
+               QString &&database = u""_s, QString &&tablePrefix = u""_s,
                QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                std::optional<bool> returnQDateTime = true,
                QVariantHash &&config = {});

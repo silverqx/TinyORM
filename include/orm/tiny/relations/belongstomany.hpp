@@ -35,10 +35,11 @@ namespace Orm::Tiny::Relations
 
     protected:
         /*! Protected constructor. */
-        BelongsToMany(std::unique_ptr<Related> &&related, Model &parent,
-                      const QString &table = "", const QString &foreignPivotKey = "", // NOLINT(modernize-pass-by-value)
-                      const QString &relatedPivotKey = "", const QString &parentKey = "", // NOLINT(modernize-pass-by-value)
-                      const QString &relatedKey = "", const QString &relationName = ""); // NOLINT(modernize-pass-by-value)
+        BelongsToMany(
+                std::unique_ptr<Related> &&related, Model &parent,
+                const QString &table = EMPTY, const QString &foreignPivotKey = EMPTY, // NOLINT(modernize-pass-by-value)
+                const QString &relatedPivotKey = EMPTY, const QString &parentKey = EMPTY, // NOLINT(modernize-pass-by-value)
+                const QString &relatedKey = EMPTY, const QString &relationName = EMPTY); // NOLINT(modernize-pass-by-value)
 
         /*! BelongsToMany's copy constructor (used by BelongsToMany::clone()). */
         BelongsToMany(const BelongsToMany &) = default;
@@ -65,9 +66,9 @@ namespace Orm::Tiny::Relations
         /*! Instantiate and initialize a new BelongsToMany instance. */
         static std::unique_ptr<BelongsToMany<Model, Related, PivotType>>
         instance(std::unique_ptr<Related> &&related, Model &parent,
-                 const QString &table = "", const QString &foreignPivotKey = "",
-                 const QString &relatedPivotKey = "", const QString &parentKey = "",
-                 const QString &relatedKey = "", const QString &relation = "");
+                 const QString &table = EMPTY, const QString &foreignPivotKey = EMPTY,
+                 const QString &relatedPivotKey = EMPTY, const QString &parentKey = EMPTY,
+                 const QString &relatedKey = EMPTY, const QString &relation = EMPTY);
 
         /* Relation related operations */
         /*! Set the base constraints on the relation query. */
@@ -254,12 +255,12 @@ namespace Orm::Tiny::Relations
         chunkById(qint64 count, // NOLINT(google-default-arguments)
                   const std::function<
                       bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
-                  const QString &column = "",
-                  const QString &alias = "") const override;
+                  const QString &column = EMPTY,
+                  const QString &alias = EMPTY) const override;
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
-                      qint64 count = 1000, const QString &column = "",
-                      const QString &alias = "") const override;
+                      qint64 count = 1000, const QString &column = EMPTY,
+                      const QString &alias = EMPTY) const override;
 
         /* Inserting/Updating operations on the relationship */
         /*! Attach a model instance to the parent model. */

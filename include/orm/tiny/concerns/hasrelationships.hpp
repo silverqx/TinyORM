@@ -138,21 +138,22 @@ namespace Concerns
         /*! Define a one-to-one relationship. */
         template<typename Related>
         std::unique_ptr<Relations::HasOne<Derived, Related>>
-        hasOne(QString foreignKey = "", QString localKey = "");
+        hasOne(QString foreignKey = EMPTY, QString localKey = EMPTY);
         /*! Define an inverse one-to-one or many relationship. */
         template<typename Related>
         std::unique_ptr<Relations::BelongsTo<Derived, Related>>
-        belongsTo(QString foreignKey = "", QString ownerKey = "", QString relation = "");
+        belongsTo(QString foreignKey = EMPTY, QString ownerKey = EMPTY,
+                  QString relation = EMPTY);
         /*! Define a one-to-many relationship. */
         template<typename Related>
         std::unique_ptr<Relations::HasMany<Derived, Related>>
-        hasMany(QString foreignKey = "", QString localKey = "");
+        hasMany(QString foreignKey = EMPTY, QString localKey = EMPTY);
         /*! Define a many-to-many relationship. */
         template<typename Related, typename PivotType = Relations::Pivot>
         std::unique_ptr<Relations::BelongsToMany<Derived, Related, PivotType>>
-        belongsToMany(QString table = "", QString foreignPivotKey = "",
-                      QString relatedPivotKey = "", QString parentKey = "",
-                      QString relatedKey = "", QString relation = "");
+        belongsToMany(QString table = EMPTY, QString foreignPivotKey = EMPTY,
+                      QString relatedPivotKey = EMPTY, QString parentKey = EMPTY,
+                      QString relatedKey = EMPTY, QString relation = EMPTY);
 
         /* Touching timestamps */
         /*! Touch the owning relations of the model. */

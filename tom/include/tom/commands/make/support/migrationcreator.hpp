@@ -5,11 +5,9 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QString>
-
 #include <filesystem>
 
-#include <orm/macros/commonnamespace.hpp>
+#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -31,9 +29,10 @@ namespace Tom::Commands::Make::Support
         ~MigrationCreator() = delete;
 
         /*! Create a new migration at the given path. */
-        static fspath create(std::string &&datetimePrefix, const QString &name,
-                             const std::string &extension, const fspath &migrationsPath,
-                             const QString &table = "", bool create = false);
+        static fspath
+        create(std::string &&datetimePrefix, const QString &name,
+               const std::string &extension, const fspath &migrationsPath,
+               const QString &table = Constants::EMPTY, bool create = false);
 
     protected:
         /*! Get the migration stub file. */

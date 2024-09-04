@@ -8,6 +8,7 @@ namespace Tom::Constants
     const QString DateTimePrefix   = u"yyyy_MM_dd_HHmmss"_s;
 
     // Common strings
+    const QString EMPTY            = u""_s; // This is fastest
     const QString LongOption       = u"--%1"_s;
     const QString LongOptionOnly   = u"    %1"_s;
     const QString LongOptionValue  = u"--%1[=%2]"_s;

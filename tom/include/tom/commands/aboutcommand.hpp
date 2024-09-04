@@ -8,7 +8,6 @@ TINY_SYSTEM_HEADER
 #include <unordered_set>
 
 #include "tom/commands/command.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

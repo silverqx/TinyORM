@@ -10,7 +10,6 @@ TINY_SYSTEM_HEADER
 #include <orm/constants.hpp>
 
 #include "tom/commands/make/modelcommand.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

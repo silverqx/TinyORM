@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/constants.hpp"
 #include "orm/schema/columndefinitionreference.hpp"
 #include "orm/schema/foreignkeydefinitionreference.hpp"
 

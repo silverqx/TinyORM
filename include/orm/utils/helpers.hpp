@@ -5,12 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QString>
-
 #include <functional>
 
-#include "orm/macros/commonnamespace.hpp"
-#include "orm/macros/export.hpp"
+#include "orm/constants.hpp"
 
 class QDateTime;
 class QVariant; // clazy:exclude=qt6-fwd-fixes
@@ -83,13 +80,16 @@ namespace Utils
 
         /*! Convert the QDateTime's time zone according to the given connection name. */
         static QDateTime
-        convertTimeZone(const QDateTime &datetime, const QString &connection = "");
+        convertTimeZone(const QDateTime &datetime,
+                        const QString &connection = Constants::EMPTY);
         /*! Set the QDateTime's time zone according to the given connection. */
         static QDateTime &
-        setTimeZone(QDateTime &datetime, const QString &connection = "");
+        setTimeZone(QDateTime &datetime,
+                    const QString &connection = Constants::EMPTY);
         /*! Set the QDateTime's time zone according to the given connection. */
         static QDateTime
-        setTimeZone(QDateTime &&datetime, const QString &connection = "");
+        setTimeZone(QDateTime &&datetime,
+                    const QString &connection = Constants::EMPTY);
 
     private:
         /*! Log the QLibraryInfo::PluginsPath if an exception message contains:

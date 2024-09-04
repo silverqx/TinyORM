@@ -202,7 +202,7 @@ namespace Types
              ModelRawType *defaultModel = nullptr);
 
         /*! Concatenate values of the given column as a string. */
-        QString implode(const QString &column, const QString &glue = "");
+        QString implode(const QString &column, const QString &glue = EMPTY);
 
         /*! Determine if the collection is not empty. */
         inline bool isNotEmpty() const noexcept;

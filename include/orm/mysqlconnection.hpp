@@ -20,7 +20,7 @@ namespace Orm
         /*! Private constructor. */
         explicit MySqlConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
-                QString &&database = "", QString &&tablePrefix = "",
+                QString &&database = u""_s, QString &&tablePrefix = u""_s,
                 QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 QVariantHash &&config = {});
 
@@ -32,7 +32,7 @@ namespace Orm
         [[nodiscard]] inline static
         std::shared_ptr<MySqlConnection>
         create(std::function<Connectors::ConnectionName()> &&connection,
-               QString &&database = "", QString &&tablePrefix = "",
+               QString &&database = u""_s, QString &&tablePrefix = u""_s,
                QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                QVariantHash &&config = {});
 

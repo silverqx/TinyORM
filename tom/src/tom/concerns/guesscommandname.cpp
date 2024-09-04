@@ -8,7 +8,6 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

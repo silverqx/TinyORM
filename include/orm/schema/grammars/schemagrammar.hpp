@@ -64,7 +64,7 @@ namespace Grammars
         /*! Compile the query to determine the list of tables. */
         virtual QString compileTableExists() const;
         /*! Compile the query to determine the list of columns. */
-        virtual QString compileColumnListing(const QString &table = "") const = 0; // NOLINT(google-default-arguments)
+        virtual QString compileColumnListing(const QString &table = EMPTY) const = 0; // NOLINT(google-default-arguments)
 
         /* Compile methods for commands */
         /*! Compile a change column command. */

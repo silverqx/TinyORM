@@ -69,7 +69,7 @@ namespace Tiny::Relations
         std::map<T, QVariant> pluck(const Column &column, const Column &key) const;
 
         /*! Concatenate values of the given column as a string. */
-        QString implode(const QString &column, const QString &glue = "") const;
+        QString implode(const QString &column, const QString &glue = EMPTY) const;
 
         /*! Find a model by its primary key. */
         virtual std::optional<Related>
@@ -210,7 +210,7 @@ namespace Tiny::Relations
 
         /*! Insert a new record and get the value of the primary key. */
         quint64 insertGetId(const QList<AttributeItem> &attributes,
-                            const QString &sequence = "") const;
+                            const QString &sequence = EMPTY) const;
 
         /*! Insert a new record into the database while ignoring errors. */
         std::tuple<int, std::optional<TSqlQuery>>
@@ -478,11 +478,11 @@ namespace Tiny::Relations
         /*! Add a vector of basic "where not" clauses to the query. */
         const Relation<Model, Related> &whereNot(
                 const QList<WhereItem> &values, const QString &condition = AND,
-                const QString &defaultCondition = "") const;
+                const QString &defaultCondition = EMPTY) const;
         /*! Add a vector of basic "or where not" clauses to the query. */
         const Relation<Model, Related> &orWhereNot(
                 const QList<WhereItem> &values,
-                const QString &defaultCondition = "") const;
+                const QString &defaultCondition = EMPTY) const;
 
         /* where column */
         /*! Add a vector of where clauses comparing two columns to the query. */
@@ -787,15 +787,15 @@ namespace Tiny::Relations
         const Relation<Model, Related> &orderByDesc(T &&query) const;
 
         /*! Put the query's results in random order. */
-        const Relation<Model, Related> &inRandomOrder(const QString &seed = "") const;
+        const Relation<Model, Related> &inRandomOrder(const QString &seed = EMPTY) const;
         /*! Add a raw "order by" clause to the query. */
         const Relation<Model, Related> &orderByRaw(
                 const QString &sql, const QList<QVariant> &bindings = {}) const;
 
         /*! Add an "order by" clause for a timestamp to the query. */
-        const Relation<Model, Related> &latest(const Column &column = "") const;
+        const Relation<Model, Related> &latest(const Column &column = EMPTY) const;
         /*! Add an "order by" clause for a timestamp to the query. */
-        const Relation<Model, Related> &oldest(const Column &column = "") const;
+        const Relation<Model, Related> &oldest(const Column &column = EMPTY) const;
         /*! Remove all existing orders. */
         const Relation<Model, Related> &reorder() const;
         /*! Remove all existing orders and optionally add a new order. */
@@ -882,12 +882,12 @@ namespace Tiny::Relations
         chunkById(qint64 count, // NOLINT(google-default-arguments)
                   const std::function<
                       bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
-                  const QString &column = "", const QString &alias = "") const;
+                  const QString &column = EMPTY, const QString &alias = EMPTY) const;
         /*! Execute a callback over each item while chunking by ID. */
         virtual bool
         eachById(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
-                 qint64 count = 1000, const QString &column = "",
-                 const QString &alias = "") const;
+                 qint64 count = 1000, const QString &column = EMPTY,
+                 const QString &alias = EMPTY) const;
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
