@@ -48,7 +48,7 @@ namespace Constants
     inline const QString Primary      = u"primary"_s;
     inline const QString Unique       = u"unique"_s;
     inline const QString Index        = u"index"_s;
-    // CUR schema, I fucked up case in fulltext and spatialIndex during replacement, have to check all occurences :( silverqx
+    // CUR schema, I fucked up case in fulltext and spatialIndex during replacement, have to check all occurrences :( silverqx
     inline const QString Fulltext     = u"fulltext"_s;
     inline const QString SpatialIndex = u"spatialIndex"_s;
     inline const QString Foreign      = u"foreign"_s;
