@@ -106,7 +106,7 @@ namespace Support
         /*! Try to guess the models path based on the pwd or use the default path. */
         fspath guessModelsPath() const;
 
-        /*! Set of all cmd. option relation names. */
+        /*! Get all cmd. option relation names. */
         static const std::unordered_set<QString> &relationNames();
 
         /*! Create a migration file for the model. */
