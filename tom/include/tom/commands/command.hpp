@@ -90,6 +90,7 @@ namespace Commands
         /* Getters */
         /*! Get the tom application. */
         inline Application &application() const noexcept;
+
         /*! Determine whether a command has own positional arguments. */
         bool hasPositionalArguments() const;
         /*! Determine whether a command has own options. */
@@ -103,15 +104,18 @@ namespace Commands
         /* Parser helpers */
         /*! Returns a list of option names found by the parser (addes , support). */
         QStringList optionNames() const;
+
         /*! Check whether the option name was set in the parser. */
         bool isSet(const QString &name) const;
         /*! Check whether the option name was set in the parser (multiple values). */
         std::vector<bool> isSetAll(const QString &name) const;
+
         /*! Returns a option value found for the given option name or empty string. */
         QString value(const QString &name) const;
         /*! Returns a option values found for the given option name (addes , support). */
         QStringList values(const QString &name,
                            Qt::SplitBehavior behavior = Qt::KeepEmptyParts) const;
+
         /*! Get a full command-line value option if value is set in the parser. */
         QString valueCmd(const QString &name,
                          const QString &key = Constants::EMPTY) const;
@@ -131,8 +135,10 @@ namespace Commands
         bool hasArgument(ArgumentsSizeType index) const;
         /*! Check whether a positional argument by the given name was set. */
         bool hasArgument(const QString &name) const;
+
         /*! Get a list of positional arguments. */
         QStringList arguments() const;
+
         /*! Get a positional argument at the given index position. */
         QString argument(ArgumentsSizeType index, bool useDefault = true) const;
         /*! Get a positional argument by the given name. */
