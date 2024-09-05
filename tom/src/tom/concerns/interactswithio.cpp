@@ -500,7 +500,7 @@ bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
 
 bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 {
-    // ANSI was set explicitly on the command-line, respect it
+    // ANSI was explicitly set on the command-line, respect it
     if (m_ansi)
         return *m_ansi;
 
@@ -510,7 +510,7 @@ bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 
 bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
 {
-    // ANSI was set explicitly on the command-line, respect it
+    // ANSI was explicitly set on the command-line, respect it
     if (m_ansi)
         return *m_ansi;
 
