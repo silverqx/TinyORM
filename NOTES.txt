@@ -3193,6 +3193,13 @@ QString converting constructors performance with 1'000'000 loop:
    -  34ms - QString s("");
    - 146ms - QString s(QLatin1String(""))
 
+ - various QString instantiations performance per 1'000'000 loop:
+   -  17ms - QString s(u"xyz"_s);
+   - 500ms - QString s("xyz");
+   - 500ms - QString s(u8"xyz")
+   - 725ms - QString::fromUtf16(u"xyz")
+   - 770ms - QString::fromUcs4(U"xyz")
+
  -  20ms - u"xxx"_s
  - 700ms - "xxx"_L1
  - 380ms - QChar('x')
