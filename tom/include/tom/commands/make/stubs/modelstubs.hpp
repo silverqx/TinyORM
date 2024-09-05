@@ -29,7 +29,7 @@ namespace Models
 
 {{ usingsSection }}
 {{ forwardsSection }}
-class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}> // NOLINT(misc-no-recursion)
+class {{ class }} final : public Model<{{ class }}{{ relationsList }}{{ pivotsList }}> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;{{ publicSection }}{{ protectedSection }}{{ privateSection }}
@@ -53,7 +53,7 @@ namespace Models
 
 {{ usingsSection }}
 {{ forwardsSection }}
-class {{ class }} final : public BasePivot<{{ class }}{{ relationsList }}{{ pivotsList }}>
+class {{ class }} final : public BasePivot<{{ class }}{{ relationsList }}{{ pivotsList }}> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     friend BasePivot;
