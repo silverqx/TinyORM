@@ -37,7 +37,6 @@ Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
                 $completionText, $listText, 'ParameterValue', $toolTip)
         }
 }
-
 )"_s;
 
 #if defined(__linux__) || defined(__MINGW32__)
@@ -205,7 +204,6 @@ _tom()
     complete -F _tom tom tom_testdata
 
 # ex: filetype=sh
-
 )TTT"_s;
 
 /*! TinyORM tom zsh completion file content. */
@@ -533,7 +531,6 @@ _tom() {
             ;;
     esac
 }
-
 )TTT"_s;
 #endif
 
