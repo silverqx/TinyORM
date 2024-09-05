@@ -438,7 +438,7 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
                 .replace(u"</b-blue>"_s,  u"\033[0m"_s)
                 .replace(u"</b-white>"_s, u"\033[0m"_s);
 
-    // no-ansi output
+    // --no-ansi output
     return stripAnsiTags(std::move(string));
 }
 

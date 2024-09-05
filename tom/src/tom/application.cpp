@@ -236,7 +236,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
     const auto message = u"Caught '%1' Exception:\n%2"_s
                          .arg(TypeUtils::classPureBasename(e, true), e.what());
 
-    // No-ansi output
+    // --no-ansi output
     if (noAnsi || !io.isAnsiOutput(std::cerr)) {
         qCritical().nospace().noquote() << tmpl.arg(message);
         return;
