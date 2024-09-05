@@ -161,11 +161,11 @@ namespace Concerns
         /*! Confirm a question with the user. */
         bool confirm(const QString &question, bool defaultAnswer = false) const;
 
-        /*! Remove tom ansi tags from the given string. */
+        /*! Remove tom ANSI tags from the given string. */
         static QString stripAnsiTags(QString string);
 
         /* Getters / Setters */
-        /*! Run the given callable with disabled ansi output support. */
+        /*! Run the given callable with disabled ANSI output support. */
         void withoutAnsi(const std::function<void()> &callback);
         /*! Enable ANSI support. */
         inline InteractsWithIO &enableAnsi();
@@ -208,9 +208,9 @@ namespace Concerns
 
         /*! Initialize verbosity by set options in the command-line parser. */
         static Verbosity initializeVerbosity(const QCommandLineParser &parser);
-        /*! Initialize ansi support by set options in the command-line parser. */
+        /*! Initialize ANSI support by set options in the command-line parser. */
         static std::optional<bool> initializeAnsi(const QCommandLineParser &parser);
-        /*! Initialize ansi support by noAnsi passed to the Application::logException. */
+        /*! Initialize ANSI support by noAnsi passed to the Application::logException. */
         static std::optional<bool> initializeNoAnsi(bool noAnsi);
 
         /*! Number of the option name set on the command-line (used by eg. -vvv). */
@@ -219,9 +219,9 @@ namespace Concerns
         /*! Determine whether discard output by the current and the given verbosity. */
         bool dontOutput(Verbosity verbosity) const;
 
-        /*! Should the given output use ansi? (ansi is disabled for non-tty). */
+        /*! Should the given output use ANSI? (ANSI is disabled for non-tty). */
         bool isAnsiOutput(const std::ostream &cout = std::cout) const;
-        /*! Should the given output use ansi? (ansi is disabled for non-tty),
+        /*! Should the given output use ANSI? (ANSI is disabled for non-tty),
             wide version. */
         bool isAnsiWOutput(const std::wostream &cout = std::wcout) const;
 
@@ -239,14 +239,14 @@ namespace Concerns
             Color green = Color::green;
             Color red   = Color::red;
         };
-        /*! Initialize tabulate table colors by supported ansi. */
+        /*! Initialize tabulate table colors by supported ANSI. */
         TableColors initializeTableColors() const;
 
         /*! Is this input means interactive? */
         bool m_interactive = true;
         /*! Current application verbosity (defined by passed command-line options). */
         Verbosity m_verbosity = Normal;
-        /*! Current application ansi passed by command-line option. */
+        /*! Current application ANSI passed by command-line option. */
         std::optional<bool> m_ansi = std::nullopt;
         /*! Describes current terminal features. */
         std::unique_ptr<Terminal> m_terminal;

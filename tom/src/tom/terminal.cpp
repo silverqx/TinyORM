@@ -24,7 +24,7 @@ using Qt::StringLiterals::operator""_s;
 namespace Tom
 {
 
-// I can tell that ansi logic detection in this class is a real porn 😎
+// I can tell that ANSI logic detection in this class is a real porn 😎
 
 /* public */
 

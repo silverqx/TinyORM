@@ -147,7 +147,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     if (dontOutput(verbosity))
         return *this;
 
-    // Do not print an error wall when ansi is disabled
+    // Do not print an error wall when ANSI is disabled
     if (!isAnsiOutput())
         return line(string, true, verbosity, {}, std::cerr);
 
@@ -237,7 +237,7 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
     if (dontOutput(verbosity))
         return *this;
 
-    // Do not print an error wall when ansi is disabled
+    // Do not print an error wall when ANSI is disabled
     if (!isAnsiWOutput())
         return wline(string, true, verbosity, {}, std::wcerr);
 
@@ -292,7 +292,7 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
     for (const auto &row : rows)
         table.add_row(row);
 
-    // Initialize tabulate table colors by supported ansi
+    // Initialize tabulate table colors by supported ANSI
     const auto [green, red] = initializeTableColors();
 
     // Format table
@@ -389,7 +389,7 @@ QString InteractsWithIO::stripAnsiTags(QString string)
 
 void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
 {
-    // Nothing to do, ansi is already disabled
+    // Nothing to do, ANSI is already disabled
     if (m_ansi && !m_ansi.value())
         return std::invoke(callback); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
@@ -416,7 +416,7 @@ void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
 QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
 {
     // FUTURE ansi, keep track and restore previous styles, don't use ESC[0m, practically recursive parser with nested tags needed silverqx
-    // ansi output
+    // ANSI output
     if (isAnsi)
         return string
                 .replace(u"<note>"_s,     EMPTY)
@@ -500,7 +500,7 @@ bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
 
 bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 {
-    // ansi was set explicitly on the command-line, respect it
+    // ANSI was set explicitly on the command-line, respect it
     if (m_ansi)
         return *m_ansi;
 
@@ -510,7 +510,7 @@ bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 
 bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
 {
-    // ansi was set explicitly on the command-line, respect it
+    // ANSI was set explicitly on the command-line, respect it
     if (m_ansi)
         return *m_ansi;
 
@@ -611,7 +611,7 @@ InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
 
 InteractsWithIO::TableColors InteractsWithIO::initializeTableColors() const
 {
-    /* Even is I detect ansi support as true, tabulate has it's own detection logic,
+    /* Even is I detect ANSI support as true, tabulate has it's own detection logic,
        it only check isatty(), it has some consequences, eg. no colors when output
        is redirected and --ansi was passed to the tom application, practically all the
        logic in the isAnsiOutput() will be skipped because of this tabulate internal

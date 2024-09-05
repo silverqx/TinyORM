@@ -53,9 +53,9 @@ namespace Tom
         static TerminalSize terminalSize() noexcept;
 
         /* Operations on a Terminal instance */
-        /*! Supports the given output ansi colors? (ansi is disabled for non-tty). */
+        /*! Supports the given output ANSI colors? (ANSI is disabled for non-tty). */
         bool hasColorSupport(const std::ostream &cout = std::cout) const;
-        /*! Supports the given output ansi colors? (ansi is disabled for non-tty),
+        /*! Supports the given output ANSI colors? (ANSI is disabled for non-tty),
             wide version. */
         bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
 
@@ -70,7 +70,7 @@ namespace Tom
         inline int lastHeight() const noexcept;
 
     private:
-        /*! Supports the given output ansi colors? (common logic). */
+        /*! Supports the given output ANSI colors? (common logic). */
         template<OStreamConcept O>
         bool hasColorSupportInternal(const O &cout, FILE *stream) const;
 
@@ -92,9 +92,9 @@ namespace Tom
         static void enableVt100Support();
 #endif
 
-        /*! Cache for detected ansi output. */
+        /*! Cache for detected ANSI output. */
         mutable std::unordered_map<const std::ostream *, bool> m_isAnsiOutput;
-        /*! Cache for detected ansi output, wide version. */
+        /*! Cache for detected ANSI output, wide version. */
         mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput;
 
         /*! Current terminal width. */
