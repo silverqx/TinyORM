@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <QString>
+
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,9 +14,11 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Stubs
 {
 
+    using Qt::StringLiterals::operator""_s;
+
     /*! Register-ArgumentCompleter command content. */
-    inline const auto *const RegisterArgumentCompleter =
-R"(
+    inline const auto RegisterArgumentCompleter =
+uR"(
 # TinyORM tom tab-completion
 # ---
 
@@ -34,12 +38,12 @@ Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
         }
 }
 
-)";
+)"_s;
 
 #if defined(__linux__) || defined(__MINGW32__)
 /*! TinyORM tom bash completion file content. */
-inline const auto *const TomBashCompletionContent =
-R"TTT(# bash completion for tom                                -*- shell-script -*-
+inline const auto TomBashCompletionContent =
+uR"TTT(# bash completion for tom                                -*- shell-script -*-
 
 # Provide file/dir completion for the following commands
 __tom_filedir()
@@ -202,11 +206,11 @@ _tom()
 
 # ex: filetype=sh
 
-)TTT";
+)TTT"_s;
 
 /*! TinyORM tom zsh completion file content. */
-inline const auto *const TomZshCompletionContent =
-R"TTT(#compdef tom tom_testdata
+inline const auto TomZshCompletionContent =
+uR"TTT(#compdef tom tom_testdata
 
 # Completion for the TinyORM tom application
 
@@ -530,7 +534,7 @@ _tom() {
     esac
 }
 
-)TTT";
+)TTT"_s;
 #endif
 
 } // namespace Tom::Commands::Stubs

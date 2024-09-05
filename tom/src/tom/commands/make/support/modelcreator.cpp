@@ -246,8 +246,8 @@ ModelCreator::createOneToOneRelation(
             continue;
 
         // Insert to model includes, usings, and relations lists
-        m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
+        m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
+        m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessOneTypeRelationName(relatedClass);
@@ -304,8 +304,8 @@ ModelCreator::createOneToManyRelation(
             continue;
 
         // Insert to model includes, usings, and relations lists
-        m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
+        m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
+        m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessManyTypeRelationName(relatedClass);
@@ -362,8 +362,8 @@ ModelCreator::createBelongsToRelation(
             continue;
 
         // Insert to model includes, usings, and relations lists
-        m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
+        m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
+        m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto relationName      = guessOneTypeRelationName(relatedClass);
@@ -461,8 +461,8 @@ ModelCreator::createBelongsToManyRelation(
             continue;
 
         // Insert to model includes, usings, and relations lists
-        m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
+        m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
+        m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
         const auto isPivotClassEmpty = pivotClass.isEmpty();
@@ -551,7 +551,7 @@ void ModelCreator::handlePivotClass(const QString &pivotClass,
         return;
 
     // User-defined Pivot
-    m_includesList.emplace(QString(ModelIncludeItemStub).arg(pivotClass.toLower()));
+    m_includesList.emplace(ModelIncludeItemStub.arg(pivotClass.toLower()));
 }
 
 void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasses)
@@ -572,12 +572,11 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
 
         // Pivot class needs <orm> include and also using Orm::...
         if (inverseClass == PivotConst) {
-            m_usingsList.emplace(QString(ModelUsingItemStub).arg(PivotConst));
-            m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
+            m_usingsList.emplace(ModelUsingItemStub.arg(PivotConst));
+            m_includesOrmList.emplace(ModelIncludeOrmItemStub
                                       .arg(u"tiny/relations/pivot.hpp"_s));
         } else
-            m_includesList.emplace(QString(ModelIncludeItemStub)
-                                   .arg(inverseClass.toLower()));
+            m_includesList.emplace(ModelIncludeItemStub.arg(inverseClass.toLower()));
     });
 }
 
@@ -725,29 +724,27 @@ QString ModelCreator::createPrivateSection(
         privateSection.append(NEWLINE);
 
     if (!table.isEmpty())
-        privateSection += QString(ModelTableStub).arg(table);
+        privateSection += ModelTableStub.arg(table);
 
     if (!primaryKey.isEmpty())
-        privateSection += QString(ModelPrimaryKeyStub).arg(primaryKey);
+        privateSection += ModelPrimaryKeyStub.arg(primaryKey);
 
     if (incrementing)
-        privateSection += QString(ModelIncrementingStub).arg(u"true"_s);
+        privateSection += ModelIncrementingStub.arg(u"true"_s);
     else if (disableIncrementing)
-        privateSection += QString(ModelIncrementingStub).arg(u"false"_s);
+        privateSection += ModelIncrementingStub.arg(u"false"_s);
 
     if (!connection.isEmpty())
-        privateSection += QString(ModelConnectionStub).arg(connection);
+        privateSection += ModelConnectionStub.arg(connection);
 
     if (!with.isEmpty())
-        privateSection += QString(ModelWithStub).arg(prepareInitializerListValues(with));
+        privateSection += ModelWithStub.arg(prepareInitializerListValues(with));
 
     if (!fillable.isEmpty())
-        privateSection += QString(ModelFillableStub)
-                          .arg(prepareInitializerListValues(fillable));
+        privateSection += ModelFillableStub.arg(prepareInitializerListValues(fillable));
 
     if (!guarded.isEmpty())
-        privateSection += QString(ModelGuardedStub)
-                          .arg(prepareInitializerListValues(guarded));
+        privateSection += ModelGuardedStub.arg(prepareInitializerListValues(guarded));
 
     if (disableTimestamps)
         privateSection += ModelDisableTimestampsStub;
@@ -756,34 +753,29 @@ QString ModelCreator::createPrivateSection(
         privateSection += ModelCastsExampleStub;
 
     if (!dateFormat.isEmpty())
-        privateSection += QString(ModelDateFormatStub).arg(dateFormat);
+        privateSection += ModelDateFormatStub.arg(dateFormat);
 
     if (!dates.isEmpty())
-        privateSection += QString(ModelDatesStub)
-                          .arg(prepareInitializerListValues(dates));
+        privateSection += ModelDatesStub.arg(prepareInitializerListValues(dates));
 
     if (!touches.isEmpty())
-        privateSection += QString(ModelTouchesStub)
-                          .arg(prepareInitializerListValues(touches));
+        privateSection += ModelTouchesStub.arg(prepareInitializerListValues(touches));
 
     if (snakeAttributes)
-        privateSection += QString(ModelSnakeAttributesStub).arg(u"true"_s);
+        privateSection += ModelSnakeAttributesStub.arg(u"true"_s);
     else if (disableSnakeAttributes)
-        privateSection += QString(ModelSnakeAttributesStub).arg(u"false"_s);
+        privateSection += ModelSnakeAttributesStub.arg(u"false"_s);
 
     if (!visible.isEmpty())
-        privateSection += QString(ModelVisibleStub)
-                          .arg(prepareInitializerListValues(visible));
+        privateSection += ModelVisibleStub.arg(prepareInitializerListValues(visible));
 
     if (!hidden.isEmpty())
-        privateSection += QString(ModelHiddenStub)
-                          .arg(prepareInitializerListValues(hidden));
+        privateSection += ModelHiddenStub.arg(prepareInitializerListValues(hidden));
 
     privateSection += createMutatorsHash(className, accessors, appends);
 
     if (!appends.isEmpty())
-        privateSection += QString(ModelAppendsStub)
-                          .arg(prepareAppendsListValues(appends));
+        privateSection += ModelAppendsStub.arg(prepareAppendsListValues(appends));
 
     if (!privateSection.isEmpty()) {
         // Prepend the private: specifier if the public section exists
@@ -1226,7 +1218,7 @@ QString ModelCreator::wrapMutatorItemsList(const QStringList &mutatorItems)
 QString ModelCreator::createIncludesOrmSection(const CmdOptions &cmdOptions)
 {
     // Will always contain
-    m_includesOrmList.emplace(QString(ModelIncludeOrmItemStub)
+    m_includesOrmList.emplace(ModelIncludeOrmItemStub
                               .arg(cmdOptions.pivotModel
                                    ? u"tiny/relations/basepivot.hpp"_s
                                    : u"tiny/model.hpp"_s));

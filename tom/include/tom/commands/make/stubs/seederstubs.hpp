@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <QString>
+
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,8 +14,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make::Stubs
 {
 
+using Qt::StringLiterals::operator""_s;
+
 /*! Seeder stub. */
-inline const auto *const SeederStub = R"(#pragma once
+inline const auto SeederStub = uR"(#pragma once
 
 #include <tom/seeder.hpp>
 
@@ -30,7 +34,7 @@ namespace Seeders
     };
 
 } // namespace Seeders
-)";
+)"_s;
 
 } // namespace Tom::Commands::Make::Stubs
 

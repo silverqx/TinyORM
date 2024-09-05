@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <QString>
+
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,8 +14,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom::Commands::Make::Stubs
 {
 
+using Qt::StringLiterals::operator""_s;
+
 /*! Empty migration stub. */
-inline const auto *const MigrationStub = R"(#pragma once
+inline const auto MigrationStub = uR"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -39,10 +43,10 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)";
+)"_s;
 
 /*! Migration stub for creating a new table. */
-inline const auto *const MigrationCreateStub = R"(#pragma once
+inline const auto MigrationCreateStub = uR"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -72,10 +76,10 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)";
+)"_s;
 
 /*! Migration stub for updating an existing table. */
-inline const auto *const MigrationUpdateStub = R"(#pragma once
+inline const auto MigrationUpdateStub = uR"(#pragma once
 
 #include <tom/migration.hpp>
 
@@ -107,7 +111,7 @@ namespace Migrations
     };
 
 } // namespace Migrations
-)";
+)"_s;
 
 } // namespace Tom::Commands::Make::Stubs
 

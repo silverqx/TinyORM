@@ -48,18 +48,13 @@ fspath MigrationCreator::create(
 
 QString MigrationCreator::getStub(const QString &table, const bool create)
 {
-    QString stub;
-
     if (table.isEmpty())
-        stub = MigrationStub;
+        return MigrationStub;
 
-    else if (create)
-        stub = MigrationCreateStub;
+    if (create)
+        return MigrationCreateStub;
 
-    else
-        stub = MigrationUpdateStub;
-
-    return stub;
+    return MigrationUpdateStub;
 }
 
 fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &name,
