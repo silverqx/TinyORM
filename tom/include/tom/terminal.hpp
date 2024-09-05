@@ -121,7 +121,7 @@ namespace Tom
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
         // BUG msvc the using Qt::StringLiterals::operator""_L1; doesn't work here, compilation fails silverqx
-        using namespace Qt::StringLiterals;
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 #ifndef _WIN32
         Q_UNUSED(cout)

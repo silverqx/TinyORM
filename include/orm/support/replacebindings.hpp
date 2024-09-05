@@ -45,7 +45,7 @@ namespace Orm::Support
                                           const bool simpleBindings)
     {
         // BUG msvc the using Qt::StringLiterals::operator""_s; doesn't work here, compilation fails silverqx
-        using namespace Qt::StringLiterals;
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         // Can't use orm/constants.hpp because this class will be also used in TinyDrivers
         static const auto Invalid     = u"INVALID"_s;
