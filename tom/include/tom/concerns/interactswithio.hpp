@@ -219,9 +219,9 @@ namespace Concerns
         /*! Determine whether discard output by the current and the given verbosity. */
         bool dontOutput(Verbosity verbosity) const;
 
-        /*! Should the given output use ANSI? (ANSI is disabled for non-tty). */
+        /*! Should the given output use ANSI? (ANSI is disabled without TTY). */
         bool isAnsiOutput(const std::ostream &cout = std::cout) const;
-        /*! Should the given output use ANSI? (ANSI is disabled for non-tty),
+        /*! Should the given output use ANSI? (ANSI is disabled without TTY),
             wide version. */
         bool isAnsiWOutput(const std::wostream &cout = std::wcout) const;
 

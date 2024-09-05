@@ -53,9 +53,9 @@ namespace Tom
         static TerminalSize terminalSize() noexcept;
 
         /* Operations on a Terminal instance */
-        /*! Supports the given output ANSI colors? (ANSI is disabled for non-tty). */
+        /*! Supports the given output ANSI colors? (ANSI is disabled without TTY). */
         bool hasColorSupport(const std::ostream &cout = std::cout) const;
-        /*! Supports the given output ANSI colors? (ANSI is disabled for non-tty),
+        /*! Supports the given output ANSI colors? (ANSI is disabled without TTY),
             wide version. */
         bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
 
