@@ -61,10 +61,10 @@ namespace Concerns
 
         /*! Validate command option. */
         static void validateOption(const QCommandLineOption &option);
-        /*! Get the command's options list. */
+        /*! Get the command's options list (to unwrap the std::reference_wrapper<>). */
         inline const QList<CommandLineOption> &options() const noexcept;
 
-        /*! Get the reference to the base InteractsWithIO concern. */
+        /*! Get the reference to the base InteractsWithIO concern (unwrap reference). */
         inline const Concerns::InteractsWithIO &io() const noexcept;
 
         /*! Reference to the command's options list. */
