@@ -171,7 +171,7 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
 {
     // Prepare namespaces for the errorWall()
     const auto formattedNamespaces = namespaces
-            | ranges::views::transform([](const auto &ambiguousNsName) -> QString
+            | ranges::views::transform([](const auto &ambiguousNsName)
     {
         return u"    %1"_s.arg(ambiguousNsName);
     })
