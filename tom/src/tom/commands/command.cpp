@@ -134,7 +134,7 @@ QStringList Command::optionNames() const
        using the , character 🤯. */
 
     // Allow to escape , char using \,
-    static const QRegularExpression regex(R"((?<!\\),)");
+    static const QRegularExpression regex(uR"((?<!\\),)"_s);
 
     auto optionNames = parser().optionNames();
 
@@ -208,7 +208,7 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
     valuesSplitted.reserve(values.size() + commasCount(values));
 
     // Allow to escape , char using \,
-    static const QRegularExpression regex(R"((?<!\\),)");
+    static const QRegularExpression regex(uR"((?<!\\),)"_s);
 
     // Support passing more values delimited by comma
     for (auto &&value : values) {
