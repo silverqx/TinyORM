@@ -1,7 +1,5 @@
 #include "tom/commands/helpcommand.hpp"
 
-#include <QCommandLineOption>
-
 #include <orm/constants.hpp>
 
 #include "tom/application.hpp"

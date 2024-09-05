@@ -1,19 +1,17 @@
 #include "tom/concerns/printsoptions.hpp"
 
 #include <orm/constants.hpp>
-#include <orm/utils/string.hpp>
 
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
+#include "tom/types/commandlineoption.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA;
 using Orm::Constants::SPACE;
-
-using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::ShortOption;
 using Tom::Constants::LongOption;

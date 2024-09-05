@@ -1,14 +1,12 @@
 #include "tom/tomutils.hpp"
 
-#include <QList>
-
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include <orm/constants.hpp>
 #include <orm/utils/string.hpp>
 
 #include "tom/tomconstants.hpp"
+#include "tom/types/commandlineoption.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

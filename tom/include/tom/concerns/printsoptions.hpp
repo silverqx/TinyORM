@@ -5,9 +5,9 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <orm/macros/commonnamespace.hpp>
+#include <QString>
 
-#include "tom/types/commandlineoption.hpp"
+#include <orm/macros/commonnamespace.hpp>
 
 class QCommandLineOption;
 
@@ -19,6 +19,11 @@ namespace Commands
 {
     class Command;
 }
+namespace Types
+{
+    class CommandLineOption;
+}
+    using CommandLineOption = Types::CommandLineOption;
 
 namespace Concerns
 {

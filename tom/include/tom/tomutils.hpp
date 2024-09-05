@@ -5,12 +5,22 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "tom/types/commandlineoption.hpp"
+#include <QtGlobal>
+
+#include <orm/macros/commonnamespace.hpp>
+
+class QCommandLineOption;
+class QStringView;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
 {
+namespace Types
+{
+    class CommandLineOption;
+}
+    using CommandLineOption = Types::CommandLineOption;
 
     /*! Tom common utilities library class. */
     class Utils
