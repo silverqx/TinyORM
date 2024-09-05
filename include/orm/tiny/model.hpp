@@ -2171,6 +2171,14 @@ namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 
+namespace Models
+{
+    /*! Alias for the literal operator that creates a QLatin1Char/StringView. */
+    using Qt::StringLiterals::operator""_L1;
+    /*! Alias for the literal operator that creates a QString. */
+    using Qt::StringLiterals::operator""_s;
+} // namespace Models
+
 #endif // ORM_TINY_MODEL_HPP
 
 // TODO release, recompile without PCH silverqx
