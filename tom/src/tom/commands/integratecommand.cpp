@@ -222,7 +222,7 @@ bool IntegrateCommand::writeToPwshProfile(
     if (isPwshCompletionRegistered(pwshProfile, pwshProfileStream))
         return false;
 
-    // Apppend tab-completion code to the pwsh profile
+    // Append tab-completion code to the pwsh profile
     pwshProfileStream << Stubs::RegisterArgumentCompleter;
 
 #ifdef TINYTOM_DEBUG

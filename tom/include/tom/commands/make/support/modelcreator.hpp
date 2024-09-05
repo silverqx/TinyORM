@@ -185,7 +185,7 @@ namespace Tom::Commands::Make::Support
         QString createIncludesOrmSection(const CmdOptions &cmdOptions);
         /*! Create model's includes section. */
         QString createIncludesSection() const;
-        /*! Create model's usings section. */
+        /*! Create model's using-s section. */
         QString createUsingsSection(const CmdOptions &cmdOptions);
         /*! Create model's relations list for the Model base class. */
         QString createRelationsList() const;

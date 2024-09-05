@@ -245,7 +245,7 @@ ModelCreator::createOneToOneRelation(
         if (relatedClass.isEmpty())
             continue;
 
-        // Insert to model includes, usings, and relations lists
+        // Insert to model includes, using-s, and relations lists
         m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
         m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
@@ -303,7 +303,7 @@ ModelCreator::createOneToManyRelation(
         if (relatedClass.isEmpty())
             continue;
 
-        // Insert to model includes, usings, and relations lists
+        // Insert to model includes, using-s, and relations lists
         m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
         m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
@@ -361,7 +361,7 @@ ModelCreator::createBelongsToRelation(
         if (relatedClass.isEmpty())
             continue;
 
-        // Insert to model includes, usings, and relations lists
+        // Insert to model includes, using-s, and relations lists
         m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
         m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
@@ -460,7 +460,7 @@ ModelCreator::createBelongsToManyRelation(
         if (relatedClass.isEmpty())
             continue;
 
-        // Insert to model includes, usings, and relations lists
+        // Insert to model includes, using-s, and relations lists
         m_includesList.emplace(ModelIncludeItemStub.arg(relatedClass.toLower()));
         m_forwardsList.emplace(ModelForwardItemStub.arg(relatedClass));
         m_relationsList.emplace(relatedClass);
