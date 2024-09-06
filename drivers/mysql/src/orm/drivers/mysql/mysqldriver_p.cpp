@@ -1,5 +1,9 @@
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 
+#ifdef QT_LEAN_HEADERS
+#  include <QStringList>
+#endif
+
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/exceptions/sqlerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"

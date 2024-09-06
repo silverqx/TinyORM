@@ -1,6 +1,10 @@
 #include <QCoreApplication>
 #include <QTest>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QSet>
+#endif
+
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/schema.hpp"

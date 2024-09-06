@@ -4,6 +4,10 @@
 
 #include <QVariant>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/drivers/driverstypes.hpp"
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 #  include "orm/drivers/macros/export.hpp"

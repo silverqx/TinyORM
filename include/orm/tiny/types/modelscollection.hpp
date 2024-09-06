@@ -8,6 +8,11 @@ TINY_SYSTEM_HEADER
 #include <QJsonArray>
 #include <QJsonDocument>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QSet>
+#  include <QStringList>
+#endif
+
 #include <unordered_map>
 
 #include <range/v3/action/erase.hpp>

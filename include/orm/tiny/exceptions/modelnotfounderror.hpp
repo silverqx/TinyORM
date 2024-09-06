@@ -7,6 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QVariant>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/exceptions/runtimeerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

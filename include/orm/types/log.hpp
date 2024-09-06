@@ -4,6 +4,10 @@
 
 #include <QVariant>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 

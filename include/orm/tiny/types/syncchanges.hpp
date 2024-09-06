@@ -5,8 +5,11 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QList>
 #include <QVariant>
+
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
 
 #include <map>
 

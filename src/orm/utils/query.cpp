@@ -2,6 +2,10 @@
 
 #include <QDebug>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QMap>
+#endif
+
 #include TINY_INCLUDE_TSqlDriver
 #include TINY_INCLUDE_TSqlQuery
 

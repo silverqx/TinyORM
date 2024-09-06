@@ -7,6 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QVariant>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QStringList>
+#endif
+
 #include "orm/macros/commonnamespace.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

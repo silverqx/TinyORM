@@ -5,6 +5,10 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#ifdef QT_LEAN_HEADERS
+#  include <QStringList>
+#endif
+
 #include "orm/drivers/sqlfield.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

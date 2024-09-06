@@ -1,6 +1,10 @@
 #include <QCoreApplication>
 #include <QTest>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QSet>
+#endif
+
 #include <filesystem>
 
 #include "orm/db.hpp"

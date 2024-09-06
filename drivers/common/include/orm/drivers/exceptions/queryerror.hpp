@@ -7,6 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QVariant>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/drivers/exceptions/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

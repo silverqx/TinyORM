@@ -5,6 +5,10 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/query/expression.hpp"
 #include "orm/schema/schematypes.hpp"
 

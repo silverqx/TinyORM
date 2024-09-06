@@ -5,6 +5,11 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#ifdef QT_LEAN_HEADERS
+#  include <QMap>
+#  include <QStringList>
+#endif
+
 #include "orm/query/concerns/buildsqueries.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/utils/query.hpp"

@@ -7,6 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QTimeZone>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include <memory>
 #include <variant>
 

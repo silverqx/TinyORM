@@ -5,6 +5,10 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#ifdef QT_LEAN_HEADERS
+#  include <QMap>
+#endif
+
 #include <set>
 #include <unordered_set>
 
