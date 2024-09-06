@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtCore/qcontainerfwd.h>
+#include <QtContainerFwd>
 
 #include <concepts>
 
