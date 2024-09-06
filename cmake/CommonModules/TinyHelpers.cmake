@@ -103,53 +103,6 @@ macro(tiny_find_and_link_mysql target)
 
 endmacro()
 
-# Add a simple build option which controls compile definition(s) for a target.
-#
-# Synopsis:
-# target_optional_compile_definitions(<target> <scope> [FEATURE]
-#   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
-#   [ENABLED [enabled_compile_definitions...]]
-#   [DISABLED [disabled_compile_defnitions...]]
-# )
-#
-# NAME, DESCRIPTION and DEFAULT are passed to option() command.
-# If FEATURE is given, they are also passed to add_feature_info() command.
-# <scope> determines the scope for the following compile definitions.
-# ENABLED lists compile definitions that will be set on <target> when option is enabled,
-# DISABLED lists definitions that will be set otherwise.
-# ADVANCED calls mark_as_advanced(<NAME>) command.
-function(target_optional_compile_definitions target scope)
-
-    set(options ADVANCED FEATURE)
-    set(oneValueArgs NAME DESCRIPTION DEFAULT)
-    set(multiValueArgs ENABLED DISABLED)
-    cmake_parse_arguments(PARSE_ARGV 2 TINY "${options}" "${oneValueArgs}"
-        "${multiValueArgs}"
-    )
-
-    if(DEFINED TINY_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
-${TINY_UNPARSED_ARGUMENTS}")
-    endif()
-
-    option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
-
-    if(${${TINY_NAME}}) # Quotes not needed, don't care about lists for now
-        target_compile_definitions(${target} ${scope} ${TINY_ENABLED})
-    else()
-        target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
-    endif()
-
-    if(TINY_FEATURE)
-        add_feature_info(${TINY_NAME} ${TINY_NAME} "${TINY_DESCRIPTION}")
-    endif()
-
-    if(TINY_ADVANCED)
-        mark_as_advanced(${TINY_NAME})
-    endif()
-
-endfunction()
-
 # Set TINYORM_LTO macro based on the INTERPROCEDURAL_OPTIMIZATION target property
 # Used by the tom about command to show if the LTO is enabled
 function(tiny_set_lto_compile_definition target)
