@@ -1,6 +1,6 @@
 #include "orm/query/processors/processor.hpp"
 
-#include "orm/types/sqlquery.hpp"
+#include "orm/types/sqlquery.hpp" // IWYU pragma: keep
 #include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
