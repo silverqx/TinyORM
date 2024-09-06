@@ -15,7 +15,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
-using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
@@ -23,6 +22,7 @@ using Orm::Constants::TMPL_ONE;
 
 using StringUtils = Orm::Utils::String;
 
+using Tom::Constants::EMPTY;
 using Tom::Constants::ansi;
 using Tom::Constants::noansi;
 using Tom::Constants::nointeraction;

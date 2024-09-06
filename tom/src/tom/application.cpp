@@ -66,7 +66,6 @@ using DriversLibraryInfo = Orm::Drivers::LibraryInfo;
 #endif
 
 using Orm::Constants::COMMA;
-using Orm::Constants::EMPTY;
 #ifdef TINYDRIVERS_MYSQL_DRIVER
 using Orm::Constants::MYSQL_;
 #endif
@@ -109,6 +108,7 @@ using Tom::Constants::About;
 using Tom::Constants::Complete;
 using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
+using Tom::Constants::EMPTY;
 using Tom::Constants::Env;
 using Tom::Constants::Help;
 using Tom::Constants::Inspire;

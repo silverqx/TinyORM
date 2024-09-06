@@ -31,7 +31,6 @@ using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
 #ifdef _MSC_VER
-using Orm::Constants::EMPTY;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::database_;
 #endif
