@@ -3,15 +3,18 @@
 # options/definitions
 function(tiny_common target)
 
+    # Arguments
     set(options EXPORT)
     set(oneValueArgs NAMESPACE NAME)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "${oneValueArgs}" "")
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Body
     add_library(${target} INTERFACE)
     add_library(${TINY_NAMESPACE}::${TINY_NAME} ALIAS ${target})
 

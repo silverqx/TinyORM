@@ -151,11 +151,13 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
     set(oneValueArgs VERSION_HEADER PREFIX HEADER_FOR)
     cmake_parse_arguments(PARSE_ARGV 5 TINY "" "${oneValueArgs}" "")
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Body
     # Debug setup
     list(APPEND CMAKE_MESSAGE_CONTEXT VersionHeader)
     set(mainMessage "Reading Version Header for ${TINY_HEADER_FOR}")
@@ -573,6 +575,7 @@ function(tiny_set_compatible_interface_string target)
     set(multiValueArgs PROPERTIES)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "" "" "${multiValueArgs}")
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")

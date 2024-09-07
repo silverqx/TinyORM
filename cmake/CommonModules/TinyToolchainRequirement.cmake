@@ -70,14 +70,17 @@ endfunction()
 # Make minimum toolchain version a requirement
 function(tiny_toolchain_requirement)
 
+    # Arguments
     set(oneValueArgs MSVC CLANG_CL GCC CLANG QT)
     cmake_parse_arguments(PARSE_ARGV 0 TINY "" "${oneValueArgs}" "")
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Body
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_MSVC)
             message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
