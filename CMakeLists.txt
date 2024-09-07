@@ -208,6 +208,18 @@ target_optional_compile_definitions(${TinyOrm_target}
         DISABLED TINYORM_DISABLE_TOM
 )
 
+# See: https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
+target_optional_compile_definitions(${TinyOrm_target}
+    PUBLIC
+        ADVANCED FEATURE NAME LEAN_HEADERS
+        DEFAULT OFF
+        DEFAULT_FROM_ENVIRONMENT TINYORM_QT_LEAN_HEADERS
+        DESCRIPTION "Set QT_LEAN_HEADERS=2 compile definition (forward declare \
+QList, QMap, QHash, QVarLengthArray, and QSet in <QVariant> and <QDebug> headers; \
+Default initial value can be set using the TINYORM_QT_LEAN_HEADERS environment variable)"
+        ENABLED QT_LEAN_HEADERS=2
+)
+
 # Depends on the TOM build option
 feature_option_dependent(TOM_EXAMPLE
     "Build the Tom command-line application example" OFF

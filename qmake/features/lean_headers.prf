@@ -1,0 +1,6 @@
+CONFIG *= lean_headers
+
+# Forward declare QList, QMap, QHash, QVarLengthArray, QSet, and QObject in <QVariant>
+# and <QDebug> headers instead of #include-ing them (reduce transitive includes)
+# See: https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
+DEFINES *= QT_LEAN_HEADERS=2

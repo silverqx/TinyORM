@@ -1,0 +1,49 @@
+# Set DEFINES *= QT_LEAN_HEADERS=2 based on CONFIG*=lean_headers (higher priority) and
+# TINYORM_QT_LEAN_HEADERS environment variable (CMake ON, TRUE, ...).
+defineTest(tiny_set_lean_headers_from_environment) {
+    # Nothing to do, lean_header was set in the $$CONFIG, it has a higher priority
+    lean_headers: \
+        return()
+
+    # Get the value of an environment variable
+    leanHeadersEnv = $$(TINYORM_QT_LEAN_HEADERS)
+
+    # Nothing to do, the environment variable is not set or empty
+    isEmpty(leanHeadersEnv): \
+        return()
+
+    # Nothing to do, the environment variable is not set to CMake ON, TRUE, ...
+    !tiny_is_cmake_true($$leanHeadersEnv): \
+        return()
+
+    DEFINES *= QT_LEAN_HEADERS=2
+    export(DEFINES)
+}
+
+# Determine if a string is the CMake true boolean value (1, ON, YES, TRUE, Y, or
+# a non-zero number (including floating point numbers)).
+defineTest(tiny_is_cmake_true) {
+    # Nothing to do
+    !defined(1, var) | \
+    isEmpty(1): \
+        return(false)
+
+    # Case-sensitive tests
+    equals(1, "0") | \
+    equals(1, "NOTFOUND") | \
+    # endsWith()
+    contains(1, "(?:.*)(?:-NOTFOUND)$"): \
+        return(false)
+
+    value = $$lower($$1)
+
+    # Case-insensitive tests
+    !equals(value, "off"): \
+    !equals(value, "no"): \
+    !equals(value, "n"): \
+    !equals(value, "false"): \
+    !equals(value, "ignore"): \
+        return(true)
+
+    return(false)
+}

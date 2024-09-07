@@ -11,23 +11,17 @@ endfunction()
 
 # Helper function for coupling option() and add_feature_info() and use the default value
 # from the given environment variable if defined, otherwise, use a value from the given
-# default CMake variable
+# default CMake variable. The 'default' CMake variable must be of the boolean type and
+# can't be empty!
 function(feature_option_environment name description environment_variable_name default)
 
-    # If an environment variable is defined, then use its value
-    if(DEFINED ENV{${environment_variable_name}})
-        if("$ENV{${environment_variable_name}}")
-            set(defaultValue ON)
-        else()
-            set(defaultValue OFF)
-        endif()
+    set(defaultValue "")
 
-    # Otherwise, use a value from the default CMake variable
-    else()
-        set(defaultValue "${default}")
-    endif()
+    tiny_get_default_value_from_environment(
+        defaultValue ${environment_variable_name} ${default}
+    )
 
-    feature_option(${name} "${description}" "${defaultValue}")
+    feature_option(${name} "${description}" ${defaultValue})
 
 endfunction()
 
@@ -119,6 +113,7 @@ endmacro()
 # Synopsis:
 # target_optional_compile_definitions(<target> <scope> [ADVANCED] [FEATURE]
 #   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
+#   DEFAULT_FROM_ENVIRONMENT <environment_variable_name>
 #   [ENABLED [enabled_compile_definitions...]]
 #   [DISABLED [disabled_compile_definitions...]]
 # )
@@ -130,12 +125,16 @@ endmacro()
 # ENABLED lists compile definitions that will be set on <target> when option is enabled.
 # DISABLED lists compile definitions that will be set on <target> when option is disabled.
 # ENABLED or DISABLE are passed to the target_compile_definitions() command.
-# DEFAULT can't be if they are passed and they must be of the boolean type.
+# DEFAULT_FROM_ENVIRONMENT get a default value for the option() command from the given
+# environment variable if it's defined otherwise use a value from the given <DEFAULT>
+# argument.
+# DEFAULT and DEFAULT_FROM_ENVIRONMENT can't be if they are passed and they must be
+# of the boolean type.
 function(target_optional_compile_definitions target scope)
 
     # Arguments
     set(options ADVANCED FEATURE)
-    set(oneValueArgs NAME DESCRIPTION DEFAULT)
+    set(oneValueArgs NAME DESCRIPTION DEFAULT DEFAULT_FROM_ENVIRONMENT)
     set(multiValueArgs ENABLED DISABLED)
     cmake_parse_arguments(PARSE_ARGV 2 TINY
         "${options}" "${oneValueArgs}" "${multiValueArgs}"
@@ -147,10 +146,28 @@ function(target_optional_compile_definitions target scope)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    option(${TINY_NAME} "${TINY_DESCRIPTION}" ${TINY_DEFAULT})
+    if("DEFAULT" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
+            "DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES
+    )
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing values for \
+arguments: ${TINY_KEYWORDS_MISSING_VALUES}")
+    endif()
 
+    # Body
+    # If an environment variable is defined then use its value otherwise
+    # use a value from the 'TINY_DEFAULT' CMake variable
+    set(defaultValue OFF)
+    # This macro sets the defaultValue value
+    tiny_get_default_value_from_environment_wrapper(
+        TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT}
+    )
+
+    option(${TINY_NAME} "${TINY_DESCRIPTION}" ${defaultValue}) # No need to quote the defaultValue as it can't be empty, is unquoted everywhere
+
+    # No need to check for empty TINY_ENABLED/DISABLED values
+    # for target_compile_definitions() because it ignores empty values
     if(${${TINY_NAME}}) # Quotes not needed, don't care about lists for now
-        target_compile_definitions(${target} ${scope} ${TINY_ENABLED})
+        target_compile_definitions(${target} ${scope} ${TINY_ENABLED}) # Don't quote TINY_ENABLED (it works also quoted for list values)
     else()
         target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
     endif()
@@ -164,3 +181,44 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
 endfunction()
+
+# Get a default value from the given environment variable if defined otherwise return
+# a value from the given 'default' CMake variable. Used by our option() helper functions
+# to set their default values ​​from an environment variable.
+# The 'default' CMake variable must be of the boolean type and can't be empty!
+function(tiny_get_default_value_from_environment out_variable name default)
+
+    # If an environment variable is defined then use its value
+    if(DEFINED ENV{${name}})
+        if("$ENV{${name}}")
+            set(defaultValue ON)
+        else()
+            set(defaultValue OFF)
+        endif()
+
+    # Otherwise, use a value from the 'default' CMake variable
+    else()
+        set(defaultValue ${default})
+    endif()
+
+    set(${out_variable} ${defaultValue} PARENT_SCOPE)
+
+endfunction()
+
+# Helper macro() for the target_optional_compile_definitions() for nice and terser code.
+# It must be a macro() because of if(DEFINED).
+# The 'default' CMake variable must be of the boolean type and can't be empty!
+macro(tiny_get_default_value_from_environment_wrapper name default)
+
+    # If an environment variable is defined then use its value
+    if(DEFINED ${name})
+        set(defaultValue "")
+
+        tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
+
+    # Otherwise, use a value from the 'TINY_DEFAULT' CMake variable
+    else()
+        set(defaultValue ${TINY_DEFAULT})
+    endif()
+
+endmacro()
