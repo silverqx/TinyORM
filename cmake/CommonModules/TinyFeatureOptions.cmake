@@ -133,6 +133,7 @@ endmacro()
 # DEFAULT can't be if they are passed and they must be of the boolean type.
 function(target_optional_compile_definitions target scope)
 
+    # Arguments
     set(options ADVANCED FEATURE)
     set(oneValueArgs NAME DESCRIPTION DEFAULT)
     set(multiValueArgs ENABLED DISABLED)
@@ -140,6 +141,7 @@ function(target_optional_compile_definitions target scope)
         "${multiValueArgs}"
     )
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
