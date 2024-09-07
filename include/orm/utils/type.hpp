@@ -77,7 +77,7 @@ namespace Orm::Utils
             so return ON/OFF for the Classic bool. */
         static QString normalizeCMakeBool(const QString &value);
         /*! Determine if a string is the CMake true bool value (1, ON, YES, TRUE, Y, or
-            a non-zero number (including floating point numbers). */
+            a non-zero number (including floating point numbers)). */
         static bool isCMakeTrue(const QString &value);
 
     private:
