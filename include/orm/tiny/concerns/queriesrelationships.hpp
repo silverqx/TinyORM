@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <stack>
 
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
-#include "orm/query/querybuilder.hpp"
+#include "orm/query/querybuilder.hpp" // IWYU pragma: keep
 #include "orm/tiny/relations/relation.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

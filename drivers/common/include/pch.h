@@ -17,9 +17,9 @@
 #  include <QDebug>
 #endif
 
-#include <mutex>
-#include <shared_mutex>
-#include <thread>
+#include <mutex>        // IWYU pragma: keep
+#include <shared_mutex> // IWYU pragma: keep
+#include <thread>       // IWYU pragma: keep
 
 #ifdef __linux__
 #  include <dlfcn.h>

@@ -27,12 +27,12 @@
 #  include <QtSql/QSqlRecord>
 #endif
 
-#include <fstream>
-#include <set>
-#include <stack>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_set>
+#include <fstream>       // IWYU pragma: keep
+#include <set>           // IWYU pragma: keep
+#include <stack>         // IWYU pragma: keep
+#include <typeindex>     // IWYU pragma: keep
+#include <typeinfo>      // IWYU pragma: keep
+#include <unordered_set> // IWYU pragma: keep
 
 #ifdef __GNUG__
 #  include <cxxabi.h>
