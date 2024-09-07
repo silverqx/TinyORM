@@ -120,7 +120,7 @@ endmacro()
 # target_optional_compile_definitions(<target> <scope> [FEATURE]
 #   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
 #   [ENABLED [enabled_compile_definitions...]]
-#   [DISABLED [disabled_compile_defnitions...]]
+#   [DISABLED [disabled_compile_definitions...]]
 # )
 #
 # NAME, DESCRIPTION and DEFAULT are passed to option() command.
