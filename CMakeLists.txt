@@ -215,7 +215,7 @@ target_optional_compile_definitions(${TinyOrm_target}
         DEFAULT OFF
         DEFAULT_FROM_ENVIRONMENT TINYORM_QT_LEAN_HEADERS
         DESCRIPTION "Set QT_LEAN_HEADERS=2 compile definition (forward declare \
-QList, QMap, QHash, QVarLengthArray, and QSet in <QVariant> and <QDebug> headers; \
+QList, QMap, QHash, QVarLengthArray, and QSet in qvariant.h and qdebug.h headers; \
 Default initial value can be set using the TINYORM_QT_LEAN_HEADERS environment variable)"
         ENABLED QT_LEAN_HEADERS=2
 )
