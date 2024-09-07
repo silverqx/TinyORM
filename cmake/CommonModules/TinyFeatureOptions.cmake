@@ -163,7 +163,9 @@ arguments: ${TINY_KEYWORDS_MISSING_VALUES}")
         TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT}
     )
 
-    option(${TINY_NAME} "${TINY_DESCRIPTION}" ${defaultValue}) # No need to quote the defaultValue as it can't be empty, is unquoted everywhere
+    string(CONCAT description "${TINY_DESCRIPTION} (default: ${defaultValue})")
+
+    option(${TINY_NAME} "${description}" ${defaultValue}) # No need to quote the defaultValue as it can't be empty, is unquoted everywhere
 
     # No need to check for empty TINY_ENABLED/DISABLED values
     # for target_compile_definitions() because it ignores empty values
@@ -174,7 +176,7 @@ arguments: ${TINY_KEYWORDS_MISSING_VALUES}")
     endif()
 
     if(TINY_FEATURE)
-        add_feature_info(${TINY_NAME} ${TINY_NAME} "${TINY_DESCRIPTION}")
+        add_feature_info(${TINY_NAME} ${TINY_NAME} "${description}")
     endif()
 
     if(TINY_ADVANCED)
