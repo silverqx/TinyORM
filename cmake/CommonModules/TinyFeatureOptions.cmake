@@ -137,8 +137,8 @@ function(target_optional_compile_definitions target scope)
     set(options ADVANCED FEATURE)
     set(oneValueArgs NAME DESCRIPTION DEFAULT)
     set(multiValueArgs ENABLED DISABLED)
-    cmake_parse_arguments(PARSE_ARGV 2 TINY "${options}" "${oneValueArgs}"
-        "${multiValueArgs}"
+    cmake_parse_arguments(PARSE_ARGV 2 TINY
+        "${options}" "${oneValueArgs}" "${multiValueArgs}"
     )
 
     # Arguments checks
