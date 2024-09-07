@@ -117,7 +117,7 @@ endmacro()
 # Add a simple build option which controls compile definition(s) for a target.
 #
 # Synopsis:
-# target_optional_compile_definitions(<target> <scope> [FEATURE]
+# target_optional_compile_definitions(<target> <scope> [ADVANCED] [FEATURE]
 #   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
 #   [ENABLED [enabled_compile_definitions...]]
 #   [DISABLED [disabled_compile_definitions...]]
@@ -125,10 +125,12 @@ endmacro()
 #
 # NAME, DESCRIPTION and DEFAULT are passed to option() command.
 # If FEATURE is given, they are also passed to add_feature_info() command.
+# ADVANCED calls the mark_as_advanced(<NAME>) command.
 # <scope> determines the scope for the following compile definitions.
-# ENABLED lists compile definitions that will be set on <target> when option is enabled,
-# DISABLED lists definitions that will be set otherwise.
-# ADVANCED calls mark_as_advanced(<NAME>) command.
+# ENABLED lists compile definitions that will be set on <target> when option is enabled.
+# DISABLED lists compile definitions that will be set on <target> when option is disabled.
+# ENABLED or DISABLE are passed to the target_compile_definitions() command.
+# DEFAULT can't be if they are passed and they must be of the boolean type.
 function(target_optional_compile_definitions target scope)
 
     set(options ADVANCED FEATURE)
