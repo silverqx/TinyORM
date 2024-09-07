@@ -3,7 +3,7 @@
 function(tinydrivers_sources out_headers_private out_headers out_sources)
 
     # Private Header files section
-    set(headers_private)
+    set(headers_private "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND headers_private constants_extern_p.hpp)
@@ -28,7 +28,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     )
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     list(APPEND headers
         concerns/selectsallcolumnswithlimit0.hpp
@@ -56,7 +56,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     )
 
     # Source files section
-    set(sources)
+    set(sources "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND sources constants_extern_p.cpp)
@@ -109,7 +109,7 @@ endfunction()
 function(tinymysqldriver_sources out_headers_private out_headers out_sources)
 
     # Private Header files section
-    set(headers_private)
+    set(headers_private "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND headers_private mysqlconstants_extern_p.hpp)
@@ -128,7 +128,7 @@ function(tinymysqldriver_sources out_headers_private out_headers out_sources)
     )
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     list(APPEND headers
         mysqldriver.hpp
@@ -137,7 +137,7 @@ function(tinymysqldriver_sources out_headers_private out_headers out_sources)
     )
 
     # Source files section
-    set(sources)
+    set(sources "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND sources mysqlconstants_extern_p.cpp)
@@ -178,7 +178,7 @@ endfunction()
 function(tinyorm_sources out_headers out_sources)
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND headers
@@ -366,7 +366,7 @@ function(tinyorm_sources out_headers out_sources)
     endif()
 
     # Source files section
-    set(sources)
+    set(sources "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND sources
@@ -471,7 +471,7 @@ endfunction()
 function(tinytom_sources out_headers out_sources)
 
     # Tom header files section
-    set(headers)
+    set(headers "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND headers tomconstants_extern.hpp)
@@ -544,7 +544,7 @@ function(tinytom_sources out_headers out_sources)
     )
 
     # Tom source files section
-    set(sources)
+    set(sources "")
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND sources tomconstants_extern.cpp)
@@ -613,7 +613,7 @@ endfunction()
 function(tiny_model_sources out_headers out_sources)
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     # Model Include lists (used to avoid duplicate #include-s) 😮
     list(APPEND headers
@@ -666,7 +666,7 @@ function(tiny_model_sources out_headers out_sources)
     )
 
     # Source files section (empty)
-    set(sources)
+    set(sources "")
 
     list(SORT headers)
 
@@ -682,7 +682,7 @@ endfunction()
 function(tiny_tests_migration_sources out_headers)
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     list(APPEND headers
         2014_10_12_000000_create_posts_table.hpp
@@ -706,7 +706,7 @@ endfunction()
 function(tiny_tests_seeder_sources out_headers)
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     list(APPEND headers
         databaseseeder.hpp
@@ -727,15 +727,15 @@ endfunction()
 function(tiny_tom_example_database_sources out_headers)
 
     # Header files section
-    set(migration_headers)
-    set(seeder_headers)
+    set(migration_headers "")
+    set(seeder_headers "")
 
     # Migrations
     tiny_tests_migration_sources(migration_headers)
     # Seeders
     tiny_tests_seeder_sources(seeder_headers)
 
-    set(headers)
+    set(headers "")
     list(APPEND headers ${migration_headers} ${seeder_headers})
 
     list(SORT headers)
@@ -749,7 +749,7 @@ endfunction()
 function(tiny_tom_testdata_database_sources out_headers)
 
     # Header files section
-    set(headers)
+    set(headers "")
 
     list(APPEND headers
         # Migrations

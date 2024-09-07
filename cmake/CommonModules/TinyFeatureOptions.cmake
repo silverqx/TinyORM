@@ -91,7 +91,8 @@ endmacro()
 # Helper function for coupling tiny_dependent_string_option() and add_feature_info()
 macro(feature_string_option_dependent name strings description default depends force)
 
-    set(allowedValues)
+    set(allowedValues "")
+
     string(JOIN ", " allowedValues ${strings})
     string(CONCAT desc
         "${description} (allowed values: ${allowedValues}; default: ${default}; \

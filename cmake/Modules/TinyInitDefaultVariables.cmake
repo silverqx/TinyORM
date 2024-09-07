@@ -136,7 +136,7 @@ builds
 
     # Remove the lib prefix for shared libraries
     if(MINGW)
-        set(CMAKE_SHARED_LIBRARY_PREFIX)
+        set(CMAKE_SHARED_LIBRARY_PREFIX "")
     endif()
 
     # Used to save and restore original content of the CMAKE_RC_FLAGS variable

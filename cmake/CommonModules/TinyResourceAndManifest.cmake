@@ -26,7 +26,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Initialize variables
-    set(tiny_original_extension)
     if(NOT TINY_OUTPUT_DIR)
         set(TINY_OUTPUT_DIR "tmp/")
     endif()
@@ -111,6 +110,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Manifest file (injected through the RC file on MinGW)
     if(NOT MINGW)
         # Obtain extension by target type - .exe or .dll
+        set(tiny_original_extension "")
+
         if(target_type STREQUAL "SHARED_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY")
             set(tiny_original_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
         elseif(target_type STREQUAL "EXECUTABLE")

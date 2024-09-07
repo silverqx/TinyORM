@@ -73,7 +73,7 @@ endmacro()
 # Generate find_dependency() calls for the TinyORM package config file
 function(tiny_generate_find_dependency_calls out_dependency_calls)
 
-    set(findDependencyCalls)
+    set(findDependencyCalls "")
 
     get_property(packageDependencies GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES)
 
@@ -606,8 +606,8 @@ endfunction()
 function(tiny_generate_target_includes out_variable)
 
     set(includeTmpl "include(\"\${CMAKE_CURRENT_LIST_DIR}/@target@.cmake\")")
-    set(includeReplaced)
-    set(result)
+    set(includeReplaced "")
+    set(result "")
 
     # The order is important here, the TinyDriversTargets must be included before
     # the TinyOrmTargets because of the checks whether the exported targets exist

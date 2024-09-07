@@ -6,7 +6,7 @@ function(tiny_get_target_configurations out_target_configuations)
 
     file(GLOB targets "${targetsDir}/${PACKAGE_FIND_NAME}[Tt]argets-*.cmake")
 
-    set(configurations)
+    set(configurations "")
 
     foreach(target ${targets})
         string(REGEX MATCH "${PACKAGE_FIND_NAME}[Tt]argets-([a-zA-Z]+).cmake$"
@@ -52,7 +52,7 @@ endfunction()
 # Convert target configurations to the printable string
 function(tiny_printable_configurations out_configurations configurations)
 
-    set(result)
+    set(result "")
 
     foreach(configuration ${configurations})
         string(SUBSTRING ${configuration} 0 1 firstLetter)

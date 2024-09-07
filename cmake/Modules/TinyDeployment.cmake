@@ -152,7 +152,7 @@ function(tiny_install_tinyorm)
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled, vcpkg doesn't need it because we are using the unofficial-libmysql
     # package config inside the vcpkg
-    set(tiny_cmake_module_path)
+    set(tiny_cmake_module_path "")
     if(NOT TINY_VCPKG AND (MYSQL_PING OR BUILD_MYSQL_DRIVER))
         install(FILES "cmake/Modules/FindMySQL.cmake"
             DESTINATION "${tiny_config_package_dir}/Modules"
@@ -175,7 +175,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     tiny_to_bool(cvf_is_vcpkg ${TINY_VCPKG}) # Don't quote, must fail if undefined
 
     # Generate target includes for the TinyORM package config file
-    set(tiny_target_includes)
+    set(tiny_target_includes "")
     tiny_generate_target_includes(tiny_target_includes)
 
     # Install destination directories for the Install Tree
@@ -264,7 +264,7 @@ function(tiny_export_build_tree)
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled, vcpkg doesn't need it because we are using the unofficial-libmysql
     # package config
-    set(tiny_cmake_module_path)
+    set(tiny_cmake_module_path "")
     if(NOT TINY_VCPKG AND (MYSQL_PING OR BUILD_MYSQL_DRIVER))
         file(COPY "cmake/Modules/FindMySQL.cmake" DESTINATION "cmake/Modules")
 
@@ -294,7 +294,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config}) # Don't quote, must fail if undefined
 
     # Generate target includes for the TinyORM package config file
-    set(tiny_target_includes)
+    set(tiny_target_includes "")
     tiny_generate_target_includes(tiny_target_includes)
 
     # Configure Package Config file for the Build Tree
@@ -343,7 +343,7 @@ function(tiny_build_tree_deployment)
         return()
     endif()
 
-    set(filesToDeploy)
+    set(filesToDeploy "")
 
     # All generator expressions below will be expanded during the add_custom_target() call
     if(TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS)

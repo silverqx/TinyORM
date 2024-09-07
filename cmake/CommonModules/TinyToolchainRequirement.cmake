@@ -126,7 +126,7 @@ upgrade Clang compiler")
     endif()
 
     # Minimum required Qt version (minReqQtVersion)
-    set(satisfiedMinReqQtVersion)
+    set(satisfiedMinReqQtVersion FALSE)
     tiny_satisfies_minimum_required_qt_version(satisfiedMinReqQtVersion)
 
     if(NOT satisfiedMinReqQtVersion)
