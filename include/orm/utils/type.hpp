@@ -8,7 +8,6 @@ TINY_SYSTEM_HEADER
 #include <QString>
 
 #include <typeindex>
-#include <typeinfo>
 
 #ifdef __GNUG__
 #  include <cxxabi.h>

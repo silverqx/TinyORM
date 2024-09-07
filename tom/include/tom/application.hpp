@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 
 #include <filesystem>
 #include <typeindex>
-#include <typeinfo>
 
 #include <range/v3/view/slice.hpp>
 

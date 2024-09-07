@@ -1,7 +1,5 @@
 #include "tom/migrator.hpp"
 
-#include <typeinfo>
-
 #include <orm/databaseconnection.hpp>
 #include <orm/utils/query.hpp>
 #include <orm/utils/type.hpp>

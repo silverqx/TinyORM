@@ -31,7 +31,6 @@
 #include <set>           // IWYU pragma: keep
 #include <stack>         // IWYU pragma: keep
 #include <typeindex>     // IWYU pragma: keep
-#include <typeinfo>      // IWYU pragma: keep
 #include <unordered_set> // IWYU pragma: keep
 
 #ifdef __GNUG__
