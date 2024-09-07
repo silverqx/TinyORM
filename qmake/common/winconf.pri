@@ -134,7 +134,7 @@ win32-clang-msvc {
         QMAKE_CXXFLAGS_WARN_ON += -Wno-microsoft-include
 
     # Always use colors in diagnostics
-    equals(QMAKE_LINK, lld-link): \
+    equals(QMAKE_LINK, "lld-link"): \
         QMAKE_LFLAGS *= --color-diagnostics
 }
 

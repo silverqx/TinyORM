@@ -29,7 +29,7 @@ defineTest(tiny_is_cmake_true) {
         return(false)
 
     # Case-sensitive tests
-    equals(1, "0") | \
+    equals(1, 0) | \
     equals(1, "NOTFOUND") | \
     # endsWith()
     contains(1, "(?:.*)(?:-NOTFOUND)$"): \
