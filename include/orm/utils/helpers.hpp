@@ -9,6 +9,10 @@ TINY_SYSTEM_HEADER
 
 #include "orm/constants.hpp"
 
+#ifndef TINYORM_EXTERN_CONSTANTS
+#  include "orm/macros/export.hpp"
+#endif
+
 class QDateTime;
 class QVariant; // clazy:exclude=qt6-fwd-fixes
 
