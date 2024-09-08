@@ -5,10 +5,13 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/macros/export.hpp"
 #include "orm/ormconcepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/container.hpp"
+
+#ifndef TINYORM_EXTERN_CONSTANTS
+#  include "orm/macros/export.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

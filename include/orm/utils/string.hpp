@@ -10,8 +10,11 @@ TINY_SYSTEM_HEADER
 #endif
 
 #include "orm/constants.hpp"
-#include "orm/macros/export.hpp"
 #include "orm/ormconcepts.hpp" // IWYU pragma: keep
+
+#ifndef TINYORM_EXTERN_CONSTANTS
+#  include "orm/macros/export.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

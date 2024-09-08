@@ -10,8 +10,11 @@ TINY_SYSTEM_HEADER
 
 #include <optional>
 
-#include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp"
+
+#ifndef TINYORM_EXTERN_CONSTANTS
+#  include "orm/macros/export.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

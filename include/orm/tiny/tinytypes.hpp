@@ -15,9 +15,12 @@ TINY_SYSTEM_HEADER
 #  include <unordered_map>
 #endif
 
-#include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp" // IWYU pragma: export
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
+
+#ifndef TINYORM_EXTERN_CONSTANTS
+#  include "orm/macros/export.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
