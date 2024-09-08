@@ -16,7 +16,9 @@ defineTest(tiny_set_lean_headers_from_environment) {
     !tiny_is_cmake_true($$leanHeadersEnv): \
         return()
 
+    CONFIG *= lean_headers
     DEFINES *= QT_LEAN_HEADERS=2
+    export(CONFIG)
     export(DEFINES)
 }
 
