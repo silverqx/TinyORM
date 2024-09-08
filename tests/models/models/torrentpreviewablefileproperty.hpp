@@ -25,31 +25,31 @@ public:
     torrentFile()
     {
         return belongsTo<TorrentPreviewableFile>(
-                    "previewable_file_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    u"previewable_file_id"_s, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     /*! Get a property property associated with the file property. */
     std::unique_ptr<HasMany<TorrentPreviewableFileProperty, FilePropertyProperty>>
     filePropertyProperty()
     {
-        return hasMany<FilePropertyProperty>("file_property_id");
+        return hasMany<FilePropertyProperty>(u"file_property_id"_s);
     }
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"torrent_previewable_file_properties"};
+    QString u_table {u"torrent_previewable_file_properties"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrentFile",          [](auto &v) { v(&TorrentPreviewableFileProperty::torrentFile); }},
-        {"filePropertyProperty", [](auto &v) { v(&TorrentPreviewableFileProperty::filePropertyProperty); }},
+        {u"torrentFile"_s,          [](auto &v) { v(&TorrentPreviewableFileProperty::torrentFile); }},
+        {u"filePropertyProperty"_s, [](auto &v) { v(&TorrentPreviewableFileProperty::filePropertyProperty); }},
     };
 
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false; // Timestamps disabled explicitly (even if the table has timestamp columns; they aren't used anywhere)
 
     /*! All of the relationships to be touched. */
-    QStringList u_touches {"torrentFile"};
+    QStringList u_touches {u"torrentFile"_s};
 };
 
 } // namespace Models

@@ -15,7 +15,7 @@ class TorrentPeer_NoRelations final : public Model<TorrentPeer_NoRelations> // N
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrent_peers"};
+    QString u_table {u"torrent_peers"_s};
 };
 
 } // namespace Models

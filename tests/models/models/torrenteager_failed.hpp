@@ -15,11 +15,11 @@ class TorrentEager_Failed final : public Model<TorrentEager_Failed> // NOLINT(bu
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "torrentFiles-NON_EXISTENT",
+        u"torrentFiles-NON_EXISTENT"_s,
     };
 };
 

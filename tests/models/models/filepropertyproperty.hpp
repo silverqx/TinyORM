@@ -28,15 +28,15 @@ public:
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"file_property_properties"};
+    QString u_table {u"file_property_properties"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"fileProperty", [](auto &v) { v(&FilePropertyProperty::fileProperty); }},
+        {u"fileProperty"_s, [](auto &v) { v(&FilePropertyProperty::fileProperty); }},
     };
 
     /*! All of the relationships to be touched. */
-    QStringList u_touches {"fileProperty"};
+    QStringList u_touches {u"fileProperty"_s};
 };
 
 } // namespace Models

@@ -32,8 +32,8 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Torrent>();
 
-        relation/*->as("tagged")*/
-                ->withPivot("active")
+        relation/*->as(u"tagged"_s)*/
+                ->withPivot(u"active"_s)
                  .withTimestamps();
 
         return relation;
@@ -45,7 +45,7 @@ public:
     {
         // Ownership of a unique_ptr()
         return belongsToMany<Torrent>({}, {}, {}, {}, {},
-                                      "torrents_WithoutPivotAttributes");
+                                      u"torrents_WithoutPivotAttributes"_s);
     }
 
     /*! Get a tag property associated with the tag. */
@@ -62,27 +62,27 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Role>();
 
-        relation->as("acl")
-                 .withPivot("active");
+        relation->as(u"acl"_s)
+                 .withPivot(u"active"_s);
 
         return relation;
     }
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"torrent_tags"};
+    QString u_table {u"torrent_tags"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrents",                        [](auto &v) { v(&Tag::torrents); }},
-        {"torrents_WithoutPivotAttributes", [](auto &v) { v(&Tag::torrents_WithoutPivotAttributes); }},
-        {"tagProperty",                     [](auto &v) { v(&Tag::tagProperty); }},
-        {"roles",                           [](auto &v) { v(&Tag::roles); }},
+        {u"torrents"_s,                        [](auto &v) { v(&Tag::torrents); }},
+        {u"torrents_WithoutPivotAttributes"_s, [](auto &v) { v(&Tag::torrents_WithoutPivotAttributes); }},
+        {u"tagProperty"_s,                     [](auto &v) { v(&Tag::tagProperty); }},
+        {u"roles"_s,                           [](auto &v) { v(&Tag::roles); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "tagProperty",
+        u"tagProperty"_s,
     };
 
     /*! The attributes that are mass assignable. */
@@ -92,7 +92,7 @@ private:
     };
 
     /*! All of the relationships to be touched. */
-    QStringList u_touches {"torrents"};
+    QStringList u_touches {u"torrents"_s};
 };
 
 } // namespace Models

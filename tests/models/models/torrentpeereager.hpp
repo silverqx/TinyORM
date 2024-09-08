@@ -26,16 +26,16 @@ public:
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"torrent_peers"};
+    QString u_table {u"torrent_peers"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrent", [](auto &v) { v(&TorrentPeerEager::torrent); }},
+        {u"torrent"_s, [](auto &v) { v(&TorrentPeerEager::torrent); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "torrent",
+        u"torrent"_s,
     };
 };
 

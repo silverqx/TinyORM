@@ -15,7 +15,7 @@ class TagProperty final : public Model<TagProperty> // NOLINT(bugprone-exception
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"tag_properties"};
+    QString u_table {u"tag_properties"_s};
 };
 
 } // namespace Models

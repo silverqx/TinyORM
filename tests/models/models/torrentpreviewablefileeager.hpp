@@ -28,27 +28,28 @@ public:
                            TorrentPreviewableFileProperty_NoRelations>>
     fileProperty()
     {
-        return hasOne<TorrentPreviewableFileProperty_NoRelations>("previewable_file_id");
+        return hasOne<TorrentPreviewableFileProperty_NoRelations>(
+                    u"previewable_file_id"_s);
     }
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"torrent_previewable_files"};
+    QString u_table {u"torrent_previewable_files"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"fileProperty", [](auto &v) { v(&TorrentPreviewableFileEager::fileProperty); }},
+        {u"fileProperty"_s, [](auto &v) { v(&TorrentPreviewableFileEager::fileProperty); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "fileProperty",
+        u"fileProperty"_s,
     };
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        "file_index",
-        "filepath",
+        u"file_index"_s,
+        u"filepath"_s,
         SIZE_,
         Progress,
         NOTE,

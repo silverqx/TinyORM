@@ -31,7 +31,7 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<User>();
 
-        relation->withPivot("active");
+        relation->withPivot(u"active"_s);
 
         return relation;
     }
@@ -39,7 +39,7 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"users", [](auto &v) { v(&Role::users); }},
+        {u"users"_s, [](auto &v) { v(&Role::users); }},
     };
 
     /*! The attributes that are mass assignable. */

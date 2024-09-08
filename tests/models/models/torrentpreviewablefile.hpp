@@ -39,7 +39,7 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent>(
-                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                            u"torrent_id"_s, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault();
 
@@ -52,9 +52,9 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent>(
-                            "torrent_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                            u"torrent_id"_s, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
-        relation->withDefault({{NAME, "default_torrent_name"}, {SIZE_, 123}});
+        relation->withDefault({{NAME, u"default_torrent_name"_s}, {SIZE_, 123}});
 
         return relation;
     }
@@ -63,14 +63,14 @@ public:
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty()
     {
-        return hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+        return hasOne<TorrentPreviewableFileProperty>(u"previewable_file_id"_s);
     }
 
     /*! Get a file property associated with the previewable file. */
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithBoolDefault()
     {
-        auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+        auto relation = hasOne<TorrentPreviewableFileProperty>(u"previewable_file_id"_s);
 
         relation->withDefault();
 
@@ -81,9 +81,9 @@ public:
     std::unique_ptr<HasOne<TorrentPreviewableFile, TorrentPreviewableFileProperty>>
     fileProperty_WithVectorDefaults()
     {
-        auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
+        auto relation = hasOne<TorrentPreviewableFileProperty>(u"previewable_file_id"_s);
 
-        relation->withDefault({{NAME, "default_fileproperty_name"}, {SIZE_, 321}});
+        relation->withDefault({{NAME, u"default_fileproperty_name"_s}, {SIZE_, 321}});
 
         return relation;
     }
@@ -94,38 +94,38 @@ protected:
     {
         return Attribute::make(/* get */ [this]() -> QVariant
         {
-            return SPACE_IN.arg(getAttribute<QString>("filepath"),
-                                PARENTH_ONE.arg("dummy-STRING"));
+            return SPACE_IN.arg(getAttribute<QString>(u"filepath"_s),
+                                PARENTH_ONE.arg(u"dummy-STRING"_s));
         });
     }
 
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrent",                         [](auto &v) { v(&TorrentPreviewableFile::torrent); }},
-        {"torrent_WithBoolDefault",         [](auto &v) { v(&TorrentPreviewableFile::torrent_WithBoolDefault); }},
-        {"torrent_WithVectorDefaults",      [](auto &v) { v(&TorrentPreviewableFile::torrent_WithVectorDefaults); }},
-        {"fileProperty",                    [](auto &v) { v(&TorrentPreviewableFile::fileProperty); }},
-        {"fileProperty_WithBoolDefault",    [](auto &v) { v(&TorrentPreviewableFile::fileProperty_WithBoolDefault); }},
-        {"fileProperty_WithVectorDefaults", [](auto &v) { v(&TorrentPreviewableFile::fileProperty_WithVectorDefaults); }},
+        {u"torrent"_s,                         [](auto &v) { v(&TorrentPreviewableFile::torrent); }},
+        {u"torrent_WithBoolDefault"_s,         [](auto &v) { v(&TorrentPreviewableFile::torrent_WithBoolDefault); }},
+        {u"torrent_WithVectorDefaults"_s,      [](auto &v) { v(&TorrentPreviewableFile::torrent_WithVectorDefaults); }},
+        {u"fileProperty"_s,                    [](auto &v) { v(&TorrentPreviewableFile::fileProperty); }},
+        {u"fileProperty_WithBoolDefault"_s,    [](auto &v) { v(&TorrentPreviewableFile::fileProperty_WithBoolDefault); }},
+        {u"fileProperty_WithVectorDefaults"_s, [](auto &v) { v(&TorrentPreviewableFile::fileProperty_WithVectorDefaults); }},
     };
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        "file_index",
-        "filepath",
+        u"file_index"_s,
+        u"filepath"_s,
         SIZE_,
         Progress,
         NOTE,
     };
 
     /*! All of the relationships to be touched. */
-    QStringList u_touches {"torrent"};
+    QStringList u_touches {u"torrent"_s};
 
     /* Appends */
     /*! Map of mutator names to methods. */
     inline static const QHash<QString, MutatorFunction> u_mutators {
-        {"filepath", &TorrentPreviewableFile::filepath},
+        {u"filepath"_s, &TorrentPreviewableFile::filepath},
     };
 };
 

@@ -21,7 +21,7 @@ class Torrent_With_QDateTime final : public Model<Torrent_With_QDateTime> // NOL
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! The model's default values for attributes. */
     inline static const QList<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)

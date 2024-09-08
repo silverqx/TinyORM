@@ -18,7 +18,7 @@ class Tag_CustomPivot_NoRelations final : // NOLINT(bugprone-exception-escape, m
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrent_tags"};
+    QString u_table {u"torrent_tags"_s};
 };
 
 } // namespace Models

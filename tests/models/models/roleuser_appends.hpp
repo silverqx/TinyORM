@@ -22,31 +22,31 @@ protected:
     {
         return Attribute::make(/* get */ [this]() -> QVariant
         {
-            return getAttribute<bool>("active");
+            return getAttribute<bool>(u"active"_s);
         });
     }
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"role_user"}; // Not used in belongsToMany()
+    QString u_table {u"role_user"_s}; // Not used in belongsToMany()
 
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
-        {"active", CastType::Boolean},
+        {u"active"_s, CastType::Boolean},
     };
 
     /* Appends */
     /*! Map of mutator names to methods. */
     inline static const QHash<QString, MutatorFunction> u_mutators {
-        {"is_active", &RoleUser_Appends::isActive},
+        {u"is_active"_s, &RoleUser_Appends::isActive},
     };
 
     /*! The attributes that should be appended during serialization. */
     std::set<QString> u_appends {
-        "is_active",
+        u"is_active"_s,
     };
 };
 

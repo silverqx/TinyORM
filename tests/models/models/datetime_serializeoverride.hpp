@@ -26,7 +26,7 @@ protected:
     {
         return Attribute::make(/* get */ [this]() -> QVariant
         {
-            return asDateTime(getAttribute("datetime")).addMonths(1);
+            return asDateTime(getAttribute(u"datetime"_s)).addMonths(1);
         });
     }
 
@@ -35,7 +35,7 @@ protected:
     {
         return Attribute::make(/* get */ [this]() -> QVariant
         {
-            return asDate(getAttribute("date")).addMonths(1);
+            return asDate(getAttribute(u"date"_s)).addMonths(1);
         });
     }
 
@@ -44,7 +44,7 @@ protected:
     {
         return Attribute::make(/* get */ [this]() -> QVariant
         {
-            return asTime(getAttribute("time")).addSecs(5);
+            return asTime(getAttribute(u"time"_s)).addSecs(5);
         });
     }
 
@@ -53,13 +53,13 @@ private:
     /*! Prepare a date for vector, map, or JSON serialization. */
     static QString serializeDate(const QDate date)
     {
-        return date.toString("dd.MM.yyyy");
+        return date.toString(u"dd.MM.yyyy"_s);
     }
 
     /*! Prepare a datetime for vector, map, or JSON serialization. */
     static QString serializeDateTime(const QDateTime &datetime)
     {
-        return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
+        return datetime.toUTC().toString(u"dd.MM.yyyy HH:mm:ss.z t"_s);
     }
 
     /*! Prepare a time for vector, map, or JSON serialization. */
@@ -68,22 +68,22 @@ private:
         /* .z reports the seconds to full available (millisecond) precision without
            trailing zeroes, so if ms is .123 it reports also .123, what means there is
            no rounding support for now and we can't force the output to .1 only. */
-        return time.toString("HH-mm-ss.z");
+        return time.toString(u"HH-mm-ss.z"_s);
     }
 
     /* Data members */
     /*! The table associated with the model. */
-    QString u_table {"datetimes"};
+    QString u_table {u"datetimes"_s};
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        "datetime",
-        "datetime_tz",
-        "timestamp",
-        "timestamp_tz",
-        "date",
-        "time",
-        "time_ms",
+        u"datetime"_s,
+        u"datetime_tz"_s,
+        u"timestamp"_s,
+        u"timestamp_tz"_s,
+        u"date"_s,
+        u"time"_s,
+        u"time_ms"_s,
     };
 
     /*! Indicates whether the model should be timestamped. */
@@ -95,14 +95,14 @@ private:
     /* Appends */
     /*! Map of mutator names to methods. */
     inline static const QHash<QString, MutatorFunction> u_mutators {
-        {"datetime_test", &Datetime_SerializeOverride::datetimeTest},
-        {"date_test",     &Datetime_SerializeOverride::dateTest},
-        {"time_test",     &Datetime_SerializeOverride::timeTest},
+        {u"datetime_test"_s, &Datetime_SerializeOverride::datetimeTest},
+        {u"date_test"_s,     &Datetime_SerializeOverride::dateTest},
+        {u"time_test"_s,     &Datetime_SerializeOverride::timeTest},
     };
 
 public:
     /*! The storage format of the model's time columns. */
-    inline static QString u_timeFormat {"HH:mm:ss"};
+    inline static QString u_timeFormat {u"HH:mm:ss"_s};
 };
 
 } // namespace Models

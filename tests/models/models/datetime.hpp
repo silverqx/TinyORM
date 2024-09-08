@@ -16,13 +16,13 @@ class Datetime final : public Model<Datetime> // NOLINT(bugprone-exception-escap
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        "datetime",
-        "datetime_tz",
-        "timestamp",
-        "timestamp_tz",
-        "date",
-        "time",
-        "time_ms",
+        u"datetime"_s,
+        u"datetime_tz"_s,
+        u"timestamp"_s,
+        u"timestamp_tz"_s,
+        u"date"_s,
+        u"time"_s,
+        u"time_ms"_s,
     };
 
     /*! Indicates whether the model should be timestamped. */
@@ -30,16 +30,16 @@ class Datetime final : public Model<Datetime> // NOLINT(bugprone-exception-escap
 
     /*! The attributes that should be mutated to dates. */
     inline static const QStringList u_dates { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        "datetime",
-        "datetime_tz",
-        "timestamp",
-        "timestamp_tz",
-        "date",
+        u"datetime"_s,
+        u"datetime_tz"_s,
+        u"timestamp"_s,
+        u"timestamp_tz"_s,
+        u"date"_s,
     };
 
 public:
     /*! The storage format of the model's time columns. */
-    inline static QString u_timeFormat {"HH:mm:ss"};
+    inline static QString u_timeFormat {u"HH:mm:ss"_s};
 };
 
 } // namespace Models

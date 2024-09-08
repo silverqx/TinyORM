@@ -16,7 +16,7 @@ class Tag_BasicPivot_NoRelations final : public Model<Tag_BasicPivot_NoRelations
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrent_tags"};
+    QString u_table {u"torrent_tags"_s};
 };
 
 } // namespace Models

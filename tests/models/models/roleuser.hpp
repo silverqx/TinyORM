@@ -21,7 +21,7 @@ class RoleUser final : public BasePivot<RoleUser> // NOLINT(bugprone-exception-e
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
-        {"active", CastType::Boolean},
+        {u"active"_s, CastType::Boolean},
     };
 };
 

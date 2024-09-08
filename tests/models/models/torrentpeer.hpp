@@ -27,7 +27,7 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrent", [](auto &v) { v(&TorrentPeer::torrent); }},
+        {u"torrent"_s, [](auto &v) { v(&TorrentPeer::torrent); }},
     };
 };
 

@@ -30,30 +30,30 @@ public:
     std::unique_ptr<HasMany<TorrentEager, TorrentPreviewableFileEager>>
     torrentFiles()
     {
-        return hasMany<TorrentPreviewableFileEager>("torrent_id");
+        return hasMany<TorrentPreviewableFileEager>(u"torrent_id"_s);
     }
 
     /*! Get a torrent peer associated with the torrent. */
     std::unique_ptr<HasOne<TorrentEager, TorrentPeer_NoRelations>>
     torrentPeer()
     {
-        return hasOne<TorrentPeer_NoRelations>("torrent_id");
+        return hasOne<TorrentPeer_NoRelations>(u"torrent_id"_s);
     }
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrentFiles", [](auto &v) { v(&TorrentEager::torrentFiles); }},
-        {"torrentPeer",  [](auto &v) { v(&TorrentEager::torrentPeer); }},
+        {u"torrentFiles"_s, [](auto &v) { v(&TorrentEager::torrentFiles); }},
+        {u"torrentPeer"_s,  [](auto &v) { v(&TorrentEager::torrentPeer); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "torrentFiles.fileProperty",
-        "torrentPeer",
+        u"torrentFiles.fileProperty"_s,
+        u"torrentPeer"_s,
     };
 
     /*! The model's default values for attributes. */

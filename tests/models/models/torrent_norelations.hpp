@@ -15,7 +15,7 @@ class Torrent_NoRelations final : public Model<Torrent_NoRelations> // NOLINT(bu
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 };
 
 } // namespace Models

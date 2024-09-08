@@ -31,14 +31,14 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"album", [](auto &v) { v(&AlbumImage::album); }},
+        {u"album"_s, [](auto &v) { v(&AlbumImage::album); }},
     };
 
     /*! The attributes that are mass assignable. */
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         ID,
         NAME,
-        "ext",
+        u"ext"_s,
         SIZE_,
     };
 };

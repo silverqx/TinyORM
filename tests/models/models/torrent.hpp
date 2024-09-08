@@ -67,7 +67,7 @@ public:
     torrentFiles()
     {
         return hasMany<TorrentPreviewableFile>();
-//        return hasMany<TorrentPreviewableFile>("torrent_id", ID);
+//        return hasMany<TorrentPreviewableFile>(u"torrent_id"_s, ID);
     }
 
     /*! Get a torrent peer associated with the torrent. */
@@ -75,16 +75,16 @@ public:
     torrentPeer()
     {
         return hasOne<TorrentPeer>();
-//        return hasOne<TorrentPeer>("torrent_id", ID);
+//        return hasOne<TorrentPeer>(u"torrent_id"_s, ID);
 
         // Default Model example
 //        auto relation = hasOne<TorrentPeer>();
 //        relation->withDefault();
-//        relation->withDefault({{"seeds", 0}, {"total_seeds", -1}});
+//        relation->withDefault({{u"seeds"_s, 0}, {u"total_seeds"_s, -1}});
         // This callback variant is not yet implemented 😟
 //        relation->withDefault([](TorrentPeer &torrentPeer, const Torrent &/*torrent*/)
 //        {
-//            torrentPeer[NAME] = "default_peer_name";
+//            torrentPeer[NAME] = u"default_peer_name"_s;
 //        });
 //        return relation;
     }
@@ -97,22 +97,22 @@ public:
         // Basic Pivot model
         // Ownership of a unique_ptr()
 //        auto relation = belongsToMany<Tag, /*Pivot*/>();
-//        relation->as("tagged")
-//                 .withPivot("active")
+//        relation->as(u"tagged"_s)
+//                 .withPivot(u"active"_s)
 //                 .withTimestamps();
 
         // Custom 'Tagged' pivot model ✨
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Tag, Tagged>();
-        relation->as("tagged")
-                 .withPivot("active")
-                 .withTimestamps(/*"created_at_custom", "updated_at_custom"*/);
+        relation->as(u"tagged"_s)
+                 .withPivot(u"active"_s)
+                 .withTimestamps(/*u"created_at_custom"_s, u"updated_at_custom"_s*/);
 
         return relation;
 
         // Basic Pivot model
-//        return belongsToMany<Tag>("tag_torrent", "torrent_id", "tag_id", ID, ID,
-//                                  "tags");
+//        return belongsToMany<Tag>(u"tag_torrent"_s, u"torrent_id"_s, u"tag_id"_s,
+//                                  ID, ID, u"tags"_s);
     }
 
     /*! Get a user that owns the torrent. */
@@ -127,9 +127,9 @@ public:
     torrentStates()
     {
         // Ownership of a unique_ptr()
-        auto relation = belongsToMany<TorrentState>("state_torrent", {}, "state_id");
-
-        relation->withPivot("active");
+        auto relation = belongsToMany<TorrentState>(u"state_torrent"_s, {},
+                                                    u"state_id"_s);
+        relation->withPivot(u"active"_s);
 
         return relation;
     }
@@ -166,18 +166,18 @@ private:
     /*! Prepare a date for vector, map, or JSON serialization. */
 //    inline static QString serializeDate(const QDate date)
 //    {
-//        return date.toString("dd.MM.yyyy");
+//        return date.toString(u"dd.MM.yyyy"_s);
 //    }
 
     /*! Prepare a datetime for vector, map, or JSON serialization. */
 //    inline static QString serializeDateTime(const QDateTime &datetime)
 //    {
-//        return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
+//        return datetime.toUTC().toString(u"dd.MM.yyyy HH:mm:ss.z t"_s);
 //    }
 
     /* Data members */
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! Indicates if the model's ID is auto-incrementing. */
 //    bool u_incrementing = true;
@@ -186,20 +186,20 @@ private:
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"torrentFiles",  [](auto &v) { v(&Torrent::torrentFiles); }},
-        {"torrentPeer",   [](auto &v) { v(&Torrent::torrentPeer); }},
-        {"tags",          [](auto &v) { v(&Torrent::tags); }},
-        {"user",          [](auto &v) { v(&Torrent::user); }},
-        {"torrentStates", [](auto &v) { v(&Torrent::torrentStates); }},
+        {u"torrentFiles"_s,  [](auto &v) { v(&Torrent::torrentFiles); }},
+        {u"torrentPeer"_s,   [](auto &v) { v(&Torrent::torrentPeer); }},
+        {u"tags"_s,          [](auto &v) { v(&Torrent::tags); }},
+        {u"user"_s,          [](auto &v) { v(&Torrent::user); }},
+        {u"torrentStates"_s, [](auto &v) { v(&Torrent::torrentStates); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with { // NOLINT(readability-redundant-member-init)
-//        "torrentFiles",
-//        "torrentPeer",
-//        "torrentFiles.fileProperty",
-//        "tags",
-//        "user",
+//        u"torrentFiles"_s,
+//        u"torrentPeer"_s,
+//        u"torrentFiles.fileProperty"_s,
+//        u"tags"_s,
+//        u"user"_s,
     };
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
@@ -211,7 +211,7 @@ private:
 #endif
 
     /*! The connection name for the model. */
-//    QString u_connection {"sqlite"};
+//    QString u_connection {u"sqlite"_s};
 
     /*! The model's default values for attributes. */
 //    inline static const QList<AttributeItem> u_attributes {
@@ -241,24 +241,24 @@ private:
 //    bool u_timestamps = true;
 
     /*! The storage format of the model's date columns. */
-//    inline static QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
+//    inline static QString u_dateFormat {u"yyyy-MM-dd HH:mm:ss"_s};
     /*! The storage format of the model's time columns. */
-//    inline static QString u_timeFormat {"HH:mm:ss"};
+//    inline static QString u_timeFormat {u"HH:mm:ss"_s};
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {AddedOn, "added_on_alt"};
+    inline static const QStringList u_dates {AddedOn, u"added_on_alt"_s};
 
     /*! All of the relationships to be touched. */
-//    QStringList u_touches {"tags"};
-//    QStringList u_touches {"relation_name"};
+//    QStringList u_touches {u"tags"_s};
+//    QStringList u_touches {u"relation_name"_s};
 
     /*! The attributes that should be cast. */
 //    inline static std::unordered_map<QString, CastItem> u_casts {
-//        {NAME,      CastType::QString},
-//        {Progress,  CastType::UShort},
+//        {NAME,         CastType::QString},
+//        {Progress,     CastType::UShort},
 //        // Showcase only, the Torrent model doesn't have the decimal column
-//        {"decimal", CastType::Decimal},
-//        {"decimal", {CastType::Decimal, 2}},
+//        {u"decimal"_s, CastType::Decimal},
+//        {u"decimal"_s, {CastType::Decimal, 2}},
 //    };
 
     /* Serialization */
@@ -268,7 +268,7 @@ private:
     /* HidesAttributes */
     /*! The attributes that should be visible during serialization. */
 //    inline static std::set<QString> u_visible {
-//        ID, "user_id", NAME, SIZE_, Progress, NOTE, CREATED_AT(), UPDATED_AT(),
+//        ID, u"user_id"_s, NAME, SIZE_, Progress, NOTE, CREATED_AT(), UPDATED_AT(),
 //    };
     /*! The attributes that should be hidden during serialization. */
 //    inline static std::set<QString> u_hidden {
@@ -278,13 +278,13 @@ private:
     /* Appends */
     /*! Map of mutator names to methods. */
     inline static const QHash<QString, MutatorFunction> u_mutators {
-        {"name_progress", &Torrent::nameProgress},
-        {"name_size",     &Torrent::nameSize},
+        {u"name_progress"_s, &Torrent::nameProgress},
+        {u"name_size"_s,     &Torrent::nameSize},
     };
 
     /*! The attributes that should be appended during serialization. */
 //    std::set<QString> u_appends {
-//        "name_progress",
+//        u"name_progress"_s,
 //    };
 };
 

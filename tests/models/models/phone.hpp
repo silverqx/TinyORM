@@ -26,11 +26,11 @@ public:
 
 private:
     /*! The table associated with the model. */
-    QString u_table {"user_phones"};
+    QString u_table {u"user_phones"_s};
 
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"user", [](auto &v) { v(&Phone::user); }},
+        {u"user"_s, [](auto &v) { v(&Phone::user); }},
     };
 
     /*! Indicates whether the model should be timestamped. */

@@ -16,7 +16,7 @@ class TorrentPreviewableFileProperty_NoRelations final : // NOLINT(bugprone-exce
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrent_previewable_file_properties"};
+    QString u_table {u"torrent_previewable_file_properties"_s};
 
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false; // Timestamps disabled explicitly (even if the table has timestamp columns; they aren't used anywhere)

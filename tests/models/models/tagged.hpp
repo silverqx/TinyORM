@@ -17,11 +17,11 @@ class Tagged final : public BasePivot<Tagged> // NOLINT(bugprone-exception-escap
     using BasePivot::BasePivot;
 
     /*! The table associated with the model. */
-    QString u_table {"tag_torrent"}; // Not used in belongsToMany()
+    QString u_table {u"tag_torrent"_s}; // Not used in belongsToMany()
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
-        {"active", CastType::Boolean},
+        {u"active"_s, CastType::Boolean},
     };
 
     /* Below is only true when obtaining pivot records from the database during

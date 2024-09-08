@@ -21,18 +21,18 @@ class User_NoRelations final : public Model<User_NoRelations>, // NOLINT(bugpron
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"users"};
+    QString u_table {u"users"_s};
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
-        "is_banned",
+        u"is_banned"_s,
         NOTE,
     };
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
-        {"is_banned", CastType::Boolean},
+        {u"is_banned"_s, CastType::Boolean},
     };
 };
 

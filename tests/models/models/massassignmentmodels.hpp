@@ -22,7 +22,7 @@ class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded> // NOL
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 };
 
 class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> // NOLINT(bugprone-exception-escape, misc-no-recursion)
@@ -31,7 +31,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> //
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
@@ -56,7 +56,7 @@ class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssi
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! The attributes that aren't mass assignable. */
     inline static QStringList u_guarded {}; // disabled
@@ -68,10 +68,10 @@ class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // N
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrents"};
+    QString u_table {u"torrents"_s};
 
     /*! The attributes that aren't mass assignable. */
-    inline static QStringList u_guarded {"xyz"};
+    inline static QStringList u_guarded {u"xyz"_s};
 };
 
 } // namespace Models

@@ -42,8 +42,8 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Role, RoleUser>();
 
-        relation->as("subscription")
-                 .withPivot("active");
+        relation->as(u"subscription"_s)
+                 .withPivot(u"active"_s);
 
         return relation;
     }
@@ -54,9 +54,9 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsToMany<Role, RoleUser_Appends>({}, {}, {}, {}, {},
-                                                              "roles_appends");
-        relation->as("subscription")
-                 .withPivot("active");
+                                                              u"roles_appends"_s);
+        relation->as(u"subscription"_s)
+                 .withPivot(u"active"_s);
 
         return relation;
     }
@@ -71,22 +71,22 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"roles",         [](auto &v) { v(&User::roles); }},
-        {"roles_appends", [](auto &v) { v(&User::roles_appends); }},
-        {"phone",         [](auto &v) { v(&User::phone); }},
-        {"torrents",      [](auto &v) { v(&User::torrents); }},
+        {u"roles"_s,         [](auto &v) { v(&User::roles); }},
+        {u"roles_appends"_s, [](auto &v) { v(&User::roles_appends); }},
+        {u"phone"_s,         [](auto &v) { v(&User::phone); }},
+        {u"torrents"_s,      [](auto &v) { v(&User::torrents); }},
     };
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
-        "is_banned",
+        u"is_banned"_s,
         NOTE,
     };
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
-        {"is_banned", CastType::Boolean},
+        {u"is_banned"_s, CastType::Boolean},
     };
 };
 

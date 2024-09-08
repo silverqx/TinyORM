@@ -16,7 +16,7 @@ class TorrentPreviewableFile_NoRelations final : // NOLINT(bugprone-exception-es
     using Model::Model;
 
     /*! The table associated with the model. */
-    QString u_table {"torrent_previewable_files"};
+    QString u_table {u"torrent_previewable_files"_s};
 };
 
 } // namespace Models

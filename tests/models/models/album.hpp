@@ -32,12 +32,12 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"albumImages", [](auto &v) { v(&Album::albumImages); }},
+        {u"albumImages"_s, [](auto &v) { v(&Album::albumImages); }},
     };
 
     /*! The relations to eager load on every query. */
     QList<QString> u_with {
-        "albumImages",
+        u"albumImages"_s,
     };
 
     /*! The attributes that are mass assignable. */
