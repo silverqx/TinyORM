@@ -13,20 +13,20 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("file_property_properties", [](Blueprint &table)
+            Schema::create(u"file_property_properties"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.unsignedBigInteger("file_property_id");
+                table.unsignedBigInteger(u"file_property_id"_s);
 
                 table.string(NAME).unique();
-                table.unsignedBigInteger("value");
+                table.unsignedBigInteger(u"value"_s);
 
                 table.timestamps();
 
                 // Indexes
-                table.foreign("file_property_id")
-                     .references(ID).on("torrent_previewable_file_properties")
+                table.foreign(u"file_property_id"_s)
+                     .references(ID).on(u"torrent_previewable_file_properties"_s)
                      .cascadeOnDelete().cascadeOnUpdate();
             });
 
@@ -34,15 +34,15 @@ namespace Migrations
 
             // Add the table comment (MySQL only)
             if (DB::getDefaultConnection() == "tinyorm_testdata_tom_mysql"_L1)
-                DB::unprepared("alter table `file_property_properties` comment = "
-                               "'used in Builder::chunk() tests, must have exactly 8 "
-                               "rows'");
+                DB::unprepared(u"alter table `file_property_properties` comment = "_s
+                                "'used in Builder::chunk() tests, must have exactly 8 "
+                                "rows'");
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("file_property_properties");
+            Schema::dropIfExists(u"file_property_properties"_s);
         }
     };
 

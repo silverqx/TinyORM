@@ -12,11 +12,11 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("torrent_previewable_file_properties", [](Blueprint &table)
+            Schema::create(u"torrent_previewable_file_properties"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.unsignedBigInteger("previewable_file_id");
+                table.unsignedBigInteger(u"previewable_file_id"_s);
 
                 table.string(NAME).unique();
                 table.unsignedBigInteger(SIZE_);
@@ -24,8 +24,8 @@ namespace Migrations
                 table.timestamps();
 
                 // Indexes
-                table.foreign("previewable_file_id")
-                     .references(ID).on("torrent_previewable_files")
+                table.foreign(u"previewable_file_id"_s)
+                     .references(ID).on(u"torrent_previewable_files"_s)
                      .cascadeOnDelete().cascadeOnUpdate();
             });
         }
@@ -33,7 +33,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("torrent_previewable_file_properties");
+            Schema::dropIfExists(u"torrent_previewable_file_properties"_s);
         }
     };
 

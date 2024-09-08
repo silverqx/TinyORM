@@ -12,7 +12,7 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("roles", [](Blueprint &table)
+            Schema::create(u"roles"_s, [](Blueprint &table)
             {
                 table.id();
 
@@ -20,14 +20,14 @@ namespace Migrations
 
                 // To test Unix timestamps, u_dateFormat = 'U'
                 table.bigInteger(AddedOn).nullable()
-                        .comment("To test Unix timestamps, u_dateFormat = 'U'");
+                        .comment(u"To test Unix timestamps, u_dateFormat = 'U'"_s);
             });
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("roles");
+            Schema::dropIfExists(u"roles"_s);
         }
     };
 

@@ -12,7 +12,7 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("phones", [](Blueprint &table)
+            Schema::create(u"phones"_s, [](Blueprint &table)
             {
                 table.id();
 
@@ -24,7 +24,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("phones");
+            Schema::dropIfExists(u"phones"_s);
         }
     };
 

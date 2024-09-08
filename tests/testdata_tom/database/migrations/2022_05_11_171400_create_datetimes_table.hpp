@@ -12,26 +12,26 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("datetimes", [](Blueprint &table)
+            Schema::create(u"datetimes"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.datetime("datetime").nullable();
-                table.datetimeTz("datetime_tz").nullable();
+                table.datetime(u"datetime"_s).nullable();
+                table.datetimeTz(u"datetime_tz"_s).nullable();
 
-                table.timestamp("timestamp").nullable();
-                table.timestampTz("timestamp_tz").nullable();
+                table.timestamp(u"timestamp"_s).nullable();
+                table.timestampTz(u"timestamp_tz"_s).nullable();
 
-                table.date("date").nullable();
-                table.time("time").nullable();
-                table.time("time_ms", 3).nullable();
+                table.date(u"date"_s).nullable();
+                table.time(u"time"_s).nullable();
+                table.time(u"time_ms"_s, 3).nullable();
             });
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("datetimes");
+            Schema::dropIfExists(u"datetimes"_s);
         }
     };
 

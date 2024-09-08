@@ -12,16 +12,16 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("torrents", [](Blueprint &table)
+            Schema::create(u"torrents"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.foreignId("user_id").nullable()
+                table.foreignId(u"user_id"_s).nullable()
                      .constrained().cascadeOnDelete().cascadeOnUpdate();
 
-                table.string(NAME).unique().comment("Torrent name");
-                table.unsignedBigInteger(SIZE_).defaultValue("0");
-                table.unsignedSmallInteger(Progress).defaultValue("0");
+                table.string(NAME).unique().comment(u"Torrent name"_s);
+                table.unsignedBigInteger(SIZE_).defaultValue(u"0"_s);
+                table.unsignedSmallInteger(Progress).defaultValue(u"0"_s);
                 table.datetime(AddedOn).useCurrent();
                 table.string(HASH_, 40);
                 table.string(NOTE).nullable();
@@ -33,7 +33,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("torrents");
+            Schema::dropIfExists(u"torrents"_s);
         }
     };
 

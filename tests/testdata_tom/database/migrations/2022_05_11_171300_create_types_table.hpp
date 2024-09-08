@@ -12,49 +12,49 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("types", [](Blueprint &table)
+            Schema::create(u"types"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.boolean("bool_true").nullable();
-                table.boolean("bool_false").nullable();
+                table.boolean(u"bool_true"_s).nullable();
+                table.boolean(u"bool_false"_s).nullable();
 
-                table.smallInteger("smallint").nullable();
-                table.unsignedSmallInteger("smallint_u").nullable();
-                table.integer("int").nullable();
-                table.unsignedInteger("int_u").nullable();
-                table.bigInteger("bigint").nullable();
-                table.unsignedBigInteger("bigint_u").nullable();
+                table.smallInteger(u"smallint"_s).nullable();
+                table.unsignedSmallInteger(u"smallint_u"_s).nullable();
+                table.integer(u"int"_s).nullable();
+                table.unsignedInteger(u"int_u"_s).nullable();
+                table.bigInteger(u"bigint"_s).nullable();
+                table.unsignedBigInteger(u"bigint_u"_s).nullable();
 
-                table.Double("double").nullable();
-                table.Double("double_nan").nullable();
-                table.Double("double_infinity").nullable();
+                table.Double(u"double"_s).nullable();
+                table.Double(u"double_nan"_s).nullable();
+                table.Double(u"double_infinity"_s).nullable();
 
-                table.decimal("decimal").nullable();
-                table.decimal("decimal_nan").nullable();
-                table.decimal("decimal_infinity", std::nullopt, std::nullopt).nullable();
-                table.decimal("decimal_down").nullable();
-                table.decimal("decimal_up").nullable();
+                table.decimal(u"decimal"_s).nullable();
+                table.decimal(u"decimal_nan"_s).nullable();
+                table.decimal(u"decimal_infinity"_s, std::nullopt, std::nullopt).nullable();
+                table.decimal(u"decimal_down"_s).nullable();
+                table.decimal(u"decimal_up"_s).nullable();
 
-                table.string("string").nullable();
-                table.text("text").nullable();
-                table.mediumText("medium_text").nullable();
+                table.string(u"string"_s).nullable();
+                table.text(u"text"_s).nullable();
+                table.mediumText(u"medium_text"_s).nullable();
 
-                table.timestamp("timestamp").nullable();
+                table.timestamp(u"timestamp"_s).nullable();
 
-                table.datetime("datetime").nullable();
-                table.date("date").nullable();
-                table.time("time").nullable();
+                table.datetime(u"datetime"_s).nullable();
+                table.date(u"date"_s).nullable();
+                table.time(u"time"_s).nullable();
 
-                table.binary("binary").nullable();
-                table.mediumBinary("medium_binary").nullable();
+                table.binary(u"binary"_s).nullable();
+                table.mediumBinary(u"medium_binary"_s).nullable();
             });
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("types");
+            Schema::dropIfExists(u"types"_s);
         }
     };
 

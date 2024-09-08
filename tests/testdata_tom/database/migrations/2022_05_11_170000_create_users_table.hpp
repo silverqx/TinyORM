@@ -12,12 +12,12 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("users", [](Blueprint &table)
+            Schema::create(u"users"_s, [](Blueprint &table)
             {
                 table.id();
 
                 table.string(NAME).unique();
-                table.boolean("is_banned").defaultValue(false);
+                table.boolean(u"is_banned"_s).defaultValue(false);
                 table.string(NOTE).nullable();
 
                 table.timestamps();
@@ -28,7 +28,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("users");
+            Schema::dropIfExists(u"users"_s);
         }
     };
 

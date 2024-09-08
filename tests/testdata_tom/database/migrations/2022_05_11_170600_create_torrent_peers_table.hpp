@@ -12,18 +12,18 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("torrent_peers", [](Blueprint &table)
+            Schema::create(u"torrent_peers"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.foreignId("torrent_id").nullable().constrained()
+                table.foreignId(u"torrent_id"_s).nullable().constrained()
                      .cascadeOnDelete().cascadeOnUpdate();
 
-                table.integer("seeds").nullable();
-                table.integer("total_seeds").nullable();
+                table.integer(u"seeds"_s).nullable();
+                table.integer(u"total_seeds"_s).nullable();
 
-                table.integer("leechers");
-                table.integer("total_leechers");
+                table.integer(u"leechers"_s);
+                table.integer(u"total_leechers"_s);
 
                 table.timestamps();
             });
@@ -32,7 +32,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("torrent_peers");
+            Schema::dropIfExists(u"torrent_peers"_s);
         }
     };
 

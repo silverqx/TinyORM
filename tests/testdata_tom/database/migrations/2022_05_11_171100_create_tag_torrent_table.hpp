@@ -12,24 +12,24 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("tag_torrent", [](Blueprint &table)
+            Schema::create(u"tag_torrent"_s, [](Blueprint &table)
             {
                 // Don't use the terser methods syntax here, leave it this way as example
-                table.unsignedBigInteger("torrent_id");
-                table.unsignedBigInteger("tag_id");
+                table.unsignedBigInteger(u"torrent_id"_s);
+                table.unsignedBigInteger(u"tag_id"_s);
 
-                table.boolean("active").defaultValue(true);
+                table.boolean(u"active"_s).defaultValue(true);
 
                 table.timestamps();
 
                 // Indexes
-                table.primary({"torrent_id", "tag_id"});
+                table.primary({u"torrent_id"_s, u"tag_id"_s});
 
-                table.foreign("torrent_id")
-                     .references(ID).on("torrents")
+                table.foreign(u"torrent_id"_s)
+                     .references(ID).on(u"torrents"_s)
                      .cascadeOnDelete().cascadeOnUpdate();
-                table.foreign("tag_id")
-                     .references(ID).on("torrent_tags")
+                table.foreign(u"tag_id"_s)
+                     .references(ID).on(u"torrent_tags"_s)
                      .cascadeOnDelete().cascadeOnUpdate();
             });
         }
@@ -37,7 +37,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("tag_torrent");
+            Schema::dropIfExists(u"tag_torrent"_s);
         }
     };
 

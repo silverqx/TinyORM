@@ -12,20 +12,20 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("user_phones", [](Blueprint &table)
+            Schema::create(u"user_phones"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.foreignId("user_id").constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"user_id"_s).constrained().cascadeOnDelete().cascadeOnUpdate();
 
-                table.string("number").unique();
+                table.string(u"number"_s).unique();
             });
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("user_phones");
+            Schema::dropIfExists(u"user_phones"_s);
         }
     };
 

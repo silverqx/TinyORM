@@ -12,20 +12,20 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("tag_properties", [](Blueprint &table)
+            Schema::create(u"tag_properties"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.unsignedBigInteger("tag_id");
+                table.unsignedBigInteger(u"tag_id"_s);
 
-                table.string("color");
-                table.unsignedInteger("position").unique();
+                table.string(u"color"_s);
+                table.unsignedInteger(u"position"_s).unique();
 
                 table.timestamps();
 
                 // Indexes
-                table.foreign("tag_id")
-                     .references(ID).on("torrent_tags")
+                table.foreign(u"tag_id"_s)
+                     .references(ID).on(u"torrent_tags"_s)
                      .cascadeOnDelete().cascadeOnUpdate();
             });
         }
@@ -33,7 +33,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("tag_properties");
+            Schema::dropIfExists(u"tag_properties"_s);
         }
     };
 

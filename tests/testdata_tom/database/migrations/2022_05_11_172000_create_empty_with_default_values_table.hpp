@@ -12,15 +12,15 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("empty_with_default_values", [](Blueprint &table)
+            Schema::create(u"empty_with_default_values"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.foreignId("user_id").nullable()
+                table.foreignId(u"user_id"_s).nullable()
                      .constrained().cascadeOnDelete().cascadeOnUpdate();
 
-                table.unsignedBigInteger(SIZE_).defaultValue("0");
-                table.decimal("decimal").defaultValue("100.12").nullable();
+                table.unsignedBigInteger(SIZE_).defaultValue(u"0"_s);
+                table.decimal(u"decimal"_s).defaultValue(u"100.12"_s).nullable();
                 table.datetime(AddedOn).useCurrent();
                 table.string(NOTE).nullable();
             });
@@ -29,7 +29,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("empty_with_default_values");
+            Schema::dropIfExists(u"empty_with_default_values"_s);
         }
     };
 

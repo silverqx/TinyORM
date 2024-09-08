@@ -12,18 +12,18 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::table("posts", [](Blueprint &table)
+            Schema::table(u"posts"_s, [](Blueprint &table)
             {
-                table.integer("factor");
+                table.integer(u"factor"_s);
             });
         }
 
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::table("posts", [](Blueprint &table)
+            Schema::table(u"posts"_s, [](Blueprint &table)
             {
-                table.dropColumn("factor");
+                table.dropColumn(u"factor"_s);
             });
         }
     };

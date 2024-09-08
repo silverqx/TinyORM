@@ -12,10 +12,10 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("settings", [](Blueprint &table)
+            Schema::create(u"settings"_s, [](Blueprint &table)
             {
                 table.string(NAME).defaultValue("").unique();
-                table.string("value").defaultValue("");
+                table.string(u"value"_s).defaultValue("");
 
                 table.timestamps();
             });
@@ -24,7 +24,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("settings");
+            Schema::dropIfExists(u"settings"_s);
         }
     };
 

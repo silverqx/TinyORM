@@ -12,15 +12,15 @@ namespace Migrations
         /*! Run the migrations. */
         void up() const override
         {
-            Schema::create("torrent_previewable_files", [](Blueprint &table)
+            Schema::create(u"torrent_previewable_files"_s, [](Blueprint &table)
             {
                 table.id();
 
-                table.foreignId("torrent_id").nullable()
+                table.foreignId(u"torrent_id"_s).nullable()
                      .constrained().cascadeOnDelete().cascadeOnUpdate();
 
-                table.integer("file_index");
-                table.string("filepath").unique();
+                table.integer(u"file_index"_s);
+                table.string(u"filepath"_s).unique();
 
                 table.unsignedBigInteger(SIZE_);
                 table.unsignedSmallInteger(Progress);
@@ -34,7 +34,7 @@ namespace Migrations
         /*! Reverse the migrations. */
         void down() const override
         {
-            Schema::dropIfExists("torrent_previewable_files");
+            Schema::dropIfExists(u"torrent_previewable_files"_s);
         }
     };
 
