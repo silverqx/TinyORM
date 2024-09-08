@@ -32,7 +32,8 @@ namespace Migrations
 
                 table.decimal(u"decimal"_s).nullable();
                 table.decimal(u"decimal_nan"_s).nullable();
-                table.decimal(u"decimal_infinity"_s, std::nullopt, std::nullopt).nullable();
+                table.decimal(u"decimal_infinity"_s, std::nullopt,
+                                                     std::nullopt).nullable();
                 table.decimal(u"decimal_down"_s).nullable();
                 table.decimal(u"decimal_up"_s).nullable();
 
