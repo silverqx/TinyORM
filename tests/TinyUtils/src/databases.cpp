@@ -76,7 +76,8 @@ using ConfigUtils = Orm::Utils::Configuration;
 
 using ConfigurationsType = TestUtils::Databases::ConfigurationsType;
 
-// EMPTY is Orm::Constant
+/* Default SQLite test database, can be overridden by DB_SQLITE_DATABASE env. variable.
+   EMPTY is Orm::Constant. */
 #ifndef TINYORM_SQLITE_DATABASE
 #  define TINYORM_SQLITE_DATABASE EMPTY
 #endif

@@ -128,6 +128,7 @@ set_property(TARGET ${TinyUtils_target}
         PROPERTY ADDITIONAL_CLEAN_FILES "${tiny_sqlite_db}"
 )
 
+# Default SQLite test database, can be overridden by DB_SQLITE_DATABASE env. variable
 target_compile_definitions(${TinyUtils_target}
     PRIVATE TINYORM_SQLITE_DATABASE="${tiny_sqlite_db}"
 )
