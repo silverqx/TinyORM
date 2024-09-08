@@ -10,7 +10,6 @@ TINY_SYSTEM_HEADER
 #endif
 
 #include "orm/constants.hpp"
-#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 #include "orm/ormconcepts.hpp" // IWYU pragma: keep
 

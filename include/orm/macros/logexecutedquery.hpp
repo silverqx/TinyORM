@@ -7,10 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include "orm/config.hpp" // IWYU pragma: keep
 
-#include "orm/macros/commonnamespace.hpp"
-
 #if !defined(LOG_EXECUTED_QUERY) && !defined(TINYORM_NO_DEBUG)
 #  include "orm/utils/query.hpp" // IWYU pragma: keep
+#else
+#  include "orm/macros/commonnamespace.hpp"
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE

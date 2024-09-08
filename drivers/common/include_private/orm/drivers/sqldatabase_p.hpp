@@ -2,8 +2,6 @@
 #ifndef ORM_DRIVERS_SQLDATABASE_P_HPP
 #define ORM_DRIVERS_SQLDATABASE_P_HPP
 
-#include <orm/macros/commonnamespace.hpp>
-
 #include "orm/drivers/driverstypes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
