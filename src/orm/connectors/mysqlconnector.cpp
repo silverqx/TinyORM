@@ -132,7 +132,7 @@ void MySqlConnector::configureTimezone(const TSqlDatabase &connection,
 
     TSqlQuery query(connection);
 
-    if (query.exec(u"set time_zone=\"%1\";"_s.arg(config[timezone_].value<QString>())))
+    if (query.exec(uR"(set time_zone="%1";)"_s.arg(config[timezone_].value<QString>())))
         return;
 
 #ifdef TINYORM_USING_QTSQLDRIVERS

@@ -145,7 +145,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
     // No namespace found
     if (namespaces.empty()) {
         application().errorWall(
-                    u"There are no commands defined in the \"%1\" namespace."_s
+                    uR"(There are no commands defined in the "%1" namespace.)"_s
                     .arg(namespaceArg));
 
         Application::exitApplication(EXIT_FAILURE);

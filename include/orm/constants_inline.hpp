@@ -83,7 +83,7 @@ namespace Constants
     inline const QString NOSPACE3      = u"%1%2%3"_s;
     inline const QString TMPL_PLURAL   = u"%1s"_s;
     inline const QString TMPL_SQUOTES  = u"'%1'"_s;
-    inline const QString TMPL_DQUOTES  = u"\"%1\""_s;
+    inline const QString TMPL_DQUOTES  = uR"("%1")"_s;
 
     // Database related
     inline const QString QMYSQL        = u"QMYSQL"_s;

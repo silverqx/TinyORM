@@ -66,7 +66,7 @@ namespace Orm::Constants
     const QString NOSPACE3      = u"%1%2%3"_s;
     const QString TMPL_PLURAL   = u"%1s"_s;
     const QString TMPL_SQUOTES  = u"'%1'"_s;
-    const QString TMPL_DQUOTES  = u"\"%1\""_s;
+    const QString TMPL_DQUOTES  = uR"("%1")"_s;
 
     // Database related
     const QString QMYSQL        = u"QMYSQL"_s;

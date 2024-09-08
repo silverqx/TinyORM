@@ -168,7 +168,7 @@ QString BaseGrammar::wrapValue(QString value) const
         return value;
 
     // Don't change to prepend()/append(), no perf. gain, I have tested it
-    return TMPL_DQUOTES.arg(value.replace(QUOTE, u"\"\""_s));
+    return TMPL_DQUOTES.arg(value.replace(QUOTE, uR"("")"_s));
 }
 
 QString BaseGrammar::wrapSegments(QStringList segments) const // NOLINT(misc-no-recursion)

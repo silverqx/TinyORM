@@ -448,14 +448,14 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
 
     return value
             // No need to escape these
-//            .replace(QChar(QChar::LineFeed), u"\\n"_s)
-//            .replace(QChar(QChar::Tabulation), u"\\t"_s)
-//            .replace(QChar(0x0008), u"\\b"_s)
-//            .replace(QChar(QChar::CarriageReturn), u"\\r"_s)
-//            .replace(QUOTE, u"\\\""_s)
+//            .replace(QChar(QChar::LineFeed), uR"(\n)"_s)
+//            .replace(QChar(QChar::Tabulation), uR"(\t)"_s)
+//            .replace(QChar(0x0008), uR"(\b)"_s)
+//            .replace(QChar(QChar::CarriageReturn), uR"(\r)"_s)
+//            .replace(QUOTE, uR"(\")"_s)
             .replace(QChar(0x001a), u"^Z"_s)
-            .replace(u'\\', u"\\\\"_s)
-            .replace(QChar(QChar::Null), u"\\0"_s)
+            .replace(u'\\', uR"(\\)"_s)
+            .replace(QChar(QChar::Null), uR"(\0)"_s)
             .replace(SQUOTE, u"''"_s);
 }
 

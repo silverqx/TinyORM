@@ -183,7 +183,7 @@ QString PostgresConnector::quoteSearchPath(const QStringList &searchPath)
         return u"''"_s;
 
     // Really nice 😎
-    return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, u"\", \""_s));
+    return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, uR"(", ")"_s));
 }
 
 void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,

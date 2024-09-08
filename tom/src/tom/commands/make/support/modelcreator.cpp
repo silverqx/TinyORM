@@ -595,7 +595,7 @@ QString ModelCreator::createRelationCalls(
 
     // The name for the pivot relation
     if (!as.isEmpty())
-        relationCalls = u"as(\"%1\")"_s.arg(as);
+        relationCalls = uR"(as("%1"))"_s.arg(as);
 
     // Extra attributes for the pivot model
     if (!withPivot.isEmpty()) {
@@ -825,7 +825,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
         })
                 | ranges::views::transform([&prefix](const QString &value)
         {
-            return u"%2\"%1\""_s.arg(value, prefix);
+            return uR"(%2"%1")"_s.arg(value, prefix);
         })
                 | ranges::to<std::vector<QString>>();
     };

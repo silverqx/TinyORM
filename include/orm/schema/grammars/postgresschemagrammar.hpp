@@ -321,9 +321,9 @@ namespace Grammars
 
             for (auto &&segment : name.split(DOT, Qt::KeepEmptyParts))
                 // Don't use the TRIM_QUOTES here to avoid include of schema constants
-                nameList << StringUtils::trim(segment, u"'\""_s);
+                nameList << StringUtils::trim(segment, uR"('")"_s);
 
-            return TMPL_DQUOTES.arg(nameList.join(u"\".\""_s));
+            return TMPL_DQUOTES.arg(nameList.join(uR"(".")"_s));
         })
                 | ranges::to<T>();
     }

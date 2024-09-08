@@ -28,7 +28,7 @@ bool ParsesSearchPath::isSearchPathEmpty(const QStringList &searchPath)
               // During set search_path it set it to ''
               searchPath.constFirst().isEmpty() ||
               // Returned by the 'show search_path' query
-              searchPath.constFirst() == "\"\""_L1));
+              searchPath.constFirst() == R"("")"_L1));
 }
 
 /* protected */
@@ -44,7 +44,7 @@ QStringList ParsesSearchPath::parseSearchPath(const QString &searchPath)
 
     for (auto &&path : searchPath.split(COMMA_C, Qt::SkipEmptyParts))
         // Trim also spaces
-        list << StringUtils::trim(path, u" '\""_s);
+        list << StringUtils::trim(path, uR"( '")"_s);
 
     return list;
 }

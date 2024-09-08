@@ -66,7 +66,7 @@ namespace Constants
     inline const QString bytea_   = u"bytea"_s;
 
     // Common strings
-    inline const QString TRIM_QUOTES  = u"'\""_s;
+    inline const QString TRIM_QUOTES  = uR"('")"_s;
 
     // Column names
     inline const QString Uuid          = u"uuid"_s;
