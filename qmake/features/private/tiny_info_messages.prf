@@ -36,5 +36,11 @@ defineTest(tiny_log_info_messages) {
             message( "Auto-configuration is disabled." )
         else: \
             message( "Auto-configuration is enabled." )
+
+        # Qt Lean Headers
+        lean_headers: \
+            message( "Qt lean headers are enabled." )
+        else: \
+            message( "Qt lean headers are disabled." )
     }
 }
