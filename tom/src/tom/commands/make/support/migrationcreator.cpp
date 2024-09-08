@@ -7,7 +7,6 @@
 #include <orm/utils/string.hpp>
 
 #include "tom/commands/make/stubs/migrationstubs.hpp"
-#include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
