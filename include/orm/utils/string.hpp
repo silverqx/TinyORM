@@ -5,6 +5,10 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#ifdef QT_LEAN_HEADERS
+#  include <QStringList>
+#endif
+
 #include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
