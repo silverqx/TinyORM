@@ -76,8 +76,9 @@ using ConfigUtils = Orm::Utils::Configuration;
 
 using ConfigurationsType = TestUtils::Databases::ConfigurationsType;
 
+// EMPTY is Orm::Constant
 #ifndef TINYORM_SQLITE_DATABASE
-#  define TINYORM_SQLITE_DATABASE ""
+#  define TINYORM_SQLITE_DATABASE EMPTY
 #endif
 
 namespace TestUtils
@@ -657,9 +658,9 @@ Databases::mysqlConfiguration()
         {options_,        ConfigUtils::mysqlSslOptions()},
         // FUTURE remove, when unit tested silverqx
         // Example
-//        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
-//        {options_, QVariantHash {{"MYSQL_OPT_RECONNECT", 1},
-//                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
+//        {options_, u"MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"_s},
+//        {options_, QVariantHash {{u"MYSQL_OPT_RECONNECT"_s, 1},
+//                                 {u"MYSQL_OPT_READ_TIMEOUT"_s, 10}}},
     };
 
     return {std::move(config), envVariablesDefined(mysqlEnvVariables())};
@@ -698,9 +699,9 @@ Databases::mariaConfiguration()
         {options_,        ConfigUtils::mariaSslOptions()},
         // FUTURE remove, when unit tested silverqx
         // Example
-//        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
-//        {options_, QVariantHash {{"MYSQL_OPT_RECONNECT", 1},
-//                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
+//        {options_, u"MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"_s},
+//        {options_, QVariantHash {{u"MYSQL_OPT_RECONNECT"_s, 1},
+//                                 {u"MYSQL_OPT_READ_TIMEOUT"_s, 10}}},
     };
 
     return {std::move(config), envVariablesDefined(mariaEnvVariables())};

@@ -31,7 +31,7 @@ namespace TestUtils::Common
         ~Collection() = delete;
 
         /*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
-        inline static const Orm::Column album_id {std::in_place_index<0>, "album_id"};
+        inline static const Orm::Column album_id {std::in_place_index<0>, u"album_id"_s};
         /*! QString constant "album_id" (perf. reason, one time initialization). */
         inline static const auto album_id_s  = u"album_id"_s;
         /*! QString constant "albumImages" (perf. reason, one time initialization). */
