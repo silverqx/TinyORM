@@ -10,7 +10,7 @@ namespace Models
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
 
-class Tag_BasicPivot_NoRelations final : public Model<Tag_BasicPivot_NoRelations, Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Tag_BasicPivot_NoRelations final : public Model<Tag_BasicPivot_NoRelations, Pivot> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;

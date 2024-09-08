@@ -15,7 +15,7 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
-class Torrent_Without_QDateTime final : public Model<Torrent_Without_QDateTime> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_Without_QDateTime final : public Model<Torrent_Without_QDateTime> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;

@@ -11,7 +11,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-class Datetime_SerializeOverride final : public Model<Datetime_SerializeOverride> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Datetime_SerializeOverride final : public Model<Datetime_SerializeOverride> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;

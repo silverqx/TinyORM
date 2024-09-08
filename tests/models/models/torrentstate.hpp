@@ -14,7 +14,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class Torrent;
 
-class TorrentState final : public Model<TorrentState, Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class TorrentState final : public Model<TorrentState, Pivot> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;

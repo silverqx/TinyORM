@@ -9,7 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-class Datetime final : public Model<Datetime> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Datetime final : public Model<Datetime> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;

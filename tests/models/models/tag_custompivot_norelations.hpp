@@ -11,7 +11,7 @@ using Orm::Tiny::Model;
 
 class Tagged;
 
-class Tag_CustomPivot_NoRelations final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Tag_CustomPivot_NoRelations final : // NOLINT(bugprone-exception-escape)
         public Model<Tag_CustomPivot_NoRelations, Tagged>
 {
     friend Model;

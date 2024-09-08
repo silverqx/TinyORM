@@ -16,7 +16,7 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
-class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;
@@ -25,7 +25,7 @@ class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded> // NOL
     QString u_table {u"torrents"_s};
 };
 
-class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;
@@ -50,7 +50,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute> //
     };
 };
 
-class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssignment> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssignment> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;
@@ -62,7 +62,7 @@ class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssi
     inline static QStringList u_guarded {}; // disabled
 };
 
-class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // NOLINT(bugprone-exception-escape, misc-no-recursion)
+class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // NOLINT(bugprone-exception-escape)
 {
     friend Model;
     using Model::Model;
