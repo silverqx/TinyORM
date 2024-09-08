@@ -645,7 +645,7 @@ void Blueprint::addFluentIndexes()
                to "true" (boolean), no name has been specified for this index so the
                index method can be called without a name and it will generate one. */
             if (std::holds_alternative<bool>(index) && std::get<bool>(index)) {
-                indexCommand(indexItem.type, {column.name}, "");
+                indexCommand(indexItem.type, {column.name}, EMPTY);
 
                 index = false;
 

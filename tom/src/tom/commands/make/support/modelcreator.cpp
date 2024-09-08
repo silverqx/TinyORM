@@ -1201,7 +1201,7 @@ QString ModelCreator::wrapMutatorItemsList(const QStringList &mutatorItems)
 {
     // Nothing to do
     if (mutatorItems.isEmpty()) T_UNLIKELY
-        return "";
+        return EMPTY;
 
     else T_LIKELY {
         auto mutatorItemsJoined = mutatorItems.join(NEWLINE);
