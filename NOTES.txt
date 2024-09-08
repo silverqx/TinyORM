@@ -3216,6 +3216,12 @@ QStringList::join() vs QString::repeated() then chop/ped():
  - 2240ms - QStringList(5, u"?"_s).join(u", "_s)
  -  640ms - u"?, "_s.repeated(5).chopped(2)
 
+QByteArray instantiation performance with 1'000'000 loop:
+ - 850ms - QByteArray::fromHex("616263") // Also encoded "abc" string in HEX
+ - 380ms - QByteArray b2("abc")
+ -  17ms - "abc"_ba
+ -  17ms - QByteArrayLiteral("abc")
+
 
 c++ confusions:
 ---------------
