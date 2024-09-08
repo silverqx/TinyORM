@@ -628,6 +628,10 @@ Maintenance:
 GitHub Actions:
 ---------------
 
+ - on Linux /etc/environment and /etc/profile.d/ are not picked up and don't interfere
+   with workflows (self-hosted runners)
+ - on Windows only basic User/System environment variables are used, NOT ALL (self-hosted runners)
+
  - Repeatedly
    - delete all _work\TinyORM\TinyORM-builds-cmake\Drivers-msys2-u-* after bumping versions because
      tst_versions test case will fail, I think ccache doesn't get these bumped C macro versions and
