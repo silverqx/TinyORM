@@ -16,8 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId(u"user_id"_s).nullable()
-                     .constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"user_id"_s).nullable().constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.string(NAME).unique().comment(u"Torrent name"_s);
                 table.unsignedBigInteger(SIZE_).defaultValue(u"0"_s);

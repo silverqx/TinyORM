@@ -16,7 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId(u"user_id"_s).constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"user_id"_s).constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.string(u"number"_s).unique();
             });

@@ -14,8 +14,10 @@ namespace Migrations
         {
             Schema::create(u"role_user"_s, [](Blueprint &table)
             {
-                table.foreignId(u"role_id"_s).constrained().cascadeOnDelete().cascadeOnUpdate();
-                table.foreignId(u"user_id"_s).constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"role_id"_s).constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"user_id"_s).constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.boolean(u"active"_s).defaultValue(true);
 

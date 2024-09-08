@@ -16,8 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId(u"album_id"_s).nullable()
-                     .constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"album_id"_s).nullable().constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.string(NAME).unique();
                 table.string(u"ext"_s);

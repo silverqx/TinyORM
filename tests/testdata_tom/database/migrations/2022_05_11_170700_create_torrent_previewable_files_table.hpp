@@ -16,8 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId(u"torrent_id"_s).nullable()
-                     .constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"torrent_id"_s).nullable().constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.integer(u"file_index"_s);
                 table.string(u"filepath"_s).unique();

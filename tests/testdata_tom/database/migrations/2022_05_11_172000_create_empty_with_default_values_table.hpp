@@ -16,8 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId(u"user_id"_s).nullable()
-                     .constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId(u"user_id"_s).nullable().constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.unsignedBigInteger(SIZE_).defaultValue(u"0"_s);
                 table.decimal(u"decimal"_s).defaultValue(u"100.12"_s).nullable();
