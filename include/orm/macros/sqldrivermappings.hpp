@@ -56,6 +56,7 @@ C preprocessor macro to select the SQL drivers to use.
 
 /* Includes */
 
+// These #include-s are needed in this file, they are not meant as export headers
 #ifdef TINYORM_USING_QTSQLDRIVERS
 #  include <QtGlobal>
 #elif defined(TINYORM_USING_TINYDRIVERS)
