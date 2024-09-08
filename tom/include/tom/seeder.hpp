@@ -188,6 +188,8 @@ namespace Seeders
     using TINYORM_PREPEND_NAMESPACE(Tom::Seeder); // NOLINT(misc-unused-using-decls)
 
     // Aliases for the most used string constants
+    /*! Alias for the string constant "". */
+    using TINYORM_PREPEND_NAMESPACE(Orm::Constants::EMPTY); // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "id". */
     using TINYORM_PREPEND_NAMESPACE(Orm::Constants::ID); // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "name". */
