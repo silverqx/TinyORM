@@ -211,8 +211,8 @@ jobs:
 
     - name: Qt v${{ env.TINY_QT_VERSION }} prepare environment
       run: |
-        echo "/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain/bin" >> $GITHUB_PATH
-        echo "LD_LIBRARY_PATH=/opt/Qt/$TINY_QT_VERSION/$TinyQtSpecPlain/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo "$TINY_QT_ROOT/$TINY_QT_VERSION/$TinyQtSpecPlain/bin" >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=$TINY_QT_ROOT/$TINY_QT_VERSION/$TinyQtSpecPlain/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
     - name: Compiler print version (${{ matrix.compiler.command }})
       run: |
