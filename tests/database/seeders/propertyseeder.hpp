@@ -10,9 +10,9 @@ namespace Seeders
         /*! Run the database seeders. */
         void run() override
         {
-            DB::table("properties")->insert({
-                {{NAME, "1. property"}},
-                {{NAME, "2. property"}},
+            DB::table(u"properties"_s)->insert({
+                {{NAME, u"1. property"_s}},
+                {{NAME, u"2. property"_s}},
             });
         }
     };

@@ -16,9 +16,9 @@ namespace Seeders
         /*! Run the database seeders. */
         void run() override
         {
-            DB::table("posts")->insert({
-                {{NAME, "1. post"}, {"factor", 10}},
-                {{NAME, "2. post"}, {"factor", 20}},
+            DB::table(u"posts"_s)->insert({
+                {{NAME, u"1. post"_s}, {u"factor"_s, 10}},
+                {{NAME, u"2. post"_s}, {u"factor"_s, 20}},
             });
 
             call<PhoneSeeder, PropertySeeder>();

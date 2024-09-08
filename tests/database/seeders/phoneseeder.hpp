@@ -25,9 +25,9 @@ namespace Seeders
         void run() override
         {
 #ifdef TINYORM_DISABLE_ORM
-            DB::table("phones")->insert({
-                {{NAME, "1. phone"}},
-                {{NAME, "2. phone"}},
+            DB::table(u"phones"_s)->insert({
+                {{NAME, u"1. phone"_s}},
+                {{NAME, u"2. phone"_s}},
             });
 #else
             // This tests GuardedModel::unguarded()
