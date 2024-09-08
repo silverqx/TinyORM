@@ -986,12 +986,11 @@ PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const /
        like generatedAs(). */
     if (!column.generatedAs.isNull())
         sql += u" generated %1 as identity%2"_s
-               .arg(
-                   // ALWAYS and BY DEFAULT clause
-                   column.always ? u"always"_s : u"by default"_s,
-                   // Sequence options clause
-                   !column.generatedAs.isEmpty() ? u" (%1)"_s.arg(column.generatedAs)
-                                                 : EMPTY);
+                    // ALWAYS and BY DEFAULT clause
+               .arg(column.always ? u"always"_s : u"by default"_s,
+                    // Sequence options clause
+                    !column.generatedAs.isEmpty() ? u" (%1)"_s.arg(column.generatedAs)
+                                                  : EMPTY);
 
     if (column.change) {
         QList<QString> changes;
