@@ -246,7 +246,7 @@ private:
 //    inline static QString u_timeFormat {u"HH:mm:ss"_s};
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {AddedOn, u"added_on_alt"_s};
+    inline static const QStringList u_dates {AddedOn, u"added_on_alt"_s}; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     /*! All of the relationships to be touched. */
 //    QStringList u_touches {u"tags"_s};

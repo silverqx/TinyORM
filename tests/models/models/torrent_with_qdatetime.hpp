@@ -40,7 +40,7 @@ class Torrent_With_QDateTime final : public Model<Torrent_With_QDateTime> // NOL
     };
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {AddedOn};
+    inline static const QStringList u_dates {AddedOn}; // NOLINT(cppcoreguidelines-interfaces-global-init)
 };
 
 } // namespace Models

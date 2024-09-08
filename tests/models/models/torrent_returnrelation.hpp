@@ -95,7 +95,7 @@ private:
     };
 
     /*! The attributes that should be mutated to dates. */
-    inline static const QStringList u_dates {AddedOn};
+    inline static const QStringList u_dates {AddedOn}; // NOLINT(cppcoreguidelines-interfaces-global-init)
 };
 
 } // namespace Models

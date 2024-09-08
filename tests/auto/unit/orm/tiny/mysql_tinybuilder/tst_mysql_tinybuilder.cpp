@@ -270,7 +270,7 @@ namespace
 
     public:
         /*! The attributes that should be mutated to dates. */
-        inline static QStringList u_dates {AddedOn}; // clazy:exclude=non-pod-global-static
+        inline static QStringList u_dates {AddedOn}; // NOLINT(cppcoreguidelines-interfaces-global-init) clazy:exclude=non-pod-global-static
     };
 } // namespace
 
