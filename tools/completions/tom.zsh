@@ -45,6 +45,10 @@ __tom_about_sections() {
 __tom_connections() {
     local -a connections
     local -a lines
+    # The documentation for the _values ​​completer function states that these variables should be
+    # declared locally by the function that calls this _values completer
+    local context state state_descr line
+    typeset -A val_args
 
     [[ -d database/migrations && -f main.cpp ]] || return
 
