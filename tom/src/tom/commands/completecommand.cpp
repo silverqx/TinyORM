@@ -733,6 +733,7 @@ QStringList CompleteCommand::getConnectionNamesFromFile()
 
     static const QRegularExpression regex(uR"T("(\w+)".*// shell:connection$)T"_s);
 
+    // No need to care about \r\n at the end
     while (getline(mainFileStream, line)) {
         const auto match = regex.match(QString::fromStdString(line));
 
