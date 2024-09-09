@@ -67,7 +67,7 @@ private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = u"firewalls"_s;
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_SchemaBuilder";
+    inline static const auto ClassName = u"tst_SchemaBuilder"_s;
     /*! Database name used in the current test case. */
     inline static const auto DatabaseName = u"tinyorm_tests_schemabuilder"_s;
 

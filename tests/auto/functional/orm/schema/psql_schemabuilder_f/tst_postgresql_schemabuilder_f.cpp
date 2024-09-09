@@ -37,7 +37,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder_f";
+    inline static const auto ClassName = u"tst_PostgreSQL_SchemaBuilder_f"_s;
 
     /*! Connection name used in this test case. */
     QString m_connection;

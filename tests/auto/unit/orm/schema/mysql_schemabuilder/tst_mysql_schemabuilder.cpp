@@ -181,7 +181,7 @@ private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = u"firewalls"_s;
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_MySql_SchemaBuilder";
+    inline static const auto ClassName = u"tst_MySql_SchemaBuilder"_s;
 
     /*! Get the MySQL connection name. */
     static QString getMySqlConnectionName(QStringList &connections);

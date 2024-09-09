@@ -58,7 +58,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_PostgreSQL_Connection";
+    inline static const auto ClassName = u"tst_PostgreSQL_Connection"_s;
 
     /*! Connection name used in this test case. */
     QString m_connection;

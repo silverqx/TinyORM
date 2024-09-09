@@ -91,7 +91,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_DatabaseManager";
+    inline static const auto ClassName = u"tst_DatabaseManager"_s;
 
     /*! Path to the SQLite database file, for testing the 'check_database_exists'
         configuration option. */

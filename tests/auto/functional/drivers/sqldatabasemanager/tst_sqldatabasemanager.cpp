@@ -65,7 +65,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_SqlDatabaseManager";
+    inline static const auto ClassName = u"tst_SqlDatabaseManager"_s;
 };
 
 /* private slots */

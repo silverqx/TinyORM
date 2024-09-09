@@ -191,7 +191,7 @@ private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = u"firewalls"_s;
     /*! Test case class name. */
-    inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder";
+    inline static const auto ClassName = u"tst_PostgreSQL_SchemaBuilder"_s;
 
     /*! Connection name used in this test case. */
     QString m_connection;

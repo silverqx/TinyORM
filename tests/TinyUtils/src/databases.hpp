@@ -89,7 +89,7 @@ namespace TestUtils
         struct ConnectionNameParts
         {
             /*! Unit test case class name. */
-            const char *className;
+            QString className;
             /*! Unit test method name. */
             QString methodName;
         };
