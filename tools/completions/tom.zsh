@@ -53,8 +53,10 @@ __tom_connections() {
     # Nothing found
     [[ $#lines -eq 0 ]] && return
 
+    regex='"([[:alnum:]_.-]+)".*// shell:connection$'
+
     for line in $lines; do
-        if [[ $line =~ '.*"(\w+)".*// shell:connection' ]]; then
+        if [[ $line =~ $regex ]]; then
             connections+=$match[1]
         fi
     done

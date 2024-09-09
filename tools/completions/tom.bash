@@ -21,7 +21,7 @@ __tom_connections() {
     # Nothing found
     [[ ${#lines[@]} -eq 0 ]] && return
 
-    regex='.*"(\w+)".*// shell:connection'
+    regex='"([[:alnum:]_.-]+)".*// shell:connection$'
 
     for line in "${lines[@]}"; do
         if [[ $line =~ $regex ]]; then
