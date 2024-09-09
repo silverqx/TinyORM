@@ -99,7 +99,9 @@ conf.pri
 /.env.*
 !/.env.example
 !/.env.*.example
-/examples/tom/database/
+# Can't end with / even if it is a directory because it's the symbolic link and
+# GIT doesn't ignore it on Linux
+/examples/tom/database
 /exports*.txt
 /exports.xlsx
 /todos.csv
