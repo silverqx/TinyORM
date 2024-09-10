@@ -196,8 +196,7 @@ QList<QString>
 MySqlSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                        const IndexCommand &/*unused*/) const
 {
-    return {u"alter table %1 drop primary key"_s
-                .arg(wrapTable(blueprint))};
+    return {u"alter table %1 drop primary key"_s.arg(wrapTable(blueprint))};
 }
 
 QList<QString>
@@ -410,9 +409,8 @@ MySqlSchemaGrammar::compileAutoIncrementStartingValue(
         const Blueprint &blueprint,
         const AutoIncrementStartingValueCommand &command) const
 {
-    return {u"alter table %1 auto_increment = %2"_s
-                .arg(wrapTable(blueprint))
-                .arg(command.startingValue)};
+    return {u"alter table %1 auto_increment = %2"_s.arg(wrapTable(blueprint))
+                                                   .arg(command.startingValue)};
 }
 
 QString
@@ -715,9 +713,8 @@ QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLI
 {
     const auto precision = column.precision.value_or(0);
 
-    const auto current = precision > 0
-                         ? u"current_timestamp(%1)"_s.arg(precision)
-                         : u"current_timestamp"_s;
+    const auto current = precision > 0 ? u"current_timestamp(%1)"_s.arg(precision)
+                                       : u"current_timestamp"_s;
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);
@@ -750,9 +747,8 @@ QString MySqlSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOL
 {
     const auto precision = column.precision.value_or(0);
 
-    const auto current = precision > 0
-                         ? u"current_timestamp(%1)"_s.arg(precision)
-                         : u"current_timestamp"_s;
+    const auto current = precision > 0 ? u"current_timestamp(%1)"_s.arg(precision)
+                                       : u"current_timestamp"_s;
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);

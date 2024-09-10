@@ -338,22 +338,22 @@ namespace Grammars
     }
 
     QList<QString>
-    PostgresSchemaGrammar::compileDropFullText(
-                const Blueprint &blueprint, const IndexCommand &command) const
+    PostgresSchemaGrammar::compileDropFullText(const Blueprint &blueprint,
+                                               const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
     QList<QString>
-    PostgresSchemaGrammar::compileDropSpatialIndex(
-                const Blueprint &blueprint, const IndexCommand &command) const
+    PostgresSchemaGrammar::compileDropSpatialIndex(const Blueprint &blueprint,
+                                                   const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
 
     QList<QString>
-    PostgresSchemaGrammar::compileDropForeign(
-                const Blueprint &blueprint, const IndexCommand &command) const
+    PostgresSchemaGrammar::compileDropForeign(const Blueprint &blueprint,
+                                              const IndexCommand &command) const
     {
         return compileDropConstraint(blueprint, command);
     }

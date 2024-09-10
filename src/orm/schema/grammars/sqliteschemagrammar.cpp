@@ -24,8 +24,7 @@ namespace Orm::SchemaNs::Grammars
 QString
 SQLiteSchemaGrammar::compileDropAllTables(const QList<QString> &/*unused*/) const
 {
-    return u"delete from sqlite_master "
-            "where type in ('table', 'index', 'trigger')"_s;
+    return u"delete from sqlite_master where type in ('table', 'index', 'trigger')"_s;
 }
 
 QString

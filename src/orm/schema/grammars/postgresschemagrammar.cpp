@@ -98,8 +98,8 @@ QList<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
-    return {u"alter table %1 rename to %2"_s
-                .arg(wrapTable(blueprint), BaseGrammar::wrap(command.to))};
+    return {u"alter table %1 rename to %2"_s.arg(wrapTable(blueprint),
+                                                 BaseGrammar::wrap(command.to))};
 }
 
 QList<QString>
@@ -275,8 +275,8 @@ QList<QString>
 PostgresSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,
                                           const RenameCommand &command) const
 {
-    return {u"alter index %1 rename to %2"_s
-                .arg(BaseGrammar::wrap(command.from), BaseGrammar::wrap(command.to))};
+    return {u"alter index %1 rename to %2"_s.arg(BaseGrammar::wrap(command.from),
+                                                 BaseGrammar::wrap(command.to))};
 }
 
 QList<QString>
@@ -416,8 +416,7 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
     for (const auto method : modifierMethods)
         /* Postgres is different here, it returns a vector as it needs to return
            2 modifiers from the modifyGeneratedAs(). */
-        sql += ContainerUtils::join(
-                   std::invoke(method, this, column), EMPTY);
+        sql += ContainerUtils::join(std::invoke(method, this, column), EMPTY);
 
     return std::move(sql);
 }
@@ -622,8 +621,7 @@ PostgresSchemaGrammar::formatPostGisType(const QString &type,
 
     // NOTE api different, Eloquent uses the column.projection for this, I'm reusing the column.srid silverqx
     if (column.srid)
-        return u"geometry(%1, %2)"_s
-                .arg(type, QString::number(*column.srid));
+        return u"geometry(%1, %2)"_s.arg(type, QString::number(*column.srid));
 
     return u"geometry(%1)"_s.arg(type);
 }
@@ -710,8 +708,8 @@ QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
         return u"decimal"_s;
 
     return u"decimal(%1, %2)"_s.arg(*column.total)
-                                            // Follow the SQL standard
-                                            .arg(column.places ? *column.places : 0);
+                               // Follow the SQL standard
+                               .arg(column.places ? *column.places : 0);
 }
 
 QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
@@ -721,8 +719,8 @@ QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) c
 
 QString PostgresSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return uR"(varchar(255) check ("%1" in (%2)))"_s
-            .arg(column.name, quoteString(column.allowed));
+    return uR"(varchar(255) check ("%1" in (%2)))"_s.arg(column.name,
+                                                         quoteString(column.allowed));
 }
 
 QString PostgresSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)

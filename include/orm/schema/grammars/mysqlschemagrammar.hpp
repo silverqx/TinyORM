@@ -325,8 +325,8 @@ namespace Grammars
     }
 
     QList<QString>
-    MySqlSchemaGrammar::compileDropSpatialIndex(
-                const Blueprint &blueprint, const IndexCommand &command) const
+    MySqlSchemaGrammar::compileDropSpatialIndex(const Blueprint &blueprint,
+                                                const IndexCommand &command) const
     {
         return compileDropIndex(blueprint, command);
     }
