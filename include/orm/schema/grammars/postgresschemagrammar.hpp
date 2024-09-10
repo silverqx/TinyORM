@@ -20,7 +20,7 @@ namespace Orm::SchemaNs
 namespace Grammars
 {
 
-    /*! PostgreSQL schemma grammar. */
+    /*! PostgreSQL schema grammar. */
     class TINYORM_EXPORT PostgresSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY_MOVE(PostgresSchemaGrammar)

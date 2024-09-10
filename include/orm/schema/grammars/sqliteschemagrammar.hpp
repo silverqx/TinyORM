@@ -17,7 +17,7 @@ namespace Orm::SchemaNs
 namespace Grammars
 {
 
-    /*! SQLite schemma grammar. */
+    /*! SQLite schema grammar. */
     class TINYORM_EXPORT SQLiteSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY_MOVE(SQLiteSchemaGrammar)
