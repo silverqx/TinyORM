@@ -140,10 +140,6 @@ namespace Grammars
         const std::vector<FluentCommandItem> &getFluentCommands() const override;
 
     protected:
-        // BUG schema, change after upgrade to QtCreator with clang 13 silverqx
-        /*! Expose column types. */
-//        using enum ColumnType;
-
         /*! Create the main create table clause. */
         QString compileCreateTable(const Blueprint &blueprint) const;
         /*! Add the column modifiers to the definition. */
