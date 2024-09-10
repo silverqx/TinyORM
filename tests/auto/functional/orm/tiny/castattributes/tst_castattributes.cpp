@@ -1333,7 +1333,7 @@ void tst_CastAttributes::defaultCast_Null_bigint() const
         QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QPSQL)
         /* Look at QPSQLResult::data(), the logic for - and ULongLong is not applied
-           for the null values, so it's everytime LongLong. */
+           for the null values, so it's every time LongLong. */
         QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::QString);
@@ -1358,7 +1358,7 @@ void tst_CastAttributes::defaultCast_Null_bigint_u() const
         QCOMPARE(typeId, QMetaType::ULongLong);
     else if (driverName == QPSQL)
         /* Look at QPSQLResult::data(), the logic for - and ULongLong is not applied
-           for the null values, so it's everytime LongLong. */
+           for the null values, so it's every time LongLong. */
         QCOMPARE(typeId, QMetaType::LongLong);
     else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::QString);
@@ -3388,7 +3388,7 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
                  "connection and ID(%3) failed in %2()."_s
                 .arg(connection, __tiny_func__).arg(id));
 
-    /* The u_casts has to be reset everytime since the u_casts is static because
+    /* The u_casts has to be reset every time since the u_casts is static because
        if the u_casts is modified for eg. MySQL connection test and right after is
        executed the same unit test for eg. SQLite connection then we need the u_casts
        static data member clean.

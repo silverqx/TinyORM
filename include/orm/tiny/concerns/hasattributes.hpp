@@ -1078,7 +1078,7 @@ namespace Orm::Tiny::Concerns
         /* The getDates() is also called from the SoftDeletes::initializeSoftDeletes()
            that is called from the Model::constructor() which means that
            the Derived::u_timestamps data member is not yet initialized, so it will be
-           everytime false. This can be considered as a bug but it doesn't matter,
+           every time false. This can be considered as a bug but it doesn't matter,
            it doesn't affect the logic in any way and the result will be correct.
            The result is that I'm still successfully avoiding the need to add
            a separate Model initialization method, which I'm super happy with 🙌. */
