@@ -130,7 +130,9 @@ namespace Orm::Tiny::Relations
 
        Ignored  : u_connection, u_timestamps, CREATED_AT(), UPDATED_AT()
        Accepted : u_attributes, u_dates, u_dateFormat, u_fillable, u_guarded,
-                  u_incrementing, u_table
+                  u_incrementing, u_table (I don't remember how this exactly works but
+                  all other u_ attributes like u_casts, u_snakeAttributes, u_visible, ...
+                  should work as well)
 
        Notes : u_connection - inferred from the parent model
                u_timestamps - true if obtained pivot attributes contain both CREATED_AT
