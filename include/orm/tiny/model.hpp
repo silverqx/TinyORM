@@ -485,7 +485,9 @@ namespace Orm::Tiny
         inline const QString &getUserTimeFormat() const noexcept;
 
         /*! Get the u_dates attribute from the Derived model. */
-        inline static const QStringList &getUserDates() noexcept;
+        inline QStringList &getUserDates() noexcept;
+        /*! Get the u_dates attribute from the Derived model. */
+        inline const QStringList &getUserDates() const noexcept;
 
         /*! Get the casts hash. */
         inline std::unordered_map<QString, CastItem> &getUserCasts() noexcept;
@@ -565,9 +567,9 @@ namespace Orm::Tiny
 
         /* SoftDeletes */
         /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
-        void initializeSoftDeletes() const;
+        void initializeSoftDeletes();
         /*! Append the given column to the u_dates attribute. */
-        static void appendToUserDates(const QString &column);
+        void appendToUserDates(const QString &column);
     };
 
     /* public */
@@ -2003,8 +2005,15 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QStringList &
+    QStringList &
     Model<Derived, AllRelations...>::getUserDates() noexcept
+    {
+        return Derived::u_dates;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QStringList &
+    Model<Derived, AllRelations...>::getUserDates() const noexcept
     {
         return Derived::u_dates;
     }
@@ -2191,7 +2200,7 @@ namespace Orm::Tiny
     /* SoftDeletes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::initializeSoftDeletes() const
+    void Model<Derived, AllRelations...>::initializeSoftDeletes()
     {
         if constexpr (extendsSoftDeletes())
             model().SoftDeletes<Derived>::initializeSoftDeletes();
@@ -2200,7 +2209,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::appendToUserDates(const QString &column)
     {
-        const_cast<QStringList &>(Derived::u_dates) << column;
+        getUserDates() << column;
     }
 
 } // namespace Orm::Tiny

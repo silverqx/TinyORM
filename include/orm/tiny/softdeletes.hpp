@@ -43,7 +43,7 @@ namespace Orm::Tiny
         SoftDeletes &operator=(SoftDeletes &&) noexcept = default;
 
         /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
-        void initializeSoftDeletes() const;
+        void initializeSoftDeletes();
 
         /*! Force a hard delete on a soft deletable model. */
         bool forceDelete();
@@ -92,14 +92,15 @@ namespace Orm::Tiny
     /* public */
 
     template<typename Derived>
-    void SoftDeletes<Derived>::initializeSoftDeletes() const
+    void SoftDeletes<Derived>::initializeSoftDeletes()
     {
+        auto &model = this->model();
         const auto &deletedAtColumn = getDeletedAtColumn();
 
-        if (model().getDates().contains(deletedAtColumn))
+        if (std::as_const(model).getDates().contains(deletedAtColumn))
             return;
 
-        Derived::appendToUserDates(deletedAtColumn);
+        model.appendToUserDates(deletedAtColumn);
     }
 
     template<typename Derived>

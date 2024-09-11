@@ -1083,10 +1083,12 @@ namespace Orm::Tiny::Concerns
            The result is that I'm still successfully avoiding the need to add
            a separate Model initialization method, which I'm super happy with 🙌. */
 
-        if (!basemodel().usesTimestamps())
-            return Model<Derived, AllRelations...>::getUserDates();
+        const auto &basemodel = this->basemodel();
 
-        auto dates = Model<Derived, AllRelations...>::getUserDates() +
+        if (!basemodel.usesTimestamps())
+            return basemodel.getUserDates();
+
+        auto dates = basemodel.getUserDates() +
                      Model<Derived, AllRelations...>::timestampColumnNames();
 
         dates.removeDuplicates();
