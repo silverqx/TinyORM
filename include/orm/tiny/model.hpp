@@ -471,16 +471,20 @@ namespace Orm::Tiny
         inline QString &getUserDateFormat() noexcept;
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline const QString &getUserDateFormat() const noexcept;
+
         /*! Get the u_timeFormat attribute from the Derived model. */
         inline QString &getUserTimeFormat() noexcept;
         /*! Get the u_timeFormat attribute from the Derived model. */
         inline const QString &getUserTimeFormat() const noexcept;
+
         /*! Get the u_dates attribute from the Derived model. */
         inline static const QStringList &getUserDates() noexcept;
+
         /*! Get the casts hash. */
         inline std::unordered_map<QString, CastItem> &getUserCasts() noexcept;
         /*! Get the casts hash. */
         inline const std::unordered_map<QString, CastItem> &getUserCasts() const noexcept;
+
         /*! Get the u_snakeAttributes attribute from the Derived model. */
         inline bool &getUserSnakeAttributes() noexcept;
         /*! Get the u_snakeAttributes attribute from the Derived model. */
@@ -491,6 +495,7 @@ namespace Orm::Tiny
         inline QStringList &getUserFillable() noexcept;
         /*! Get the u_fillable attributes from the Derived model. */
         inline const QStringList &getUserFillable() const noexcept;
+
         /*! Get the u_guarded attributes from the Derived model. */
         inline QStringList &getUserGuarded() noexcept;
         /*! Get the u_guarded attributes from the Derived model. */
@@ -505,6 +510,7 @@ namespace Orm::Tiny
         /*! Get the u_relations map from the Derived model. */
         inline const QHash<QString, RelationVisitorAlias> &
         getUserRelations() const noexcept;
+
         /*! Get the u_touches relation names to touch from the Derived model. */
         inline const QStringList &getUserTouches() const noexcept;
         /*! Get the u_touches relation names to touch from the Derived model. */
@@ -515,6 +521,7 @@ namespace Orm::Tiny
         inline bool &getUserTimestamps() noexcept;
         /*! Get the u_timestamps attribute from the Derived model. */
         inline bool getUserTimestamps() const noexcept;
+
         /*! Get the CREATED_AT attribute from the Derived model. */
         inline static const QString &getUserCreatedAtColumn() noexcept;
         /*! Get the UPDATED_AT attribute from the Derived model. */
@@ -525,6 +532,7 @@ namespace Orm::Tiny
         inline std::set<QString> &getUserVisible() noexcept;
         /*! Get the u_visible attributes from the Derived model. */
         inline const std::set<QString> &getUserVisible() const noexcept;
+
         /*! Get the u_hidden attributes from the Derived model. */
         inline std::set<QString> &getUserHidden() noexcept;
         /*! Get the u_hidden attributes from the Derived model. */
@@ -535,6 +543,7 @@ namespace Orm::Tiny
         inline std::set<QString> &getUserAppends() noexcept;
         /*! Get the u_appends attributes from the Derived model. */
         inline const std::set<QString> &getUserAppends() const noexcept;
+
         /*! Get the u_mutators map from the Derived model. */
         inline static
         const QHash<QString, typename Concerns::HasAttributes<Derived, AllRelations...>
