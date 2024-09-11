@@ -646,6 +646,7 @@ function(tiny_model_sources out_headers out_sources)
         torrent.hpp
         torrent_norelations.hpp
         torrent_returnrelation.hpp
+        torrent_with_equality_operator.hpp
         torrent_with_qdatetime.hpp
         torrent_without_qdatetime.hpp
         torrenteager.hpp

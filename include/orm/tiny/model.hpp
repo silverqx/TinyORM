@@ -419,6 +419,9 @@ namespace Orm::Tiny
         /*! The relationship counts that should be eager loaded on every query. */
 //        QList<WithItem> u_withCount;
 
+        /*! Indicates whether to skip attributes comparison in the Derived model. */
+        constexpr static auto u_skipCompareDerived = false;
+
     private:
         /* Operations on a Model instance */
         /*! Method to call in the incrementOrDecrement(). */
@@ -449,6 +452,9 @@ namespace Orm::Tiny
                 TinyBuilder<Derived> &query, const QString &column, T amount,
                 const QList<AttributeItem> &extra, IncrementOrDecrement method,
                 bool all);
+
+        /*! Determine whether to skip attributes comparison in the Derived model. */
+        static bool skipCompareDerived() noexcept;
 
         /* HasAttributes */
         /*! Fill the model with a vector of attributes with the CRTP check. */
@@ -1118,10 +1124,17 @@ namespace Orm::Tiny
                                                   derivedRight.u_relations))
             return false;
 
+        /* Nothing to do, a user defined the u_skipCompareDerived = true in the Derived
+           model or the Derived::operator==() equality operator is already defined,
+           in both cases operator==() must be handled manually in the Derived model. */
+        if (skipCompareDerived())
+            return true;
+
         /* Thanks to the CRTP the user doesn't have to define operator==() in every
-           model, the u_xyz data members are compared here. I don't like it though,
-           one caveat of this is that if a user defines the operator==() then these
-           data members will be compared twice. */
+           model, the u_xyz data members are compared here.
+           After adding the skipCompareDerived() check, this is no longer true:
+           I don't like it though, one caveat of this is that if a user defines
+           the operator==() then these data members will be compared twice. */
         return model.u_table        == derivedRight.u_table        &&
                model.u_incrementing == derivedRight.u_incrementing &&
                model.u_primaryKey   == derivedRight.u_primaryKey   &&
@@ -1869,6 +1882,26 @@ namespace Orm::Tiny
             return query.decrement(column, amount, extraConverted);
 
         Q_UNREACHABLE();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool Model<Derived, AllRelations...>::skipCompareDerived() noexcept
+    {
+        // Nothing to do, a user defined u_skipCompareDerived = true in the Derived model
+        if constexpr (Derived::u_skipCompareDerived)
+            return true;
+
+        else {
+            /*! Derived::operator==() method pointer type. */
+            using EqualityOperatorMemFn = bool(Derived::*)(const Derived &) const;
+
+            /* Nothing to do, Derived::operator==() equality operator is already defined.
+               This will not work if multiple overloads are defined in the Derived model.
+               If the Derived model needs multiple overloads of operator==() then this
+               logic can be skipped using the u_skipCompareDerived = true, in both cases
+               the operator==() must be handled manually in the Derived model. */
+            return typeid (&Derived::operator==) == typeid (EqualityOperatorMemFn);
+        }
     }
 
     /* HasAttributes */

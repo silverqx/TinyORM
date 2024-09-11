@@ -30,6 +30,7 @@ headersList += \
     $$PWD/models/torrent.hpp \
     $$PWD/models/torrent_norelations.hpp \
     $$PWD/models/torrent_returnrelation.hpp \
+    $$PWD/models/torrent_with_equality_operator.hpp \
     $$PWD/models/torrent_with_qdatetime.hpp \
     $$PWD/models/torrent_without_qdatetime.hpp \
     $$PWD/models/torrenteager.hpp \

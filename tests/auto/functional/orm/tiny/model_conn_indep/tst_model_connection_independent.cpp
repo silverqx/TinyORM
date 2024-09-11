@@ -8,6 +8,7 @@
 #include "models/datetime.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent_includeslist.hpp"
+#include "models/torrent_with_equality_operator.hpp"
 #include "models/torrent_with_qdatetime.hpp"
 #include "models/torrent_without_qdatetime.hpp"
 
@@ -48,6 +49,8 @@ using Models::TorrentPreviewableFile;
 using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
 using Models::Torrent_TotallyGuarded;
+using Models::Torrent_With_Equality_Operator;
+using Models::Torrent_With_Equality_Operator_Overload;
 using Models::Torrent_With_QDateTime;
 using Models::Torrent_Without_QDateTime;
 using Models::TorrentPreviewableFileProperty;
@@ -100,6 +103,12 @@ private Q_SLOTS:
 
     void equalComparison() const;
     void notEqualComparison() const;
+
+    void equalComparison_DefaultEqualityOperator() const;
+    void notEqualComparison_DefaultEqualityOperator() const;
+
+    void equalComparison_DefaultEqualityOperator_Overload() const;
+    void notEqualComparison_DefaultEqualityOperator_Overload() const;
 
     /* Mass assignment */
     void massAssignment_Fillable() const;
@@ -896,6 +905,83 @@ void tst_Model_Connection_Independent::notEqualComparison() const
     {
         auto torrent1_2 = Torrent::with("torrentFiles")->find(1);
         QVERIFY(torrent1_2);
+
+        QVERIFY(*torrent1_1 != *torrent1_2);
+    }
+}
+
+void tst_Model_Connection_Independent::equalComparison_DefaultEqualityOperator() const
+{
+    // Is equal without relations
+    auto torrent1_1 = Torrent_With_Equality_Operator::find(1);
+    auto torrent1_2 = Torrent_With_Equality_Operator::find(1);
+
+    QVERIFY(torrent1_1);
+    QVERIFY(torrent1_2);
+    QVERIFY(*torrent1_1 == *torrent1_2);
+}
+
+void tst_Model_Connection_Independent::notEqualComparison_DefaultEqualityOperator() const
+{
+    auto torrent1_1 = Torrent_With_Equality_Operator::find(1);
+    auto torrent2 = Torrent_With_Equality_Operator::find(2);
+    QVERIFY(torrent1_1);
+    QVERIFY(torrent2);
+
+    // Different torrent
+    QVERIFY(*torrent1_1 != *torrent2);
+
+    // Different attribute
+    {
+        auto torrent1_2 = Torrent_With_Equality_Operator::find(1);
+        QVERIFY(torrent1_2);
+
+        // Check before change
+        QVERIFY(*torrent1_1 == *torrent1_2);
+
+        torrent1_2->setAttribute(NAME, "test1 changed");
+
+        QVERIFY(*torrent1_1 != *torrent1_2);
+    }
+}
+
+/* The following two test methods test scenario when the operator==() is overloaded,
+   in this case the u_skipCompareDerived = true is needed otherwise compilation fails
+   because of the typeid (&Derived::operator==) isn't able to handle overloaded
+   operator==(). */
+
+void tst_Model_Connection_Independent::
+     equalComparison_DefaultEqualityOperator_Overload() const
+{
+    // Is equal without relations
+    auto torrent1_1 = Torrent_With_Equality_Operator_Overload::find(1);
+    auto torrent1_2 = Torrent_With_Equality_Operator_Overload::find(1);
+
+    QVERIFY(torrent1_1);
+    QVERIFY(torrent1_2);
+    QVERIFY(*torrent1_1 == *torrent1_2);
+}
+
+void tst_Model_Connection_Independent::
+     notEqualComparison_DefaultEqualityOperator_Overload() const
+{
+    auto torrent1_1 = Torrent_With_Equality_Operator_Overload::find(1);
+    auto torrent2 = Torrent_With_Equality_Operator_Overload::find(2);
+    QVERIFY(torrent1_1);
+    QVERIFY(torrent2);
+
+    // Different torrent
+    QVERIFY(*torrent1_1 != *torrent2);
+
+    // Different attribute
+    {
+        auto torrent1_2 = Torrent_With_Equality_Operator_Overload::find(1);
+        QVERIFY(torrent1_2);
+
+        // Check before change
+        QVERIFY(*torrent1_1 == *torrent1_2);
+
+        torrent1_2->setAttribute(NAME, "test1 changed");
 
         QVERIFY(*torrent1_1 != *torrent1_2);
     }
