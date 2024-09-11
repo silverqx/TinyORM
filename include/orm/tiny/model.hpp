@@ -493,8 +493,6 @@ namespace Orm::Tiny
         inline const std::unordered_map<QString, CastItem> &getUserCasts() const noexcept;
 
         /*! Get the u_snakeAttributes attribute from the Derived model. */
-        inline bool &getUserSnakeAttributes() noexcept;
-        /*! Get the u_snakeAttributes attribute from the Derived model. */
         inline bool getUserSnakeAttributes() const noexcept;
 
         /* GuardsAttributes */
@@ -2023,13 +2021,6 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserCasts() const noexcept
     {
         return Derived::u_casts;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool &
-    Model<Derived, AllRelations...>::getUserSnakeAttributes() noexcept
-    {
-        return Derived::u_snakeAttributes;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
