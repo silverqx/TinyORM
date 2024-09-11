@@ -152,7 +152,7 @@ namespace Types
         inline void clear();
 
         /*! Swap the SyncChanges. */
-        inline void swap(SyncChanges &right)
+        inline void swap(SyncChanges &other)
         noexcept(std::is_nothrow_swappable_v<ContainerType>);
 
         /* Comparison */
@@ -384,13 +384,13 @@ namespace Types
         m_data.at(Constants::Updated_).clear();
     }
 
-    void SyncChanges::swap(SyncChanges &right)
+    void SyncChanges::swap(SyncChanges &other)
     noexcept(std::is_nothrow_swappable_v<ContainerType>)
     {
-        if (this == std::addressof(right))
+        if (this == std::addressof(other))
             return;
 
-        m_data.swap(right.m_data);
+        m_data.swap(other.m_data);
     }
 
     /* protected */

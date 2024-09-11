@@ -246,15 +246,15 @@ namespace Orm::Tiny
         bool isNot(const std::optional<ModelToCompare> &model) const;
 
         /*! Equality comparison operator for the Model. */
-        bool operator==(const Model &right) const; // NOLINT(misc-no-recursion)
+        bool operator==(const Model &other) const; // NOLINT(misc-no-recursion)
 
 #if defined(__clang__) && __clang_major__ >= 16
         /*! Three-way comparison operator for the Model. */
-        std::strong_ordering operator<=>(const Model &right) const
+        std::strong_ordering operator<=>(const Model &other) const
         requires std::is_integral_v<typename Derived::KeyType>;
 #else
         /*! Three-way comparison operator for the Model. */
-        std::strong_ordering operator<=>(const Model &right) const;
+        std::strong_ordering operator<=>(const Model &other) const;
 #endif
 
         /*! Fill the model with a vector of attributes. */
@@ -1074,7 +1074,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::operator==(const Model &right) const // NOLINT(misc-no-recursion)
+    bool Model<Derived, AllRelations...>::operator==(const Model &other) const // NOLINT(misc-no-recursion)
     {
         /* Comparing the HasConnectionResolver, GuardsAttributes, ModelProxies, and
            IsModel is not needed as they don't contain any data members or they
@@ -1083,45 +1083,45 @@ namespace Orm::Tiny
         // Compare the HasAttributes_ concern
         using HasAttributes_ = Concerns::HasAttributes<Derived, AllRelations...>;
         if (static_cast<const HasAttributes_ &>(*this) !=
-            static_cast<const HasAttributes_ &>(right)
+            static_cast<const HasAttributes_ &>(other)
         )
             return false;
 
         // Compare the HasRelationships_ concern
         using HasRelationships_ = Concerns::HasRelationships<Derived, AllRelations...>;
         if (static_cast<const HasRelationships_ &>(*this) !=
-            static_cast<const HasRelationships_ &>(right)
+            static_cast<const HasRelationships_ &>(other)
         )
             return false;
 
         // Compare the HasTimestamps_ concern
         using HasTimestamps_ = Concerns::HasTimestamps<Derived, AllRelations...>;
         if (static_cast<const HasTimestamps_ &>(*this) !=
-            static_cast<const HasTimestamps_ &>(right)
+            static_cast<const HasTimestamps_ &>(other)
         )
             return false;
 
         // Compare the Base Model
-        if (true != (exists         == right.exists         &&
-                     u_table        == right.u_table        &&
-                     u_connection   == right.u_connection   &&
-                     u_incrementing == right.u_incrementing &&
-                     u_primaryKey   == right.u_primaryKey   &&
-                     u_with         == right.u_with)
-//                   u_withCount    == right.u_withCount
+        if (true != (exists         == other.exists         &&
+                     u_table        == other.u_table        &&
+                     u_connection   == other.u_connection   &&
+                     u_incrementing == other.u_incrementing &&
+                     u_primaryKey   == other.u_primaryKey   &&
+                     u_with         == other.u_with)
+//                   u_withCount    == other.u_withCount
         )
             return false;
 
         const auto &model = this->model();
         // Compare data members in the Derived Model 😮🤯😎
-        const auto &derivedRight = static_cast<const Derived &>(right);
+        const auto &derivedOther = static_cast<const Derived &>(other);
 
-        // model().u_relations == derivedRight.u_relations
+        // model().u_relations == derivedOther.u_relations
         /* It compares only the size and keys and doesn't compare hash values because
            the std::function doesn't have a full/complete operator==() (it only compares
            for the nullptr). */
         if (!HasRelationships_::compareURelations(model.u_relations,
-                                                  derivedRight.u_relations))
+                                                  derivedOther.u_relations))
             return false;
 
         /* Nothing to do, a user defined the u_skipCompareDerived = true in the Derived
@@ -1135,29 +1135,29 @@ namespace Orm::Tiny
            After adding the skipCompareDerived() check, this is no longer true:
            I don't like it though, one caveat of this is that if a user defines
            the operator==() then these data members will be compared twice. */
-        return model.u_table        == derivedRight.u_table        &&
-               model.u_incrementing == derivedRight.u_incrementing &&
-               model.u_primaryKey   == derivedRight.u_primaryKey   &&
-               model.u_with         == derivedRight.u_with         &&
-//               model.u_withCount    == derivedRight.u_withCount    &&
-               model.u_connection   == derivedRight.u_connection   &&
+        return model.u_table        == derivedOther.u_table        &&
+               model.u_incrementing == derivedOther.u_incrementing &&
+               model.u_primaryKey   == derivedOther.u_primaryKey   &&
+               model.u_with         == derivedOther.u_with         &&
+//             model.u_withCount    == derivedOther.u_withCount    &&
+               model.u_connection   == derivedOther.u_connection   &&
                // HasAttributes
-               model.u_appends      == derivedRight.u_appends      &&
+               model.u_appends      == derivedOther.u_appends      &&
                // HasRelationships
-               model.u_touches      == derivedRight.u_touches      &&
+               model.u_touches      == derivedOther.u_touches      &&
                // HasTimestamps
-               model.u_timestamps   == derivedRight.u_timestamps;
+               model.u_timestamps   == derivedOther.u_timestamps;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::strong_ordering
-    Model<Derived, AllRelations...>::operator<=>(const Model &right) const
+    Model<Derived, AllRelations...>::operator<=>(const Model &other) const
 #if defined(__clang__) && __clang_major__ >= 16
     requires std::is_integral_v<typename Derived::KeyType>
 #endif
     {
         const auto primaryKey = getKeyCasted();
-        const auto primaryKeyOther = right.getKeyCasted();
+        const auto primaryKeyOther = other.getKeyCasted();
 
         // Move models with the null, invalid, or undefined primary keys to the bottom
         if (primaryKey == 0)

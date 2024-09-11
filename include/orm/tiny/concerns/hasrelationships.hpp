@@ -190,7 +190,7 @@ namespace Concerns
 
         /* Others */
         /*! Equality comparison operator for the HasRelationships concern. */
-        bool operator==(const HasRelationships &right) const;
+        bool operator==(const HasRelationships &other) const;
 
         /*! Determine whether the current model contains a pivot relation alternative
             in the m_relations std::variant. */
@@ -858,18 +858,18 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasRelationships<Derived, AllRelations...>::operator==( // NOLINT(misc-no-recursion)
-            const HasRelationships &right) const
+            const HasRelationships &other) const
     {
-        // u_relations == right.u_relations
+        // u_relations == other.u_relations
         /* It compares only the size and keys and doesn't compare hash values because
            the std::function doesn't have a full/complete operator==() (it only compares
            for the nullptr). */
-        if (!compareURelations(u_relations, right.u_relations))
+        if (!compareURelations(u_relations, other.u_relations))
             return false;
 
-        return m_relations == right.m_relations &&
-               u_touches   == right.u_touches   &&
-               m_pivots    == right.m_pivots;
+        return m_relations == other.m_relations &&
+               u_touches   == other.u_touches   &&
+               m_pivots    == other.m_pivots;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
