@@ -1162,6 +1162,7 @@ namespace Orm::Tiny
         // Move models with the null, invalid, or undefined primary keys to the bottom
         if (leftKey == 0)
             return std::strong_ordering::greater;
+
         if (rightKey == 0)
             return std::strong_ordering::less;
 
