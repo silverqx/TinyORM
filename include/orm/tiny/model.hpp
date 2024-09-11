@@ -467,6 +467,7 @@ namespace Orm::Tiny
             (mass assignment). */
         [[noreturn]] static void throwTotallyGuarded(const QString &key);
 
+        /* u_ Getters */
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline QString &getUserDateFormat() noexcept;
         /*! Get the u_dateFormat attribute from the Derived model. */
@@ -1931,6 +1932,8 @@ namespace Orm::Tiny
                      "on the '%2' model."
                     .arg(key, TypeUtils::classPureBasename<Derived>()));
     }
+
+    /* u_ Getters */
 
     /* Getters for u_ data members defined in the Derived models, helps to avoid
        'friend GuardsAttributes/HasTimestamps' declarations in models when a u_ data
