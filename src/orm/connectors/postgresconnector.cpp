@@ -118,7 +118,7 @@ void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
 /*! The key comparison function for the Compare template parameter. */
 struct QStringLessCi
 {
-    /*! Compare the given strings case insenstive (< operator). */
+    /*! Compare the given strings case insensitive (< operator). */
     bool operator()(const QString &left, const QString &right) const noexcept // NOLINT(readability-suspicious-call-argument)
     {
         return QString::compare(left, right, Qt::CaseInsensitive) < 0;
