@@ -411,7 +411,7 @@ namespace Orm::Tiny::Relations
                 const_cast<QString &>(UPDATED_AT) = updatedAt; // NOLINT(cppcoreguidelines-pro-type-const-cast)
         }
 
-        // Inferre from the parent model
+        // Infer from the parent model
         else {
             if (const auto &parentCreatedAt = Parent::getCreatedAtColumn();
                 parentCreatedAt != CREATED_AT
