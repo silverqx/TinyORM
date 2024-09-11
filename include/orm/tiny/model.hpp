@@ -1156,17 +1156,17 @@ namespace Orm::Tiny
     requires std::is_integral_v<typename Derived::KeyType>
 #endif
     {
-        const auto leftKey = getKeyCasted();
-        const auto rightKey = right.getKeyCasted();
+        const auto primaryKey = getKeyCasted();
+        const auto primaryKeyOther = right.getKeyCasted();
 
         // Move models with the null, invalid, or undefined primary keys to the bottom
-        if (leftKey == 0)
+        if (primaryKey == 0)
             return std::strong_ordering::greater;
 
-        if (rightKey == 0)
+        if (primaryKeyOther == 0)
             return std::strong_ordering::less;
 
-        return leftKey <=> rightKey;
+        return primaryKey <=> primaryKeyOther;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
