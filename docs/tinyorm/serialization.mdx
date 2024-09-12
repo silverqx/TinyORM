@@ -267,13 +267,13 @@ You may customize the default serialization format by overriding the `serializeD
 
 ```cpp
 /*! Prepare a date for vector, map, or JSON serialization. */
-QString serializeDate(const QDate date)
+inline static QString serializeDate(const QDate date)
 {
     return date.toString("yyyy-MM-dd");
 }
 
 /*! Prepare a datetime for vector, map, or JSON serialization. */
-QString serializeDateTime(const QDateTime &datetime)
+inline static QString serializeDateTime(const QDateTime &datetime)
 {
     return datetime.toUTC().toString("yyyy-MM-ddTHH:mm:ssZ");
 }
