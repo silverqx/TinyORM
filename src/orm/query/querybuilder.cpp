@@ -1595,7 +1595,7 @@ SqlQuery
 Builder::onceWithColumns(const QList<Column> &columns,
                          const std::function<SqlQuery()> &callback)
 {
-    // Save orignal columns
+    // Save original columns
     auto original = m_columns;
 
     if (original.isEmpty())
