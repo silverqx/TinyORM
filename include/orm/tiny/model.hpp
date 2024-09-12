@@ -1102,13 +1102,13 @@ namespace Orm::Tiny
             return false;
 
         // Compare the Base Model
-        if (true != (exists         == other.exists         &&
-                     u_table        == other.u_table        &&
-                     u_connection   == other.u_connection   &&
-                     u_incrementing == other.u_incrementing &&
-                     u_primaryKey   == other.u_primaryKey   &&
-                     u_with         == other.u_with)
-//                   u_withCount    == other.u_withCount
+        if (!(exists         == other.exists         &&
+              u_table        == other.u_table        &&
+              u_connection   == other.u_connection   &&
+              u_incrementing == other.u_incrementing &&
+              u_primaryKey   == other.u_primaryKey   &&
+              u_with         == other.u_with)
+//            u_withCount    == other.u_withCount
         )
             return false;
 
