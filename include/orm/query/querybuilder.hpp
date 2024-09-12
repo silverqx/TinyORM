@@ -1625,7 +1625,7 @@ namespace Orm::Query
         const auto expression = u"%1 + %2"_s.arg(m_grammar->wrap(column)).arg(amount);
 
         QList<UpdateItem> columns {{column, raw(expression)}};
-        std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
+        std::ranges::copy(extra, std::back_inserter(columns));
 
         return update(columns);
     }
@@ -1638,7 +1638,7 @@ namespace Orm::Query
         const auto expression = u"%1 - %2"_s.arg(m_grammar->wrap(column)).arg(amount);
 
         QList<UpdateItem> columns {{column, raw(expression)}};
-        std::copy(extra.cbegin(), extra.cend(), std::back_inserter(columns));
+        std::ranges::copy(extra, std::back_inserter(columns));
 
         return update(columns);
     }
