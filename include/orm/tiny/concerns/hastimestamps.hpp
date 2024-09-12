@@ -7,6 +7,10 @@ TINY_SYSTEM_HEADER
 
 #include <QDateTime>
 
+#ifdef QT_LEAN_HEADERS
+#  include <QStringList>
+#endif
+
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 
