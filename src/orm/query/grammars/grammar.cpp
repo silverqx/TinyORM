@@ -126,7 +126,7 @@ QString Grammar::compileUpsert(
             QueryBuilder &/*unused*/, const QList<QVariantMap> &/*unused*/,
             const QStringList &/*unused*/, const QStringList &/*unused*/) const
 {
-    throw Exceptions::RuntimeError("This database engine does not support upserts.");
+    throw Exceptions::RuntimeError("This database engine does not support upsert-s.");
 }
 
 QString Grammar::compileDelete(QueryBuilder &query) const
