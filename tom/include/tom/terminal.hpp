@@ -120,15 +120,15 @@ namespace Tom
     template<OStreamConcept O>
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
-        // BUG msvc the using Qt::StringLiterals::operator""_L1; doesn't work here, compilation fails silverqx
-        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
 #ifndef _WIN32
         Q_UNUSED(cout)
 #endif
         // Follow https://no-color.org/
         if (qEnvironmentVariableIsSet("NO_COLOR"))
             return false;
+
+        // BUG msvc the using Qt::StringLiterals::operator""_L1; doesn't work here, compilation fails silverqx
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         if (qEnvironmentVariable("TERM_PROGRAM") == "Hyper"_L1)
             return isatty(stream);
