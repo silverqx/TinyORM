@@ -86,18 +86,16 @@ namespace Orm::Tiny::Utils
         /*! Compare attributes helper function for the ModelsCollection::sortBy(). */
         template<typename T, typename U>
         requires ranges::totally_ordered_with<T, U>
-        static std::strong_ordering compareForSortBy(T &&left, U &&right)
-        noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
-                 noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
-                 noexcept(std::forward<T>(left) > std::forward<U>(right)));
+        static std::strong_ordering compareForSortBy(const T &left, const U &right)
+        noexcept(noexcept(left == right) && noexcept(left < right) &&
+                 noexcept(left > right));
         /*! Compare attributes in the descending order helper function
             for the ModelsCollection::sortBy(). */
         template<typename T, typename U>
         requires ranges::totally_ordered_with<T, U>
-        static std::strong_ordering compareForSortByDesc(T &&left, U &&right)
-        noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
-                 noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
-                 noexcept(std::forward<T>(left) > std::forward<U>(right)));
+        static std::strong_ordering compareForSortByDesc(const T &left, const U &right)
+        noexcept(noexcept(left == right) && noexcept(left < right) &&
+                 noexcept(left > right));
 
         /* Serialization */
         /*! Fix null QVariant bug for QJsonDocument, replace null QVariant-s with
@@ -172,16 +170,14 @@ namespace Orm::Tiny::Utils
 
     template<typename T, typename U>
     requires ranges::totally_ordered_with<T, U>
-    std::strong_ordering Attribute::compareForSortBy(T &&left, U &&right)
-    noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
-             noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
-             noexcept(std::forward<T>(left) > std::forward<U>(right)))
+    std::strong_ordering Attribute::compareForSortBy(const T &left, const U &right)
+    noexcept(noexcept(left == right) && noexcept(left < right) && noexcept(left > right))
     {
-        if (std::forward<T>(left) == std::forward<U>(right))
+        if (left == right)
             return std::strong_ordering::equal;
-        if (std::forward<T>(left) < std::forward<U>(right))
+        if (left < right)
             return std::strong_ordering::less;
-        if (std::forward<T>(left) > std::forward<U>(right))
+        if (left > right)
             return std::strong_ordering::greater;
 
         Q_UNREACHABLE();
@@ -189,16 +185,14 @@ namespace Orm::Tiny::Utils
 
     template<typename T, typename U>
     requires ranges::totally_ordered_with<T, U>
-    std::strong_ordering Attribute::compareForSortByDesc(T &&left, U &&right)
-    noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
-             noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
-             noexcept(std::forward<T>(left) > std::forward<U>(right)))
+    std::strong_ordering Attribute::compareForSortByDesc(const T &left, const U &right)
+    noexcept(noexcept(left == right) && noexcept(left < right) && noexcept(left > right))
     {
-        if (std::forward<T>(left) == std::forward<U>(right))
+        if (left == right)
             return std::strong_ordering::equal;
-        if (std::forward<T>(left) < std::forward<U>(right))
+        if (left < right)
             return std::strong_ordering::greater;
-        if (std::forward<T>(left) > std::forward<U>(right))
+        if (left > right)
             return std::strong_ordering::less;
 
         Q_UNREACHABLE();
