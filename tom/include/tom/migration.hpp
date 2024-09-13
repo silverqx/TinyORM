@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <filesystem>
+#include <filesystem> // IWYU pragma: export
 
 #include <orm/schema.hpp>
 
