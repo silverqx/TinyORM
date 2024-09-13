@@ -122,9 +122,9 @@ namespace Relations
         /*! Get the related model of the relation. */
         inline Related &getRelated() noexcept;
         /*! Get the name of the "created at" column. */
-        inline const QString &createdAt() const;
+        inline virtual const QString &createdAt() const;
         /*! Get the name of the "updated at" column. */
-        inline const QString &updatedAt() const;
+        inline virtual const QString &updatedAt() const;
         /*! Get the name of the related model's "updated at" column. */
         inline const QString &relatedUpdatedAt() const;
         /*! Get the related key for the relationship. */
@@ -287,6 +287,8 @@ namespace Relations
     {
         return *m_related;
     }
+
+    // These two can't be static as they are overridden in the BelongsToMany relation
 
     template<class Model, class Related>
     const QString &Relation<Model, Related>::createdAt() const

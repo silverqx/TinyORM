@@ -144,9 +144,9 @@ namespace Orm::Tiny::Relations
         BelongsToMany &withTimestamps(const QString &createdAt = Constants::CREATED_AT,
                                       const QString &updatedAt = Constants::UPDATED_AT);
         /*! Get the name of the "created at" column. */
-        const QString &createdAt() const;
+        const QString &createdAt() const override;
         /*! Get the name of the "updated at" column. */
-        const QString &updatedAt() const;
+        const QString &updatedAt() const override;
         /*! If we're touching the parent model, touch. */
         void touchIfTouching() const;
         /*! Touch all of the related models for the relationship.
