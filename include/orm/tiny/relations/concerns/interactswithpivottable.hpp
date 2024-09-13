@@ -981,7 +981,7 @@ namespace Concerns
 
         /* We don't cast attributes for the non-custom pivot because the u_cast data
            member can not be set, it can be set only on the custom pivot. */
-        return attributes;
+        return attributes; // NOLINT(bugprone-return-const-ref-from-parameter)
     }
 
     template<class Model, class Related, class PivotType>

@@ -206,7 +206,7 @@ namespace Private
             clauses. */
 #if defined(__clang__) || defined(__GNUG__)
         template<typename Related, typename Method,
-                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true> // NOLINT(modernize-use-constraints)
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true> // NOLINT(modernize-use-constraints, modernize-avoid-c-arrays)
 #else
         template<typename Related, typename Method>
         requires std::is_member_function_pointer_v<Method>

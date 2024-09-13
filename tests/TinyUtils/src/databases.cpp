@@ -885,6 +885,7 @@ bool Databases::isDriverAvailable(const QString &driver)
     // TinyDrivers currently supports only the MySQL database so this warning is useless
 #ifdef TINYORM_USING_QTSQLDRIVERS
     if (!isAvailable)
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
         qWarning("The '%s' driver not available, all tests for this database will "
                  "be skipped.", driver.toLatin1().constData());
 #endif

@@ -36,7 +36,7 @@ void Helpers::logException(const std::exception &e, const bool fatal)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         qFatal().nospace().noquote() << message;
 #else
-        qFatal("%s", message.toUtf8().constData());
+        qFatal("%s", message.toUtf8().constData()); // NOLINT(cppcoreguidelines-pro-type-vararg)
 #endif
     else
         qCritical().nospace().noquote() << message;
