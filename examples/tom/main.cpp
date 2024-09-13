@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
                    can be absolute or relative (to the pwd at runtime). */
 //                .migrationsPath("database/migrations")
 //                .migrationsPath(std::filesystem::current_path() / "database" / "migrations")
+
                 /* Migration classes can be named in two formats, StudlyCase without
                    the datetime prefix and snake_case with the datetime prefix.
                    If the StudlyCase name is used then the T_MIGRATION macro has to be
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
                             CreatePhonesTable>()
+
                 /* Seeder classes, the DatabaseSeeder is the default/root seeder class,
                    it must always exist if the --class command-line argument is not
                    provided, or you can provide a custom name through the --class
@@ -54,6 +56,7 @@ int main(int argc, char *argv[])
                    in the order defined by the call<>() method inside the seeders
                    themselves. */
                 .seeders<DatabaseSeeder>()
+
                 // Fire it up 🔥🚀✨
                 .run();
 
