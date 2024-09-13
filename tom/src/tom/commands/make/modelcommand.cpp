@@ -280,7 +280,7 @@ int ModelCommand::run()
 
 namespace
 {
-    /*! Studly all string lists in the given container. */
+    /*! Studly all string lists in the given container (std::vector<QStringList>). */
     const auto studlyContainer = [](auto &&container)
     {
         return ranges::views::move(container)
@@ -321,12 +321,12 @@ ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOption
                                    u"option --pivot-inverse"_s,
                                    u"pivot model"_s);
 
-    oneToOneList        = StringUtils::studly(std::move(oneToOneList));
+    oneToOneList        = StringUtils::studly(std::move(oneToOneList)); // QStringList
     oneToManyList       = StringUtils::studly(std::move(oneToManyList));
     belongsToList       = StringUtils::studly(std::move(belongsToList));
     belongsToManyList   = StringUtils::studly(std::move(belongsToManyList));
     pivotClasses        = StringUtils::studly(std::move(pivotClasses));
-    pivotInverseClasses = studlyContainer(std::move(pivotInverseClasses));
+    pivotInverseClasses = studlyContainer(std::move(pivotInverseClasses)); // std::vector<QStringList>
 
     return {StringUtils::studly(std::move(className)), std::move(cmdOptions)};
 }
