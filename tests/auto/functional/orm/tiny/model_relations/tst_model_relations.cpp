@@ -2861,9 +2861,9 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
         driverName == QMYSQL
     )
         QCOMPARE(typeId, QMetaType::UInt);
-    else if (driverName == Orm::QPSQL)
+    else if (driverName == QPSQL)
         QCOMPARE(typeId, QMetaType::UInt);
-    else if (driverName == Orm::QSQLITE)
+    else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
@@ -2894,9 +2894,9 @@ void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
         driverName == QMYSQL
     )
         QCOMPARE(typeId, QMetaType::UInt);
-    else if (driverName == Orm::QPSQL)
+    else if (driverName == QPSQL)
         QCOMPARE(typeId, QMetaType::UInt);
-    else if (driverName == Orm::QSQLITE)
+    else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::UInt);
     else
         Q_UNREACHABLE();
@@ -2930,9 +2930,9 @@ void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
         driverName == QMYSQL
     )
         QCOMPARE(typeId, QMetaType::Bool);
-    else if (driverName == Orm::QPSQL)
+    else if (driverName == QPSQL)
         QCOMPARE(typeId, QMetaType::Bool);
-    else if (driverName == Orm::QSQLITE)
+    else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::Bool);
     else
         Q_UNREACHABLE();
