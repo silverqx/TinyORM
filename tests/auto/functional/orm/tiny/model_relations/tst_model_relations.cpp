@@ -458,7 +458,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     QVERIFY(torrent->exists);
 
     // TorrentPreviewableFile has-many relation
-    auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    const auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
@@ -516,7 +516,7 @@ void tst_Model_Relations::
     QVERIFY(tag->exists);
 
     // Torrent belongs-to-many relation (basic pivot)
-    auto torrents = tag->getRelationValue<Torrent>("torrents");
+    const auto torrents = tag->getRelationValue<Torrent>("torrents");
     QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
@@ -565,7 +565,7 @@ void tst_Model_Relations::
     QVERIFY(torrent->exists);
 
     // Tag belongs-to-many relation (custom Tagged pivot)
-    auto tags = torrent->getRelationValue<Tag>("tags");
+    const auto tags = torrent->getRelationValue<Tag>("tags");
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
@@ -616,7 +616,8 @@ void tst_Model_Relations::
     QVERIFY(tag->exists);
 
     // Torrent belongs-to-many relation (basic pivot)
-    auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
+    const auto torrents = tag->getRelationValue<Torrent>(
+                              "torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
@@ -1917,10 +1918,10 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     peerOriginal->setAttribute("seeds", 33);
 
     // Validate changed attributes in relations
-    auto filepathOriginalChanged =
+    const auto filepathOriginalChanged =
             torrent->getRelationValue<TorrentPreviewableFileEager>("torrentFiles")
             .first()->getAttribute("filepath");
-    auto seedsOriginalChanged =
+    const auto seedsOriginalChanged =
             torrent->getRelationValue<TorrentPeer_NoRelations, One>("torrentPeer")
             ->getAttribute("seeds");
     QVERIFY(filepathOriginalChanged == QVariant("test3_file1-refresh.mkv"));
@@ -1976,13 +1977,13 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     QVERIFY(relations.empty());
 
     // Validate original attribute values in relations
-    auto filesOriginal =
+    const auto filesOriginal =
             torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
-    auto filepathOriginal =
+    const auto filepathOriginal =
             filesOriginal.first()->getAttribute("filepath");
-    auto *peerOriginal =
+    auto *const peerOriginal =
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
-    auto seedsOriginal =
+    const auto seedsOriginal =
             peerOriginal->getAttribute("seeds");
     QCOMPARE(relations.size(), 2);
     QVERIFY(filepathOriginal == QVariant("test3_file1.mkv"));
@@ -1993,10 +1994,10 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     peerOriginal->setAttribute("seeds", 33);
 
     // Validate changed attributes in relations
-    auto filepathOriginalChanged =
+    const auto filepathOriginalChanged =
             torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles")
             .first()->getAttribute("filepath");
-    auto seedsOriginalChanged =
+    const auto seedsOriginalChanged =
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer")
             ->getAttribute("seeds");
     QVERIFY(filepathOriginalChanged == QVariant("test3_file1-refresh.mkv"));
@@ -2028,12 +2029,12 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
             std::addressof(relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
-    auto filesRefreshed =
+    const auto filesRefreshed =
             torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
-    auto filepathRefreshed = filesRefreshed.first()->getAttribute("filepath");
-    auto *peerRefreshed =
+    const auto filepathRefreshed = filesRefreshed.first()->getAttribute("filepath");
+    auto *const peerRefreshed =
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
-    auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
+    const auto seedsRefreshed = peerRefreshed->getAttribute("seeds");
     QVERIFY(filepathOriginal == filepathRefreshed);
     QVERIFY(seedsOriginal == seedsRefreshed);
 }
