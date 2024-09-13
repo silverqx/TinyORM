@@ -2114,7 +2114,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::latest(const Column &column)
     {
-        getQuery().latest(builder().getCreatedAtColumnForLatestOldest(column));
+        getQuery().latest(TinyBuilder<Model>::getCreatedAtColumnForLatestOldest(column));
         return builder();
     }
 
@@ -2122,7 +2122,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::oldest(const Column &column)
     {
-        getQuery().oldest(builder().getCreatedAtColumnForLatestOldest(column));
+        getQuery().oldest(TinyBuilder<Model>::getCreatedAtColumnForLatestOldest(column));
         return builder();
     }
 

@@ -1381,7 +1381,7 @@ void tst_Model::incrementAndDecrement() const
     QVERIFY(torrent4_1);
     QVERIFY(torrent4_1->exists);
 
-    const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
+    const auto &updatedAtColumn = Torrent::getUpdatedAtColumn();
 
     auto sizeOriginal = torrent4_1->getAttribute(SIZE_);
     auto progressOriginal = torrent4_1->getAttribute(Progress);
@@ -1466,7 +1466,7 @@ void tst_Model::update() const
 
     auto torrent = Torrent::find(4);
 
-    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = Torrent::getUpdatedAtColumn();
 
     auto progressOriginal = torrent->getAttribute(Progress);
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
@@ -1539,7 +1539,7 @@ void tst_Model::update_SameValue() const
     auto torrent = Torrent::find(3);
     QVERIFY(torrent->exists);
 
-    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = Torrent::getUpdatedAtColumn();
     auto updatedAt = torrent->getAttribute(updatedAtColumn);
 
     /* Doesn't send update query to the database, this is different from

@@ -291,19 +291,19 @@ namespace Relations
     template<class Model, class Related>
     const QString &Relation<Model, Related>::createdAt() const
     {
-        return m_parent->getCreatedAtColumn();
+        return Model::getCreatedAtColumn();
     }
 
     template<class Model, class Related>
     const QString &Relation<Model, Related>::updatedAt() const
     {
-        return m_parent->getUpdatedAtColumn();
+        return Model::getUpdatedAtColumn();
     }
 
     template<class Model, class Related>
     const QString &Relation<Model, Related>::relatedUpdatedAt() const
     {
-        return m_related->getUpdatedAtColumn();
+        return Related::getUpdatedAtColumn();
     }
 
     template<class Model, class Related>

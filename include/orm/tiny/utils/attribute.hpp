@@ -141,8 +141,8 @@ namespace Orm::Tiny::Utils
     {
         std::unordered_set<QString> defaults {
             model.getKeyName(),
-            model.getCreatedAtColumn(),
-            model.getUpdatedAtColumn(),
+            Model::getCreatedAtColumn(),
+            Model::getUpdatedAtColumn(),
         };
         // Remove empty attribute names
         std::erase_if(defaults, [](const auto &attribute)

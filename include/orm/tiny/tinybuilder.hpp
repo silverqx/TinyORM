@@ -328,7 +328,7 @@ namespace Orm::Tiny
         QStringList addUpdatedAtToUpsertColumns(const QStringList &update) const;
 
         /*! Get the name of the "created at" column. */
-        Column getCreatedAtColumnForLatestOldest(Column column) const;
+        static Column getCreatedAtColumnForLatestOldest(Column column);
 
         /*! Add a generic "order by" clause if the query doesn't already have one. */
         void enforceOrderBy();
@@ -897,7 +897,7 @@ namespace Orm::Tiny
         if (!column.isEmpty())
             return toBase().update({{column, std::move(time)}});
 
-        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+        const auto &updatedAtColumn = Model::getUpdatedAtColumn();
 
         if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
             return {0, std::nullopt};
@@ -1450,7 +1450,7 @@ namespace Orm::Tiny
     QList<UpdateItem>
     Builder<Model>::addUpdatedAtColumn(QList<UpdateItem> values) const
     {
-        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+        const auto &updatedAtColumn = Model::getUpdatedAtColumn();
 
         // Nothing to do (model doesn't use timestamps)
         if (!m_model.usesTimestamps() || updatedAtColumn.isEmpty())
@@ -1491,11 +1491,11 @@ namespace Orm::Tiny
         columns.reserve(2);
 
         // Don't use qualified columns here, they are not needed
-        if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
+        if (const auto &createdAtColumn = Model::getCreatedAtColumn();
             !createdAtColumn.isEmpty()
         )
             columns.push_back(createdAtColumn);
-        if (const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+        if (const auto &updatedAtColumn = Model::getUpdatedAtColumn();
             !updatedAtColumn.isEmpty()
         )
             columns.push_back(updatedAtColumn);
@@ -1524,7 +1524,7 @@ namespace Orm::Tiny
         if (!m_model.usesTimestamps())
             return update;
 
-        const auto &updatedAtColumn = m_model.getUpdatedAtColumn();
+        const auto &updatedAtColumn = Model::getUpdatedAtColumn();
 
         // Nothing to do
         if (updatedAtColumn.isEmpty() || update.contains(updatedAtColumn))
@@ -1538,14 +1538,14 @@ namespace Orm::Tiny
 
     template<typename Model>
     Column
-    Builder<Model>::getCreatedAtColumnForLatestOldest(Column column) const
+    Builder<Model>::getCreatedAtColumnForLatestOldest(Column column)
     {
         /* Don't initialize column when user passed column expression, only when it
            holds the QString type. */
         if (std::holds_alternative<QString>(column) &&
             std::get<QString>(column).isEmpty()
         ) {
-            if (const auto &createdAtColumn = m_model.getCreatedAtColumn();
+            if (const auto &createdAtColumn = Model::getCreatedAtColumn();
                 createdAtColumn.isEmpty()
             )
                 column = CREATED_AT;

@@ -699,7 +699,7 @@ namespace Orm::Tiny::Relations
     {
         // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
         return m_withTimestamps ? m_pivotCreatedAt
-                                : this->m_parent->getCreatedAtColumn();
+                                : Model::getCreatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>
@@ -707,7 +707,7 @@ namespace Orm::Tiny::Relations
     {
         // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
         return m_withTimestamps ? m_pivotUpdatedAt
-                                : this->m_parent->getUpdatedAtColumn();
+                                : Model::getUpdatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>
@@ -729,7 +729,7 @@ namespace Orm::Tiny::Relations
         const auto &key = related->getKeyName();
 
         const QList<UpdateItem> record {
-            {related->getUpdatedAtColumn(), related->freshTimestampString()},
+            {Related::getUpdatedAtColumn(), related->freshTimestampString()},
         };
 
         const auto ids = allRelatedIds();

@@ -188,7 +188,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QVERIFY(torrent4_1);
     QVERIFY(torrent4_1->exists);
 
-    const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
+    const auto &updatedAtColumn = Torrent::getUpdatedAtColumn();
 
     auto sizeOriginal = torrent4_1->getAttribute(SIZE_);
     auto progressOriginal = torrent4_1->getAttribute(Progress);
@@ -235,7 +235,7 @@ void tst_TinyBuilder::update() const
 
     auto torrent = Torrent::find(4);
 
-    const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
+    const auto &updatedAtColumn = Torrent::getUpdatedAtColumn();
 
     auto progressOriginal = torrent->getAttribute(Progress);
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
@@ -308,7 +308,7 @@ void tst_TinyBuilder::update_SameValue() const
     // Verify value in the database
     auto torrentVerify = Torrent::find(5);
     QVERIFY(torrentVerify->exists);
-    QVERIFY(torrentVerify->getAttribute<QDateTime>(torrent->getUpdatedAtColumn()) >=
+    QVERIFY(torrentVerify->getAttribute<QDateTime>(Torrent::getUpdatedAtColumn()) >=
             timeBeforeUpdate);
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
