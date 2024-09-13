@@ -90,7 +90,7 @@ namespace Orm::Tiny::Utils
         noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
                  noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
                  noexcept(std::forward<T>(left) > std::forward<U>(right)));
-        /*! Compare attributes in the descending oder helper function
+        /*! Compare attributes in the descending order helper function
             for the ModelsCollection::sortBy(). */
         template<typename T, typename U>
         requires ranges::totally_ordered_with<T, U>
