@@ -36,7 +36,7 @@ public:
     bool operator==(const Torrent_With_Equality_Operator_Overload &) const = default;
 
     /*! Equality comparison operator overload for the DummyType. */
-    bool operator==(const DummyType &) const
+    bool operator==(const DummyType &/*unused*/) const
     {
         return true;
     }
