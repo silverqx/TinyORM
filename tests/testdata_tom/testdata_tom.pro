@@ -28,6 +28,9 @@ DEFINES *= PROJECT_TOM_TESTDATA
 
 SOURCES += $$PWD/main.cpp
 
+# Migrations and Seeders header files
+# ---
+
 # Migrations header files
 include($$PWD/database/migrations.pri)
 # Seeders header files
