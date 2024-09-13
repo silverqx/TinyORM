@@ -100,7 +100,7 @@ void tst_Blobs::text() const
     constexpr static auto paragraphsCount = 128;
     /* 65'535 bytes (65kB without 1 byte).
        It's the max. size of the MySQL TEXT column type. */
-    constexpr auto expectedLoremIpsumSize = m_paragraphSize * paragraphsCount - 1;
+    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
 
     static const auto loremIpsum = StringUtils::loremIpsum512Paragraph(paragraphsCount);
     /* 128 paragraphs each has 511 characters + a newline;
@@ -169,7 +169,7 @@ void tst_Blobs::mediumText() const
     constexpr static auto paragraphsCount = 32'768;
     /* 16'777'215 bytes (16MB without 1 byte).
        It's the max. size of the MySQL MEDIUMTEXT column type. */
-    constexpr auto expectedLoremIpsumSize = m_paragraphSize * paragraphsCount - 1;
+    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
 
     static const auto loremIpsum = StringUtils::loremIpsum512Paragraph(paragraphsCount);
     /* 32768 paragraphs each has 511 characters + a newline;
@@ -238,7 +238,7 @@ void tst_Blobs::binary() const
     constexpr static auto paragraphsCount = 128;
     /* 65'535 bytes (65kB without 1 byte).
        It's the max. size of the MySQL BLOB column type. */
-    constexpr auto expectedLoremIpsumSize = m_paragraphSize * paragraphsCount - 1;
+    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
 
     static const auto loremIpsumString = StringUtils::loremIpsum512Paragraph(
                                              paragraphsCount);
@@ -311,7 +311,7 @@ void tst_Blobs::mediumBinary() const
     constexpr static auto paragraphsCount = 32'768;
     /* 16'777'215 bytes (16MB without 1 byte).
        It's the max. size of the MySQL MEDIUMBLOB column type. */
-    constexpr auto expectedLoremIpsumSize = m_paragraphSize * paragraphsCount - 1;
+    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
 
     static const auto loremIpsumString = StringUtils::loremIpsum512Paragraph(
                                              paragraphsCount);

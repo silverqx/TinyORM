@@ -42,8 +42,9 @@ TINY_SYSTEM_HEADER
 #define TINYORM_VERSION_STR_2 "v" TINYORM_PROJECT_VERSION
 
 /*! Version number macro, can be used to check API compatibility, format - MMmmpp. */
-#define TINYORM_VERSION \
-    (TINYORM_VERSION_MAJOR * 10000 + TINYORM_VERSION_MINOR * 100 + TINYORM_VERSION_BUGFIX)
+#define TINYORM_VERSION ((TINYORM_VERSION_MAJOR * 10000) + \
+                         (TINYORM_VERSION_MINOR * 100) +   \
+                          TINYORM_VERSION_BUGFIX)
 
 /*! Compute the HEX representation from the given version numbers (for comparison).
     Can be used like:

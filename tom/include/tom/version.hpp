@@ -39,7 +39,8 @@ TINY_SYSTEM_HEADER
 #define TINYTOM_VERSION_STR_2 "v" TINYTOM_PROJECT_VERSION
 
 /*! Version number macro, can be used to check API compatibility, format - MMmmpp. */
-#define TINYTOM_VERSION \
-    (TINYTOM_VERSION_MAJOR * 10000 + TINYTOM_VERSION_MINOR * 100 + TINYTOM_VERSION_BUGFIX)
+#define TINYTOM_VERSION ((TINYTOM_VERSION_MAJOR * 10000) + \
+                         (TINYTOM_VERSION_MINOR * 100) +   \
+                          TINYTOM_VERSION_BUGFIX)
 
 #endif // TOM_VERSION_HPP

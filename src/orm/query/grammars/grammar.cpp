@@ -105,8 +105,8 @@ Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
     preparedBindings << joinBindings;
 
     // Merge update values bindings
-    std::transform(values.cbegin(), values.cend(), std::back_inserter(preparedBindings),
-                   [](const auto &updateItem)
+    std::ranges::transform(values, std::back_inserter(preparedBindings),
+                           [](const auto &updateItem)
     {
         return updateItem.value;
     });

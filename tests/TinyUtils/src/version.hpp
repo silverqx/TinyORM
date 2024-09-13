@@ -31,7 +31,8 @@
 #define TINYUTILS_VERSION_STR_2 "v" TINYUTILS_PROJECT_VERSION
 
 /*! Version number macro, can be used to check API compatibility, format - MMmmpp. */
-#define TINYUTILS_VERSION \
-    (TINYUTILS_VERSION_MAJOR * 10000 + TINYUTILS_VERSION_MINOR * 100 + TINYUTILS_VERSION_BUGFIX)
+#define TINYUTILS_VERSION ((TINYUTILS_VERSION_MAJOR * 10000) + \
+                           (TINYUTILS_VERSION_MINOR * 100) +   \
+                            TINYUTILS_VERSION_BUGFIX)
 
 #endif // TINYUTILS_VERSION_HPP

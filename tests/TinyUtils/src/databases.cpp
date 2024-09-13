@@ -424,8 +424,7 @@ bool Databases::driversIsThreadCheck() noexcept
 
 bool Databases::envVariablesDefined(const std::vector<const char *> &envVariables)
 {
-    return std::any_of(envVariables.cbegin(), envVariables.cend(),
-                       [](const char *envVariable)
+    return std::ranges::any_of(envVariables, [](const char *const envVariable)
     {
         return !qEnvironmentVariableIsEmpty(envVariable);
     });

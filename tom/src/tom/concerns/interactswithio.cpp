@@ -573,8 +573,8 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         /* Length of line  - 'tmpl.size() - 2' : -2 to exclude %1; '+ 1' : NEWLINE;
            Number of lines - '* (2 +' : empty line above/below
            Final +32 as a reserve. */
-        output.reserve((fullLineWidth + (tmpl.size() - 2) + 1) *
-                       (2 + lines.size()) + 32);
+        output.reserve(((fullLineWidth + (tmpl.size() - 2) + 1) *
+                        (2 + lines.size())) + 32);
 
         // Empty line above
         output += tmpl.arg(emptyLine).append(NEWLINE);

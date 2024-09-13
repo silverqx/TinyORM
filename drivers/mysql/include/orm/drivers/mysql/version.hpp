@@ -42,8 +42,9 @@ TINY_SYSTEM_HEADER
 #define TINYMYSQL_VERSION_STR_2 "v" TINYMYSQL_PROJECT_VERSION
 
 /*! Version number macro, can be used to check API compatibility, format - MMmmpp. */
-#define TINYMYSQL_VERSION \
-    (TINYMYSQL_VERSION_MAJOR * 10000 + TINYMYSQL_VERSION_MINOR * 100 + TINYMYSQL_VERSION_BUGFIX)
+#define TINYMYSQL_VERSION ((TINYMYSQL_VERSION_MAJOR * 10000) + \
+                           (TINYMYSQL_VERSION_MINOR * 100) +   \
+                            TINYMYSQL_VERSION_BUGFIX)
 
 /*! Compute the HEX representation from the given version numbers (for comparison).
     Can be used like:

@@ -152,9 +152,9 @@ void tst_Versions::versions_TinyDrivers() const
 #endif
 
     // Project Version number, to check API compatibility
-    const auto version = TINYDRIVERS_VERSION_MAJOR * 10000 +
-                         TINYDRIVERS_VERSION_MINOR * 100 +
-                         TINYDRIVERS_VERSION_BUGFIX;
+    const auto version = (TINYDRIVERS_VERSION_MAJOR * 10000) +
+                         (TINYDRIVERS_VERSION_MINOR * 100) +
+                          TINYDRIVERS_VERSION_BUGFIX;
     QCOMPARE(TINYDRIVERS_VERSION, version);
 }
 #endif
@@ -203,9 +203,9 @@ void tst_Versions::versions_TinyMySql() const
 #endif
 
     // Project Version number, to check API compatibility
-    const auto version = TINYMYSQL_VERSION_MAJOR * 10000 +
-                         TINYMYSQL_VERSION_MINOR * 100 +
-                         TINYMYSQL_VERSION_BUGFIX;
+    const auto version = (TINYMYSQL_VERSION_MAJOR * 10000) +
+                         (TINYMYSQL_VERSION_MINOR * 100) +
+                          TINYMYSQL_VERSION_BUGFIX;
     QCOMPARE(TINYMYSQL_VERSION, version);
 }
 #endif
@@ -253,8 +253,8 @@ void tst_Versions::versions_TinyOrm() const
 #endif
 
     // Project Version number, to check API compatibility
-    const auto version = TINYORM_VERSION_MAJOR * 10000 +
-                         TINYORM_VERSION_MINOR * 100 +
+    const auto version = (TINYORM_VERSION_MAJOR * 10000) +
+                         (TINYORM_VERSION_MINOR * 100) +
                          TINYORM_VERSION_BUGFIX;
     QCOMPARE(TINYORM_VERSION, version);
 }
@@ -287,8 +287,8 @@ void tst_Versions::versions_TinyUtils() const
     QCOMPARE(TINYUTILS_VERSION_STR_2, u'v' + versionStr);
 
     // Project Version number, to check API compatibility
-    const auto version = TINYUTILS_VERSION_MAJOR * 10000 +
-                         TINYUTILS_VERSION_MINOR * 100 +
+    const auto version = (TINYUTILS_VERSION_MAJOR * 10000) +
+                         (TINYUTILS_VERSION_MINOR * 100) +
                          TINYUTILS_VERSION_BUGFIX;
     QCOMPARE(TINYUTILS_VERSION, version);
 }
@@ -323,8 +323,8 @@ void tst_Versions::versions_TomExample() const
     QCOMPARE(TINYTOM_VERSION_STR_2, u'v' + versionStr);
 
     // Project Version number, to check API compatibility
-    const auto version = TINYTOM_VERSION_MAJOR * 10000 +
-                         TINYTOM_VERSION_MINOR * 100 +
+    const auto version = (TINYTOM_VERSION_MAJOR * 10000) +
+                         (TINYTOM_VERSION_MINOR * 100) +
                          TINYTOM_VERSION_BUGFIX;
     QCOMPARE(TINYTOM_VERSION, version);
 }

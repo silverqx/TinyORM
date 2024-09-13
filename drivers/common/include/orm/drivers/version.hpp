@@ -42,8 +42,9 @@ TINY_SYSTEM_HEADER
 #define TINYDRIVERS_VERSION_STR_2 "v" TINYDRIVERS_PROJECT_VERSION
 
 /*! Version number macro, can be used to check API compatibility, format - MMmmpp. */
-#define TINYDRIVERS_VERSION \
-    (TINYDRIVERS_VERSION_MAJOR * 10000 + TINYDRIVERS_VERSION_MINOR * 100 + TINYDRIVERS_VERSION_BUGFIX)
+#define TINYDRIVERS_VERSION ((TINYDRIVERS_VERSION_MAJOR * 10000) + \
+                             (TINYDRIVERS_VERSION_MINOR * 100) +   \
+                              TINYDRIVERS_VERSION_BUGFIX)
 
 /*! Compute the HEX representation from the given version numbers (for comparison).
     Can be used like:
