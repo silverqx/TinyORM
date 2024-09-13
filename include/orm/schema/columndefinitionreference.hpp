@@ -31,20 +31,17 @@ namespace Orm::SchemaNs
 
     public:
         /*! CRTP return type by the passed R template parameter. */
-        using ColumnReferenceType =
-                std::conditional_t<std::is_void_v<R>, ColumnDefinitionReference, R>;
-
+        using ColumnReferenceType = std::conditional_t<std::is_void_v<R>,
+                                                       ColumnDefinitionReference, R>;
         /*! Constructor. */
         ColumnDefinitionReference(ColumnDefinition &columnDefinition); // NOLINT(google-explicit-constructor)
         /*! Default destructor. */
         ~ColumnDefinitionReference() = default;
 
         /*! Copy constructor. */
-        ColumnDefinitionReference(
-                    const ColumnDefinitionReference &) = default;
+        ColumnDefinitionReference(const ColumnDefinitionReference &) = default;
         /*! Move constructor. */
-        ColumnDefinitionReference(
-                    ColumnDefinitionReference &&) noexcept = default;
+        ColumnDefinitionReference(ColumnDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */
         ColumnDefinitionReference &operator=(const ColumnDefinitionReference &) = delete;

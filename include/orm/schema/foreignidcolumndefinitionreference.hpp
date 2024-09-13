@@ -30,10 +30,10 @@ namespace Orm::SchemaNs
 
         /*! Copy constructor. */
         ForeignIdColumnDefinitionReference(
-                    const ForeignIdColumnDefinitionReference &) = default;
+                const ForeignIdColumnDefinitionReference &) = default;
         /*! Move constructor. */
         ForeignIdColumnDefinitionReference(
-                    ForeignIdColumnDefinitionReference &&) noexcept = default;
+                ForeignIdColumnDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */
         ForeignIdColumnDefinitionReference &
@@ -59,7 +59,7 @@ namespace Orm::SchemaNs
         std::reference_wrapper<Blueprint> m_blueprint;
         /*! Reference to a column definition. */
         std::optional<ForeignKeyDefinitionReference>
-                m_foreignKeyDefinitionReference = std::nullopt;
+        m_foreignKeyDefinitionReference = std::nullopt;
     };
 
     template<typename>

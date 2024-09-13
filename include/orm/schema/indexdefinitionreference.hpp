@@ -27,11 +27,9 @@ namespace Orm::SchemaNs
         ~IndexDefinitionReference() = default;
 
         /*! Copy constructor. */
-        IndexDefinitionReference(
-                    const IndexDefinitionReference &) = default;
+        IndexDefinitionReference(const IndexDefinitionReference &) = default;
         /*! Move constructor. */
-        IndexDefinitionReference(
-                    IndexDefinitionReference &&) noexcept = default;
+        IndexDefinitionReference(IndexDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */
         IndexDefinitionReference &
