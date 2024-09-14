@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_CONCERNS_EXPLAINQUERIES_HPP
-#define ORM_CONCERNS_EXPLAINQUERIES_HPP
+#ifndef ORM_CONCERNS_EXPLAINSQUERIES_HPP
+#define ORM_CONCERNS_EXPLAINSQUERIES_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
@@ -28,13 +28,13 @@ namespace Concerns
 {
 
     /*! Counts the number of executed queries and the elapsed time of queries. */
-    class TINYORM_EXPORT ExplainQueries
+    class TINYORM_EXPORT ExplainsQueries
     {
     public:
         /*! Default constructor. */
-        inline ExplainQueries() = default;
+        inline ExplainsQueries() = default;
         /*! Virtual destructor. */
-        inline virtual ~ExplainQueries() = default;
+        inline virtual ~ExplainsQueries() = default;
 
         /*! Explains the query. */
         TSqlQuery explain();
@@ -49,4 +49,4 @@ namespace Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_CONCERNS_EXPLAINQUERIES_HPP
+#endif // ORM_CONCERNS_EXPLAINSQUERIES_HPP
