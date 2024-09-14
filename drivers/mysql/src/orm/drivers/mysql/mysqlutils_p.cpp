@@ -130,8 +130,7 @@ bool MySqlUtilsPrivate::isNumber(const QStringView string)
     if (string.isEmpty())
         return false;
 
-    const auto *const nonDigit = std::find_if(string.cbegin(), string.cend(),
-                                       [](const auto &ch)
+    const auto *const nonDigit = std::ranges::find_if(string, [](const auto &ch)
     {
         // Is not numeric == 0
         return std::isdigit(ch.toLatin1()) == 0;
