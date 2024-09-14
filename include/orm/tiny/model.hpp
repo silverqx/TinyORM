@@ -116,36 +116,40 @@ namespace Orm::Tiny
         template<class Model, class Related>
         using Relation = Relations::Relation<Model, Related>;
 
+    protected:
         /* Constructors */
-        /*! Create a new TinyORM model instance, Default constructor. */
-        Model();
+        /*! Protected default constructor, create a new TinyORM model instance. */
+        Model(); // NOLINT(bugprone-crtp-constructor-accessibility)
+
+        /*! Protected copy constructor. */
+        Model(const Model &) = default; // NOLINT(bugprone-crtp-constructor-accessibility, misc-no-recursion)
+        /*! Protected move constructor. */
+        Model(Model &&) = default; // NOLINT(bugprone-crtp-constructor-accessibility, bugprone-exception-escape)
+
+        /*! Protected copy assignment operator. */
+        Model &operator=(const Model &) = default; // NOLINT(bugprone-crtp-constructor-accessibility, misc-no-recursion)
+        /*! Protected move assignment operator. */
+        Model &operator=(Model &&) = default; // NOLINT(bugprone-crtp-constructor-accessibility, bugprone-exception-escape)
+
+    public:
+        /* Constructors */
         /*! Default destructor. */
         ~Model() = default;
 
-        /*! Model's copy constructor. */
-        Model(const Model &) = default; // NOLINT(misc-no-recursion)
-        /*! Model's move constructor. */
-        Model(Model &&) = default; // NOLINT(bugprone-exception-escape)
-
-        /*! Model's copy assignment operator. */
-        Model &operator=(const Model &) = default; // NOLINT(misc-no-recursion)
-        /*! Model's move assignment operator. */
-        Model &operator=(Model &&) = default; // NOLINT(bugprone-exception-escape)
-
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
-        explicit Model(const QList<AttributeItem> &attributes);
+        explicit Model(const QList<AttributeItem> &attributes); // NOLINT(bugprone-crtp-constructor-accessibility)
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
-        explicit Model(QList<AttributeItem> &&attributes);
+        explicit Model(QList<AttributeItem> &&attributes); // NOLINT(bugprone-crtp-constructor-accessibility)
 
         /*! Create a new TinyORM model instance from attributes
             (list initialization). */
-        Model(std::initializer_list<AttributeItem> attributes);
+        Model(std::initializer_list<AttributeItem> attributes); // NOLINT(bugprone-crtp-constructor-accessibility)
 
         /*! Create a new TinyORM model instance, skip-filling default attribute
             values. */
-        explicit Model(DontFillDefaultAttributes /*unused*/);
+        explicit Model(DontFillDefaultAttributes /*unused*/); // NOLINT(bugprone-crtp-constructor-accessibility)
 
         /* Static operations on the Model class */
         /*! Create a new TinyORM model instance. */
@@ -572,7 +576,7 @@ namespace Orm::Tiny
         void appendToUserDates(const QString &column);
     };
 
-    /* public */
+    /* protected */
 
     /* Constructors */
 
@@ -590,6 +594,10 @@ namespace Orm::Tiny
 
         this->syncOriginal();
     }
+
+    /* public */
+
+    /* Constructors */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Model<Derived, AllRelations...>::Model(const QList<AttributeItem> &attributes)

@@ -24,9 +24,11 @@ namespace Orm::Tiny::Relations::Concerns
         /*! Callback used to fill default attribute values for the default model. */
 //        using Callback      = std::function<void(Related &, const Model &)>;
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         SupportsDefaultModels() = default;
+
+    public:
         /*! Pure virtual destructor. */
         inline virtual ~SupportsDefaultModels() = 0;
 

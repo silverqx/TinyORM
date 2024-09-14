@@ -18,6 +18,11 @@ namespace Orm::Tiny::Concerns
     /*! Manages mass assignment restrictions for the entire Model class. */
     class TINYORM_EXPORT GuardedModel
     {
+
+    protected:
+        /*! Protected default constructor. */
+        GuardedModel() = default;
+
     public:
         /*! Run the given callable while being unguarded. */
         static void unguarded(const std::function<void()> &callback);

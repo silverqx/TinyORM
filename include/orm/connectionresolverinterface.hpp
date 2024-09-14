@@ -20,9 +20,11 @@ namespace Orm
     {
         Q_DISABLE_COPY_MOVE(ConnectionResolverInterface)
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         ConnectionResolverInterface() = default;
+
+    public:
         /*! Pure virtual destructor. */
         inline virtual ~ConnectionResolverInterface() = 0;
 

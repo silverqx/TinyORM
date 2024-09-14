@@ -33,6 +33,10 @@ namespace Concerns
         // To access u_visible and u_hidden
         friend Model<Derived, AllRelations...>;
 
+    protected:
+        /*! Protected default constructor. */
+        HidesAttributes() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Get the visible attributes for the model. */
         inline const std::set<QString> &getVisible() const noexcept;

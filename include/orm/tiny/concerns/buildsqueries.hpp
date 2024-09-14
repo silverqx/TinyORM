@@ -27,9 +27,11 @@ namespace Concerns
         /*! Alias for the query utils. */
         using QueryUtils = Orm::Utils::Query;
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         BuildsQueries() = default;
+
+    public:
         /*! Default destructor. */
         ~BuildsQueries() = default;
 

@@ -28,6 +28,10 @@ namespace Orm::Tiny::Relations
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+    protected:
+        /*! Protected default constructor. */
+        BasePivot() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Inherit constructors. */
         using Model<PivotModel>::Model;

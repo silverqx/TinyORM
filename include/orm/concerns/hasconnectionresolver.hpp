@@ -20,6 +20,11 @@ namespace Concerns
     /*! Connection resolver. */
     class TINYORM_EXPORT HasConnectionResolver
     {
+
+    protected:
+        /*! Protected default constructor. */
+        HasConnectionResolver() = default;
+
     public:
         /*! Get the connection resolver instance. */
         static ConnectionResolverInterface *getConnectionResolver() noexcept;

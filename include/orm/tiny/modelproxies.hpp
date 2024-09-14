@@ -34,6 +34,10 @@ namespace Tiny
         template<typename Related>
         using RelationAlias = Orm::Tiny::Relations::Relation<Derived, Related>;
 
+    protected:
+        /*! Protected default constructor. */
+        ModelProxies() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /* Retrieving results */
         /*! Get a single column's value from the first result of a query. */

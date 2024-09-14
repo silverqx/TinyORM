@@ -26,9 +26,11 @@ namespace Orm::Tiny
         /*! Alias for the null QVariant-s utils. */
         using NullVariant = Orm::Utils::NullVariant;
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         SoftDeletes() = default;
+
+    public:
         /*! Default destructor. */
         ~SoftDeletes() = default;
 

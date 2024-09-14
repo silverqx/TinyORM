@@ -50,6 +50,9 @@ namespace Concerns
         using BaseModel = Orm::Tiny::Model<Derived>;
 
     protected:
+        /*! Protected default constructor. */
+        InteractsWithPivotTable() = default;
+
         /*! InteractsWithPivotTable's copy constructor
             (used by BelongsToMany::clone()). */
         InteractsWithPivotTable(const InteractsWithPivotTable &) = default;
@@ -62,8 +65,6 @@ namespace Concerns
         /*! Alias for the related model's key type (for shorter name). */
         using RelatedKeyType = typename BaseModel<Related>::KeyType;
 
-        /*! Default constructor. */
-        InteractsWithPivotTable() = default;
         /*! Pure virtual destructor. */
         inline virtual ~InteractsWithPivotTable() = 0;
 

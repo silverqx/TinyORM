@@ -67,6 +67,10 @@ namespace Concerns
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+    protected:
+        /*! Protected default constructor. */
+        HasRelationships() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Alias for the RelationsContainer. */
         using RelationsContainerType = RelationsContainer<AllRelations...>;

@@ -33,6 +33,9 @@ namespace Tiny::Relations
                                       ::QueriesRelationshipsCallback<HasRelated>;
 
     protected:
+        /*! Protected default constructor. */
+        RelationProxies() = default;
+
         /*! RelationProxies's copy constructor (used by BelongsToMany::clone()). */
         RelationProxies(const RelationProxies &) = default;
 
@@ -42,8 +45,6 @@ namespace Tiny::Relations
         /*! Related type. */
         using RelatedType = Related;
 
-        /*! Default constructor. */
-        RelationProxies() = default;
         /*! Pure virtual destructor. */
         inline virtual ~RelationProxies() = 0;
 

@@ -115,7 +115,7 @@ namespace Utils
 
 #ifndef TINYORM_DISABLE_TOM
     template<ColumnContainer T>
-    T String::studly(T &&strings)
+    T String::studly(T &&strings) // NOLINT(cppcoreguidelines-missing-std-forward)
     {
         T result;
 

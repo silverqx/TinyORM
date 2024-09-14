@@ -104,9 +104,10 @@ namespace Private
         template<typename Related>
         using Relation = Orm::Tiny::Relations::Relation<Model, Related>;
 
-    public:
-        /*! Default constructor. */
+        /*! Protected default constructor. */
         QueriesRelationships() = default;
+
+    public:
         /*! Default destructor. */
         ~QueriesRelationships() = default;
 

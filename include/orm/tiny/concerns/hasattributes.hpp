@@ -50,6 +50,10 @@ namespace Orm::Tiny::Concerns
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+    protected:
+        /*! Protected default constructor. */
+        HasAttributes() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Alias for the attribute. */
         using Attribute = Orm::Tiny::Casts::Attribute;

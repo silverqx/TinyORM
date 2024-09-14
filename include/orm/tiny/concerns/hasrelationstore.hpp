@@ -25,7 +25,7 @@ namespace Orm::Tiny::Concerns
     /*! Relation store, handles mapping from a relation name to the Model's relation
         method, also calls visited method with Related parameter when needed. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    class HasRelationStore // clazy:exclude=rule-of-three
+    class HasRelationStore // NOLINT(bugprone-crtp-constructor-accessibility) clazy:exclude=rule-of-three
     {
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
@@ -43,19 +43,19 @@ namespace Orm::Tiny::Concerns
         friend HasRelationships<Derived, AllRelations...>;
 
         /* Constructors */
-        /*! Default constructor. */
+        /*! Private default constructor. */
         HasRelationStore() = default;
-        /*! Default destructor. */
+        /*! Private default destructor. */
         ~HasRelationStore() = default;
 
-        /*! Copy constructor. */
+        /*! Private copy constructor. */
         inline HasRelationStore(const HasRelationStore &other);
-        /*! Copy assignment operator. */
+        /*! Private copy assignment operator. */
         inline HasRelationStore &operator=(const HasRelationStore &other);
 
-        /*! Move constructor. */
+        /*! Private move constructor. */
         inline HasRelationStore(HasRelationStore &&other) noexcept;
-        /*! Move assignment operator. */
+        /*! Private move assignment operator. */
         inline HasRelationStore &operator=(HasRelationStore &&other) noexcept;
 
         /* Factory methods for Relation stores */

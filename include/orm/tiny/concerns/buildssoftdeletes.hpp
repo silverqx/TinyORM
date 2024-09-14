@@ -38,9 +38,11 @@ namespace Concerns
         /*! Alias for the null QVariant-s utils. */
         using NullVariant = Orm::Utils::NullVariant;
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         BuildsSoftDeletes() = default;
+
+    public:
         /*! Default destructor. */
         ~BuildsSoftDeletes() = default;
 

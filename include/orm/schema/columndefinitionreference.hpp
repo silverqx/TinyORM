@@ -34,14 +34,14 @@ namespace Orm::SchemaNs
         using ColumnReferenceType = std::conditional_t<std::is_void_v<R>,
                                                        ColumnDefinitionReference, R>;
         /*! Constructor. */
-        ColumnDefinitionReference(ColumnDefinition &columnDefinition); // NOLINT(google-explicit-constructor)
+        ColumnDefinitionReference(ColumnDefinition &columnDefinition); // NOLINT(bugprone-crtp-constructor-accessibility, google-explicit-constructor)
         /*! Default destructor. */
         ~ColumnDefinitionReference() = default;
 
         /*! Copy constructor. */
-        ColumnDefinitionReference(const ColumnDefinitionReference &) = default;
+        ColumnDefinitionReference(const ColumnDefinitionReference &) = default; // NOLINT(bugprone-crtp-constructor-accessibility)
         /*! Move constructor. */
-        ColumnDefinitionReference(ColumnDefinitionReference &&) noexcept = default;
+        ColumnDefinitionReference(ColumnDefinitionReference &&) noexcept = default; // NOLINT(bugprone-crtp-constructor-accessibility)
 
         /*! Deleted copy assignment operator. */
         ColumnDefinitionReference &operator=(const ColumnDefinitionReference &) = delete;

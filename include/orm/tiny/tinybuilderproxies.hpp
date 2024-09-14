@@ -31,9 +31,11 @@ namespace Tiny
         /*! Alias for the JoinClause. */
         using JoinClause = Orm::Query::JoinClause;
 
-    public:
-        /*! Default constructor. */
+    protected:
+        /*! Protected default constructor. */
         BuilderProxies() = default;
+
+    public:
         /*! Default destructor. */
         ~BuilderProxies() = default;
 

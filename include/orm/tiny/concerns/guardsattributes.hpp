@@ -25,6 +25,10 @@ namespace Orm::Tiny::Concerns
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+    protected:
+        /*! Protected default constructor. */
+        GuardsAttributes() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Get the fillable attributes for the model. */
         inline const QStringList &getFillable() const;

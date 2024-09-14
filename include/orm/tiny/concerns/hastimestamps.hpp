@@ -29,6 +29,11 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasTimestamps
     {
+
+    protected:
+        /*! Protected default constructor. */
+        HasTimestamps() = default; // NOLINT(bugprone-crtp-constructor-accessibility)
+
     public:
         /*! Equality comparison operator for the HasTimestamps concern. */
         bool operator==(const HasTimestamps &) const noexcept = default;
