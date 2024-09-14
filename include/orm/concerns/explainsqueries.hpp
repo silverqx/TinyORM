@@ -33,8 +33,8 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline ExplainsQueries() = default;
-        /*! Virtual destructor. */
-        inline virtual ~ExplainsQueries() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~ExplainsQueries() = 0;
 
         /*! Explains the query. */
         TSqlQuery explain();
@@ -43,6 +43,10 @@ namespace Concerns
         /*! Dynamic cast *this to the QueryBuilder & derived type. */
         QueryBuilder &builder();
     };
+
+    /* public */
+
+    ExplainsQueries::~ExplainsQueries() = default;
 
 } // namespace Concerns
 } // namespace Orm
