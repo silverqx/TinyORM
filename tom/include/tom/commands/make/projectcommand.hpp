@@ -25,7 +25,7 @@ namespace Tom::Commands::Make
         /*! Constructor. */
         ProjectCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~ProjectCommand() override = default;
+        ~ProjectCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;
