@@ -195,7 +195,7 @@ namespace Orm::Tiny::Concerns
             inline operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         private:
-            /*! AttributeReference's private constructor. */
+            /*! Private constructor. */
             AttributeReference(Model<Derived, AllRelations...> &model,
                                const QString &attribute);  // NOLINT(modernize-pass-by-value)
 

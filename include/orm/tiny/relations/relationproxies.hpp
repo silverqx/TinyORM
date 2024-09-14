@@ -36,7 +36,7 @@ namespace Tiny::Relations
         /*! Protected default constructor. */
         RelationProxies() = default;
 
-        /*! RelationProxies's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         RelationProxies(const RelationProxies &) = default;
 
     public:
@@ -48,11 +48,12 @@ namespace Tiny::Relations
         /*! Pure virtual destructor. */
         inline virtual ~RelationProxies() = 0;
 
-        /*! RelationProxies's copy assignment operator. */
-        RelationProxies &operator=(const RelationProxies &) = delete;
-        /*! RelationProxies's move constructor. */
+        /*! Deleted move constructor. */
         RelationProxies(RelationProxies &&) = delete;
-        /*! RelationProxies's move assignment operator. */
+
+        /*! Deleted copy assignment operator. */
+        RelationProxies &operator=(const RelationProxies &) = delete;
+        /*! Deleted move assignment operator. */
         RelationProxies &operator=(RelationProxies &&) = delete;
 
         /* Retrieving results */

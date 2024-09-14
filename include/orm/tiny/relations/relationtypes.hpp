@@ -18,7 +18,7 @@ namespace Orm::Tiny::Relations
     class IsRelation
     {
     protected:
-        /*! IsRelation's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         IsRelation(const IsRelation &) = default;
 
     public:
@@ -27,12 +27,12 @@ namespace Orm::Tiny::Relations
         /*! Pure virtual destructor. */
         inline virtual ~IsRelation() = 0;
 
-        /*! IsRelation's move constructor. */
+        /*! Deleted move constructor. */
         IsRelation(IsRelation &&) = delete;
 
-        /*! IsRelation's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         IsRelation &operator=(const IsRelation &) = delete;
-        /*! IsRelation's move assignment operator. */
+        /*! Deleted move assignment operator. */
         IsRelation &operator=(IsRelation &&) = delete;
     };
 
@@ -56,7 +56,7 @@ namespace Orm::Tiny::Relations
     class IsManyRelation
     {
     protected:
-        /*! IsManyRelation's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         IsManyRelation(const IsManyRelation &) = default;
 
     public:
@@ -65,12 +65,12 @@ namespace Orm::Tiny::Relations
         /*! Pure virtual destructor. */
         inline virtual ~IsManyRelation() = 0;
 
-        /*! IsManyRelation's move constructor. */
+        /*! Deleted move constructor. */
         IsManyRelation(IsManyRelation &&) = delete;
 
-        /*! IsManyRelation's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         IsManyRelation &operator=(const IsManyRelation &) = delete;
-        /*! IsManyRelation's move assignment operator. */
+        /*! Deleted move assignment operator. */
         IsManyRelation &operator=(IsManyRelation &&) = delete;
     };
 
@@ -80,7 +80,7 @@ namespace Orm::Tiny::Relations
     class IsPivotRelation
     {
     protected:
-        /*! IsPivotRelation's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         IsPivotRelation(const IsPivotRelation &) = default;
 
     public:
@@ -89,12 +89,12 @@ namespace Orm::Tiny::Relations
         /*! Pure virtual destructor. */
         inline virtual ~IsPivotRelation() = 0;
 
-        /*! IsPivotRelation's move constructor. */
+        /*! Deleted move constructor. */
         IsPivotRelation(IsPivotRelation &&) = delete;
 
-        /*! IsPivotRelation's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         IsPivotRelation &operator=(const IsPivotRelation &) = delete;
-        /*! IsPivotRelation's move assignment operator. */
+        /*! Deleted move assignment operator. */
         IsPivotRelation &operator=(IsPivotRelation &&) = delete;
     };
 

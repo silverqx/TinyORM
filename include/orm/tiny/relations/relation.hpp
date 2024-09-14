@@ -46,7 +46,7 @@ namespace Relations
         Relation(std::unique_ptr<Related> &&related, Model &parent,
                  const QString &relatedKey = EMPTY);
 
-        /*! Relation's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         Relation(const Relation &) = default;
 
     public:
@@ -58,12 +58,12 @@ namespace Relations
         /*! Pure virtual destructor. */
         inline ~Relation() override = 0;
 
-        /*! Relation's move constructor. */
+        /*! Deleted move constructor. */
         Relation(Relation &&) = delete;
 
-        /*! Relation's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         Relation &operator=(const Relation &) = delete;
-        /*! Relation's move assignment operator. */
+        /*! Deleted move assignment operator. */
         Relation &operator=(Relation &&) = delete;
 
         /* Relation related operations */

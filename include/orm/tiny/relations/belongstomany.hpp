@@ -41,7 +41,7 @@ namespace Orm::Tiny::Relations
                 const QString &relatedPivotKey = EMPTY, const QString &parentKey = EMPTY, // NOLINT(modernize-pass-by-value)
                 const QString &relatedKey = EMPTY, const QString &relationName = EMPTY); // NOLINT(modernize-pass-by-value)
 
-        /*! BelongsToMany's copy constructor (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         BelongsToMany(const BelongsToMany &) = default;
 
     public:
@@ -55,12 +55,12 @@ namespace Orm::Tiny::Relations
         /*! Virtual destructor. */
         ~BelongsToMany() override = default;
 
-        /*! BelongsToMany's move constructor. */
+        /*! Deleted move constructor. */
         BelongsToMany(BelongsToMany &&) = delete;
 
-        /*! BelongsToMany's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         BelongsToMany &operator=(const BelongsToMany &) = delete;
-        /*! BelongsToMany's move assignment operator. */
+        /*! Deleted move assignment operator. */
         BelongsToMany &operator=(BelongsToMany &&) = delete;
 
         /*! Instantiate and initialize a new BelongsToMany instance. */

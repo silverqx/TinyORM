@@ -53,8 +53,7 @@ namespace Concerns
         /*! Protected default constructor. */
         InteractsWithPivotTable() = default;
 
-        /*! InteractsWithPivotTable's copy constructor
-            (used by BelongsToMany::clone()). */
+        /*! Protected copy constructor (used by BelongsToMany::clone()). */
         InteractsWithPivotTable(const InteractsWithPivotTable &) = default;
 
     public:
@@ -68,12 +67,12 @@ namespace Concerns
         /*! Pure virtual destructor. */
         inline virtual ~InteractsWithPivotTable() = 0;
 
-        /*! InteractsWithPivotTable's move constructor. */
+        /*! Deleted move constructor. */
         InteractsWithPivotTable(InteractsWithPivotTable &&) = delete;
 
-        /*! InteractsWithPivotTable's copy assignment operator. */
+        /*! Deleted copy assignment operator. */
         InteractsWithPivotTable &operator=(const InteractsWithPivotTable &) = delete;
-        /*! InteractsWithPivotTable's move assignment operator. */
+        /*! Deleted move assignment operator. */
         InteractsWithPivotTable &operator=(InteractsWithPivotTable &&) = delete;
 
         /*! Set the columns on the pivot table to retrieve. */
