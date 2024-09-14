@@ -8,8 +8,11 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlQuery
 
-#include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/macros/commonnamespace.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
