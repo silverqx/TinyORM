@@ -368,12 +368,12 @@ namespace Query
         explicit DatabaseManager(const QString &defaultConnection);
         /*! Private constructor to create DatabaseManager instance and register a new
             connection as default connection at once. */
-        explicit DatabaseManager(const QVariantHash &config, const QString &connection,
-                                 const QString &defaultConnection);
+        DatabaseManager(const QVariantHash &config, const QString &connection,
+                        const QString &defaultConnection);
         /*! Private constructor to create DatabaseManager instance and set connections
             at once. */
-        explicit DatabaseManager(const ConfigurationsType &configs,
-                                 const QString &defaultConnection);
+        DatabaseManager(const ConfigurationsType &configs,
+                        const QString &defaultConnection);
 
         /*! Setup the default database connection reconnector. */
         DatabaseManager &setupDefaultReconnector();

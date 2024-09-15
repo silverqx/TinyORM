@@ -17,7 +17,7 @@ namespace Orm::Exceptions
     {
     public:
         /*! Constructor. */
-        inline explicit MultipleRecordsFoundError(int count, QString &&functionName);
+        inline MultipleRecordsFoundError(int count, QString &&functionName);
 
         /*! Get the number of records found. */
         inline int count() const noexcept;
