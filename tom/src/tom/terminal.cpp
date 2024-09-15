@@ -250,7 +250,7 @@ void Terminal::enableUtf8ConsoleEncoding()
 #ifdef __MINGW32__
 void Terminal::enableVt100Support()
 {
-    /* The vt100 is disabled by default on MSYS2 so have to be explicitly enabled:
+    /* The VT100 is disabled by default on MSYS2 so have to be explicitly enabled:
        https://github.com/msys2/msys2-runtime/issues/91 */
     DWORD mode = 0;
     auto *const stdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);

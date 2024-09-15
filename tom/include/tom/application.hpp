@@ -245,7 +245,7 @@ namespace Concerns
         /*! Create the QCoreApplication instance. */
         static std::unique_ptr<QCoreApplication>
         createQCoreApplication(int &argc, char **argv);
-        /*! Initialize the migrations or seeders path (prepend pwd and make_prefered). */
+        /*! Initialize the migrations or seeders path (prepend pwd and make_preferred). */
         static fspath initializePath(fspath &&path);
 
         /*! Get database connection resolver. */

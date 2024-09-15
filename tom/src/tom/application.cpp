@@ -196,7 +196,7 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
     , m_migrations(std::move(migrations))
     , m_seeders(std::move(seeders))
 {
-    // Enable UTF-8 encoding and vt100 support
+    // Enable UTF-8 encoding and VT100 support
     Terminal::initialize();
 
     QCoreApplication::setApplicationName(u"tom"_s);
@@ -225,7 +225,7 @@ int Application::run()
 void Application::logException(const std::exception &e, const bool noAnsi)
 {
     // TODO future decide how qCritical()/qFatal() really works, also regarding to the Qt Creator's settings 'Ignore first chance access violations' and similar silverqx
-    // TODO future alse how to correctly setup this in prod/dev envs. silverqx
+    // TODO future also how to correctly setup this in prod/dev envs. silverqx
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */
@@ -773,7 +773,7 @@ Application::commandNames()
 const std::vector<std::reference_wrapper<const QString>> &
 Application::namespaceNames()
 {
-    // Order is important here - ziped with the commandsIndexes()
+    // Order is important here - zipped with the commandsIndexes()
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
         EMPTY, NsGlobal,
@@ -801,7 +801,7 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
        Look to the Application::commandNames() to understand this indexes.
        tuple is forwarded as args to the ranges::views::slice().
 
-       Order is important here - ziped with the namespaceNames(). */
+       Order is important here - zipped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
         {0,   8}, // "" - also global
         {0,   8}, // global
