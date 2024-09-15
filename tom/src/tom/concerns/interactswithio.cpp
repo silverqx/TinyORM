@@ -271,7 +271,7 @@ InteractsWithIO::newLineErr(const quint16 count, const Verbosity verbosity) cons
 }
 
 const InteractsWithIO &
-InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &rows,
+InteractsWithIO::table(const TableRow &header, const std::vector<TableRow> &rows,
                        const Verbosity verbosity) const
 {
     if (dontOutput(verbosity))
@@ -287,7 +287,7 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
     table.format().locale("C");
 #endif
 
-    table.add_row(headers);
+    table.add_row(header);
 
     for (const auto &row : rows)
         table.add_row(row);

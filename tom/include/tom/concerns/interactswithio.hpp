@@ -155,7 +155,7 @@ namespace Concerns
 
         /*! Format input to textual table. */
         const InteractsWithIO &
-        table(const TableRow &headers, const std::vector<TableRow> &rows,
+        table(const TableRow &header, const std::vector<TableRow> &rows,
               Verbosity verbosity = Normal) const;
 
         /*! Confirm a question with the user. */
