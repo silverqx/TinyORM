@@ -162,7 +162,7 @@ $clazyCurrentVersion = $Matches.version
 
 Write-Info 'Recommended versions'
 Newline
-Write-Output "  Clang-Tidy `e[32mv18`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
+Write-Output "  Clang-Tidy `e[32mv19`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
 Write-Output "  Clazy standalone `e[32mv1.12`e[0m (current `e[33mv$clazyCurrentVersion`e[0m)"
 
 # Initialize build environment if it's not already initialized
