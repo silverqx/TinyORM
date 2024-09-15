@@ -25,7 +25,7 @@ namespace Support
         inline SqlDriverFactoryPrivate(const QString &driver, const QString &connection);
         /*! Constructor. */
         inline SqlDriverFactoryPrivate(QString &&driver, const QString &connection);
-        /*! Deleted destructor. */
+        /*! Default destructor. */
         ~SqlDriverFactoryPrivate() = default;
 
         /*! Create a SqlDriver instance based on the driverName data member. */
