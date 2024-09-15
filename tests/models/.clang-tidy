@@ -1,4 +1,4 @@
-# Optimized for Clang-Tidy v18
+# Optimized for Clang-Tidy v19
 ---
 InheritParentConfig: true
 CheckOptions:
