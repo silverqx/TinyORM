@@ -54,7 +54,7 @@ namespace MySql
         /*! Converting constructor from the std::unique_ptr<SqlResult>. */
         explicit SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept;
 
-        /*! Default destructor. */
+        /*! Destructor. */
         ~SqlQuery();
 
         /*! Move constructor. */

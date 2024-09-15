@@ -38,7 +38,7 @@ namespace Orm::Drivers
         explicit SqlDatabase(std::unique_ptr<SqlDriver> &&driver);
 
     public:
-        /*! Default destructor. */
+        /*! Destructor. */
         ~SqlDatabase() noexcept;
 
         /*! Copy constructor. */
