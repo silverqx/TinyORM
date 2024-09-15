@@ -23,6 +23,7 @@ private:
     QString u_table {u"torrents"_s};
 };
 
+/*! Dummy type that helps to define the overloaded operator==(). */
 struct DummyType
 {};
 
