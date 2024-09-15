@@ -121,7 +121,7 @@ namespace Utils
         result.reserve(strings.size());
 
         for (auto &&string : strings)
-            result.push_back(studly(std::forward<decltype (string)>(string)));
+            result.push_back(studly(std::move(string)));
 
         return result;
     }
