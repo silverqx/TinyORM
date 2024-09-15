@@ -414,6 +414,8 @@ cmake_minimum_required(VERSION VERSION 3.22...3.30 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+# Set the AUTOMOC property explicitly only when needed (eg. unit tests need AUTOMOC)
+set(CMAKE_AUTOMOC OFF)
 
 # Initialize variables
 # ---
@@ -421,6 +423,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(Tom_ns tom)
 set(Tom_target tom)
 
+# Path to the PARENT TinyORM directory❗
 file(REAL_PATH "../../TinyORM" TinyMainDir)
 
 set(TinyOrmSourceDir "${TinyMainDir}/TinyORM")
@@ -479,10 +482,7 @@ target_include_directories(${Tom_target}
 # Tom command-line application defines
 # ---
 
-target_compile_definitions(${Tom_target}
-    PRIVATE
-        PROJECT_TOM
-)
+target_compile_definitions(${Tom_target} PRIVATE PROJECT_TOM)
 
 # Windows resource and manifest files
 # ---
