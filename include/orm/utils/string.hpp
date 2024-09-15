@@ -118,6 +118,7 @@ namespace Utils
     T String::studly(T &&strings) // NOLINT(cppcoreguidelines-missing-std-forward)
     {
         T result;
+        result.reserve(strings.size());
 
         for (auto &&string : strings)
             result.push_back(studly(std::forward<decltype (string)>(string)));
