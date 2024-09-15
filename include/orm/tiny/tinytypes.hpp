@@ -101,12 +101,14 @@ namespace Types
 
     /*! Tag for Model::getRelation() family methods to return Related type
         directly ( not container type ). */
-    struct One {};
+    struct One
+    {};
 
     /*! Tag for Model::getRelationshipFromMethod() to return ModelsCollection<Related>
         type ( 'Many' relation types ), only internal type for now, used as the template
         tag in the HasRelationships::pushVisited. */
-    struct Many {};
+    struct Many
+    {};
 
     /*! Options parameter type used in Model save() method. */
     struct SaveOptions

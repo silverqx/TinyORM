@@ -23,7 +23,8 @@ private:
     QString u_table {u"torrents"_s};
 };
 
-struct DummyType {};
+struct DummyType
+{};
 
 class Torrent_With_Equality_Operator_Overload final : // NOLINT(bugprone-exception-escape)
         public Model<Torrent_With_Equality_Operator_Overload>

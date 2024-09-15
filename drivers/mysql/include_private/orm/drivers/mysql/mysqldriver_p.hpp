@@ -79,7 +79,8 @@ namespace Orm::Drivers::MySql
         using SetOptionMemFn = std::function<bool(const MySqlDriverPrivate &,
                                                   mysql_option, QStringView)>;
         /*! MySQL connection option and the set method. */
-        struct MySqlOptionValue {
+        struct MySqlOptionValue
+        {
             /*! MySQL connection option. */
             mysql_option option;
             /*! The set method for MySQL connection option (calls mysql_options()). */

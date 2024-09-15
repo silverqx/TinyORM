@@ -36,7 +36,8 @@ namespace Types
 {
 
     /*! Tag type for each() related methods (return bool callback overload). */
-    struct EachBoolCallbackType {
+    struct EachBoolCallbackType
+    {
         /*! Default constructor. */
         explicit EachBoolCallbackType() = default;
     };
