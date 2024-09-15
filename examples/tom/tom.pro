@@ -41,15 +41,6 @@ include($$TINYORM_SOURCE_TREE/tests/database/seeders.pri)
 # Or include yours seeders
 #include(/home/xyz/your_project/database/seeders.pri)
 
-# Deployment
-# ---
-
-win32-msvc:CONFIG(debug, debug|release) {
-    win32-msvc: target.path = C:/optx64/$${TARGET}
-#    else: unix:!android: target.path = /opt/$${TARGET}/bin
-    !isEmpty(target.path): INSTALLS += target
-}
-
 # User Configuration
 # ---
 

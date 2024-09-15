@@ -36,15 +36,6 @@ include($$PWD/database/migrations.pri)
 # Seeders header files
 include($$PWD/database/seeders.pri)
 
-# Deployment
-# ---
-
-win32-msvc:CONFIG(debug, debug|release) {
-    win32-msvc: target.path = C:/optx64/$${TARGET}
-#    else: unix:!android: target.path = /opt/$${TARGET}/bin
-    !isEmpty(target.path): INSTALLS += target
-}
-
 # User Configuration
 # ---
 

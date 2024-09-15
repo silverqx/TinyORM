@@ -64,15 +64,6 @@ tiny_resource_and_manifest(                                                     
 
 include($$TINYORM_SOURCE_TREE/include/pch.pri)
 
-# Deployment
-# ---
-
-win32-msvc:CONFIG(debug, debug|release) {
-    win32-msvc: target.path = C:/optx64/$${TARGET}
-#    else: unix:!android: target.path = /opt/$${TARGET}/bin
-    !isEmpty(target.path): INSTALLS += target
-}
-
 # Some info output
 # ---
 
