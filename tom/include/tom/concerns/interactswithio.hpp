@@ -203,7 +203,7 @@ namespace Concerns
         /*! Constructor (used by TomApplication::logException()). */
         explicit InteractsWithIO(bool noAnsi);
 
-        /*! Repalce text tags with ANSI sequences. */
+        /*! Replace text tags with ANSI sequences. */
         static QString parseOutput(QString string, bool isAnsi = true);
 
         /*! Initialize verbosity by set options in the command-line parser. */
