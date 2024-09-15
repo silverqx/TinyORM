@@ -997,6 +997,12 @@ throw (.*::)?\w+(E|_error)
 Powershell commands:
 --------------------
 
+ - print all diagnostics from the Clang Tidy output:
+qa-clang-tidy-sort.ps1 -Path .\tidy1.txt
+
+ - print all filenames from the Clang Tidy output:
+Get-Content .\tidy1.txt | where { $_ -cmatch 'error: ' } | % { $_ -cmatch '[\\/](?<file>\w+\.\w+):\d+:\d+: error: ' | Out-Null; $Matches.file } | sort -Unique
+
  - export todos to csv:
 Get-ChildItem -Path *.cpp,*.hpp -Recurse | sls -Pattern ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE) ' -CaseSensitive | % { $_.Line = $_.Line.Trim().TrimStart('// '); return  $_; } | select Line,LineNumber,Path | Export-Csv todos.csv -Delimiter ';' -NoTypeInformation
 
