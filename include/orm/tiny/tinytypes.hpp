@@ -125,7 +125,7 @@ namespace Types
     struct DontFillDefaultAttributes
     {
         /*! Default constructor. */
-        DontFillDefaultAttributes() = default;
+        explicit DontFillDefaultAttributes() = default;
     };
 
     /*! Instance of the tag used to select a constructor without filling Default
