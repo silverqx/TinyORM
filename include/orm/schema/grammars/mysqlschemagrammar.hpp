@@ -25,7 +25,7 @@ namespace Grammars
 
     public:
         /*! Constructor. */
-        inline explicit MySqlSchemaGrammar(bool isMaria = false);
+        inline explicit MySqlSchemaGrammar(bool isMaria = false); // explicit is needed as still can act as converting constructor if the isMaria is passed
         /*! Virtual destructor. */
         ~MySqlSchemaGrammar() override = default;
 

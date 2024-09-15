@@ -20,7 +20,7 @@ namespace Orm::Drivers::Support
         /*! Determine if a SqlRecord is cached. */
         constexpr bool has() const noexcept;
         /*! Determine if a SqlRecord is cached. */
-        constexpr explicit operator bool() const noexcept;
+        constexpr explicit operator bool() const noexcept; // explicit is always desirable with the operator bool() to avoid unintentional conversions
 
         /*! Retrieve a SqlRecord from the cache. */
         constexpr SqlRecord &get();

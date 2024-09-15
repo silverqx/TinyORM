@@ -38,7 +38,7 @@ namespace Orm::Drivers
         using enum RequiredStatus;
 
         /*! Constructor. */
-        explicit SqlField(QString fieldName = {}, QMetaType metaType = {},
+        explicit SqlField(QString fieldName = {}, QMetaType metaType = {}, // explicit is needed as still can act as converting constructor if only the fieldName is passed
                           QString tableName = {});
         /*! Default destructor. */
         ~SqlField() = default;
