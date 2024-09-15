@@ -27,10 +27,8 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY_MOVE(StatusCommand)
 
-        /*! Alias for the tabulate cell. */
-        using TableCell = InteractsWithIO::TableCell;
         /*! Alias for the tabulate row. */
-        using TableRow  = InteractsWithIO::TableRow;
+        using TableRow = InteractsWithIO::TableRow;
 
     public:
         /*! Constructor. */
