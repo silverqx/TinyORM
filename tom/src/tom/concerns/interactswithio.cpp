@@ -287,8 +287,10 @@ InteractsWithIO::table(const TableRow &header, const std::vector<TableRow> &rows
     table.format().locale("C");
 #endif
 
+    // thead
     table.add_row(header);
 
+    // tbody
     for (const auto &row : rows)
         table.add_row(row);
 
@@ -475,6 +477,7 @@ InteractsWithIO::initializeAnsi(const QCommandLineParser &parser)
     if (parser.isSet(noansi))
         return false;
 
+    // ANSI will be autodetected
     return std::nullopt;
 }
 
@@ -484,6 +487,7 @@ InteractsWithIO::initializeNoAnsi(const bool noAnsi)
     if (noAnsi)
         return false;
 
+    // ANSI will be autodetected
     return std::nullopt;
 }
 

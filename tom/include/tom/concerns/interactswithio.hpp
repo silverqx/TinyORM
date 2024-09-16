@@ -242,13 +242,13 @@ namespace Concerns
         /*! Initialize tabulate table colors by supported ANSI. */
         TableColors initializeTableColors() const;
 
-        /*! Is this input means interactive? */
+        /*! Is the input interactive? (don't ask any interactive question if false) */
         bool m_interactive = true;
         /*! Current application verbosity (defined by passed command-line options). */
         Verbosity m_verbosity = Normal;
-        /*! Current application ANSI passed by command-line option. */
+        /*! Current application ANSI passed by command-line option (nullopt is auto). */
         std::optional<bool> m_ansi = std::nullopt;
-        /*! Describes current terminal features. */
+        /*! Describes features of the current terminal. */
         std::unique_ptr<Terminal> m_terminal;
     };
 
