@@ -265,7 +265,7 @@ std::weak_ptr<const TSqlDriver> DatabaseManager::driverWeak(const QString &conne
 
 namespace
 {
-    const auto *const InstanceExceptionMessage =
+    constexpr auto *const InstanceExceptionMessage =
             "The DatabaseManager instance has not yet been created, create it "
             "by the DB::create() method.";
 } // namespace
