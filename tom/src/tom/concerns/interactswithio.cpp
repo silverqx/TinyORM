@@ -59,6 +59,7 @@ InteractsWithIO::line(const QString &string, const bool newline,
                       const Verbosity verbosity, const QString &style,
                       std::ostream &cout) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -114,6 +115,7 @@ InteractsWithIO::muted(const QString &string, const bool newline,
 const InteractsWithIO &InteractsWithIO::alert(const QString &string,
                                               const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -131,6 +133,7 @@ const InteractsWithIO &InteractsWithIO::alert(const QString &string,
 const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
                                                   const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -150,6 +153,7 @@ InteractsWithIO::wline(const QString &string, const bool newline,
                        const Verbosity verbosity, const QString &style,
                        std::wostream &wcout) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -204,6 +208,7 @@ InteractsWithIO::wmuted(const QString &string, const bool newline,
 const InteractsWithIO &InteractsWithIO::walert(const QString &string,
                                                const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -221,6 +226,7 @@ const InteractsWithIO &InteractsWithIO::walert(const QString &string,
 const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
                                                    const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -238,6 +244,7 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
 const InteractsWithIO &
 InteractsWithIO::newLine(const quint16 count, const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -249,6 +256,7 @@ InteractsWithIO::newLine(const quint16 count, const Verbosity verbosity) const
 const InteractsWithIO &
 InteractsWithIO::newLineErr(const quint16 count, const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
@@ -290,6 +298,7 @@ InteractsWithIO::table(
         const TableRow &header, const std::vector<TableRow> &rows,
         const FormatTableCallback &formatCallback, const Verbosity verbosity) const
 {
+    // Nothing to do, verbosity is too low
     if (dontOutput(verbosity))
         return *this;
 
