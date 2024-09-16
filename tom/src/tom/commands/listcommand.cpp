@@ -144,9 +144,8 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
     // No namespace found
     if (namespaces.empty()) {
-        application().errorWall(
-                    uR"(There are no commands defined in the "%1" namespace.)"_s
-                    .arg(namespaceArg));
+        errorWall(uR"(There are no commands defined in the "%1" namespace.)"_s
+                  .arg(namespaceArg));
 
         Application::exitApplication(EXIT_FAILURE);
     }
@@ -177,10 +176,8 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
     })
             | ranges::to<QStringList>();
 
-    application().errorWall(
-                u"The namespace \"%1\" is ambiguous.\n\n"
-                 "Did you mean one of these?\n%2"_s
-                .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
+    errorWall(u"The namespace \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2"_s
+              .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
 
     Application::exitApplication(EXIT_FAILURE);
 }
