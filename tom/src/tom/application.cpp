@@ -864,7 +864,9 @@ const Concerns::InteractsWithIO &Application::io() const noexcept
     /* This is our internal thing so the Q_ASSERT() is enough. I tried to make it public
        because the InteractsWithIO() class contains useful methods, but it's not fully
        ready until the TomApplication::run() method call and that's a problem.
-       And that's why I made it protected. 🫤 */
+       And that's why I made it protected. 🫤
+       See the following commit for the whole refactor:
+       tom removed tabulate/table.hpp from headers 🙌 (bef2b13f) */
     Q_ASSERT(m_io);
     return *m_io;
 }

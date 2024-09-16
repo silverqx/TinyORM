@@ -5,6 +5,8 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
+/* See the following commit for the whole refactor:
+   tom removed tabulate/table.hpp from headers 🙌 (bef2b13f) */
 #include <tabulate/table.hpp>
 
 #include <orm/utils/string.hpp>
