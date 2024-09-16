@@ -468,7 +468,7 @@ InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser)
 std::optional<bool>
 InteractsWithIO::initializeAnsi(const QCommandLineParser &parser)
 {
-    // Ansi option has higher priority
+    // --ansi option has higher priority
     if (parser.isSet(ansi))
         return true;
 
@@ -564,7 +564,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     QString output;
 
     {
-        // Ansi template
+        // ANSI template
         static const auto tmpl = u"\033[37;41m%1\033[0m"_s;
         // Get final max. line width in all rendered lines (after splitted by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
@@ -587,7 +587,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
             auto lineSpaced = u"  %1  "_s.arg(line);
             // Fill a line to the end with spaces
             lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
-            // Ansi wrap
+            // ANSI wrap
             output += tmpl.arg(lineSpaced).append(NEWLINE);
         }
 
