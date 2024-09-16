@@ -2,9 +2,11 @@
 
 #include <QCommandLineParser>
 
-#include <cmath>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
-#include <orm/constants.hpp>
+#include <tabulate/table.hpp>
+
 #include <orm/utils/string.hpp>
 
 #include "tom/terminal.hpp"
@@ -31,6 +33,13 @@ using Tom::Constants::quiet;
 namespace Tom::Concerns
 {
 
+/* private */
+
+InteractsWithIO::InteractsWithIO(const bool noAnsi)
+    : m_ansi(initializeNoAnsi(noAnsi))
+    , m_terminal(std::make_unique<Terminal>())
+{}
+
 /* public */
 
 InteractsWithIO::InteractsWithIO(const QCommandLineParser &parser)
@@ -42,28 +51,6 @@ InteractsWithIO::InteractsWithIO(const QCommandLineParser &parser)
 
 // Needed by a unique_ptr()
 InteractsWithIO::~InteractsWithIO() = default;
-
-/* protected */
-
-// Needed by a unique_ptr()
-InteractsWithIO::InteractsWithIO()
-    : m_terminal(nullptr)
-{}
-
-void InteractsWithIO::initialize(const QCommandLineParser &parser)
-{
-    m_interactive = !parser.isSet(nointeraction);
-    m_verbosity   = initializeVerbosity(parser);
-    m_ansi        = initializeAnsi(parser);
-    m_terminal    = std::make_unique<Terminal>();
-}
-
-/* private */
-
-InteractsWithIO::InteractsWithIO(const bool noAnsi)
-    : m_ansi(initializeNoAnsi(noAnsi))
-    , m_terminal(std::make_unique<Terminal>())
-{}
 
 /* public */
 
@@ -270,9 +257,38 @@ InteractsWithIO::newLineErr(const quint16 count, const Verbosity verbosity) cons
     return *this;
 }
 
+namespace
+{
+    /*! Alias for the tabulate cell. */
+    using TabulateCell = Table::Row_t::value_type;
+    /*! Alias for the tabulate row. */
+    using TabulateRow  = Table::Row_t;
+
+    /*! Convert our table row to a tabulate table row. */
+    TabulateRow convertToTabulateRow(const InteractsWithIO::TableRow &row)
+    {
+        return row
+                | ranges::views::transform([](const auto &cell) -> TabulateCell
+        {
+            if (std::holds_alternative<const char *>(cell))
+                return std::get<const char *>(cell);
+
+            if (std::holds_alternative<std::string>(cell))
+                return std::get<std::string>(cell);
+
+            if (std::holds_alternative<std::string_view>(cell))
+                return std::string(std::get<std::string_view>(cell));
+
+            Q_UNREACHABLE();
+        })
+                | ranges::to<TabulateRow>();
+    }
+} // namespace
+
 const InteractsWithIO &
-InteractsWithIO::table(const TableRow &header, const std::vector<TableRow> &rows,
-                       const Verbosity verbosity) const
+InteractsWithIO::table(
+        const TableRow &header, const std::vector<TableRow> &rows,
+        const FormatTableCallback &formatCallback, const Verbosity verbosity) const
 {
     if (dontOutput(verbosity))
         return *this;
@@ -288,40 +304,15 @@ InteractsWithIO::table(const TableRow &header, const std::vector<TableRow> &rows
 #endif
 
     // thead
-    table.add_row(header);
+    table.add_row(convertToTabulateRow(header));
 
     // tbody
     for (const auto &row : rows)
-        table.add_row(row);
+        table.add_row(convertToTabulateRow(row));
 
-    // Initialize tabulate table colors by supported ANSI
-    const auto [green, red] = initializeTableColors();
-
-    // Format table
-    // Green text in header
-    table.row(0).format().font_color(green);
-
-    for (std::size_t i = 1; i <= rows.size() ; ++i) {
-        auto &row = table.row(i);
-
-        // Remove line between rows in the tbody
-        if (i > 1)
-            row.format().hide_border_top();
-
-        // Align the Batch column to the right (must be after the hide_border_top())
-        row.cell(2).format().font_align(tabulate::FontAlign::right);
-
-        // Ran? column : Yes - green, No - red
-        {
-            auto &cell0 = row.cell(0);
-            auto &format = cell0.format();
-
-            if (cell0.get_text() == "Yes")
-                format.font_color(green);
-            else
-                format.font_color(red);
-        }
-    }
+    // Format the tabulate table using the given callback
+    if (formatCallback)
+        std::invoke(formatCallback, table, *this);
 
     std::cout << table << std::endl; // NOLINT(performance-avoid-endl)
 
@@ -391,6 +382,26 @@ QString InteractsWithIO::stripAnsiTags(QString string)
 }
 
 /* Getters / Setters */
+
+bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
+{
+    // ANSI was explicitly set on the command-line, respect it
+    if (m_ansi)
+        return *m_ansi;
+
+    // Instead autodetect
+    return m_terminal->hasColorSupport(cout);
+}
+
+bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
+{
+    // ANSI was explicitly set on the command-line, respect it
+    if (m_ansi)
+        return *m_ansi;
+
+    // Instead autodetect
+    return m_terminal->hasWColorSupport(wcout);
+}
 
 void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
 {
@@ -505,26 +516,6 @@ bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
     return verbosity > m_verbosity;
 }
 
-bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
-{
-    // ANSI was explicitly set on the command-line, respect it
-    if (m_ansi)
-        return *m_ansi;
-
-    // Instead autodetect
-    return m_terminal->hasColorSupport(cout);
-}
-
-bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
-{
-    // ANSI was explicitly set on the command-line, respect it
-    if (m_ansi)
-        return *m_ansi;
-
-    // Instead autodetect
-    return m_terminal->hasWColorSupport(wcout);
-}
-
 namespace
 {
     /*! Get max. line size after the split with the newline in all rendered lines. */
@@ -614,20 +605,6 @@ InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
         size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;
 
     return size;
-}
-
-InteractsWithIO::TableColors InteractsWithIO::initializeTableColors() const
-{
-    /* Even is I detect ANSI support as true, tabulate has it's own detection logic,
-       it only check isatty(), it has some consequences, eg. no colors when output
-       is redirected and --ansi was passed to the tom application, practically all the
-       logic in the isAnsiOutput() will be skipped because of this tabulate internal
-       logic, not a big deal though. */
-    if (isAnsiOutput())
-        return {};
-
-    // Disable coloring if no-ansi
-    return {Color::none, Color::none};
 }
 
 } // namespace Tom::Concerns

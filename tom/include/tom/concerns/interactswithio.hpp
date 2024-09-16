@@ -7,30 +7,20 @@ TINY_SYSTEM_HEADER
 
 #include <QStringList>
 
-#include <tabulate/table.hpp>
-/* This header exists from the tabulate v1.4.0, it has been added in the middle of v1.3.0
-   and didn't exist at the v1.3.0 release. */
-#if __has_include(<tabulate/tabulate.hpp>)
-#  include <tabulate/tabulate.hpp>
-#endif
+#include <iostream>
 
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
 
 class QCommandLineParser;
 
+namespace tabulate
+{
+    class Table;
+}
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-// Defines to detect the tabulate version
-#ifndef TABULATE_VERSION_MAJOR
-#  define TABULATE_VERSION_MAJOR 0
-#  define TABULATE_VERSION_MINOR 0
-#  define TABULATE_VERSION_PATCH 0
-#endif
-
-#define TINY_TABULATE_VERSION QT_VERSION_CHECK(TABULATE_VERSION_MAJOR, \
-                                               TABULATE_VERSION_MINOR, \
-                                               TABULATE_VERSION_PATCH)
 namespace Tom
 {
     class Application;
@@ -47,29 +37,10 @@ namespace Concerns
         // To access private constructor and errorWallInternal() (used by logException())
         friend Tom::Application;
 
+        /*! Constructor (used by TomApplication::logException()). */
+        explicit InteractsWithIO(bool noAnsi);
+
     public:
-#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 5, 0)
-        /*! Alias for the tabulate cell. */
-        using TableCell = tabulate::Table::Row_t::value_type;
-#elif TINY_TABULATE_VERSION == QT_VERSION_CHECK(1, 4, 0)
-        /*! Alias for the tabulate cell. */
-        using TableCell = std::variant<std::string, const char *, tabulate::Table>;
-#else
-        /*! Alias for the tabulate cell. */
-        using TableCell = std::variant<std::string, tabulate::Table>;
-#endif
-
-#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 5, 0)
-        /*! Alias for the tabulate row. */
-        using TableRow = tabulate::Table::Row_t;
-        // Check the type because we have no control over this type
-        static_assert (std::is_same_v<TableRow, std::vector<TableCell>>,
-                "The InteractsWithIO::TableRow must be the std::vector<TableCell> type.");
-#else
-        /*! Alias for the tabulate row. */
-        using TableRow = std::vector<TableCell>;
-#endif
-
         /*! Constructor. */
         explicit InteractsWithIO(const QCommandLineParser &parser);
         /*! Virtual destructor. */
@@ -153,9 +124,17 @@ namespace Concerns
         const InteractsWithIO &newLineErr(quint16 count = 1,
                                           Verbosity verbosity = Normal) const;
 
+        /*! Alias for the table cell. */
+        using TableCell = std::variant<std::string, const char *, std::string_view>;
+        /*! Alias for the table row. */
+        using TableRow  = std::vector<TableCell>;
+        /*! Format the tabulate table callback type. */
+        using FormatTableCallback = std::function<void(tabulate::Table &,
+                                                       const InteractsWithIO &)>;
         /*! Format input to textual table. */
         const InteractsWithIO &
         table(const TableRow &header, const std::vector<TableRow> &rows,
+              const FormatTableCallback &formatCallback = nullptr,
               Verbosity verbosity = Normal) const;
 
         /*! Confirm a question with the user. */
@@ -165,6 +144,12 @@ namespace Concerns
         static QString stripAnsiTags(QString string);
 
         /* Getters / Setters */
+        /*! Should the given output use ANSI? (ANSI is disabled without TTY). */
+        bool isAnsiOutput(const std::ostream &cout = std::cout) const;
+        /*! Should the given output use ANSI? (ANSI is disabled without TTY),
+            wide version. */
+        bool isAnsiWOutput(const std::wostream &cout = std::wcout) const;
+
         /*! Run the given callable with disabled ANSI output support. */
         void withoutAnsi(const std::function<void()> &callback);
         /*! Enable ANSI support. */
@@ -179,13 +164,6 @@ namespace Concerns
         inline InteractsWithIO &setAnsi(bool value) noexcept;
 
     protected:
-        /*! Default constructor (used by the TomApplication, instance is initialized
-            later in the TomApplication::parseCommandLine()). */
-        InteractsWithIO();
-        /*! Initialize instance like the second constructor do, allows to create
-            an instance in two steps. */
-        void initialize(const QCommandLineParser &parser);
-
         /*! Get a current verbosity level. */
         inline Verbosity verbosity() const noexcept;
         /*! Is quiet verbosity level? */
@@ -200,9 +178,6 @@ namespace Concerns
         inline bool isDebugVerbosity() const noexcept;
 
     private:
-        /*! Constructor (used by TomApplication::logException()). */
-        explicit InteractsWithIO(bool noAnsi);
-
         /*! Replace text tags with ANSI sequences. */
         static QString parseOutput(QString string, bool isAnsi = true);
 
@@ -219,35 +194,18 @@ namespace Concerns
         /*! Determine whether discard output by the current and the given verbosity. */
         bool dontOutput(Verbosity verbosity) const;
 
-        /*! Should the given output use ANSI? (ANSI is disabled without TTY). */
-        bool isAnsiOutput(const std::ostream &cout = std::cout) const;
-        /*! Should the given output use ANSI? (ANSI is disabled without TTY),
-            wide version. */
-        bool isAnsiWOutput(const std::wostream &cout = std::wcout) const;
-
         /*! Write a string as error output (red box with a white text). */
         QString errorWallInternal(const QString &string) const;
         /*! Compute a reserve value for the QStringList lines. */
         static QStringList::size_type
         computeReserveForErrorWall(const QStringList &splitted, int maxLineWidth);
 
-        /*! Alias for the tabulate color. */
-        using Color = tabulate::Color;
-        /*! Default tabulate table colors. */
-        struct TableColors
-        {
-            Color green = Color::green;
-            Color red   = Color::red;
-        };
-        /*! Initialize tabulate table colors by supported ANSI. */
-        TableColors initializeTableColors() const;
-
         /*! Is the input interactive? (don't ask any interactive question if false) */
         bool m_interactive = true;
         /*! Current application verbosity (defined by passed command-line options). */
         Verbosity m_verbosity = Normal;
         /*! Current application ANSI passed by command-line option (nullopt is auto). */
-        std::optional<bool> m_ansi = std::nullopt;
+        std::optional<bool> m_ansi;
         /*! Describes features of the current terminal. */
         std::unique_ptr<Terminal> m_terminal;
     };

@@ -15,7 +15,6 @@ TINY_SYSTEM_HEADER
 #include "tom/config.hpp" // IWYU pragma: keep
 
 #include "tom/concerns/guesscommandname.hpp"
-#include "tom/concerns/interactswithio.hpp"
 #include "tom/tomtypes.hpp"
 #include "tom/types/commandlineoption.hpp"
 
@@ -39,6 +38,7 @@ namespace Commands
 namespace Concerns
 {
     class CallsCommands;
+    class InteractsWithIO;
     class PrintsOptions;
 } // namespace Concerns
 
@@ -48,8 +48,7 @@ namespace Concerns
     class Seeder;
 
     /*! Tom application. */
-    class TINYORM_EXPORT Application : public Concerns::InteractsWithIO,
-                                       public Concerns::GuessCommandName
+    class TINYORM_EXPORT Application : public Concerns::GuessCommandName
     {
         Q_DISABLE_COPY_MOVE(Application)
 
@@ -67,7 +66,7 @@ namespace Concerns
         friend Concerns::PrintsOptions;
         // To access initializeParser() and createCommand()
         friend Concerns::CallsCommands;
-        // To access createCommandsVector(), errorWall(), exitApplication()
+        // To access createCommandsVector(), io(), exitApplication()
         friend Concerns::GuessCommandName;
 
         /*! Alias for the ConnectionResolverInterface. */
@@ -83,7 +82,7 @@ namespace Concerns
                     std::vector<std::shared_ptr<Migration>> migrations = {},
                     std::vector<std::shared_ptr<Seeder>> seeders = {});
         /*! Virtual destructor. */
-        ~Application() override = default;
+        ~Application() override;
 
         /*! Instantiate/initialize all migration classes. */
         template<typename ...Migrations>
@@ -250,6 +249,8 @@ namespace Concerns
 
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> connectionResolver() const noexcept;
+        /*! Get the IO aka InteractsWithIO (methods for the console output/input). */
+        const Concerns::InteractsWithIO &io() const noexcept;
 
         /*! Throw if no connection configuration is registered. */
         void throwIfNoConnectionConfig() const;
@@ -301,6 +302,9 @@ namespace Concerns
 
         /*! Application options (more info at the cpp file beginning). */
         QList<CommandLineOption> m_options;
+
+        /*! IO aka InteractsWithIO instance (methods for the console output/input). */
+        std::unique_ptr<Concerns::InteractsWithIO> m_io;
 
         /* Auto tests helpers */
 #ifdef TINYTOM_TESTS_CODE

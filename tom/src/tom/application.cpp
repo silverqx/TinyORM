@@ -50,6 +50,7 @@
 #include "tom/commands/migrations/rollbackcommand.hpp"
 #include "tom/commands/migrations/statuscommand.hpp"
 #include "tom/commands/migrations/uninstallcommand.hpp"
+#include "tom/concerns/interactswithio.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
@@ -195,6 +196,7 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
     , m_seedersPath(initializePath(TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)))
     , m_migrations(std::move(migrations))
     , m_seeders(std::move(seeders))
+    , m_io(nullptr) // Instantiated after the command-line is parsed
 {
     // Enable UTF-8 encoding and VT100 support
     Terminal::initialize();
@@ -207,6 +209,9 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
     // Initialize the command-line parser
     initializeParser(m_parser);
 }
+
+// Needed by a unique_ptr()
+Application::~Application() = default;
 
 int Application::run()
 {
@@ -352,10 +357,10 @@ void Application::parseCommandLine()
 
     initializeEnvironment();
 
-    /* Command-line arguments are parsed now, so the InteractsWithIO() base class can be
-       initialized. Nothing bad to divide it into two steps as output to the console
-       is not needed until here. */
-    Concerns::InteractsWithIO::initialize(m_parser);
+    /* Command-line arguments are parsed now, so the InteractsWithIO() class can be
+       instantiated. There's nothing wrong with being so late as output to the console
+       is not needed until now. */
+    m_io = std::make_unique<Concerns::InteractsWithIO>(m_parser);
 
     if (m_parser.isSet(nointeraction))
         m_interactive = false;
@@ -423,7 +428,7 @@ void Application::handleEmptyCommandName(const QString &name,
 
     T_UNLIKELY
     case ShowErrorWall:
-        errorWall(u"Command '%1' is not defined."_s.arg(name));
+        io().errorWall(u"Command '%1' is not defined."_s.arg(name));
 
         exitApplication(EXIT_FAILURE);
 
@@ -448,23 +453,23 @@ void Application::showVersion() const
 
 void Application::printVersion() const
 {
-    note(u"TinyORM "_s, false);
+    io().note(u"TinyORM "_s, false);
 
-    info(TINYORM_VERSION_STR);
+    io().info(TINYORM_VERSION_STR);
 }
 
 void Application::printFullVersions() const
 {
-    note(u"tom "_s, false);
-    info(TINYTOM_VERSION_STR);
+    io().note(u"tom "_s, false);
+    io().info(TINYTOM_VERSION_STR);
 
     for (const auto versionsSubsection = createVersionsSubsection();
          const auto &[subsectionName, abouts] : versionsSubsection
     ) {
         // Subsection name is optional
         if (subsectionName) {
-            newLine();
-            comment(*subsectionName);
+            io().newLine();
+            io().comment(*subsectionName);
         }
 
         /*! Alias for the std::map<QString, AboutValue>. */
@@ -473,14 +478,14 @@ void Application::printFullVersions() const
         Q_ASSERT(std::holds_alternative<AboutItemsType>(abouts));
 
         for (const auto &[name, about] : std::get<AboutItemsType>(abouts)) {
-            note(NOSPACE.arg(name).arg(SPACE), false);
-            info(about.value, false);
+            io().note(NOSPACE.arg(name).arg(SPACE), false);
+            io().info(about.value, false);
 
             // Item components
             if (const auto &components = about.components; components)
-               muted(SPACE + PARENTH_ONE.arg(components->join(COMMA)), false);
+               io().muted(SPACE + PARENTH_ONE.arg(components->join(COMMA)), false);
 
-            newLine();
+            io().newLine();
         }
     }
 }
@@ -852,6 +857,16 @@ std::shared_ptr<ConnectionResolverInterface>
 Application::connectionResolver() const noexcept
 {
     return std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db);
+}
+
+const Concerns::InteractsWithIO &Application::io() const noexcept
+{
+    /* This is our internal thing so the Q_ASSERT() is enough. I tried to make it public
+       because the InteractsWithIO() class contains useful methods, but it's not fully
+       ready until the TomApplication::run() method call and that's a problem.
+       And that's why I made it protected. 🫤 */
+    Q_ASSERT(m_io);
+    return *m_io;
 }
 
 void Application::throwIfNoConnectionConfig() const

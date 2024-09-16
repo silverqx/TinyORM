@@ -2,12 +2,20 @@
 
 #include <QCommandLineParser>
 
+#include <tabulate/table.hpp>
+
 #include <orm/db.hpp>
 
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
 
 #include <range/v3/view/remove_if.hpp>
+
+/* This header exists from the tabulate v1.4.0, it has been added in the middle of v1.3.0
+   and doesn't exist at the v1.3.0 release. */
+#if __has_include(<tabulate/tabulate.hpp>)
+#  include <tabulate/tabulate.hpp>
+#endif
 
 #ifdef TINYTOM_TESTS_CODE
 #  include <range/v3/algorithm/transform.hpp>
@@ -46,6 +54,67 @@ QList<CommandLineOption> StatusCommand::optionsSignature() const
     };
 }
 
+namespace
+{
+    /*! Alias for the tabulate color. */
+    using Color = tabulate::Color;
+    /*! Default tabulate table colors. */
+    struct TableColors
+    {
+        Color green = Color::green;
+        Color red   = Color::red;
+    };
+
+    /*! Initialize tabulate table colors by supported ANSI. */
+    inline TableColors initializeTableColors(const bool isAnsiOutput)
+    {
+        /* Even if I detect ANSI support as true, tabulate has its own detection logic,
+           it only checks isatty(), it has some consequences, eg. no colors when output
+           is redirected and --ansi was passed to the tom application, practically
+           all logic in the isAnsiOutput() will be skipped because of this internal
+           tabulate logic, not a big deal though. */
+        if (isAnsiOutput)
+            return {}; // Use default colors
+
+        // Disable ANSI colors if eg. --no-ansi (or not supported)
+        return {Color::none, Color::none};
+    }
+
+    /*! Callback function to format the tabulate table. */
+    void formatStatusTable(tabulate::Table &table, const Concerns::InteractsWithIO &io)
+    {
+        // Initialize tabulate table colors by supported ANSI
+        const auto [green, red] = initializeTableColors(io.isAnsiOutput());
+
+        // Format table
+        // thead - green text for all columns
+        table.row(0).format().font_color(green);
+
+        // tbody
+        for (std::size_t i = 1; i < table.size() ; ++i) {
+            auto &row = table.row(i);
+
+            // Remove all lines between rows in the tbody (leave only the first one)
+            if (i > 1)
+                row.format().hide_border_top();
+
+            // Ran? column : Yes - green, No - red
+            {
+                auto &cell0 = row.cell(0);
+                auto &format = cell0.format();
+
+                if (cell0.get_text() == "Yes")
+                    format.font_color(green);
+                else
+                    format.font_color(red);
+            }
+
+            // Align the Batch column to the right (must be after the hide_border_top())
+            row.cell(2).format().font_align(tabulate::FontAlign::right);
+        }
+    }
+} // namespace
+
 int StatusCommand::run()
 {
     Command::run();
@@ -74,7 +143,7 @@ int StatusCommand::run()
                 m_status = statusForUnitTest(std::move(migrations));
             else
 #endif
-                table({"Ran?", "Migration", "Batch"}, migrations);
+                table({"Ran?", "Migration", "Batch"}, migrations, formatStatusTable);
 
             return EXIT_SUCCESS;
         }
@@ -117,6 +186,21 @@ StatusCommand::getStatusFor(const QList<QVariant> &ran,
 }
 
 #ifdef TINYTOM_TESTS_CODE
+// Prepare the tabulate version
+#ifndef TABULATE_VERSION_MAJOR
+#  define TABULATE_VERSION_MAJOR 0
+#endif
+#ifndef TABULATE_VERSION_MINOR
+#  define TABULATE_VERSION_MINOR 0
+#endif
+#ifndef TABULATE_VERSION_PATCH
+#  define TABULATE_VERSION_PATCH 0
+#endif
+
+/*! Tabulate version suitable for the QT_VERSION_CHECK comparison. */
+#define TINY_TABULATE_VERSION QT_VERSION_CHECK(TABULATE_VERSION_MAJOR, \
+                                               TABULATE_VERSION_MINOR, \
+                                               TABULATE_VERSION_PATCH)
 namespace
 {
 #if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 3, 0)
