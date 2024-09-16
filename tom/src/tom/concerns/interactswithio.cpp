@@ -300,22 +300,25 @@ InteractsWithIO::table(const TableRow &header, const std::vector<TableRow> &rows
     table.row(0).format().font_color(green);
 
     for (std::size_t i = 1; i <= rows.size() ; ++i) {
+        auto &row = table.row(i);
+
         // Remove line between rows in the tbody
         if (i > 1)
-            table.row(i).format().hide_border_top();
+            row.format().hide_border_top();
+
+        // Align the Batch column to the right (must be after the hide_border_top())
+        row.cell(2).format().font_align(tabulate::FontAlign::right);
 
         // Ran? column : Yes - green, No - red
-        const auto &ran = rows.at(i - 1).front(); // The rows are 0-base so -1 is needed
+        {
+            auto &cell0 = row.cell(0);
+            auto &format = cell0.format();
 
-        if (!std::holds_alternative<std::string>(ran))
-            continue;
-
-        if (auto &format = table.row(i).cell(0).format();
-            std::get<std::string>(ran) == "Yes"
-        )
-            format.font_color(green);
-        else
-            format.font_color(red);
+            if (cell0.get_text() == "Yes")
+                format.font_color(green);
+            else
+                format.font_color(red);
+        }
     }
 
     std::cout << table << std::endl; // NOLINT(performance-avoid-endl)
