@@ -36,7 +36,7 @@ TINY_FORWARD_DECLARE_TClass(TSqlQueryRaw)
 
 */
 
-/* TSqlError aka. QSqlError
+/* TSqlError aka QSqlError
 
    TinyDrivers doesn't provide this Orm::Drivers::SqlError class, it always throws
    exceptions. There is only the Orm::Drivers::DummySqlError class, which is used

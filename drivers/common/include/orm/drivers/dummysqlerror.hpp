@@ -63,7 +63,7 @@ namespace Orm::Drivers
         inline QString driverText() const noexcept;
         /*! Get the database-specific error message (always returns an empty string). */
         inline QString databaseText() const noexcept;
-        /*! Get an error type (always returns NoError aka. 0). */
+        /*! Get an error type (always returns NoError aka 0). */
         inline ErrorType type() const noexcept;
         /*! Get the database-specific error code (always returns an empty string). */
         inline QString nativeErrorCode() const noexcept;

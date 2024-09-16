@@ -1,7 +1,7 @@
 # TinyMySql database driver
 # ---
 # All include and link dependencies can be PRIVATE because the TinyMySql library will be
-# only used as a loadable shared library (aka. add_library(MODULE)), so we don't need to
+# only used as a loadable shared library (aka add_library(MODULE)), so we don't need to
 # propagate these dependencies anywhere
 
 # Initialize Project Version

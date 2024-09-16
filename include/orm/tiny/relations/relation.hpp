@@ -242,7 +242,7 @@ namespace Relations
     ModelsCollection<Related>
     Relation<Model, Related>::getEager() const
     {
-        // Avoid querying the database if the keys are empty (IN () aka. where 0 = 1)
+        // Avoid querying the database if the keys are empty (IN () aka where 0 = 1)
         if (m_eagerKeysWereEmpty)
             return {};
 
