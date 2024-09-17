@@ -39,10 +39,10 @@ void ConfigurationOptionsParser::parseOptionsOption(QVariantHash &config) const
 
 QString
 ConfigurationOptionsParser::mergeAndConcatenateOptions(
-        const QVariantHash &connectortOptions, const QVariantHash &config)
+        const QVariantHash &connectorOptions, const QVariantHash &config)
 {
     // Merge the TinyORM's default connector 'options' with the user-defined options
-    const auto mergedOptions = mergeOptions(connectortOptions,
+    const auto mergedOptions = mergeOptions(connectorOptions,
                                             config[options_].value<QVariantHash>());
 
     // Return in the format expected by the QSqlDatabase
@@ -137,24 +137,24 @@ ConfigurationOptionsParser::splitConfigOptions(const QString &optionsString)
 }
 
 QVariantHash
-ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
+ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectorOptions,
                                          QVariantHash &&preparedConfigOptions)
 {
     QVariantHash merged(std::move(preparedConfigOptions));
-    merged.reserve(merged.size() + connectortOptions.size());
+    merged.reserve(merged.size() + connectorOptions.size());
 
     /* Insert options from the default connector options hash, if the prepared
        configuration options already doesn't contain it, so user can overwrite
        default connector options. */
-    auto itConnectortOptions = connectortOptions.constBegin();
-    while (itConnectortOptions != connectortOptions.constEnd()) {
-        const auto &key = itConnectortOptions.key();
-        const auto &value = itConnectortOptions.value();
+    auto itConnectorOptions = connectorOptions.constBegin();
+    while (itConnectorOptions != connectorOptions.constEnd()) {
+        const auto &key = itConnectorOptions.key();
+        const auto &value = itConnectorOptions.value();
 
         if (!merged.contains(key))
             merged.emplace(key, value);
 
-        ++itConnectortOptions;
+        ++itConnectorOptions;
     }
 
     return merged;

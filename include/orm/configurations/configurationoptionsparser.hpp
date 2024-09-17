@@ -33,7 +33,7 @@ namespace Orm::Configurations
         void parseOptionsOption(QVariantHash &config) const;
 
         /*! Merge and concatenate a default connector options with a prepared options. */
-        static QString mergeAndConcatenateOptions(const QVariantHash &connectortOptions,
+        static QString mergeAndConcatenateOptions(const QVariantHash &connectorOptions,
                                                   const QVariantHash &config);
 
     protected:
@@ -57,7 +57,7 @@ namespace Orm::Configurations
 
         /*! Merge the TinyORM's default connector 'options' with the user-defined
             options in the configuration. */
-        static QVariantHash mergeOptions(const QVariantHash &connectortOptions,
+        static QVariantHash mergeOptions(const QVariantHash &connectorOptions,
                                          QVariantHash &&preparedConfigOptions);
         /*! Stringify the prepared 'options' option. */
         static QString concatenateOptions(const QVariantHash &options);
