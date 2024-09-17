@@ -31,6 +31,10 @@ QString GuessCommandName::guessCommandName(const QString &name)
 {
     const auto isGlobalCmd = !name.contains(COLON);
 
+    /* The reason why the first is the guessCommandsWithoutNamespace() and not
+       the guessCommandsInAllNamespaces() is that the tom mig must match only
+       the tom migrate, with the guessCommandsInAllNamespaces() it would match
+       all migrate:xyz and it would be ambiguous. */
     const auto commands = isGlobalCmd ? guessCommandsWithoutNamespace(name)
                                       : guessCommandsWithNamespace(name);
 
