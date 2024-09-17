@@ -76,6 +76,7 @@ namespace Concerns
         guessCommandsInNamespace(const QString &namespaceName,
                                  const QString &commandName);
 
+        /* Others */
         /*! Get the tom application. */
         Application &application() noexcept;
         /*! Get the tom application, const version. */

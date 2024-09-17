@@ -140,6 +140,8 @@ GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
             | ranges::to<std::vector<std::shared_ptr<Command>>>();
 }
 
+/* Others */
+
 Application &GuessCommandName::application() noexcept
 {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
