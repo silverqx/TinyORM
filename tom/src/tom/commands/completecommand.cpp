@@ -356,7 +356,7 @@ int CompleteCommand::printGuessedNamespaces(const QString &wordArg) const
         )
             namespaceNames << namespaceName;
 
-    // Want to have un-sorted if printing all namespaces
+    // Want to have unsorted if printing all namespaces
     if (!printAll)
         namespaceNames.sort(Qt::CaseInsensitive);
 
@@ -388,7 +388,7 @@ int CompleteCommand::printGuessedShells(const QString &wordArg) const
         if (!shellName.isEmpty() && (printAll || shellName.startsWith(wordArg)))
             shellNames << shellName;
 
-    // Want to have un-sorted if printing all namespaces
+    // Want to have unsorted if printing all namespaces
     if (!printAll)
         shellNames.sort(Qt::CaseInsensitive);
 
@@ -752,7 +752,7 @@ CompleteCommand::PrintArrayOptionValuesType
 CompleteCommand::initializePrintArrayOptionValues(const QStringView optionValuesArg,
                                                   const QStringList &allValues)
 {
-    // Nothing to do, option values are empty, return right away as we know the resut
+    // Nothing to do, option values are empty, return right away as we know the result
     if (optionValuesArg.isEmpty())
         return {EMPTY, ranges::to<QList<QStringView>>(allValues), true, true};
 
