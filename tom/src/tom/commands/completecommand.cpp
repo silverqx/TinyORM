@@ -648,6 +648,7 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
 QList<CommandLineOption>
 CompleteCommand::getCommandOptionsSignature(const std::optional<QString> &command) const
 {
+    // Nothing to do, no command passed so print the common options
     if (!command)
         return application().m_options;
 

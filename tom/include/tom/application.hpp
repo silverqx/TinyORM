@@ -238,7 +238,7 @@ namespace Concerns
         /*! Get commands index positions in namespaces. */
         static const std::vector<std::tuple<int, int>> &commandsIndexes();
 
-        /*! Get options signature for the given command. */
+        /*! Get options signature for the given command (used by complete command). */
         QList<CommandLineOption> getCommandOptionsSignature(const QString &command);
 
         /*! Create the QCoreApplication instance. */
