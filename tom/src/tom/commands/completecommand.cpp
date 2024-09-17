@@ -135,7 +135,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     if (wordArg.isEmpty() && (!currentCommandArg || currentCommandArg == Help))
 #endif
         return printGuessedCommands(
-                    application().guessCommandNamesForComplete({}));
+                    application().guessCommandsForComplete({}));
 
     /* Print all guessed commands by the word argument after tom or for the help command
        --- */
@@ -150,7 +150,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     )
 #endif
         return printGuessedCommands(
-                    application().guessCommandNamesForComplete(wordArg));
+                    application().guessCommandsForComplete(wordArg));
 
     /* Print all or guessed namespace names for the list command
        --- */

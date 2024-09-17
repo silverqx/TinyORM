@@ -61,9 +61,9 @@ namespace Concerns
                 const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
-        /*! Try to guess all command names by the given name (name can be partial). */
+        /*! Try to guess all commands by the given name (name can be partial). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandNamesForComplete(const QString &name);
+        guessCommandsForComplete(const QString &name);
 
         /*! Try to guess all commands in all namespaces (also in the global namespace). */
         std::vector<std::shared_ptr<Command>>

@@ -107,7 +107,7 @@ void GuessCommandName::printAmbiguousCommands(
 /* For the complete command */
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandNamesForComplete(const QString &name)
+GuessCommandName::guessCommandsForComplete(const QString &name)
 {
     const auto isNamespacedCmd = name.contains(COLON);
 
