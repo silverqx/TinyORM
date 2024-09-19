@@ -403,7 +403,7 @@ void Command::validateRequiredArguments() const
 QString Command::argumentInternal(const QStringList &positionalArguments,
                                   const ArgumentsSizeType index) const
 {
-    // This method can't be called with 0-index if useDefault == true
+    // This method can't be called with index 0 (main/tom command) if useDefault == true
     Q_ASSERT_X(index > 0, "Command::argument()",
                "The this->positionalArguments() doesn't provide data for 0-index "
                "(command name).");
