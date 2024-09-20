@@ -226,6 +226,10 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 #endif
         return printGuessedShortOptions(currentCommandArg);
 
+    /* Block paths completion, pwsh Register-ArgumentCompleter will Trim()
+       the output and returns $null if empty (preventing paths completion). */
+    note(EMPTY);
+
     return EXIT_SUCCESS;
 }
 
