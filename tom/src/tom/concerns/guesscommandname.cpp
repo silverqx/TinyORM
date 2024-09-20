@@ -15,10 +15,11 @@ using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::SPACE;
 
-using Tom::Commands::Command;
 using Tom::Constants::NsAll;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsNamespaced;
+
+using Tom::Commands::Command;
 
 namespace Tom::Concerns
 {
