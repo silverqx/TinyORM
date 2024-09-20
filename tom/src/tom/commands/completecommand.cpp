@@ -315,6 +315,10 @@ QString CompleteCommand::getWordOptionValue(
 int CompleteCommand::printGuessedCommands(
         const std::vector<std::shared_ptr<Command>> &commands) const
 {
+    // Nothing to print
+    if (commands.empty())
+        return EXIT_SUCCESS;
+
     QStringList guessedCommands;
     guessedCommands.reserve(static_cast<decltype (guessedCommands)::size_type>(
                                 commands.size()));
@@ -341,6 +345,10 @@ int CompleteCommand::printGuessedCommands(
 int CompleteCommand::printGuessedNamespaces(const QString &wordArg) const
 {
     const auto &allNamespaceNames = Application::namespaceNames();
+
+    // Nothing to print
+    if (allNamespaceNames.empty())
+        return EXIT_SUCCESS;
 
     const auto printAll = wordArg.isEmpty();
 
