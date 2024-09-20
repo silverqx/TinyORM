@@ -65,6 +65,7 @@ namespace Concerns
         std::vector<std::shared_ptr<Command>>
         guessCommandsForComplete(const QString &name);
 
+        /* Common */
         /*! Try to guess all commands in all namespaces (also in the global namespace). */
         std::vector<std::shared_ptr<Command>>
         guessCommandsInAllNamespaces(const QString &commandName);
