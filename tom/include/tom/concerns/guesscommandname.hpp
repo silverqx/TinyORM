@@ -44,8 +44,8 @@ namespace Concerns
         GuessCommandName() = default;
 
         /* For classic command guesser */
-        /*! Try to guess the command name by the given name (name can be partial). */
-        QString guessCommandName(const QString &name);
+        /*! Try to guess the command name by the given name (to create/invoke command). */
+        QString guessCommandName(const QString &name); // name can be partial
 
         /*! Try to guess the namespaced command. */
         std::vector<std::shared_ptr<Command>>
@@ -61,9 +61,9 @@ namespace Concerns
                 const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
-        /*! Try to guess all commands by the given name (name can be partial). */
+        /*! Try to guess all commands by the given name (for printing to the cout). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsForComplete(const QString &name);
+        guessCommandsForComplete(const QString &name); // name can be partial
 
         /* Common */
         /*! Try to guess all commands in all namespaces (also in the global namespace). */
