@@ -27,7 +27,7 @@ namespace Commands
 namespace Concerns
 {
 
-    /*! Try to guess the command name by the given name (name can be partial). */
+    /*! Try to guess the Tom command name by the given name (name can be partial). */
     class TINYORM_EXPORT GuessCommandName
     {
         Q_DISABLE_COPY_MOVE(GuessCommandName)
@@ -47,10 +47,10 @@ namespace Concerns
         /*! Try to guess the command name by the given name (to create/invoke command). */
         QString guessCommandName(const QString &name); // name can be partial
 
-        /*! Try to guess the namespaced command. */
+        /*! Try to guess the namespaced Tom command. */
         std::vector<std::shared_ptr<Command>>
         guessCommandsWithNamespace(const QString &name);
-        /*! Try to guess a command in the global namespace (without namespace). */
+        /*! Try to guess a Tom command in the global namespace (without namespace). */
         std::vector<std::shared_ptr<Command>>
         guessCommandsWithoutNamespace(const QString &commandName);
 
@@ -61,7 +61,7 @@ namespace Concerns
                 const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
-        /*! Try to guess all commands by the given name (for printing to the cout). */
+        /*! Try to guess all Tom commands by the given name (for printing to the cout). */
         std::vector<std::shared_ptr<Command>>
         guessCommandsForComplete(const QString &name); // name can be partial
 
@@ -72,7 +72,7 @@ namespace Concerns
 
     private:
         /* Common */
-        /*! Try to guess a command in the given namespace. */
+        /*! Try to guess a Tom command in the given namespace. */
         std::vector<std::shared_ptr<Command>>
         guessCommandsInNamespace(const QString &namespaceName,
                                  const QString &commandName);

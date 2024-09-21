@@ -39,15 +39,15 @@ QString GuessCommandName::guessCommandName(const QString &name)
     const auto commands = isGlobalCmd ? guessCommandsWithoutNamespace(name)
                                       : guessCommandsWithNamespace(name);
 
-    // Found exactly one command
+    // Found exactly one Tom command
     if (commands.size() == 1)
         return commands.front()->name();
 
-    // No command found
+    // No Tom command found
     if (commands.empty())
         return {};
 
-    // Found more commands (ambiguous)
+    // Found more Tom commands (ambiguous)
     printAmbiguousCommands(name, commands);
 }
 
@@ -116,6 +116,7 @@ GuessCommandName::guessCommandsForComplete(const QString &name)
 {
     const auto isNamespacedCmd = name.contains(COLON);
 
+    // Here we need to print all Tom commands in all namespaces after <TAB> pressed
     return isNamespacedCmd ? guessCommandsWithNamespace(name)
                            : guessCommandsInAllNamespaces(name);
 }
