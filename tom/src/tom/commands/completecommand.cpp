@@ -228,7 +228,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
     /* Block paths completion, pwsh Register-ArgumentCompleter will Trim()
        the output and returns $null if empty (preventing paths completion). */
-    note(EMPTY);
+    note(EMPTY, false);
 
     return EXIT_SUCCESS;
 }
@@ -341,7 +341,7 @@ int CompleteCommand::printGuessedCommands(
 #endif
     }
 
-    note(guessedCommands.join(NEWLINE));
+    note(guessedCommands.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -370,7 +370,7 @@ int CompleteCommand::printGuessedNamespaces(const QString &wordArg) const
     if (!printAll)
         namespaceNames.sort(Qt::CaseInsensitive);
 
-    note(namespaceNames.join(NEWLINE));
+    note(namespaceNames.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -402,7 +402,7 @@ int CompleteCommand::printGuessedShells(const QString &wordArg) const
     if (!printAll)
         shellNames.sort(Qt::CaseInsensitive);
 
-    note(shellNames.join(NEWLINE));
+    note(shellNames.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -425,7 +425,7 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
     /* Print only one space if all array option values have already been entered,
        it prevents printing basic files completion. */
     if (allSectionNamesFiltered.isEmpty()){
-        note(u" ; "_s);
+        note(u" ; "_s, false);
         return EXIT_SUCCESS;
     }
 
@@ -449,7 +449,7 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
                                 allSectionName);
 
     // Print
-    note(sectionNames.join(NEWLINE));
+    note(sectionNames.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -472,7 +472,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
     /* Print only one space if all array option values have already been entered,
        it prevents printing basic files completion. */
     if (allConnectionNamesFiltered.isEmpty()){
-        note(u" ; "_s);
+        note(u" ; "_s, false);
         return EXIT_SUCCESS;
     }
 
@@ -497,7 +497,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
                                    allConnectionName);
 
     // Print
-    note(connectionNames.join(NEWLINE));
+    note(connectionNames.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -525,7 +525,7 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
                            environment);
 
     // Print
-    note(environmentNames.join(NEWLINE));
+    note(environmentNames.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -589,7 +589,7 @@ int CompleteCommand::printGuessedLongOptions(
             }
     }
 
-    note(options.join(NEWLINE));
+    note(options.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
@@ -640,7 +640,7 @@ int CompleteCommand::printGuessedShortOptions(
             }
     }
 
-    note(options.join(NEWLINE));
+    note(options.join(NEWLINE), false);
 
     return EXIT_SUCCESS;
 }
