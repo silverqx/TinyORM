@@ -16,7 +16,7 @@ __tom_connections() {
 
     [[ -d database/migrations && -f main.cpp ]] || return
 
-    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// shell:connection'))
+    IFS=$'\r\n' lines=($(/bin/cat main.cpp | grep '// shell:connection'))
 
     # Nothing found
     [[ ${#lines[@]} -eq 0 ]] && return
@@ -47,6 +47,10 @@ _tom()
     _init_completion -s || return
 
     COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
+    # Prevent ^M in the complete output on MSYS2/MinGW-w64
+    if [ ! "x${MSYSTEM}" = "x" ]; then
+        IFS=$' \t\r\n'
+    fi
 
     # No completion after the following options
     case $prev in
