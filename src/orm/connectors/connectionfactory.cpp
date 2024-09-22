@@ -100,7 +100,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
         const auto hosts = parseHosts(config);
         std::exception_ptr lastException;
 
-        // FUTURE add support for multiple hosts and connect randomly to one of them, in this step have to take into account also the sticky config paramater silverqx
+        // FUTURE add support for multiple hosts and connect randomly to one of them, in this step have to take into account also the sticky config parameter silverqx
         /* This for statement do nothing for now, it purpose is to randomly
            shuffle hosts and try to connect to them one be one, until the connection
            will be successful. */

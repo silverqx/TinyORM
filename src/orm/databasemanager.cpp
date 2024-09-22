@@ -74,7 +74,7 @@ DatabaseManager::create(const QString &defaultConnection)
                             new DatabaseManager(defaultConnection));
 }
 
-// CUR add 'createLazy = true' paramater / or open = false?, add support to create eager connection silverqx
+// CUR add 'createLazy = true' parameter / or open = false?, add support to create eager connection silverqx
 std::shared_ptr<DatabaseManager>
 DatabaseManager::create(const QVariantHash &config, const QString &connection)
 {
