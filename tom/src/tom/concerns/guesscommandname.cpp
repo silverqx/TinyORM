@@ -8,6 +8,7 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
+#include "tom/types/guesscommandnametype.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -21,6 +22,8 @@ using Tom::Constants::NsNamespaced;
 
 using Tom::Commands::Command;
 
+using enum Tom::GuessCommandNameResult;
+
 namespace Tom::Concerns
 {
 
@@ -30,14 +33,7 @@ namespace Tom::Concerns
 
 QString GuessCommandName::guessCommandName(const QString &name)
 {
-    const auto isGlobalCmd = !name.contains(COLON);
-
-    /* The reason why the first is the guessCommandsWithoutNamespace() and not
-       the guessCommandsInAllNamespaces() is that the tom mig must match only
-       the tom migrate, with the guessCommandsInAllNamespaces() it would match
-       all migrate:xyz and it would be ambiguous. */
-    const auto commands = isGlobalCmd ? guessCommandsWithoutNamespace(name)
-                                      : guessCommandsWithNamespace(name);
+    const auto commands = guessCommandsInternal(name);
 
     // Found exactly one Tom command
     if (commands.size() == 1)
@@ -111,6 +107,23 @@ void GuessCommandName::printAmbiguousCommands(
 
 /* For the complete command */
 
+GuessCommandNameType
+GuessCommandName::guessCommandNameForComplete(const QString &name)
+{
+    const auto commands = guessCommandsInternal(name);
+
+    // Found exactly one Tom command
+    if (commands.size() == 1)
+        return {kFound, commands.front()->name()};
+
+    // No Tom command found
+    if (commands.empty())
+        return {kNotFound, std::nullopt};
+
+    // More Tom commands found
+    return {kAmbiguous, std::nullopt};
+}
+
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsForComplete(const QString &name)
 {
@@ -146,6 +159,19 @@ GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
                 command->name().startsWith(commandName, Qt::CaseInsensitive);
     })
             | ranges::to<std::vector<std::shared_ptr<Command>>>();
+}
+
+std::vector<std::shared_ptr<Command>>
+GuessCommandName::guessCommandsInternal(const QString &name)
+{
+    const auto isGlobalCmd = !name.contains(COLON);
+
+    /* The reason why the first is the guessCommandsWithoutNamespace() and not
+       the guessCommandsInAllNamespaces() is that eg. the tom mig must match only
+       the tom migrate, with the guessCommandsInAllNamespaces() it would match
+       all migrate:xyz and it would be ambiguous. */
+    return isGlobalCmd ? guessCommandsWithoutNamespace(name)
+                       : guessCommandsWithNamespace(name);
 }
 
 /* Others */

@@ -23,6 +23,10 @@ namespace Commands
 {
     class Command;
 }
+namespace Types
+{
+    struct GuessCommandNameType;
+}
 
 namespace Concerns
 {
@@ -34,6 +38,8 @@ namespace Concerns
 
         /*! Alias for the Command. */
         using Command = Commands::Command;
+        /*! Alias for the GuessCommandNameType. */
+        using GuessCommandNameType = Types::GuessCommandNameType;
 
     public:
         /*! Pure virtual destructor. */
@@ -61,6 +67,9 @@ namespace Concerns
                 const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
+        /*! Try to guess one Tom command name by the given name (for complete logic). */
+        GuessCommandNameType guessCommandNameForComplete(const QString &name); // name can be partial
+
         /*! Try to guess all Tom commands by the given name (for printing to the cout). */
         std::vector<std::shared_ptr<Command>>
         guessCommandsForComplete(const QString &name); // name can be partial
@@ -76,6 +85,10 @@ namespace Concerns
         std::vector<std::shared_ptr<Command>>
         guessCommandsInNamespace(const QString &namespaceName,
                                  const QString &commandName);
+
+        /*! Try to guess the Tom command name by the given name (common logic). */
+        std::vector<std::shared_ptr<Command>>
+        guessCommandsInternal(const QString &name);
 
         /* Others */
         /*! Get the tom application. */

@@ -15,6 +15,7 @@
 
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
+#include "tom/types/guesscommandnametype.hpp"
 
 #ifndef TINYTOM_DEBUG
 #  include "tom/exceptions/runtimeerror.hpp"
@@ -37,6 +38,7 @@ using Orm::Constants::database_;
 
 using StringUtils = Orm::Utils::String;
 
+using Tom::Constants::DbSeed;
 using Tom::Constants::DoubleDash;
 using Tom::Constants::EMPTY;
 using Tom::Constants::Help;
@@ -64,6 +66,8 @@ using Tom::Constants::cword_up;
 #endif
 
 using TomUtils = Tom::Utils;
+
+using enum Tom::GuessCommandNameResult;
 
 namespace Tom::Commands
 {
@@ -102,22 +106,33 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 #ifdef _MSC_VER
     const auto positionArg = value(position_).toLongLong();
 
-    // Currently processed tom command
-    const auto commandlineArgSplitted = commandlineArg.split(SPACE);
+    // Common for both (command and option)
+    const auto commandlineArgSize     = commandlineArg.size();      // xyz
+    const auto commandlineArgSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts);
     Q_ASSERT(!commandlineArgSplitted.isEmpty());
 
-    const auto currentCommandArg = getCurrentTomCommand(commandlineArgSplitted);
-    const auto tomCommandSize    = commandlineArgSplitted.constFirst().size();
-
-    // Get the command-line option value for --word= option (with workaround for pwsh)
-    const auto commandlineArgSize = commandlineArg.size();
+    // Get the command-line option value for --xyz= option (with workaround for pwsh)
     const auto wordArg = getWordOptionValue(commandlineArgSplitted, positionArg,
                                             commandlineArgSize);
+
+    // Currently processed Tom command
+//    const auto isCommandLineEndPosition   = positionArg == commandlineArgSize;
+    const auto isNewArgumentPositionAtEnd = positionArg > commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
+    const auto argumentsCount             = getArgumentsCount(commandlineArgSplitted);
+    const auto currentCommandArg          = getCurrentTomCommand(commandlineArgSplitted,
+                                                                 argumentsCount);
+    const auto currentArgumentPosition    = getCurrentArgumentPosition(
+                                                {commandlineArg.constBegin(),
+                                                 isNewArgumentPositionAtEnd
+                                                 ? positionArg - 1 : positionArg},
+                                                wordArg, isNewArgumentPositionAtEnd);
+    m_hasAnyTomCommand = currentCommandArg != kNotFound; // kFound || kAmbiguous
+    const auto maxArgumentsCount = getPositionalArgumentsCount();
 #else
     const auto wordArg  = value(word_);
     const auto cwordArg = value(cword_).toLongLong();
 
-    // Currently processed tom command
+    // Currently processed Tom command
     const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
 #endif
 
@@ -127,9 +142,9 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
        --- */
 #ifdef _MSC_VER
     if (wordArg.isEmpty() &&
-        (positionArg == tomCommandSize + 1 ||
-         (positionArg >= commandlineArgSize &&
-          (!commandlineArg.contains(SPACE) || currentCommandArg == Help)))
+        ((currentArgumentPosition == TomCommandPosition && bw(argumentsCount, 1, 2)) || // tom | ; tom | a
+         (currentCommandArg == Help && argumentsCount == 2 &&
+                                       currentArgumentPosition == 2)) // tom help |
     )
 #else
     if (wordArg.isEmpty() && (!currentCommandArg || currentCommandArg == Help))
@@ -139,9 +154,12 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     /* Print all guessed commands by the word argument after tom or for the help command
        --- */
 #ifdef _MSC_VER
-    if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
-        (StringUtils::countBefore(commandlineArg, SPACE, positionArg) == 1 ||
-         currentCommandArg == Help)
+    if (!wordArg.isEmpty() && !isOptionArgument(wordArg) &&
+        ((bw(argumentsCount, 2, maxArgumentsCount) &&       // tom db:se|           ; tom db:see|d           ; tom db:seed|
+          currentArgumentPosition == TomCommandPosition) || // tom db:se| XyzSeeder ; tom db:see|d XyzSeeder ; tom db:seed| XyzSeeder
+         (currentCommandArg == Help && argumentsCount == 3 &&
+          (currentArgumentPosition == TomCommandPosition || // tom he| a   ; tom hel|p a ; tom help| a
+           currentArgumentPosition == 2)))                  // tom help a| ; tom help ab|out
     )
 #else
     if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
@@ -154,9 +172,9 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
        --- */
 #ifdef _MSC_VER
     if (!isOptionArgument(wordArg) && currentCommandArg == List &&
-        positionArg >= commandlineArgSize &&
-        ((wordArg.isEmpty() && commandlineArg.count(SPACE) == 1) ||
-         (!wordArg.isEmpty() && commandlineArg.count(SPACE) == 2))
+        currentArgumentPosition == 2 &&
+        ((argumentsCount == 2 && wordArg.isEmpty()) || // tom list |
+         (argumentsCount == 3 && !wordArg.isEmpty()))  // tom list g| ; tom list gl|obal
     )
 #else
     if (!isOptionArgument(wordArg) && currentCommandArg == List)
@@ -167,9 +185,9 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
        --- */
 #ifdef _MSC_VER
     if (!isOptionArgument(wordArg) && currentCommandArg == Integrate &&
-        positionArg >= commandlineArgSize &&
-        ((wordArg.isEmpty() && commandlineArg.count(SPACE) == 1) ||
-         (!wordArg.isEmpty() && commandlineArg.count(SPACE) == 2))
+        currentArgumentPosition == 2 &&
+        ((argumentsCount == 2 && wordArg.isEmpty()) || // tom integrate |
+         (argumentsCount == 3 && !wordArg.isEmpty()))  // tom integrate p| ; tom integrate p|wsh
     )
 #else
     if (!isOptionArgument(wordArg) && currentCommandArg == Integrate)
@@ -181,7 +199,8 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     // Bash has it's own guess logic in the tom.bash complete file
 #ifdef _MSC_VER
     if (currentCommandArg == About && wordArg.startsWith(LongOption.arg(only_)) &&
-        positionArg >= commandlineArgSize
+        argumentsCount == 2 && currentArgumentPosition == kOnOptionArgument && // tom about --only=m| ; tom about --only=m|acros
+        !isNewArgumentPositionAtEnd // < : tom about --only=| --ansi ; = : tom about --only=|
     )
         return printGuessedSectionNamesForAbout(getOptionValue(wordArg));
 #endif
@@ -191,8 +210,14 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     // Bash has it's own guess logic in the tom.bash complete file
 #ifdef _MSC_VER
     if (wordArg.startsWith(LongOption.arg(database_)) &&
-        currentCommandArg && commandHasLongOption(*currentCommandArg, database_) &&
-        positionArg >= commandlineArgSize
+        ((currentCommandArg == kFound && argumentsCount == 2) ||
+         /* db:seed is the only command that has positional argument,
+            all other commands with the --database= option don't have any. */
+         (currentCommandArg == DbSeed && // tom db:seed Xyz --database=|
+          argumentsCount == getPositionalArgumentsCount(DbSeed))) &&
+        currentArgumentPosition == kOnOptionArgument && // tom migrate --database=t| ; tom migrate --database=tiny|orm_tom_mysql
+        !isNewArgumentPositionAtEnd && // < : tom migrate --database=| --ansi ; = : tom migrate --database=|
+        currentCommandArg && commandHasLongOption(*currentCommandArg, database_) // All migrate/: and db: commands have the --database= option
     )
         return printGuessedConnectionNames(getOptionValue(wordArg));
 #endif
@@ -202,29 +227,50 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     // Bash has it's own guess logic in the tom.bash complete file
 #ifdef _MSC_VER
     if (wordArg.startsWith(LongOption.arg(Env)) &&
-        currentCommandArg && // All commands has the --env= option
-        positionArg >= commandlineArgSize
+        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
+        (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+          // Don't print/complete the --env= option for unknown commands eg. tom xyz --|
+         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom migrate --env=| ; tom migrate --env=d| ; tom db:seed --env=d|ev Xyz
+                                                                           // kAmbiguous : tom migrate:re --env=| (migrate:refresh or migrate:reset)
     )
         return printGuessedEnvironmentNames(getOptionValue(wordArg));
 #endif
 
+    /* Print long/short options always, the completer is context specific, meaning
+       it prints options based on the current command, or prints common options if
+       there is no command on the command-line. */
+
     /* Print all or guessed long option parameter names
        --- */
 #ifdef _MSC_VER
-    if (isLongOption(wordArg) && commandlineArg.contains(SPACE))
+    if (isLongOption(wordArg) &&
+        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
+        (argumentsCount == 1 || // tom --| ; tom --e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+          // Don't print/complete options for unknown commands eg. tom xyz --|
+         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom list --| ; tom list --r| ; tom list --r|aw
+                                                                           // kAmbiguous : tom i --| ; tom i --a| (inspire or integrate)
+    )
+        return printGuessedLongOptions(currentCommandArg.commandName, wordArg);
 #else
     if (isLongOption(wordArg) && cwordArg >= 1)
-#endif
         return printGuessedLongOptions(currentCommandArg, wordArg);
+#endif
 
     /* Print all or guessed short option parameter names
        --- */
 #ifdef _MSC_VER
-    if (isShortOption(wordArg) && commandlineArg.contains(SPACE))
+    if (isShortOption(wordArg) &&
+        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
+        (argumentsCount == 1 || // tom -| ; tom -e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+          // Don't print/complete options for unknown commands eg. tom xyz -|
+         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom list -| ; tom list -h|
+                                                                           // kAmbiguous : tom i -| ; tom i -h| (inspire or integrate)
+    )
+        return printGuessedShortOptions(currentCommandArg.commandName);
 #else
     if (isShortOption(wordArg) && cwordArg >= 1)
-#endif
         return printGuessedShortOptions(currentCommandArg);
+#endif
 
     /* Block paths completion, pwsh Register-ArgumentCompleter will Trim()
        the output and returns $null if empty (preventing paths completion). */
@@ -236,14 +282,90 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 /* protected */
 
 #ifdef _MSC_VER
-std::optional<QString>
-CompleteCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted)
+GuessCommandNameType
+CompleteCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted,
+                                      const ArgumentsSizeType argumentsCount) const
 {
-    // It's not a command name
-    if (commandlineArgSplitted.size() < 2 || isLongOption(commandlineArgSplitted[1]))
-        return std::nullopt;
+    // No Tom command on the command-line (only the tom.exe executable name)
+    if (argumentsCount <= 1)
+        return {kNotFound, std::nullopt};
 
-    return std::make_optional(commandlineArgSplitted[1]);
+    // Try to guess one Tom command name (detects kFound, kNotFound, kAmbiguous)
+    return application().guessCommandNameForComplete(
+                             getRawTomCommandName(commandlineArgSplitted));
+}
+
+QString
+CompleteCommand::getRawTomCommandName(const QStringList &commandlineArgSplitted)
+{
+    for (ArgumentsSizeType index = kUndefinedPosition;
+         const auto &argument : commandlineArgSplitted
+    ) {
+        if (isOptionArgument(argument))
+            continue;
+
+        if (++index == TomCommandPosition)
+            return argument;
+    }
+
+    Q_UNREACHABLE();
+    return {};
+}
+
+Command::ArgumentsSizeType
+CompleteCommand::getCurrentArgumentPosition(
+        const QStringView commandlineArg, const QString &wordArg,
+        const bool isNewArgumentPositionAtEnd)
+{
+    // Cursor is on the long/short option
+    if (isOptionArgument(wordArg))
+        return kOnOptionArgument;
+
+    ArgumentsSizeType index = kUndefinedPosition;
+                                                                      // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
+    for (const auto commandlineSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach
+         const auto argument : commandlineSplitted
+    ) {
+        // CUR1 tom FINISH QStringView silverqx
+        if (isOptionArgument(argument.toString()))
+            continue;
+
+        ++index;
+    }
+
+    Q_ASSERT(index != kUndefinedPosition);
+
+    /* pwsh truncates the commandlineArg in this case: tom list |,
+       it truncates it like this: tom list|, so the index must be incremented manually
+       to detect that the cursor is at position 3. */
+    if (isNewArgumentPositionAtEnd || wordArg.isEmpty())
+        ++index;
+
+    return index;
+}
+
+CompleteCommand::ArgumentsSizeType
+CompleteCommand::getPositionalArgumentsCount()
+{
+    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
+    return 1 + (m_hasAnyTomCommand ? 1 : 0) +
+            static_cast<ArgumentsSizeType>(
+                (*std::ranges::max_element(application().createCommandsVector(),
+                                           std::less(), [](const auto &command)
+    {
+        return command->positionalArguments().size();
+    }))
+        ->positionalArguments().size());
+}
+
+CompleteCommand::ArgumentsSizeType
+CompleteCommand::getPositionalArgumentsCount(const QString &command)
+{
+    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
+    return 1 + (m_hasAnyTomCommand ? 1 : 0) +
+            static_cast<ArgumentsSizeType>(
+                application().createCommand(command, std::nullopt, false)
+                            ->positionalArguments().size());
 }
 #else
 std::optional<QString>

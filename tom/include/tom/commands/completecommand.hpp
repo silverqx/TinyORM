@@ -11,13 +11,23 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom::Commands
+namespace Tom
+{
+namespace Types
+{
+    struct GuessCommandNameType;
+}
+
+namespace Commands
 {
 
     /*! Complete command names and parameters (for tab-completion only). */
     class CompleteCommand : public Command
     {
         Q_DISABLE_COPY_MOVE(CompleteCommand)
+
+        /*! Alias for the GuessCommandNameType. */
+        using GuessCommandNameType = Types::GuessCommandNameType;
 
     public:
         /*! Constructor. */
@@ -38,9 +48,43 @@ namespace Tom::Commands
 
     protected:
 #ifdef _MSC_VER
+        /*! Cursor positions on the command-line. */
+        enum TomCursorPostion : qint8
+        {
+            /*! Undefined cursor position (used as an initial value). */
+            kUndefinedPosition = -1, // Must be -1!
+            /*! Cursor is on the long/short option. */
+            kOnOptionArgument  = -2,
+        };
+        /*! Tom command positional argument position. */
+        constexpr static qint8 TomCommandPosition = 1;
+
         /*! Currently processed tom command. */
-        static std::optional<QString>
-        getCurrentTomCommand(const QStringList &commandlineArgSplitted);
+        GuessCommandNameType
+        getCurrentTomCommand(const QStringList &commandlineArgSplitted,
+                             ArgumentsSizeType argumentsCount) const;
+        /*! Get the raw Tom command name (positional argument number 1). */
+        static QString getRawTomCommandName(const QStringList &commandlineArgSplitted);
+
+        /*! Get the Tom command (positional argument) position under the cursor (0-based)
+            or kOnOptionArgument if the cursor is on the long/short option. */
+        static ArgumentsSizeType
+        getCurrentArgumentPosition(QStringView commandlineArg, const QString &wordArg,
+                                   bool isNewArgumentPositionAtEnd);
+
+        /*! Get positional arguments count on the command-line. */
+        inline static ArgumentsSizeType
+        getArgumentsCount(const QStringList &commandlineArgSplitted);
+
+        /*! Get positional arguments count for the given command. */
+        ArgumentsSizeType getPositionalArgumentsCount();
+        /*! Get positional arguments count for all commands. */
+        ArgumentsSizeType getPositionalArgumentsCount(const QString &command);
+
+        /*! Determine if the given value is between min/max (inclusive). */
+        inline static bool
+        bw(ArgumentsSizeType value, ArgumentsSizeType min,
+                                    ArgumentsSizeType max) noexcept;
 #else
         /*! Currently processed tom command. */
         static std::optional<QString>
@@ -134,6 +178,11 @@ namespace Tom::Commands
         /*const*/ std::unordered_set<QString> m_dontList {
             Tom::Constants::Complete,
         };
+
+#ifdef _MSC_VER
+        /*! Is known/our or ambiguous Tom command on the command-line? (!kNotFound). */
+        bool m_hasAnyTomCommand = false;
+#endif
     };
 
     /* public */
@@ -150,6 +199,24 @@ namespace Tom::Commands
 
     /* protected */
 
+#ifdef _MSC_VER
+    CompleteCommand::ArgumentsSizeType
+    CompleteCommand::getArgumentsCount(const QStringList &commandlineArgSplitted)
+    {
+        return std::ranges::count_if(commandlineArgSplitted, [](const auto &argument)
+        {
+            return !isOptionArgument(argument);
+        });
+    }
+
+    bool CompleteCommand::bw(
+            const ArgumentsSizeType value, const ArgumentsSizeType min,
+                                           const ArgumentsSizeType max) noexcept
+    {
+        return value >= min && value <= max;
+    }
+#endif
+
     bool CompleteCommand::isLongOption(const QString &wordArg)
     {
         return isOptionArgument(wordArg, LONG);
@@ -160,7 +227,8 @@ namespace Tom::Commands
         return isOptionArgument(wordArg, SHORT);
     }
 
-} // namespace Tom::Commands
+} // namespace Commands
+} // namespace Tom
 
 TINYORM_END_COMMON_NAMESPACE
 
