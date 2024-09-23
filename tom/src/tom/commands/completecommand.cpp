@@ -575,7 +575,7 @@ int CompleteCommand::printGuessedLongOptions(
                     // Text to be used as the auto completion result
                     auto longOption = LongOption.arg(optionName).append(EQ_C);
 #ifdef _MSC_VER
-                    // Text to be displayed in a list
+                    // Text to be displayed in the list
                     const auto longOptionList = LongOptionValue.arg(optionName,
                                                                     valueName);
 
