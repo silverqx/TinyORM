@@ -51,6 +51,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString command_name;
     // list
     TINYORM_EXPORT extern const QString namespace_;
+    // integrate
     TINYORM_EXPORT extern const QString shell_;
 
     // Commands' options

@@ -50,6 +50,7 @@ namespace Constants
     inline const QString command_name = u"command_name"_s;
     // list
     inline const QString namespace_   = u"namespace"_s;
+    // integrate
     inline const QString shell_       = u"shell"_s;
 
     // Commands' options

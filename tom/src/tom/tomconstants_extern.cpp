@@ -32,6 +32,7 @@ namespace Tom::Constants
     const QString command_name = u"command_name"_s;
     // list
     const QString namespace_   = u"namespace"_s;
+    // integrate
     const QString shell_       = u"shell"_s;
 
     // Commands' options
