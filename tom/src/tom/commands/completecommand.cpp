@@ -625,10 +625,8 @@ int CompleteCommand::printGuessedShortOptions(
 #endif
                 // Special handling of the -v options, good enough 😎
                 else {
-                    /* Has to be v because pwsh parameter names are case-insensitive so
-                       it collides with the -V parameter. */
 #ifdef _MSC_VER
-                    options << u"-v;v;%1"_s.arg(option.description())
+                    options << u"-v;-v;%1"_s.arg(option.description())
                             << u"-vv;-vv;%1"_s.arg(option.description())
                             << u"-vvv;-vvv;%1"_s.arg(option.description());
 #else
