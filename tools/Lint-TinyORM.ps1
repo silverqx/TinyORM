@@ -43,8 +43,8 @@ Param(
     [switch] $CleanBuild,
 
     [Parameter(HelpMessage = 'Specifies the CMake build type.')]
-    [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
     [ValidateNotNullOrEmpty()]
+    [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
     [string] $BuildType = 'Debug',
 
     [Parameter(
@@ -62,8 +62,8 @@ Param(
 
     [Parameter(HelpMessage = 'Build TinyDrivers database driver (core/common code) ' +
         '(default: Loadable).')]
-    [ValidateSet('Shared', 'Loadable', 'Static')]
     [ValidateNotNullOrEmpty()]
+    [ValidateSet('Shared', 'Loadable', 'Static')]
     [string] $DriversType = 'Loadable'
 )
 
