@@ -24,6 +24,9 @@ Param(
     [Parameter(HelpMessage = 'Skip Clazy standalone analyzes.')]
     [switch] $SkipClazy,
 
+    [Parameter(HelpMessage = 'Skip building unit tests (BUILD_TESTS=OFF).')]
+    [switch] $SkipTests,
+
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
     [switch] $CleanBuild,
 

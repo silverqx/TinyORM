@@ -32,6 +32,9 @@ Param(
     [Parameter(HelpMessage = 'Skip Clazy standalone analyzes.')]
     [switch] $SkipClazy,
 
+    [Parameter(HelpMessage = 'Skip building unit tests (BUILD_TESTS=OFF).')]
+    [switch] $SkipTests,
+
     [Parameter(HelpMessage = 'Specifies Qt version to use for compilation (sources qtenvX.ps1).')]
     [ValidateRange(5, 6)]
     [int] $QtVersion = 6,
@@ -208,7 +211,7 @@ cmake `
     -D LEAN_HEADERS:BOOL=ON `
     -D STRICT_MODE:BOOL=ON `
     -D MYSQL_PING:BOOL=ON `
-    -D BUILD_TESTS:BOOL=ON `
+    -D BUILD_TESTS:BOOL=$($SkipTests ? 'OFF' : 'ON') `
     -D ORM:BOOL=ON `
     -D TOM:BOOL=ON `
     -D TOM_EXAMPLE:BOOL=ON `
