@@ -41,6 +41,7 @@ namespace Constants
     TINYORM_EXPORT extern const QChar QUOTE;
     TINYORM_EXPORT extern const QChar SQUOTE;
     TINYORM_EXPORT extern const QChar UnixTimestamp;
+    TINYORM_EXPORT extern const QChar NEWLINE_C;
 
     // Common strings
     TINYORM_EXPORT extern const QString NEWLINE;

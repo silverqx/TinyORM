@@ -40,6 +40,7 @@ namespace Constants
     inline const QChar QUOTE         = QChar(u'"');
     inline const QChar SQUOTE        = QChar(u'\'');
     inline const QChar UnixTimestamp = QChar(u'U');
+    inline const QChar NEWLINE_C     = QChar::LineFeed;
 
     // Common strings
     inline const QString NEWLINE       = u"\n"_s;
