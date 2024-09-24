@@ -146,8 +146,8 @@ using TomUtils = Tom::Utils;
 
 namespace Tom {
 
-/* Adding/removing/disabling/enabling a command, add #include, using, factory in the
-   Application::createCommand(), add a command name to the Application::commandNames(),
+/* Adding/removing/disabling/enabling a command, add constants, #include, using, factory
+   in Application::createCommand(), add a command name to the Application::commandNames(),
    update indexes in the Application::commandsIndexes() and if the command introduces
    a new namespace add it to the Application::namespaceNames().
    I have everything extracted and placed it to the bottom of application.cpp so it is
