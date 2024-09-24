@@ -186,7 +186,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString List;
     TINYORM_EXPORT extern const QString MakeMigration;
     TINYORM_EXPORT extern const QString MakeModel;
-    TINYORM_EXPORT extern const QString MakeProject;
+//    TINYORM_EXPORT extern const QString MakeProject;
     TINYORM_EXPORT extern const QString MakeSeeder;
     TINYORM_EXPORT extern const QString &Migrate;
     TINYORM_EXPORT extern const QString MigrateFresh;

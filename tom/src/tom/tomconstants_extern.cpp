@@ -168,7 +168,7 @@ namespace Tom::Constants
     const QString List             = u"list"_s;
     const QString MakeMigration    = u"make:migration"_s;
     const QString MakeModel        = u"make:model"_s;
-    const QString MakeProject      = u"make:project"_s;
+//    const QString MakeProject    = u"make:project"_s;
     const QString MakeSeeder       = u"make:seeder"_s;
     const QString &Migrate         = Tom::Constants::NsMigrate;
     const QString MigrateFresh     = u"migrate:fresh"_s;

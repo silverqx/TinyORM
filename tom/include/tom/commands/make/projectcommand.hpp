@@ -35,7 +35,7 @@ namespace Tom::Commands::Make
         /*! The console command positional arguments signature. */
         const std::vector<PositionalArgument> &positionalArguments() const override;
         /*! The signature of the console command. */
-        QList<QCommandLineOption> signature() const override;
+        QList<CommandLineOption> optionsSignature() const override;
 
         /*! Execute the console command. */
         int run() override;
@@ -56,12 +56,12 @@ namespace Tom::Commands::Make
 
     QString ProjectCommand::name() const
     {
-        return QStringLiteral("make:project");
+        return Constants::MakeProject;
     }
 
     QString ProjectCommand::description() const
     {
-        return QLatin1String("Create a new Tom application project");
+        return u"Create a new Tom application project"_s;
     }
 
     /* protected */

@@ -8,6 +8,10 @@
 
 using Orm::Constants::NAME;
 
+using Tom::Constants::path_;
+using Tom::Constants::path_up;
+using Tom::Constants::realpath_;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom::Commands::Make
@@ -22,21 +26,22 @@ ProjectCommand::ProjectCommand(Application &application, QCommandLineParser &par
 const std::vector<PositionalArgument> &ProjectCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, "The name of the project"},
+        {NAME, u"The name of the project"_s},
     };
 
     return cached;
 }
 
-QList<QCommandLineOption> ProjectCommand::signature() const
+QList<CommandLineOption> ProjectCommand::optionsSignature() const
 {
     return {
-        {"qmake",     "Create qmake project"},
-        {"cmake",     "Create CMake project"},
-        {"tinyorm",   "Crete TinyORM project"},
-        {"tom",       "Crete tom project"},
-        {"path",      "The location where the project should be created", "path"},
-        {"realpath",  "Indicate the <info>path</info> argument is an absolute path"},
+        {u"qmake"_s,   u"Create qmake project"_s},
+        {u"cmake"_s,   u"Create CMake project"_s},
+        {u"tinyorm"_s, u"Create TinyORM project"_s},
+        {u"tom"_s,     u"Create tom project"_s},
+        {path_,        u"The location where the project should be created"_s,
+                       path_up}, // Value
+        {realpath_,    u"Indicate the <info>path</info> argument is an absolute path"_s},
     };
 }
 

@@ -186,7 +186,7 @@ namespace Constants
     inline const QString List             = u"list"_s;
     inline const QString MakeMigration    = u"make:migration"_s;
     inline const QString MakeModel        = u"make:model"_s;
-    inline const QString MakeProject      = u"make:project"_s;
+//    inline const QString MakeProject    = u"make:project"_s;
     inline const QString MakeSeeder       = u"make:seeder"_s;
     inline const QString &Migrate         = Tom::Constants::NsMigrate;
     inline const QString MigrateFresh     = u"migrate:fresh"_s;
