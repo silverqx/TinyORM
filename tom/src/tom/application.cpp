@@ -735,7 +735,7 @@ const std::unordered_map<QString, std::tuple<int, int>> &
 Application::commandsByNamespaceHash()
 {
     /* First number is index where it starts (0-based), second the number where it ends
-       (it's like iterator's end so should point after).
+       (it's like the iterator's end() so it must point after).
        Look to the Application::commandNames() to understand this indexes.
        tuple is forwarded as args to the ranges::views::slice(). */
     static const std::unordered_map<QString, std::tuple<int, int>> cached = []
