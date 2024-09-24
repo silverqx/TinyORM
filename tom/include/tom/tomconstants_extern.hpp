@@ -102,6 +102,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString accessors_up;
     TINYORM_EXPORT extern const QString appends_up;
     TINYORM_EXPORT extern const QString only_up;
+    TINYORM_EXPORT extern const QString shell_up;
     // complete
     TINYORM_EXPORT extern const QString commandline;
     TINYORM_EXPORT extern const QString position_;
@@ -178,10 +179,11 @@ namespace Constants
     TINYORM_EXPORT extern const QString Complete;
     TINYORM_EXPORT extern const QString DbSeed;
     TINYORM_EXPORT extern const QString DbWipe;
-    TINYORM_EXPORT extern const QString Inspire;
-    TINYORM_EXPORT extern const QString List;
     TINYORM_EXPORT extern const QString &Env;
     TINYORM_EXPORT extern const QString &Help;
+    TINYORM_EXPORT extern const QString Inspire;
+    TINYORM_EXPORT extern const QString Integrate;
+    TINYORM_EXPORT extern const QString List;
     TINYORM_EXPORT extern const QString MakeMigration;
     TINYORM_EXPORT extern const QString MakeModel;
     TINYORM_EXPORT extern const QString MakeProject;
@@ -189,12 +191,11 @@ namespace Constants
     TINYORM_EXPORT extern const QString &Migrate;
     TINYORM_EXPORT extern const QString MigrateFresh;
     TINYORM_EXPORT extern const QString MigrateInstall;
-    TINYORM_EXPORT extern const QString MigrateRollback;
     TINYORM_EXPORT extern const QString MigrateRefresh;
     TINYORM_EXPORT extern const QString MigrateReset;
+    TINYORM_EXPORT extern const QString MigrateRollback;
     TINYORM_EXPORT extern const QString MigrateStatus;
     TINYORM_EXPORT extern const QString MigrateUninstall;
-    TINYORM_EXPORT extern const QString Integrate;
 
 } // namespace Constants
 } // namespace Tom

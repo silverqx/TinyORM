@@ -101,6 +101,7 @@ namespace Constants
     inline const QString accessors_up       = u"ACCESSORS"_s;
     inline const QString appends_up         = u"APPENDS"_s;
     inline const QString only_up            = u"ONLY"_s;
+    inline const QString shell_up           = u"SHELL"_s;
     // complete
     inline const QString commandline        = u"commandline"_s;
     inline const QString position_          = u"position"_s;
@@ -178,10 +179,11 @@ namespace Constants
     inline const QString Complete         = u"complete"_s;
     inline const QString DbSeed           = u"db:seed"_s;
     inline const QString DbWipe           = u"db:wipe"_s;
-    inline const QString Inspire          = u"inspire"_s;
-    inline const QString List             = u"list"_s;
     inline const QString &Env             = Tom::Constants::env;
     inline const QString &Help            = Tom::Constants::help;
+    inline const QString Inspire          = u"inspire"_s;
+    inline const QString Integrate        = u"integrate"_s;
+    inline const QString List             = u"list"_s;
     inline const QString MakeMigration    = u"make:migration"_s;
     inline const QString MakeModel        = u"make:model"_s;
     inline const QString MakeProject      = u"make:project"_s;
@@ -189,12 +191,11 @@ namespace Constants
     inline const QString &Migrate         = Tom::Constants::NsMigrate;
     inline const QString MigrateFresh     = u"migrate:fresh"_s;
     inline const QString MigrateInstall   = u"migrate:install"_s;
-    inline const QString MigrateRollback  = u"migrate:rollback"_s;
     inline const QString MigrateRefresh   = u"migrate:refresh"_s;
     inline const QString MigrateReset     = u"migrate:reset"_s;
+    inline const QString MigrateRollback  = u"migrate:rollback"_s;
     inline const QString MigrateStatus    = u"migrate:status"_s;
     inline const QString MigrateUninstall = u"migrate:uninstall"_s;
-    inline const QString Integrate        = u"integrate"_s;
 
 } // namespace Constants
 } // namespace Tom
