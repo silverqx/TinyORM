@@ -1,6 +1,7 @@
 #include "tom/concerns/printsoptions.hpp"
 
 #include <orm/constants.hpp>
+#include <orm/macros/likely.hpp>
 
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
@@ -131,9 +132,10 @@ void PrintsOptions::printOptionDefaultValue(const QCommandLineOption &option) co
     // Multiple default values are not supported
     Q_ASSERT(defaultValues.size() <= 1);
 
-    if (defaultValues.isEmpty())
+    if (defaultValues.isEmpty()) T_LIKELY
         io().newLine();
-    else
+
+    else T_UNLIKELY
         io().comment(TomUtils::defaultValueText(defaultValues.constFirst()));
 }
 
