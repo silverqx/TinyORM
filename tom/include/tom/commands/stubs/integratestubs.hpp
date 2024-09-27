@@ -23,8 +23,8 @@ uR"(
 # ---
 
 Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
-    Param($wordToComplete, $commandAst, $cursorPosition)
-    [Console]::InputEncoding = `
+    Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
+    [Console]::InputEncoding =
     [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
     $Local:word = $wordToComplete.Replace('"', '\"')
     $Local:ast = $commandAst.ToString().Replace('"', '\"')
