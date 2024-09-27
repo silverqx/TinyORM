@@ -30,7 +30,8 @@
 #include <orm/version.hpp>
 
 #include "tom/commands/aboutcommand.hpp"
-#include "tom/commands/completecommand.hpp"
+#include "tom/commands/complete/bashcommand.hpp"
+#include "tom/commands/complete/pwshcommand.hpp"
 #include "tom/commands/database/seedcommand.hpp"
 #include "tom/commands/database/wipecommand.hpp"
 #include "tom/commands/environmentcommand.hpp"
@@ -84,7 +85,8 @@ using TypeUtils = Orm::Utils::Type;
 
 using Tom::Commands::AboutCommand;
 using Tom::Commands::Command;
-using Tom::Commands::CompleteCommand;
+using Tom::Commands::Complete::BashCommand;
+using Tom::Commands::Complete::PwshCommand;
 using Tom::Commands::Database::SeedCommand;
 using Tom::Commands::Database::WipeCommand;
 using Tom::Commands::EnvironmentCommand;
@@ -106,7 +108,8 @@ using Tom::Commands::Migrations::StatusCommand;
 using Tom::Commands::Migrations::UninstallCommand;
 
 using Tom::Constants::About;
-using Tom::Constants::Complete;
+using Tom::Constants::CompleteBash;
+using Tom::Constants::CompletePwsh;
 using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
 using Tom::Constants::EMPTY;
@@ -128,6 +131,7 @@ using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
 using Tom::Constants::MigrateUninstall;
 using Tom::Constants::NsAll;
+using Tom::Constants::NsComplete;
 using Tom::Constants::NsDb;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsMake;
@@ -149,7 +153,8 @@ namespace Tom {
 /* Adding/removing/disabling/enabling a command, add constants, #include, using, factory
    in Application::createCommand(), add a command name to the Application::commandNames(),
    update indexes in the Application::commandsIndexes() and if the command introduces
-   a new namespace add it to the Application::namespaceNames().
+   a new namespace add it to the Application::namespaceNames(). If the command or
+   namespace is hidden, add it to the isCommandHidden() or isNamespaceHidden() methods.
    I have everything extracted and placed it to the bottom of application.cpp so it is
    nicely in one place. */
 
@@ -608,8 +613,11 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     if (command == About)
         return std::make_unique<AboutCommand>(*this, parserRef);
 
-    if (command == Complete)
-        return std::make_unique<CompleteCommand>(*this, parserRef);
+    if (command == CompleteBash)
+        return std::make_unique<BashCommand>(*this, parserRef);
+
+    if (command == CompletePwsh)
+        return std::make_unique<PwshCommand>(*this, parserRef);
 
     if (command == DbSeed)
         return std::make_unique<SeedCommand>(*this, parserRef);
@@ -762,7 +770,9 @@ Application::commandNames()
     // Order is important here (shown by defined order by the list command)
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        About, Complete, Env, Help, Inspire, Integrate, List, Migrate,
+        About, Env, Help, Inspire, Integrate, List, Migrate,
+        // complete
+        CompleteBash, CompletePwsh,
         // db
         DbSeed, DbWipe,
         // make
@@ -783,7 +793,7 @@ Application::namespaceNames()
         // global namespace
         EMPTY, NsGlobal,
         // all other namespaces
-        NsDb, NsMake, NsMigrate,
+        NsComplete, NsDb, NsMake, NsMigrate,
         /* The special index used by the command name guesser, it doesn't name
            the namespace but rather returns all namespaced commands. I leave it
            accessible also by the list command so a user can also display all namespaced
@@ -808,16 +818,36 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
 
        Order is important here - zipped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
-        {0,   8}, // "" - also global
-        {0,   8}, // global
-        {8,  10}, // db
-        {10, 13}, // make
-        {13, 20}, // migrate
-        {8,  20}, // namespaced
-        {0,  20}, // all
+        { 0,  7}, // "" - also global
+        { 0,  7}, // global
+        { 7,  9}, // complete (hidden namespace, will be excluded from the output)
+        { 9, 11}, // db
+        {11, 14}, // make
+        {14, 21}, // migrate
+        { 7, 21}, // namespaced
+        { 0, 21}, // all
     };
 
     return cached;
+}
+
+bool Application::isCommandHidden(const QString &command)
+{
+    static const std::unordered_set<QString> hiddenCommands {
+        Tom::Constants::CompleteBash,
+        Tom::Constants::CompletePwsh,
+    };
+
+    return hiddenCommands.contains(command);
+}
+
+bool Application::isNamespaceHidden(const QString &namespaceName)
+{
+    static const std::unordered_set<QString> hiddenNamespaces {
+        Tom::Constants::NsComplete,
+    };
+
+    return hiddenNamespaces.contains(namespaceName);
 }
 
 QList<CommandLineOption> Application::getCommandOptionsSignature(const QString &command)

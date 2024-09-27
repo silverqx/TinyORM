@@ -18,6 +18,10 @@ namespace Tom::Constants
     const QString migration_    = u"migration"_s;
     const QString batch_        = u"batch"_s;
 
+    // Templates
+    const QString TMPL_RESULT2  = u"%1;%2"_s;
+    const QString TMPL_RESULT3  = u"%1;%2;%3"_s;
+
     // Common options
     const QString ansi          = u"ansi"_s;
     const QString noansi        = u"no-ansi"_s;
@@ -145,6 +149,7 @@ namespace Tom::Constants
 
     // Namespace names
     const QString NsGlobal     = u"global"_s;
+    const QString NsComplete   = u"complete"_s;
     const QString NsDb         = u"db"_s;
     const QString NsMake       = u"make"_s;
     const QString NsMigrate    = u"migrate"_s;
@@ -158,7 +163,8 @@ namespace Tom::Constants
 
     // Command names
     const QString About            = u"about"_s;
-    const QString Complete         = u"complete"_s;
+    const QString CompleteBash     = u"complete:bash"_s;
+    const QString CompletePwsh     = u"complete:pwsh"_s;
     const QString DbSeed           = u"db:seed"_s;
     const QString DbWipe           = u"db:wipe"_s;
     const QString &Env             = Tom::Constants::env;

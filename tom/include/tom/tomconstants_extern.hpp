@@ -37,6 +37,10 @@ namespace Constants
     TINYORM_EXPORT extern const QString migration_;
     TINYORM_EXPORT extern const QString batch_;
 
+    // Templates
+    TINYORM_EXPORT extern const QString TMPL_RESULT2;
+    TINYORM_EXPORT extern const QString TMPL_RESULT3;
+
     // Common options
     TINYORM_EXPORT extern const QString ansi;
     TINYORM_EXPORT extern const QString noansi;
@@ -163,6 +167,7 @@ namespace Constants
 
     // Namespace names
     TINYORM_EXPORT extern const QString NsGlobal;
+    TINYORM_EXPORT extern const QString NsComplete;
     TINYORM_EXPORT extern const QString NsDb;
     TINYORM_EXPORT extern const QString NsMake;
     TINYORM_EXPORT extern const QString NsMigrate;
@@ -176,7 +181,8 @@ namespace Constants
 
     // Command names
     TINYORM_EXPORT extern const QString About;
-    TINYORM_EXPORT extern const QString Complete;
+    TINYORM_EXPORT extern const QString CompleteBash;
+    TINYORM_EXPORT extern const QString CompletePwsh;
     TINYORM_EXPORT extern const QString DbSeed;
     TINYORM_EXPORT extern const QString DbWipe;
     TINYORM_EXPORT extern const QString &Env;

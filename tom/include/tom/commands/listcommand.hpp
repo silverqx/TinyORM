@@ -80,11 +80,6 @@ namespace Tom::Commands
         /*! Wrapper for the two methods below, helps to avoid one copy. */
         const std::vector<std::shared_ptr<Command>> &
         getCommandsByNamespace(const QString &name) const;
-
-        /*! Commands to exclude from the list. */
-        /*const*/ std::unordered_set<QString> m_dontList {
-            Tom::Constants::Complete,
-        };
     };
 
     /* public */

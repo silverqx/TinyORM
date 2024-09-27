@@ -483,7 +483,9 @@ function(tinytom_sources out_headers out_sources)
         application.hpp
         commands/aboutcommand.hpp
         commands/command.hpp
-        commands/completecommand.hpp
+        commands/complete/basecompletecommand.hpp
+        commands/complete/bashcommand.hpp
+        commands/complete/pwshcommand.hpp
         commands/database/seedcommand.hpp
         commands/database/wipecommand.hpp
         commands/environmentcommand.hpp
@@ -555,7 +557,9 @@ function(tinytom_sources out_headers out_sources)
         application.cpp
         commands/aboutcommand.cpp
         commands/command.cpp
-        commands/completecommand.cpp
+        commands/complete/basecompletecommand.cpp
+        commands/complete/bashcommand.cpp
+        commands/complete/pwshcommand.cpp
         commands/database/seedcommand.cpp
         commands/database/wipecommand.cpp
         commands/environmentcommand.cpp

@@ -31,9 +31,15 @@ namespace Tom {
 namespace Commands
 {
     class AboutCommand;
-    class CompleteCommand;
     class HelpCommand;
     class ListCommand;
+
+namespace Complete
+{
+    class BaseCompleteCommand;
+    class BashCommand;
+    class PwshCommand;
+} // namespace Complete
 } // namespace Commands
 namespace Concerns
 {
@@ -56,11 +62,16 @@ namespace Concerns
         friend Commands::AboutCommand;
         // To access saveOptions()
         friend Commands::Command;
-        // To access createCommand(), namespaceNames(), guessCommandXyz() related methods
-        friend Commands::CompleteCommand;
+        /* To access namespaceNames(), getCommandOptionsSignature(), m_options,
+           isCommandHidden(), isNamespaceHidden(). */
+        friend Commands::Complete::BaseCompleteCommand;
+        // To access guessCommandsForComplete()
+        friend Commands::Complete::BashCommand;
+        // To access createCommand(), createCommandsVector(), guessCommandXyz() methods
+        friend Commands::Complete::PwshCommand;
         // To access createCommand(), m_options
         friend Commands::HelpCommand;
-        // To access showVersion(), m_options
+        // To access showVersion(), m_options, isNamespaceHidden()
         friend Commands::ListCommand;
         // To access m_options
         friend Concerns::PrintsOptions;
@@ -237,6 +248,11 @@ namespace Concerns
         static const std::vector<std::reference_wrapper<const QString>> &namespaceNames();
         /*! Get commands index positions in namespaces. */
         static const std::vector<std::tuple<int, int>> &commandsIndexes();
+
+        /*! Commands to exclude from the output result (eg. output completion list). */
+        static bool isCommandHidden(const QString &command);
+        /*! Namespaces to exclude from the output result (eg. output completion list). */
+        static bool isNamespaceHidden(const QString &namespaceName);
 
         /*! Get options signature for the given command (used by complete command). */
         QList<CommandLineOption> getCommandOptionsSignature(const QString &command);

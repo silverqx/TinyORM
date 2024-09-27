@@ -106,7 +106,7 @@ int ListCommand::raw(const QString &namespaceArg)
         const auto commandName = command->name();
 
         // Exclude hidden commands
-        if (m_dontList.contains(commandName))
+        if (Application::isCommandHidden(commandName))
             continue;
 
         const auto indent = QString(commandMaxSize - commandName.size(), SPACE);
@@ -131,7 +131,8 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
     // Try to find a full command name to avoid the guess logic
     if (auto namespaceArg_ = namespaceArg.toLower();
-        ranges::contains(Application::namespaceNames(), namespaceArg_)
+        ranges::contains(Application::namespaceNames(), namespaceArg_) &&
+        !Application::isNamespaceHidden(namespaceArg_) // Exclude hidden namespaces
     )
         return namespaceArg_;
 
@@ -160,7 +161,8 @@ std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg)
             // CUR1 ranges, check all pred and proj, now I understand where I have to use auto & or auto &&, note in bash_or_cmd c++ sheet silverqx
             | ranges::views::filter([&namespaceArg](const QString &namespaceName)
     {
-        return namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive);
+        return namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive) &&
+                !Application::isNamespaceHidden(namespaceName); // Exclude hidden namespaces
     })
             | ranges::to<std::vector<QString>>();
 }
@@ -237,7 +239,7 @@ void ListCommand::printCommands(
         const auto commandName = command->name();
 
         // Exclude hidden commands
-        if (m_dontList.contains(commandName))
+        if (Application::isCommandHidden(commandName))
             continue;
 
         // Begin a new namespace section

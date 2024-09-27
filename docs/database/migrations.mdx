@@ -134,7 +134,7 @@ Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
     [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
     $Local:word = $wordToComplete.Replace('"', '\"')
     $Local:ast = $commandAst.ToString().Replace('"', '\"')
-    tom complete --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
+    tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
         | ForEach-Object {
             if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
             $completionText, $listText, $toolTip = $_ -split ';', 3

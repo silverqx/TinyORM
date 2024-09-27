@@ -103,7 +103,7 @@ _tom()
            [[ $split == false &&
               (-v tom_command && $args -eq 2 && $tom_command == @(help|list|integrate)) ]]
         then
-            COMPREPLY=($(compgen -W "$(tom complete --word="$cur" \
+            COMPREPLY=($(compgen -W "$(tom complete:bash --word="$cur" \
                 --commandline="${words[*]}" --cword=$cword 2>/dev/null)" -- "$cur"))
             return
         fi

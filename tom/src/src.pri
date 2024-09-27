@@ -8,7 +8,9 @@ sourcesList += \
     $$PWD/tom/application.cpp \
     $$PWD/tom/commands/aboutcommand.cpp \
     $$PWD/tom/commands/command.cpp \
-    $$PWD/tom/commands/completecommand.cpp \
+    $$PWD/tom/commands/complete/basecompletecommand.cpp \
+    $$PWD/tom/commands/complete/bashcommand.cpp \
+    $$PWD/tom/commands/complete/pwshcommand.cpp \
     $$PWD/tom/commands/database/seedcommand.cpp \
     $$PWD/tom/commands/database/wipecommand.cpp \
     $$PWD/tom/commands/environmentcommand.cpp \

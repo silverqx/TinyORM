@@ -28,7 +28,7 @@ Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
     [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
     $Local:word = $wordToComplete.Replace('"', '\"')
     $Local:ast = $commandAst.ToString().Replace('"', '\"')
-    tom complete --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
+    tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
         | ForEach-Object {
             if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
             $completionText, $listText, $toolTip = $_ -split ';', 3
@@ -148,7 +148,7 @@ _tom()
            [[ $split == false &&
               (-v tom_command && $args -eq 2 && $tom_command == @(help|list|integrate)) ]]
         then
-            COMPREPLY=($(compgen -W "$(tom complete --word="$cur" \
+            COMPREPLY=($(compgen -W "$(tom complete:bash --word="$cur" \
                 --commandline="${words[*]}" --cword=$cword 2>/dev/null)" -- "$cur"))
             return
         fi
