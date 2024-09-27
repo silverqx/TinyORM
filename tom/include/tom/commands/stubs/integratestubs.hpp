@@ -118,7 +118,7 @@ _tom()
     local tom_command i
     for ((i = 1; i < ${#words[@]}; i++)); do
         if [[ ${words[i]} != -* ]]; then
-            # Command found but is actually completing now
+            # Command is considered found only if isn't currently completing
             if [[ $i -ne $cword ]]; then
                 tom_command=${words[i]}
             fi
