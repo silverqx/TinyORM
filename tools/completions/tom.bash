@@ -158,7 +158,7 @@ _tom()
     fi
 
     # Provide file/dir paths completion for the following commands
-    __tom_filedir $tom_command $args
+    __tom_filedir "$tom_command" $args
 
 } &&
     complete -F _tom tom tom_testdata
