@@ -126,11 +126,11 @@ _tom() {
         '--ansi[Force ANSI output]'
         '--no-ansi[Disable ANSI output]'
         '--env=[The environment the command should run under]: :__tom_environments'
-        '(: -)'{-h,--help}"[Display help for the given command. When no command is given display help for the list command]"
+        '(: -)'{-h,--help}"[Display help for a given command, when no command is given display help for the list command]"
         '(-n --no-interaction)'{-n,--no-interaction}'[Do not ask any interactive question]'
         '(-q --quiet)'{-q,--quiet}'[Do not output any message]'
         '(: -)'{-V,--version}'[Display this application version]'
-        '(-v --verbose)'{-v,--verbose}'[Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug]'
+        '(-v --verbose)'{-v,--verbose}'[Increase verbosity of messages: 1 for normal output, 2 for more verbose output, 3 for debug]'
     )
 
     _arguments -C \
