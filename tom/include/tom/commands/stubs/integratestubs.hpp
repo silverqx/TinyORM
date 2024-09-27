@@ -45,7 +45,7 @@ Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
 inline const auto TomBashCompletionContent =
 uR"TTT(# bash completion for tom                                -*- shell-script -*-
 
-# Provide file/dir completion for the following commands
+# Provide file/dir paths completion for the following commands
 __tom_filedir()
 {
     if [[ ${1-} == @(make:migration|make:seeder) && ${2-} -eq 2 ]]; then
@@ -153,7 +153,7 @@ _tom()
             return
         fi
 
-        # Provide file/dir completion for the following commands
+        # Provide file/dir paths completion for the following commands
         __tom_filedir "$tom_command" $args
 
         return
@@ -202,7 +202,7 @@ _tom()
         COMPREPLY=($(compgen -W "$commands" -- "$cur"))
     fi
 
-    # Provide file/dir completion for the following commands
+    # Provide file/dir paths completion for the following commands
     __tom_filedir $tom_command $args
 
 } &&

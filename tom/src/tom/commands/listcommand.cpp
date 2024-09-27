@@ -105,7 +105,7 @@ int ListCommand::raw(const QString &namespaceArg)
     for (const auto &command : commands) {
         const auto commandName = command->name();
 
-        // Exclude defined commands
+        // Exclude hidden commands
         if (m_dontList.contains(commandName))
             continue;
 
@@ -236,7 +236,7 @@ void ListCommand::printCommands(
     for (const auto &command : commands) {
         const auto commandName = command->name();
 
-        // Exclude defined commands
+        // Exclude hidden commands
         if (m_dontList.contains(commandName))
             continue;
 

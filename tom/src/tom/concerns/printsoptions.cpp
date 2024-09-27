@@ -67,7 +67,7 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
             if (const auto valueName = option.valueName();
                 names.size() == 2
             ) {
-                // W/o the value
+                // Without the value
                 if (valueName.isEmpty())
                     options << LongOption.arg(name);
                 // With the value
@@ -76,7 +76,7 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
             }
             // Only a long option passed
             else {
-                // W/o a value
+                // Without a value
                 if (valueName.isEmpty())
                     options << LongOptionOnly.arg(LongOption.arg(name));
                 // With a value
@@ -128,7 +128,7 @@ void PrintsOptions::printOptionDefaultValue(const QCommandLineOption &option) co
 {
     const auto defaultValues = option.defaultValues();
 
-    // More default values is not supported
+    // Multiple default values are not supported
     Q_ASSERT(defaultValues.size() <= 1);
 
     if (defaultValues.isEmpty())
