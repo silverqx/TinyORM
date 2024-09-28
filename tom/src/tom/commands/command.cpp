@@ -61,6 +61,9 @@ int Command::run()
        shows an error wall and exit application if validation failed. */
     validateRequiredArguments();
 
+    /* This value can be dropped in descendants as it always returns an EXIT_SUCCESS
+       exit code. If something bad happens above then it throws an exception instead.
+       So there is no need for any advanced logic for exit codes in descendants. */
     return EXIT_SUCCESS;
 }
 
