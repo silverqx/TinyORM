@@ -204,7 +204,7 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
     return EXIT_SUCCESS;
 }
 
-/* protected */
+/* private */
 
 /* Current Tom command */
 

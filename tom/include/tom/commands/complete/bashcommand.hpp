@@ -34,7 +34,7 @@ namespace Tom::Commands::Complete
         /*! Execute the console command. */
         int run() override;
 
-    protected:
+    private:
         /* Current Tom command */
         /*! Get the currently processed Tom command. */
         static std::optional<QString>
@@ -66,7 +66,7 @@ namespace Tom::Commands::Complete
         return u"Complete command names and options in the bash shell (tab-completion)"_s;
     }
 
-    /* protected */
+    /* private */
 
     /* Printing support */
 

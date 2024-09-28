@@ -226,18 +226,6 @@ int BaseCompleteCommand::printGuessedShortOptions(
 
 /* Option arguments */
 
-QString BaseCompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
-{
-    const auto defaultValues = option.defaultValues();
-
-    // Multiple default values are not supported
-    Q_ASSERT(defaultValues.size() <= 1);
-
-    return defaultValues.isEmpty() ? EMPTY
-                                   : TomUtils::defaultValueText(
-                                         defaultValues.constFirst()); // Quotes the string type
-}
-
 QList<CommandLineOption>
 BaseCompleteCommand::getCommandOptionsSignature(
         const std::optional<QString> &command) const
@@ -268,6 +256,22 @@ bool BaseCompleteCommand::isOptionArgument(const QString &wordArg, const OptionT
 #else
     Q_UNREACHABLE();
 #endif
+}
+
+/* private */
+
+/* Option arguments */
+
+QString BaseCompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
+{
+    const auto defaultValues = option.defaultValues();
+
+    // Multiple default values are not supported
+    Q_ASSERT(defaultValues.size() <= 1);
+
+    return defaultValues.isEmpty() ? EMPTY
+                                   : TomUtils::defaultValueText(
+                                         defaultValues.constFirst()); // Quotes the string type
 }
 
 } // namespace Tom::Commands::Complete

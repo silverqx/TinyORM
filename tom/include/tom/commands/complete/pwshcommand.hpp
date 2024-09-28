@@ -44,7 +44,7 @@ namespace Commands::Complete
         /*! Execute the console command. */
         int run() override;
 
-    protected:
+    private:
         /* Current Tom command */
         /*! Cursor positions on the command-line. */
         enum TomCursorPostion : qint8
@@ -166,7 +166,7 @@ namespace Commands::Complete
         return u"Complete command names and options in the pwsh shell (tab-completion)"_s;
     }
 
-    /* protected */
+    /* private */
 
     /* Current Tom command */
 

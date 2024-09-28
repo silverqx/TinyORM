@@ -43,16 +43,11 @@ namespace Tom::Commands::Complete
         int printGuessedShortOptions(const std::optional<QString> &currentCommand) const;
 
         /* Printing support */
-        /*! Print the completion result. */
-        inline void printCompletionResult(const QStringList &result) const;
         /*! Print completion result (used to print one space or block paths complete). */
         inline virtual void printCompletionResult(const QString &result) const;
         /*! Get the delimiter for result values (newline for pwsh and space for bash). */
         virtual QChar getResultDelimiter() const noexcept = 0;
 
-        /*! Prepare one result value (argument or option) for printing (shortcut). */
-        inline QString
-        prepareResultValue(QString &&completionText, const QString &toolTip) const;
         /*! Prepare one result value (argument or option) for printing (shortcut). */
         inline virtual QString
         prepareResultValue(
@@ -64,9 +59,6 @@ namespace Tom::Commands::Complete
                                                const QString &description) const = 0;
 
         /* Option arguments */
-        /*! Get an option's default value part. */
-        static QString getOptionDefaultValue(const QCommandLineOption &option);
-
         /*! Get option arguments signature for the given command. */
         QList<CommandLineOption>
         getCommandOptionsSignature(const std::optional<QString> &command) const;
@@ -97,6 +89,19 @@ namespace Tom::Commands::Complete
         inline static bool
         between(ArgumentsSizeType value, ArgumentsSizeType min,
                                          ArgumentsSizeType max) noexcept;
+
+    private:
+        /* Printing support */
+        /*! Print the completion result. */
+        inline void printCompletionResult(const QStringList &result) const;
+
+        /*! Prepare one result value (argument or option) for printing (shortcut). */
+        inline QString
+        prepareResultValue(QString &&completionText, const QString &toolTip) const;
+
+        /* Option arguments */
+        /*! Get an option's default value part. */
+        static QString getOptionDefaultValue(const QCommandLineOption &option);
     };
 
     /* public */
@@ -107,21 +112,9 @@ namespace Tom::Commands::Complete
 
     /* Printing support */
 
-    void BaseCompleteCommand::printCompletionResult(const QStringList &result) const
-    {
-        printCompletionResult(result.join(getResultDelimiter()));
-    }
-
     void BaseCompleteCommand::printCompletionResult(const QString &result) const
     {
         note(result, false);
-    }
-
-    QString
-    BaseCompleteCommand::prepareResultValue(QString &&completionText,
-                                            const QString &toolTip) const
-    {
-        return prepareResultValue(std::move(completionText), std::nullopt, toolTip);
     }
 
     bool BaseCompleteCommand::isLongOption(const QString &wordArg)
@@ -141,6 +134,22 @@ namespace Tom::Commands::Complete
                                            const ArgumentsSizeType max) noexcept
     {
         return value >= min && value <= max;
+    }
+
+    /* private */
+
+    /* Printing support */
+
+    void BaseCompleteCommand::printCompletionResult(const QStringList &result) const
+    {
+        printCompletionResult(result.join(getResultDelimiter()));
+    }
+
+    QString
+    BaseCompleteCommand::prepareResultValue(QString &&completionText,
+                                            const QString &toolTip) const
+    {
+        return prepareResultValue(std::move(completionText), std::nullopt, toolTip);
     }
 
 } // namespace Tom::Commands::Complete

@@ -100,7 +100,7 @@ int BashCommand::run()
     return EXIT_SUCCESS;
 }
 
-/* protected */
+/* private */
 
 /* Current Tom command */
 
