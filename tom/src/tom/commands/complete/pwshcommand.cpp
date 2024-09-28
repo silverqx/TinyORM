@@ -128,7 +128,7 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
         return printGuessedCommands(application().guessCommandsForComplete(wordArg));
 
     // Print all or guessed namespace names for the list command
-    if (!isOptionArgument(wordArg) && currentCommandArg == List &&
+    if (currentCommandArg == List && !isOptionArgument(wordArg) &&
         currentArgumentPosition == 2 &&
         ((argumentsCount == 2 && wordArg.isEmpty()) || // tom list |
          (argumentsCount == 3 && !wordArg.isEmpty()))  // tom list g| ; tom list gl|obal
@@ -136,7 +136,7 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
         return printGuessedNamespaces(wordArg);
 
     // Print all or guessed shell names for the integrate command
-    if (!isOptionArgument(wordArg) && currentCommandArg == Integrate &&
+    if (currentCommandArg == Integrate && !isOptionArgument(wordArg) &&
         currentArgumentPosition == 2 &&
         ((argumentsCount == 2 && wordArg.isEmpty()) || // tom integrate |
          (argumentsCount == 3 && !wordArg.isEmpty()))  // tom integrate p| ; tom integrate p|wsh
