@@ -29,7 +29,7 @@ using fspath = std::filesystem::path;
 using Orm::Constants::COMMA;
 using Orm::Constants::DOT;
 using Orm::Constants::EMPTY;
-using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::QUOTE;
 using Orm::Constants::SPACE;
@@ -587,7 +587,7 @@ QString ModelCreator::createRelationCalls(
     const auto relationCallsAlign = [](const auto &relationCalls)
     {
         return relationCalls.isEmpty() ? EMPTY
-                                       : u"%1%2%3"_s.arg(NEWLINE,
+                                       : u"%1%2%3"_s.arg(NEWLINE_C,
                                                          QString(16, SPACE)).arg(DOT);
     };
 
@@ -693,7 +693,7 @@ QString ModelCreator::createAccessorMethods(const QStringList &accessors,
                    .replace(u"{{accessorNameSnake}}"_s,   accessor);
     }
 
-    return accessorMethodsList.join(NEWLINE);
+    return accessorMethodsList.join(NEWLINE_C);
 }
 
 /* Private model section */
@@ -721,7 +721,7 @@ QString ModelCreator::createPrivateSection(
 
     // Append a newline after the relations hash
     if (!privateSection.isEmpty() && anyModelOptionGiven(cmdOptions))
-        privateSection.append(NEWLINE);
+        privateSection.append(NEWLINE_C);
 
     if (!table.isEmpty())
         privateSection += ModelTableStub.arg(table);
@@ -782,7 +782,7 @@ QString ModelCreator::createPrivateSection(
         if (hasPublicSection || hasProtectedSection)
             privateSection.prepend(ModelPrivateStub);
         else
-            privateSection.prepend(NEWLINE);
+            privateSection.prepend(NEWLINE_C);
     }
 
     return privateSection;
@@ -843,12 +843,12 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
                           listSize > 2 ? u",\n"_s : COMMA);
 
     if (listSize > 2)
-        listJoined.prepend(NEWLINE);
+        listJoined.prepend(NEWLINE_C);
     else if (listSize > 1)
-        listJoined.prepend(NOSPACE.arg(NEWLINE, QString(8, SPACE)));
+        listJoined.prepend(NOSPACE.arg(NEWLINE_C, QString(8, SPACE)));
 
     if (listSize > 1)
-        listJoined.append(COMMA).append(NEWLINE).append(QString(4, SPACE));
+        listJoined.append(COMMA).append(NEWLINE_C).append(QString(4, SPACE));
 
     return listJoined;
 }
@@ -1204,10 +1204,10 @@ QString ModelCreator::wrapMutatorItemsList(const QStringList &mutatorItems)
         return EMPTY;
 
     else T_LIKELY {
-        auto mutatorItemsJoined = mutatorItems.join(NEWLINE);
+        auto mutatorItemsJoined = mutatorItems.join(NEWLINE_C);
 
-        mutatorItemsJoined.prepend(NEWLINE)
-                          .append(NOSPACE.arg(NEWLINE, QString(4, SPACE)));
+        mutatorItemsJoined.prepend(NEWLINE_C)
+                          .append(NOSPACE.arg(NEWLINE_C, QString(4, SPACE)));
 
         return mutatorItemsJoined;
     }
@@ -1223,7 +1223,7 @@ QString ModelCreator::createIncludesOrmSection(const CmdOptions &cmdOptions)
                                    ? u"tiny/relations/basepivot.hpp"_s
                                    : u"tiny/model.hpp"_s));
 
-    return ContainerUtils::join(m_includesOrmList, NEWLINE);
+    return ContainerUtils::join(m_includesOrmList, NEWLINE_C);
 }
 
 QString ModelCreator::createIncludesSection() const
@@ -1232,7 +1232,7 @@ QString ModelCreator::createIncludesSection() const
     if (m_includesList.empty())
         return {};
 
-    return NOSPACE.arg("\n\n", ContainerUtils::join(m_includesList, NEWLINE));
+    return NOSPACE.arg("\n\n", ContainerUtils::join(m_includesList, NEWLINE_C));
 }
 
 QString ModelCreator::createUsingsSection(const CmdOptions &cmdOptions)
@@ -1242,7 +1242,7 @@ QString ModelCreator::createUsingsSection(const CmdOptions &cmdOptions)
                          ? u"using Orm::Tiny::Relations::BasePivot;"_s
                          : u"using Orm::Tiny::Model;"_s);
 
-    return ContainerUtils::join(m_usingsList, NEWLINE);
+    return ContainerUtils::join(m_usingsList, NEWLINE_C);
 }
 
 QString ModelCreator::createRelationsList() const
@@ -1269,7 +1269,7 @@ QString ModelCreator::createForwardsSection() const
     if (m_forwardsList.empty())
         return {};
 
-    return StringUtils::wrapValue(ContainerUtils::join(m_forwardsList, NEWLINE),
+    return StringUtils::wrapValue(ContainerUtils::join(m_forwardsList, NEWLINE_C),
                                   QChar(QChar::LineFeed));
 }
 
@@ -1284,7 +1284,7 @@ QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList) // N
     })
             | ranges::to<QStringList>();
 
-    return relationsQList.join(NEWLINE);
+    return relationsQList.join(NEWLINE_C);
 }
 
 } // namespace Tom::Commands::Make::Support

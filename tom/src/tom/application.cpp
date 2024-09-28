@@ -71,7 +71,7 @@ using Orm::Constants::COMMA;
 #ifdef TINYDRIVERS_MYSQL_DRIVER
 using Orm::Constants::MYSQL_;
 #endif
-using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::SPACE;
@@ -241,7 +241,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
        instantiated again. */
     const Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
     const auto message = u"Caught '%1' Exception:\n%2"_s
                          .arg(TypeUtils::classPureBasename(e, true), e.what());

@@ -20,6 +20,7 @@ using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 using Orm::Constants::TMPL_ONE;
@@ -70,7 +71,7 @@ InteractsWithIO::line(const QString &string, const bool newline,
     const auto parsedString = parseOutput(string, isAnsiOutput(cout));
 
     if (style.isEmpty())
-        cout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdString();
+        cout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdString(); // Don't use the NEWLINE_C for these ternary operators
     else
         cout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                           .toStdString();
@@ -143,7 +144,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     if (!isAnsiOutput())
         return line(string, true, verbosity, {}, std::cerr);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
     line(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::cerr);
 
@@ -164,7 +165,7 @@ InteractsWithIO::wline(const QString &string, const bool newline,
     const auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
 
     if (style.isEmpty())
-        wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdWString();
+        wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdWString(); // Don't use the NEWLINE_C for these ternary operators
     else
         wcout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                            .toStdWString();
@@ -236,7 +237,7 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
     if (!isAnsiWOutput())
         return wline(string, true, verbosity, {}, std::wcerr);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE, TMPL_ONE);
+    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
     wline(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::wcerr);
 
@@ -552,7 +553,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     QStringList lines;
 
     {
-        const auto splitted = string.split(NEWLINE, Qt::SkipEmptyParts);
+        const auto splitted = string.split(NEWLINE_C, Qt::SkipEmptyParts);
 
         /* Compute the max. box width */
         // Get max. line width after the split with the newline in all rendered lines
@@ -586,7 +587,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
                         (2 + lines.size())) + 32);
 
         // Empty line above
-        output += tmpl.arg(emptyLine).append(NEWLINE);
+        output += tmpl.arg(emptyLine).append(NEWLINE_C);
 
         for (const auto &line : std::as_const(lines)) {
             // Prepend/append spaces
@@ -594,7 +595,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
             // Fill a line to the end with spaces
             lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
             // ANSI wrap
-            output += tmpl.arg(lineSpaced).append(NEWLINE);
+            output += tmpl.arg(lineSpaced).append(NEWLINE_C);
         }
 
         // Empty line below

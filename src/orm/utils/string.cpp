@@ -23,7 +23,7 @@ using Orm::Constants::SQUOTE;
 using Orm::Constants::UNDERSCORE;
 
 #ifdef TINYORM_TESTS_CODE
-using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 #endif
 
 namespace Orm::Utils
@@ -443,7 +443,7 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
      "Risus nibh semper quis volutpat facilisi."_s;
 
 #  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return QStringList(count, lorem511).join(NEWLINE);
+    return QStringList(count, lorem511).join(NEWLINE_C);
             // Insert the s character before the last . to make it 512, 1024, ...
             // .insert(-1, u's');
 #  else
@@ -453,7 +453,7 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
     for (QStringList::size_type index = 0; index < count; ++index)
         result << lorem511;
 
-    return result.join(NEWLINE);
+    return result.join(NEWLINE_C);
 #  endif
 }
 #endif

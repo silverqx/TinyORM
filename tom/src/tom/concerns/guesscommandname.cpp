@@ -13,7 +13,7 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COLON;
-using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 using Orm::Constants::SPACE;
 
 using Tom::Constants::NsAll;
@@ -100,7 +100,7 @@ void GuessCommandName::printAmbiguousCommands(
 
     application().io().errorWall(
                 u"Command \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2"_s
-                .arg(commandName, formattedCommands.join(NEWLINE)));
+                .arg(commandName, formattedCommands.join(NEWLINE_C)));
 
     Application::exitApplication(EXIT_FAILURE);
 }

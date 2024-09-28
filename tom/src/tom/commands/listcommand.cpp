@@ -12,7 +12,7 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COLON;
-using Orm::Constants::NEWLINE;
+using Orm::Constants::NEWLINE_C;
 using Orm::Constants::SPACE;
 
 using Tom::Constants::NsGlobal;
@@ -179,7 +179,7 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
             | ranges::to<QStringList>();
 
     errorWall(u"The namespace \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2"_s
-              .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
+              .arg(namespaceName, formattedNamespaces.join(NEWLINE_C)));
 
     Application::exitApplication(EXIT_FAILURE);
 }
