@@ -4,12 +4,17 @@ extern_constants: \
     sourcesList += \
         $$PWD/tom/tomconstants_extern.cpp
 
+# There is no need to compile the bash completion for other platforms.
+# The pwsh can run on all our supported platforms so always compile it.
+linux|mingw: \
+    sourcesList += \
+        $$PWD/tom/commands/complete/bashcommand.cpp
+
 sourcesList += \
     $$PWD/tom/application.cpp \
     $$PWD/tom/commands/aboutcommand.cpp \
     $$PWD/tom/commands/command.cpp \
     $$PWD/tom/commands/complete/basecompletecommand.cpp \
-    $$PWD/tom/commands/complete/bashcommand.cpp \
     $$PWD/tom/commands/complete/pwshcommand.cpp \
     $$PWD/tom/commands/database/seedcommand.cpp \
     $$PWD/tom/commands/database/wipecommand.cpp \

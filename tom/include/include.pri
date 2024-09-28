@@ -9,12 +9,17 @@ else: \
     headersList += \
         $$PWD/tom/tomconstants_inline.hpp
 
+# There is no need to compile the bash completion for other platforms.
+# The pwsh can run on all our supported platforms so always compile it.
+linux|mingw: \
+    headersList += \
+        $$PWD/tom/commands/complete/bashcommand.hpp
+
 headersList += \
     $$PWD/tom/application.hpp \
     $$PWD/tom/commands/aboutcommand.hpp \
     $$PWD/tom/commands/command.hpp \
     $$PWD/tom/commands/complete/basecompletecommand.hpp \
-    $$PWD/tom/commands/complete/bashcommand.hpp \
     $$PWD/tom/commands/complete/pwshcommand.hpp \
     $$PWD/tom/commands/database/seedcommand.hpp \
     $$PWD/tom/commands/database/wipecommand.hpp \

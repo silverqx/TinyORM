@@ -479,12 +479,17 @@ function(tinytom_sources out_headers out_sources)
         list(APPEND headers tomconstants_inline.hpp)
     endif()
 
+    # There is no need to compile the bash completion for other platforms.
+    # The pwsh can run on all our supported platforms so always compile it.
+    if(MINGW OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        list(APPEND headers commands/complete/bashcommand.hpp)
+    endif()
+
     list(APPEND headers
         application.hpp
         commands/aboutcommand.hpp
         commands/command.hpp
         commands/complete/basecompletecommand.hpp
-        commands/complete/bashcommand.hpp
         commands/complete/pwshcommand.hpp
         commands/database/seedcommand.hpp
         commands/database/wipecommand.hpp
@@ -553,12 +558,17 @@ function(tinytom_sources out_headers out_sources)
         list(APPEND sources tomconstants_extern.cpp)
     endif()
 
+    # There is no need to compile the bash completion for other platforms.
+    # The pwsh can run on all our supported platforms so always compile it.
+    if(MINGW OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        list(APPEND sources commands/complete/bashcommand.cpp)
+    endif()
+
     list(APPEND sources
         application.cpp
         commands/aboutcommand.cpp
         commands/command.cpp
         commands/complete/basecompletecommand.cpp
-        commands/complete/bashcommand.cpp
         commands/complete/pwshcommand.cpp
         commands/database/seedcommand.cpp
         commands/database/wipecommand.cpp

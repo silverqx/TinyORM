@@ -30,7 +30,9 @@
 #include <orm/version.hpp>
 
 #include "tom/commands/aboutcommand.hpp"
-#include "tom/commands/complete/bashcommand.hpp"
+#if defined(__linux__) || defined(__MINGW32__)
+#  include "tom/commands/complete/bashcommand.hpp"
+#endif
 #include "tom/commands/complete/pwshcommand.hpp"
 #include "tom/commands/database/seedcommand.hpp"
 #include "tom/commands/database/wipecommand.hpp"
@@ -85,7 +87,9 @@ using TypeUtils = Orm::Utils::Type;
 
 using Tom::Commands::AboutCommand;
 using Tom::Commands::Command;
+#if defined(__linux__) || defined(__MINGW32__)
 using Tom::Commands::Complete::BashCommand;
+#endif
 using Tom::Commands::Complete::PwshCommand;
 using Tom::Commands::Database::SeedCommand;
 using Tom::Commands::Database::WipeCommand;
@@ -108,7 +112,9 @@ using Tom::Commands::Migrations::StatusCommand;
 using Tom::Commands::Migrations::UninstallCommand;
 
 using Tom::Constants::About;
+#if defined(__linux__) || defined(__MINGW32__)
 using Tom::Constants::CompleteBash;
+#endif
 using Tom::Constants::CompletePwsh;
 using Tom::Constants::DbSeed;
 using Tom::Constants::DbWipe;
@@ -613,8 +619,10 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     if (command == About)
         return std::make_unique<AboutCommand>(*this, parserRef);
 
+#if defined(__linux__) || defined(__MINGW32__)
     if (command == CompleteBash)
         return std::make_unique<BashCommand>(*this, parserRef);
+#endif
 
     if (command == CompletePwsh)
         return std::make_unique<PwshCommand>(*this, parserRef);
@@ -768,19 +776,23 @@ Application::commandsByNamespaceHash()
 const std::vector<std::reference_wrapper<const QString>> &
 Application::commandNames()
 {
-    // Order is important here (shown by defined order by the list command)
+    /* Order is important here (shown by defined order by the list command and also must
+       match namespaces order). */
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
         About, Env, Help, Inspire, Integrate, List, Migrate,
-        // complete
-        CompleteBash, CompletePwsh,
         // db
         DbSeed, DbWipe,
         // make
         MakeMigration, MakeModel, /*MakeProject,*/ MakeSeeder,
         // migrate
         MigrateFresh,  MigrateInstall,  MigrateRefresh, MigrateReset, MigrateRollback,
-        MigrateStatus, MigrateUninstall
+        MigrateStatus, MigrateUninstall,
+        // complete
+#if defined(__linux__) || defined(__MINGW32__)
+        CompleteBash,
+#endif
+        CompletePwsh,
     };
 
     return cached;
@@ -791,20 +803,22 @@ Application::namespaceNames()
 {
     // Order is important here - zipped with the commandsIndexes()
     static const std::vector<std::reference_wrapper<const QString>> cached {
-        /* The special index used by the command name guesser for the complete command,
-           it doesn't name the namespace but rather returns all commands. I leave it
-           accessible also by the list command so a user can also display all namespaced
-           commands. */
-        NsAll,
         // global namespace
         NsGlobal, EMPTY,
         // all other namespaces
-        NsComplete, NsDb, NsMake, NsMigrate,
+        NsDb, NsMake, NsMigrate,
+        // Hidden namespaces
+        NsComplete, // Also contains a conditionally compiled BashCommand and therefore is at the end
         /* The special index used by the command name guesser, it doesn't name
            the namespace but rather returns all namespaced commands. I leave it
            accessible also by the list command so a user can also display all namespaced
            commands. */
         NsNamespaced,
+        /* The special index used by the command name guesser for the complete command,
+           it doesn't name the namespace but rather returns all commands. I leave it
+           accessible also by the list command so a user can also display all namespaced
+           commands. */
+        NsAll,
     };
 
     return cached;
@@ -819,15 +833,21 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
 
        Order is important here - zipped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
-        { 0, 21}, // all
         { 0,  7}, // global
         { 0,  7}, // "" - also global
 
-        { 7,  9}, // complete (hidden namespace, will be excluded from the output)
-        { 9, 11}, // db
-        {11, 14}, // make
-        {14, 21}, // migrate
+        { 7,  9}, // db
+        { 9, 12}, // make
+        {12, 19}, // migrate
+#if defined(__linux__) || defined(__MINGW32__)
+        {19, 21}, // complete (hidden namespace, will be excluded from the output)
         { 7, 21}, // namespaced
+        { 0, 21}, // all
+#else
+        {19, 20}, // complete (hidden namespace, will be excluded from the output)
+        { 7, 20}, // namespaced
+        { 0, 20}, // all
+#endif
     };
 
     return cached;
@@ -836,7 +856,9 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
 bool Application::isCommandHidden(const QString &command)
 {
     static const std::unordered_set<QString> hiddenCommands {
+#if defined(__linux__) || defined(__MINGW32__)
         Tom::Constants::CompleteBash,
+#endif
         Tom::Constants::CompletePwsh,
     };
 

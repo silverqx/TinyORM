@@ -37,7 +37,9 @@ namespace Commands
 namespace Complete
 {
     class BaseCompleteCommand;
+#if defined(__linux__) || defined(__MINGW32__)
     class BashCommand;
+#endif
     class PwshCommand;
 } // namespace Complete
 } // namespace Commands
@@ -65,8 +67,10 @@ namespace Concerns
         /* To access namespaceNames(), getCommandOptionsSignature(), m_options,
            isCommandHidden(), isNamespaceHidden(). */
         friend Commands::Complete::BaseCompleteCommand;
+#if defined(__linux__) || defined(__MINGW32__)
         // To access guessCommandsForComplete()
         friend Commands::Complete::BashCommand;
+#endif
         // To access createCommand(), createCommandsVector(), guessCommandXyz() methods
         friend Commands::Complete::PwshCommand;
         // To access createCommand(), m_options
