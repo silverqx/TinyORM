@@ -53,8 +53,8 @@ namespace Tom::Commands
         static bool isPwshCompletionRegistered(const QString &pwshProfile,
                                                QTextStream &pwshProfileStream);
 
-        /* Bash integrate related */
 #if defined(__linux__) || defined(__MINGW32__)
+        /* Bash integrate related */
         /*! Integrate tab-completion for the bash shell. */
         int integrateBash() const;
 
@@ -66,8 +66,8 @@ namespace Tom::Commands
         static bool isBashCompletionRegistered();
 #endif
 
-        /* Zsh integrate related */
 #if defined(__linux__) || defined(__MINGW32__)
+        /* Zsh integrate related */
         /*! Integrate tab-completion for the zsh shell. */
         int integrateZsh() const;
 

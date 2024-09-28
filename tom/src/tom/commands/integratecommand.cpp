@@ -258,9 +258,9 @@ bool IntegrateCommand::isPwshCompletionRegistered(const QString &pwshProfile,
     return false;
 }
 
+#if defined(__linux__) || defined(__MINGW32__)
 /* Bash integrate related */
 
-#if defined(__linux__) || defined(__MINGW32__)
 int IntegrateCommand::integrateBash() const
 {
     // Some validation
