@@ -64,10 +64,11 @@ _tom()
     esac
 
     # Count the number of arguments excluding options
-    # Default is 1 and it only count arguments before current word!
-    # $1 = because without it it counts tom --env=dev as 3 instead of 1+
-    local args
-    _count_args =
+    # Default is 1 and it only count arguments before the current word!
+    # See NOTES.txt[bash completion]
+    local REPLY
+    _comp_count_args
+    local cargs=$REPLY
 
     # Find currently active tom command
     local tom_command i
@@ -99,9 +100,9 @@ _tom()
     # Accurate completion using the tom complete command
     if _have tom; then
         # Completion for positional arguments and for long and short options
-        if [[ $split == false && ($args -eq 1 || $cur == -*) ]] ||
+        if [[ $split == false && ($cargs -eq 1 || $cur == -*) ]] ||
            [[ $split == false &&
-              (-v tom_command && $args -eq 2 && $tom_command == @(help|list|integrate)) ]]
+              (-v tom_command && $cargs -eq 2 && $tom_command == @(help|list|integrate)) ]]
         then
             COMPREPLY=($(compgen -W "$(tom complete:bash --word="$cur" \
                 --commandline="${words[*]}" --cword=$cword 2>/dev/null)" -- "$cur"))
@@ -109,7 +110,7 @@ _tom()
         fi
 
         # Provide file/dir paths completion for the following commands
-        __tom_filedir "$tom_command" $args
+        __tom_filedir "$tom_command" $cargs
 
         return
     fi
@@ -129,7 +130,7 @@ _tom()
     shells='bash pwsh zsh'
 
     # Complete positional arguments for tom commands
-    if [[ -v tom_command && $args -eq 2 && $cur != -* ]]; then
+    if [[ -v tom_command && $cargs -eq 2 && $cur != -* ]]; then
         case $tom_command in
             integrate)
                 COMPREPLY=($(compgen -W "$shells" -- "$cur"))
@@ -158,7 +159,7 @@ _tom()
     fi
 
     # Provide file/dir paths completion for the following commands
-    __tom_filedir "$tom_command" $args
+    __tom_filedir "$tom_command" $cargs
 
 } &&
     complete -F _tom tom tom_testdata

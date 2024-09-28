@@ -3993,3 +3993,20 @@ Get-ChildItem -File -Recurse *.hpp
     | % { $_ -cmatch 'include "(?<inc>.*)"' | Out-Null; $Matches.includes }
     | sort -Unique
     | Set-Clipboard
+
+
+bash completion:
+----------------
+
+The _comp_count_args function is defined in the bash_completion and _count_args is defined
+in the 000_bash_completion_compat.bash. I used the _count_args = before instead of _comp_count_args.
+The following is true for the _count_args:
+The first positional parameter ($1) must be set to the = because without it it counts
+tom --env=dev | as 3 positional arguments instead of 1!
+The reason is it internally calls the _comp__reassemble_words with an empty argument.
+The _comp_count_args doesn't call the _comp__reassemble_words by default, it calls it only if
+the -n parameter is passed.
+The _comp__reassemble_words is defined in the /usr/share/bash-completion/bash_completion.
+The _count_args is deprecated so I refactored it to the _comp_count_args.
+The _comp_count_args returns the value using the REPLY variable.
+The _count_args returns the value using the args variable.
