@@ -94,7 +94,7 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
     using SizeType = QList<QStringView>::size_type;
 
     /*! Cached the datetime prefix parts sizes. */
-    static const auto prefixSizes = []
+    static const auto prefixSizes = std::invoke([]
     {
         const auto prefixSplitted = DateTimePrefix.split(UNDERSCORE);
 
@@ -104,7 +104,7 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
             return datetimePart.size();
         })
                 | ranges::to<std::vector<SizeType>>();
-    }();
+    });
 
     /*! Compute the current datetime prefix parts sizes. */
     const auto prefixPartsSizes = [&prefixParts]

@@ -725,7 +725,7 @@ QStringList Application::prepareArguments() const
 const std::vector<std::shared_ptr<Application::Command>> &
 Application::createCommandsVector()
 {
-    static const std::vector<std::shared_ptr<Command>> cached = [this]
+    static const std::vector<std::shared_ptr<Command>> cached = std::invoke([this]
     {
         return commandNames()
                 | ranges::views::transform([this](const QString &commandName)
@@ -734,7 +734,7 @@ Application::createCommandsVector()
             return createCommand(commandName);
         })
                 | ranges::to<std::vector<std::shared_ptr<Command>>>();
-    }();
+    });
 
     return cached;
 }
@@ -746,7 +746,8 @@ Application::commandsByNamespaceHash()
        (it's like the iterator's end() so it must point after).
        Look to the Application::commandNames() to understand this indexes.
        tuple is forwarded as args to the ranges::views::slice(). */
-    static const std::unordered_map<QString, std::tuple<int, int>> cached = []
+    static const std::unordered_map<QString, std::tuple<int, int>>
+    cached = std::invoke([]
     {
         Q_ASSERT(namespaceNames().size() == commandsIndexes().size());
 
@@ -759,7 +760,7 @@ Application::commandsByNamespaceHash()
             namespaceNames(), commandsIndexes()
         )
             | ranges::to<std::unordered_map<QString, std::tuple<int, int>>>();
-    }();
+    });
 
     return cached;
 }

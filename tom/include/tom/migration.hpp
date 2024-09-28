@@ -13,11 +13,11 @@ TINY_SYSTEM_HEADER
     the filepath part). */
 #define T_MIGRATION                                                                 \
     /*! Filename of the migration file. */                                          \
-    inline static const auto FileName = []                                          \
+    inline static const auto FileName = std::invoke([]                              \
     {                                                                               \
         return QString::fromStdString(                                              \
                     std::filesystem::path(__FILE__).stem().string());               \
-    }();
+    });
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
