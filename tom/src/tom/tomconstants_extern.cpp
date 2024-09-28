@@ -10,6 +10,7 @@ namespace Tom::Constants
     // Common strings
     const QString EMPTY            = u""_s; // This is the fastest
     const QString LongOption       = u"--%1"_s;
+    const QString LongOptionEq     = u"--%1="_s;
     const QString LongOptionOnly   = u"    %1"_s;
     const QString LongOptionValue  = u"--%1[=%2]"_s;
     const QString ShortOption      = u"-%1"_s;

@@ -28,6 +28,7 @@ namespace Constants
     // Common strings
     inline const QString EMPTY           = u""_s; // This is the fastest
     inline const QString LongOption      = u"--%1"_s;
+    inline const QString LongOptionEq    = u"--%1="_s;
     inline const QString LongOptionOnly  = u"    %1"_s;
     inline const QString LongOptionValue = u"--%1[=%2]"_s;
     inline const QString ShortOption     = u"-%1"_s;

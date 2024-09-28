@@ -132,6 +132,8 @@ namespace Commands::Complete
 
         /*! Determine if the given word is a long option argument with multi-value. */
         static bool isLongOptionWithArrayValue(const QString &wordArg);
+        /*! Determine whether the word is a long option argument with the given name. */
+        inline static bool isLongOptionName(const QString &wordArg, const QString &name);
         /*! Get the value of the option argument (eg. --database=value). */
         static QString getOptionValue(const QString &wordArg);
 
@@ -197,6 +199,13 @@ namespace Commands::Complete
     {
         return Constants::TMPL_RESULT3
                 .arg(completionText, listItemText.value_or(completionText), toolTip);
+    }
+
+    /* Option arguments */
+
+    bool PwshCommand::isLongOptionName(const QString &wordArg, const QString &name)
+    {
+        return wordArg.startsWith(Constants::LongOptionEq.arg(name));
     }
 
     /* Others */

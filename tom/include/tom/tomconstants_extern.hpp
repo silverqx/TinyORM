@@ -29,6 +29,7 @@ namespace Constants
     // Common strings
     TINYORM_EXPORT extern const QString EMPTY;
     TINYORM_EXPORT extern const QString LongOption;
+    TINYORM_EXPORT extern const QString LongOptionEq;
     TINYORM_EXPORT extern const QString LongOptionOnly;
     TINYORM_EXPORT extern const QString LongOptionValue;
     TINYORM_EXPORT extern const QString ShortOption;

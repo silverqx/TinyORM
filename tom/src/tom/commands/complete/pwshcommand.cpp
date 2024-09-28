@@ -41,6 +41,7 @@ using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
 using Tom::Constants::LongOption;
+using Tom::Constants::LongOptionEq;
 using Tom::Constants::TMPL_RESULT2;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
@@ -143,14 +144,14 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
         return printGuessedShells(wordArg);
 
     // Print all or guessed section names for the about command --only= option
-    if (currentCommandArg == About && wordArg.startsWith(LongOption.arg(only_)) &&
+    if (currentCommandArg == About && isLongOptionName(wordArg, only_) &&
         argumentsCount == 2 && currentArgumentPosition == kOnOptionArgument && // tom about --only=m| ; tom about --only=m|acros
         !isNewArgumentPositionAtEnd // < : tom about --only=| --ansi ; = : tom about --only=|
     )
         return printGuessedSectionNamesForAbout(getOptionValue(wordArg));
 
     // Print all or inferred database connection names for the --database= option
-    if (wordArg.startsWith(LongOption.arg(database_)) &&
+    if (isLongOptionName(wordArg, database_) &&
         ((currentCommandArg == kFound && argumentsCount == 2) ||
          /* db:seed is the only command that has positional argument,
             all other commands with the --database= option don't have any. */
@@ -163,7 +164,7 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
         return printGuessedConnectionNames(getOptionValue(wordArg));
 
     // Print environment names for the --env= option
-    if (wordArg.startsWith(LongOption.arg(Env)) &&
+    if (isLongOptionName(wordArg, Env) &&
         currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
         (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
           // Don't print/complete the --env= option for unknown commands eg. tom xyz --|
