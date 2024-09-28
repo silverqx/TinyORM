@@ -76,7 +76,7 @@ namespace Commands
         /*! The console command positional arguments signature. */
         inline virtual const std::vector<PositionalArgument> &
         positionalArguments() const;
-        /*! The signature of the console command. */
+        /*! Options signature of the console command. */
         virtual QList<CommandLineOption> optionsSignature() const;
 
         /*! The console command help. */

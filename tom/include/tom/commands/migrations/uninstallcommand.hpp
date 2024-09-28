@@ -42,7 +42,7 @@ namespace Commands::Migrations
         /*! The console command description. */
         inline QString description() const override;
 
-        /*! The signature of the console command. */
+        /*! Options signature of the console command. */
         QList<CommandLineOption> optionsSignature() const override;
 
         /*! Execute the console command. */
