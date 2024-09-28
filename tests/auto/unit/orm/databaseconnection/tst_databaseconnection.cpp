@@ -102,7 +102,7 @@ void tst_DatabaseConnection::pingDatabase() const
 
 #ifndef TINYORM_MYSQL_PING
     QSKIP("mysql_ping feature was disabled, to pass this test reconfigure the TinyORM "
-          "project with the MYSQL_PING preprocessor macro ( -DMYSQL_PING ) for cmake "
+          "project with the MYSQL_PING preprocessor macro ( -DMYSQL_PING ) for CMake "
           "or with the 'mysql_ping' configuration option ( \"CONFIG+=mysql_ping\" ) "
           "for qmake.", );
 #endif

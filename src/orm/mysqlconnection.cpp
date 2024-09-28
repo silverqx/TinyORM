@@ -243,7 +243,7 @@ bool MySqlConnection::pingDatabase()
                 u"The pingDatabase() method was disabled for the '%1' database driver, "
                  "if you want to use MySqlConnection::pingDatabase(), then "
                  "reconfigure the TinyORM project with the MYSQL_PING preprocessor "
-                 "macro ( -DMYSQL_PING ) for cmake or with the 'mysql_ping' "
+                 "macro ( -DMYSQL_PING ) for CMake or with the 'mysql_ping' "
                  "configuration option ( \"CONFIG+=mysql_ping\" ) for qmake."_s
                 .arg(driverName()));
 #endif

@@ -55,7 +55,7 @@ defineTest(tiny_resource_and_manifest) {
     export(QMAKE_DISTCLEAN)
 }
 
-# Substitute cmake variables in the Windows RC file, is better to reuse existing Windows
+# Substitute CMake variables in the Windows RC file, is better to reuse existing Windows
 # RC file than manage two practically the same files.
 defineReplace(tiny_configure_cmake_rc) {
     # All tests use the same test.rc.in file

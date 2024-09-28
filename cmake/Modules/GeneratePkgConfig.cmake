@@ -44,7 +44,7 @@ function(_get_target_property_merging_configs _var_name _target_name _propert_na
 			string(REPLACE "$<$<CONFIG:${imported_config}>:" "$<1:" vals "${vals}")
 		endif()
 	endif()
-	# HACK for static libraries cmake populates link dependencies as $<LINK_ONLY:lib_name>.
+	# HACK for static libraries, CMake populates link dependencies as $<LINK_ONLY:lib_name>.
 	# pkg-config does not support special handling for static libraries and as such we will remove
 	# that generator expression
 	string(REPLACE "$<LINK_ONLY:" "$<1:" vals "${vals}")

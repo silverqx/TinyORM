@@ -3,11 +3,11 @@ include("@_variables_file_name@")
 function (cmake_list_to_pkg_config _result _list _prefix)
 	set(_tmp_list "${_list}")
 	list(REMOVE_ITEM _tmp_list "")
-	# remove prefix from prefixed items
+	# Remove prefix from prefixed items
 	string(REGEX REPLACE "(^|;)(${_prefix})" "\\1" _tmp_list "${_tmp_list}")
-	# append 'prefix' to each element
+	# Append 'prefix' to each element
 	string(REGEX REPLACE "([^;]+)" "${_prefix}\\1" _tmp_list "${_tmp_list}")
-	# transform cmake list into a space delimited list
+	# Transform CMake list into a space delimited list
 	string(REPLACE ";" " " _tmp_list "${_tmp_list}")
 	set(${_result} "${_tmp_list}" PARENT_SCOPE)
 endfunction()

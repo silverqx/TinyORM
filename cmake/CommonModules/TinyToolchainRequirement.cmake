@@ -155,7 +155,7 @@ problems with inline constants :/.")
             INLINE_CONSTANTS AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
     )
         message(FATAL_ERROR "MinGW Clang <18 shared build crashes with inline constants, \
-don't enable the INLINE_CONSTANTS cmake option :/.")
+don't enable the INLINE_CONSTANTS CMake option. :/")
     endif()
 
     if(TINY_VCPKG AND TINY_IS_MULTI_CONFIG)

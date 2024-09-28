@@ -125,7 +125,7 @@ mingw {
         # QMAKE_LFLAGS += -Xlinker --default-image-base-high
 
         # The QMAKE_LFLAGS_CONSOLE -= -Wl,-subsystem,console is correct, lld recognizes
-        # this correctly, but eg. cmake isn't using this linker parameter, the reason
+        # this correctly, but eg. CMake isn't using this linker parameter, the reason
         # is that the console subsystem is the default value.
         # I could use QMAKE_LFLAGS_CONSOLE = to reset it but I leave it as it's now. 😁
     }
