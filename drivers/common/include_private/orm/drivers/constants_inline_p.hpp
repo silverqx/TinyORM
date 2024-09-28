@@ -18,7 +18,7 @@ namespace Constants
 {
 
     // Common chars - QChar(u'') is faster than ''_L1
-    inline const QChar SPACE = QChar(u' ');
+    inline const QChar SPACE = QChar::Space;
     inline const QChar DOT   = QChar(u'.');
     inline const QChar QUOTE = QChar(u'"');
 

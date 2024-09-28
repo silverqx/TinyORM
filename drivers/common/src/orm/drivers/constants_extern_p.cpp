@@ -6,7 +6,7 @@ namespace Orm::Drivers::Constants
 {
 
     // Common chars - QChar(u'') is faster than ''_L1
-    const QChar SPACE = QChar(u' ');
+    const QChar SPACE = QChar::Space;
     const QChar DOT   = QChar(u'.');
     const QChar QUOTE = QChar(u'"');
 
