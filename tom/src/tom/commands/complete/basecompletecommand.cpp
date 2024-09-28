@@ -40,8 +40,6 @@ BaseCompleteCommand::BaseCompleteCommand(Application &application,
     : Command(application, parser)
 {}
 
-BaseCompleteCommand::~BaseCompleteCommand() = default;
-
 int BaseCompleteCommand::run()
 {
     return Command::run();

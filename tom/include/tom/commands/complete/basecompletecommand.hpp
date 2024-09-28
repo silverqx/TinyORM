@@ -21,7 +21,7 @@ namespace Tom::Commands::Complete
         /*! Constructor. */
         BaseCompleteCommand(Application &application, QCommandLineParser &parser);
         /*! Pure virtual destructor. */
-        ~BaseCompleteCommand() override = 0;
+        inline ~BaseCompleteCommand() override = 0;
 
         /*! Execute the console command. */
         int run() override;
@@ -98,6 +98,10 @@ namespace Tom::Commands::Complete
         between(ArgumentsSizeType value, ArgumentsSizeType min,
                                          ArgumentsSizeType max) noexcept;
     };
+
+    /* public */
+
+    BaseCompleteCommand::~BaseCompleteCommand() = default;
 
     /* protected */
 
