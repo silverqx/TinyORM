@@ -790,8 +790,13 @@ Application::namespaceNames()
 {
     // Order is important here - zipped with the commandsIndexes()
     static const std::vector<std::reference_wrapper<const QString>> cached {
+        /* The special index used by the command name guesser for the complete command,
+           it doesn't name the namespace but rather returns all commands. I leave it
+           accessible also by the list command so a user can also display all namespaced
+           commands. */
+        NsAll,
         // global namespace
-        EMPTY, NsGlobal,
+        NsGlobal, EMPTY,
         // all other namespaces
         NsComplete, NsDb, NsMake, NsMigrate,
         /* The special index used by the command name guesser, it doesn't name
@@ -799,11 +804,6 @@ Application::namespaceNames()
            accessible also by the list command so a user can also display all namespaced
            commands. */
         NsNamespaced,
-        /* The special index used by the command name guesser for the complete command,
-           it doesn't name the namespace but rather returns all commands. I leave it
-           accessible also by the list command so a user can also display all namespaced
-           commands. */
-        NsAll,
     };
 
     return cached;
@@ -818,14 +818,15 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
 
        Order is important here - zipped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
-        { 0,  7}, // "" - also global
+        { 0, 21}, // all
         { 0,  7}, // global
+        { 0,  7}, // "" - also global
+
         { 7,  9}, // complete (hidden namespace, will be excluded from the output)
         { 9, 11}, // db
         {11, 14}, // make
         {14, 21}, // migrate
         { 7, 21}, // namespaced
-        { 0, 21}, // all
     };
 
     return cached;
