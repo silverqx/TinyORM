@@ -58,9 +58,9 @@ enum ArtifactType {
 $Script:BuildTreePath = $null
 # Deploy hash of executables to deploy
 $Script:DeployHash = $null
-# Deploy array of executables' filepaths to deploy (allows to copy all artifacts at once)
+# Deploy array of executables' file paths to deploy (allows to copy all artifacts at once)
 $Script:DeployArray = @()
-# PDB filepaths to remove at deploy destination if they didn't exist in the build tree
+# PDB file paths to remove at deploy destination if they didn't exist in the build tree
 $Script:PdbToRemoveArray = @()
 
 # Functions section
@@ -249,7 +249,7 @@ function Sync-PdbFile {
     }
 }
 
-# Pre-compute executable artifacts' filepaths (allows to copy all artifacts at once)
+# Pre-compute executable artifacts' file paths (allows to copy all artifacts at once)
 function Initialize-DeployArray {
     [OutputType([void])]
     Param()
@@ -292,7 +292,7 @@ function Initialize-DeployArray {
 Initialize-BuildTreePath
 # Initialize deploy hash of executables to deploy
 Initialize-DeployHash
-# Pre-compute executable artifacts' filepaths (allows to copy all artifacts at once)
+# Pre-compute executable artifacts' file paths (allows to copy all artifacts at once)
 Initialize-DeployArray
 
 # Copy all at once

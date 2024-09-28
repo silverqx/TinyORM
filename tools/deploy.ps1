@@ -45,7 +45,7 @@ $Script:BumpsHash = $null
 $Script:VersionLocations = $null
 # Files in which a number of unit tests needs to be updated (integer value is the number of updates)
 $Script:NumberOfUnitTestsLocations = $null
-# Vcpkg port filepaths and bumping port-version field for tinyorm port
+# Vcpkg port file paths and bumping port-version field for tinyorm port
 $Script:VcpkgHash = $null
 
 # Tag version with the v prefix
@@ -658,7 +658,7 @@ function Read-VersionNumbers {
         $regex = "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?<version>\d{1,5})$"
 
         # Obtain all C macros with version numbers
-        # No Test-Path check needed as version.hpp filepaths were passed using the Resolve-Path
+        # No Test-Path check needed as version.hpp file paths were passed using the Resolve-Path
         $versionMacros = (Get-Content -Path $versionHppPath) -cmatch $regex
 
         # Verify that the count of matched C macro version numbers is correct
@@ -1218,7 +1218,7 @@ function Read-PortVersionNumbers {
         $vcpkgJsonPath = $portValue.vcpkgJson
 
         # Obtain the port-version field with version number
-        # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
+        # No Test-Path check needed as vcpkg.json file paths were passed using the Resolve-Path
         $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $Script:PortVersionRegEx
 
         $portVersionFieldCount = $portVersionField.Count
@@ -1451,7 +1451,7 @@ function Edit-PortVersionNumbers {
         $vcpkgJsonPath = $portValue.vcpkgJson
 
         # Obtain the port-version field with version number
-        # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
+        # No Test-Path check needed as vcpkg.json file paths were passed using the Resolve-Path
         $fileContent = Get-Content -Path $vcpkgJsonPath
         $portVersionField = $fileContent -cmatch $Script:PortVersionRegEx
 

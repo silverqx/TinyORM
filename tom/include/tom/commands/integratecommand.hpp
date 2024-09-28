@@ -85,7 +85,7 @@ namespace Tom::Commands
         static bool writeTomZshCompletion(const QString &filepath);
         /*! Create /usr/local/share/zsh/site-functions folder for zsh completions. */
         static void createZshCompletionFolder();
-        /*! Get list of all completion filepaths. */
+        /*! Get list of all completion file paths. */
         static QStringList getCompletionFilepaths();
 #endif
 
