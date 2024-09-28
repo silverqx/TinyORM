@@ -3363,6 +3363,11 @@ PowerShell confusions:
 qmake confusions:
 -----------------
 
+ - Platform targeting
+   - use linux: for Linux based systems (it implies unix posix)
+   - use win32: for Windows (also MSYS2 or MinGW-w64 set win32)
+   - use mingw: for MSYS2 or MinGW-w64 (they set also win32)
+
  - load() vs include() prf files:
    - if load() or include() is called inside other feature prf or pri file then you don't need
      to load() or include() again, it's imported into the current scope (what is logical)
@@ -3395,6 +3400,7 @@ qmake confusions:
    is being written).
    When both debug_and_release and static_and_shared are used all four Debug/Release and
    Static/Shared combinations will occur in addition to build_pass.
+   So use !build_pass: ... to exclude all of these build passes.
 
  - static vs staticlib
    - static
