@@ -20,10 +20,13 @@ using Tom::Constants::DoubleDash;
 using Tom::Constants::EMPTY;
 using Tom::Constants::LongOption;
 using Tom::Constants::LongOptionValue;
-using Tom::Constants::ShBash;
 using Tom::Constants::ShPwsh;
-using Tom::Constants::ShZsh;
 using Tom::Constants::ShortOption;
+
+#if defined(__linux__) || defined(__MINGW32__)
+using Tom::Constants::ShBash;
+using Tom::Constants::ShZsh;
+#endif
 
 using TomUtils = Tom::Utils;
 
@@ -107,10 +110,16 @@ int BaseCompleteCommand::printGuessedNamespaces(const QString &wordArg) const
 // FUTURE complete, printGuessedNamespaces and printGuessedShells are practically the same methods, if I will implement another method of this simple list type, then create common method and reuse code silverqx
 int BaseCompleteCommand::printGuessedShells(const QString &wordArg) const
 {
+    /* There is no need to complete the bash and zsh for other platforms.
+       The pwsh can run on all our supported platforms so always complete it. */
     static const std::array allShellNames {
+#if defined(__linux__) || defined(__MINGW32__)
         ShBash,
+#endif
         ShPwsh,
+#if defined(__linux__) || defined(__MINGW32__)
         ShZsh,
+#endif
     };
 
     const auto printAll = wordArg.isEmpty();
