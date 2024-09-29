@@ -45,7 +45,7 @@ IntegrateCommand::IntegrateCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {shell_, u"The shell name (values: bash, pwsh, zsh)"_s, {}, true},
+        {shell_, u"The name of the shell (values: bash, pwsh, zsh)"_s, {}, true},
     };
 
     return cached;
