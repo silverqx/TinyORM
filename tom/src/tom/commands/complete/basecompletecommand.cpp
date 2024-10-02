@@ -132,9 +132,7 @@ int BaseCompleteCommand::printGuessedShells(const QString &wordArg) const
         if (!shellName.isEmpty() && (printAll || shellName.startsWith(wordArg)))
             shellNames << shellName;
 
-    // Want to have it unsorted if printing all namespaces
-    if (!printAll)
-        shellNames.sort(Qt::CaseInsensitive);
+    // Shell names are already sorted
 
     printCompletionResult(shellNames);
 
