@@ -173,6 +173,21 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
     )
         return printGuessedEnvironmentNames(getOptionValue(wordArg));
 
+    /* This could provide directory path completion for all commands with the --path=
+       option, but pwsh isn't able to complete file/dir paths after --path=| (after
+       long options that end with the = character). I leave it here, maybe it will be
+       supported in future versions. */
+//    if ((currentCommandArg == Integrate || currentCommandArg == MakeMigration ||
+//         currentCommandArg == MakeModel || currentCommandArg == MakeSeeder) &&
+//        isLongOptionName(wordArg, path_) &&
+//        currentArgumentPosition == kOnOptionArgument && // tom integrate --path=|
+//        !isNewArgumentPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
+//        bw(argumentsCount, 2, maxArgumentsCount)
+//    ) {
+//        printCompletionResult(<Nothing works here>);
+//        return EXIT_SUCCESS;
+//    }
+
     /* Print long/short options always, the completer is context specific, meaning
        it prints options based on the current command, or prints common options if
        there is no command on the command-line. */
