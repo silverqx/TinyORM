@@ -91,25 +91,25 @@ namespace Types
     constexpr GuessCommandNameType::value_type &
     GuessCommandNameType::operator*() & noexcept
     {
-        return *commandName;
+        return *commandName; // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr const GuessCommandNameType::value_type &
     GuessCommandNameType::operator*() const & noexcept
     {
-        return *commandName;
+        return *commandName; // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr GuessCommandNameType::value_type &&
     GuessCommandNameType::operator*() && noexcept
     {
-        return *std::move(commandName);
+        return *std::move(commandName); // NOLINT(bugprone-unchecked-optional-access)
     }
 
     constexpr const GuessCommandNameType::value_type &&
     GuessCommandNameType::operator*() const && noexcept
     {
-        return *std::move(commandName); // NOLINT(performance-move-const-arg)
+        return *std::move(commandName); // NOLINT(bugprone-unchecked-optional-access, performance-move-const-arg)
     }
 
 } // namespace Types
