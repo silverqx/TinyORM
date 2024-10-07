@@ -36,8 +36,8 @@ QList<CommandLineOption> BashCommand::optionsSignature() const
     return {
         {word_,       u"The current word that is being completed"_s, word_up}, // Value
         {commandline, u"The entire current command-line"_s, commandline_up}, // Value
-        {cword_,      u"Position of the current word on the command-line that is "
-                       "being completed"_s, cword_up}, // Value
+        {cword_,      u"Position of the current word on the command-line that is being "
+                       "completed"_s, cword_up, u"0"_s}, // Value
     };
 }
 
