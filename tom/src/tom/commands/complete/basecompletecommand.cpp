@@ -74,6 +74,8 @@ int BaseCompleteCommand::printGuessedCommands(
                                               command->description());
     }
 
+    // Want to have them always unsorted, they are sorted by namespaces
+
     printCompletionResult(guessedCommands);
 
     return EXIT_SUCCESS;
@@ -98,7 +100,7 @@ int BaseCompleteCommand::printGuessedNamespaces(const QString &wordArg) const
         )
             namespaceNames << namespaceName;
 
-    // Want to have it unsorted if printing all namespaces
+    // Want to have them unsorted if printing all namespaces
     if (!printAll)
         namespaceNames.sort(Qt::CaseInsensitive);
 
@@ -190,6 +192,8 @@ int BaseCompleteCommand::printGuessedLongOptions(
             }
     }
 
+    // Want to have them always unsorted
+
     printCompletionResult(options);
 
     return EXIT_SUCCESS;
@@ -225,6 +229,8 @@ int BaseCompleteCommand::printGuessedShortOptions(
                     appendShortVerboseOptions(options, option.description());
             }
     }
+
+    // Want to have them always unsorted
 
     printCompletionResult(options);
 
@@ -277,8 +283,8 @@ QString BaseCompleteCommand::getOptionDefaultValue(const QCommandLineOption &opt
     Q_ASSERT(defaultValues.size() <= 1);
 
     return defaultValues.isEmpty() ? EMPTY
-                                   : TomUtils::defaultValueText(
-                                         defaultValues.constFirst()); // Quotes the string type
+                                   : TomUtils::defaultValueText( // Quote the string type
+                                         defaultValues.constFirst());
 }
 
 } // namespace Tom::Commands::Complete

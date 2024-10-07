@@ -54,7 +54,7 @@ namespace Tom::Commands::Complete
                 QString &&completionText, const std::optional<QString> &listItemText,
                 const QString &toolTip) const = 0;
 
-        /*! Append short verbose options (-v,-vv,-vvv) to the completion result. */
+        /*! Append short verbose options (-v,-vv,-vvv) to the tab-completion result. */
         virtual void appendShortVerboseOptions(QStringList &options,
                                                const QString &description) const = 0;
 
@@ -92,7 +92,7 @@ namespace Tom::Commands::Complete
 
     private:
         /* Printing support */
-        /*! Print the completion result. */
+        /*! Print the tab-completion result. */
         inline void printCompletionResult(const QStringList &result) const;
 
         /*! Prepare one result value (argument or option) for printing (shortcut). */

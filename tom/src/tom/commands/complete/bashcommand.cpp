@@ -34,10 +34,10 @@ BashCommand::BashCommand(Application &application, QCommandLineParser &parser)
 QList<CommandLineOption> BashCommand::optionsSignature() const
 {
     return {
-        {word_,       u"The current word that is being completed"_s, word_up},
-        {commandline, u"The entire current command-line"_s, commandline_up},
+        {word_,       u"The current word that is being completed"_s, word_up}, // Value
+        {commandline, u"The entire current command-line"_s, commandline_up}, // Value
         {cword_,      u"Position of the current word on the command-line that is "
-                       "being completed"_s, cword_up},
+                       "being completed"_s, cword_up}, // Value
     };
 }
 
@@ -92,9 +92,9 @@ int BashCommand::run()
     if (isShortOption(wordArg) && cwordArg >= 1)
         return printGuessedShortOptions(currentCommandArg);
 
-    /* This doesn't block file/dir paths completion on bash, the _filedir function
-       must be called explicitly to invoke file/dir paths completion, it's done
-       by the command name in the __tom_filedir function. */
+    /* This doesn't block directory paths completion on bash, the _filedir like function
+       must be called explicitly to invoke directory paths completion, it's done
+       based on the command name in the __tom_complete_dir function. */
     printCompletionResult(EMPTY);
 
     return EXIT_SUCCESS;

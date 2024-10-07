@@ -69,10 +69,10 @@ PwshCommand::PwshCommand(Application &application, QCommandLineParser &parser)
 QList<CommandLineOption> PwshCommand::optionsSignature() const
 {
     return {
-        {word_,       u"The current word that is being completed"_s, word_up},
-        {commandline, u"The entire current command-line"_s, commandline_up},
+        {word_,       u"The current word that is being completed"_s, word_up}, // Value
+        {commandline, u"The entire current command-line"_s, commandline_up}, // Value
         {position_,   u"The current position of the cursor on the command-line"_s,
-                      position_up, u"0"_s},
+                      position_up, u"0"_s}, // Value
     };
 }
 
@@ -212,8 +212,8 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
     )
         return printGuessedShortOptions(currentCommandArg.commandName);
 
-    /* Block paths completion, pwsh Register-ArgumentCompleter will Trim()
-       the output and returns $null if empty (preventing paths completion). */
+    /* Block file/dir paths completion, our pwsh Register-ArgumentCompleter will Trim()
+       this output and returns $null if output is empty (preventing paths completion). */
     printCompletionResult(NEWLINE);
 
     return EXIT_SUCCESS;

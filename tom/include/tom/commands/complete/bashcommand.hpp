@@ -49,7 +49,7 @@ namespace Tom::Commands::Complete
                 QString &&completionText, const std::optional<QString> &listItemText,
                 const QString &toolTip) const override;
 
-        /*! Append short verbose options (-v,-vv,-vvv) to the completion result. */
+        /*! Append short verbose options (-v,-vv,-vvv) to the tab-completion result. */
         inline void appendShortVerboseOptions(QStringList &options,
                                               const QString &description) const override;
     };
