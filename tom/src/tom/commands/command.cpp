@@ -425,9 +425,9 @@ QString Command::argumentInternal(const QStringList &positionalArguments,
     return positionalArguments.value(index, defaultValue);
 }
 
-QStringList::size_type Command::commasCount(const QStringList &values)
+Command::SizeType Command::commasCount(const QStringList &values)
 {
-    QStringList::size_type result = 0;
+    SizeType result = 0;
 
     for (const auto &value : values)
         result += value.count(COMMA_C);
