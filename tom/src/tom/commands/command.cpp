@@ -254,7 +254,7 @@ QString Command::longOption(const QString &name, const QString &value)
     return u"--%1=%2"_s.arg(name, value);
 }
 
-bool Command::hasArgument(const ArgumentsSizeType index) const
+bool Command::hasArgument(const SizeType index) const
 {
     /* Has to be isNull(), an argument passed on the command-line still can be an empty
        value, like "", in this case it has to return a true value. */
@@ -272,7 +272,7 @@ QStringList Command::arguments() const
     return parser().positionalArguments();
 }
 
-QString Command::argument(const ArgumentsSizeType index, const bool useDefault) const
+QString Command::argument(const SizeType index, const bool useDefault) const
 {
     /* Below is confusing so look at the example for eg. tom help about:
        parser().positionalArguments() will contain {"help", "about"}
@@ -340,19 +340,19 @@ void Command::initializePositionalArguments()
 
     m_positionalArguments =
             ranges::views::zip_with([](const PositionalArgument &argument,
-                                       const ArgumentsSizeType index)
-                                    -> std::pair<QString, ArgumentsSizeType>
+                                       const SizeType index)
+                                    -> std::pair<QString, SizeType>
     {
         return {argument.name, index};
     },
         arguments,
-        ranges::views::closed_iota(static_cast<ArgumentsSizeType>(1),
-                                   static_cast<ArgumentsSizeType>(arguments.size()))
+        ranges::views::closed_iota(static_cast<SizeType>(1),
+                                   static_cast<SizeType>(arguments.size()))
     )
         | ranges::to<decltype (m_positionalArguments)>();
 
     // The same as above, I leave above as I want to have one example with zip_with()
-//    for (ArgumentsSizeType index = 0; const auto &argument : positionalArguments())
+//    for (SizeType index = 0; const auto &argument : positionalArguments())
 //        m_positionalArguments.emplace(argument.name, ++index);
 }
 
@@ -404,7 +404,7 @@ void Command::validateRequiredArguments() const
 }
 
 QString Command::argumentInternal(const QStringList &positionalArguments,
-                                  const ArgumentsSizeType index) const
+                                  const SizeType index) const
 {
     // This method can't be called with index 0 (main/tom command) if useDefault == true
     Q_ASSERT_X(index > 0, "Command::argument()",

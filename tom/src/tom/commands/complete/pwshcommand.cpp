@@ -172,7 +172,7 @@ CompleteContext PwshCommand::initializeCompletionContext()
 
 /* Context - Positional arguments */
 
-ArgumentsSizeType
+SizeType
 PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
                                         const QStringView wordArg) const
 {
@@ -180,7 +180,7 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
     if (isOptionArgument(wordArg))
         return kOnOptionArgument;
 
-    ArgumentsSizeType index = kUndefinedPosition;
+    SizeType index = kUndefinedPosition;
                                                                       // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
     for (const auto commandlineSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach; Already trimmed by pwsh
          const auto argument : commandlineSplitted
@@ -255,7 +255,7 @@ PwshCommand::getWordArgOptionValue() const
 
 MultiValueOptionType PwshCommand::findCurrentWord() const
 {
-    constexpr static ArgumentsSizeType Position0 = 0; // Needed by the std::max()
+    constexpr static SizeType Position0 = 0; // Needed by the std::max()
 
     const auto firstCharIdx  = m_commandlineArg.lastIndexOf(
                                    SPACE, std::max(Position0, m_positionArg - 1) // The lowest must always be 0
@@ -490,7 +490,7 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
     };
 }
 
-ArgumentsSizeType
+SizeType
 PwshCommand::getOptionValuesLastPosition(const QStringView optionValuesArg) const
 {
     const auto multiValueOptionPosition = context().multiValueOptionPosition;
@@ -615,7 +615,7 @@ void PwshCommand::validateInputOptionValues() const
                 .arg(minRequiredPosition).arg(__tiny_func__));
 }
 
-ArgumentsSizeType PwshCommand::getCursorPositionAfterExecutable() const
+SizeType PwshCommand::getCursorPositionAfterExecutable() const
 {
     const auto firstSpacePosition = m_commandlineArg.indexOf(SPACE);
 

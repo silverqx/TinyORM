@@ -16,7 +16,7 @@ namespace Tom::Commands::Complete
     /* Common for all */
 
     /*! Alias for the QList command-line option size type. */
-    using ArgumentsSizeType = Command::ArgumentsSizeType;
+    using SizeType = Command::SizeType;
 
     /*! Tom command positional argument position on the command-line. */
     inline constexpr qint8 ArgTomCommand = 1;
@@ -44,12 +44,12 @@ namespace Tom::Commands::Complete
         /*! The current word that is being completed. */
         QStringView wordArg;
         /*! Number of all positional arguments on the command-line. */
-        ArgumentsSizeType argumentsCount = 0;
+        SizeType argumentsCount = 0;
         /*! Tom command (positional argument) position under the cursor (0-based) or
             kOnOptionArgument if the cursor is on the long/short option. */
-        ArgumentsSizeType currentArgumentPosition = kUndefinedPosition;
+        SizeType currentArgumentPosition = kUndefinedPosition;
         /*! Number of positional arguments for all commands. (from signature). */
-        ArgumentsSizeType maxArgumentsCount = 0;
+        SizeType maxArgumentsCount = 0;
         /*! Is known/our or ambiguous Tom command on the command-line? (!kNotFound) */
         bool hasAnyTomCommand = false; // true = kFound || kAmbiguous; false = kNotFound
         /*! Determine if the cursor is at the end on the command-line, in this case
@@ -58,7 +58,7 @@ namespace Tom::Commands::Complete
         bool isNewArgumentPositionAtEnd = false; // pwsh only; !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
         /*! Multi-value option value position without the long option prefix,
             eg. for --only=env,mac|ros,versions the position will be 7 (0-based). */
-        ArgumentsSizeType multiValueOptionPosition = kUndefinedPosition; // pwsh only
+        SizeType multiValueOptionPosition = kUndefinedPosition; // pwsh only
     };
 
     /*! Option type (long/short). */
@@ -87,7 +87,7 @@ namespace Tom::Commands::Complete
             wordArg position in the commandlineArg eg. for
             tom about ¦--only=env,mac|ros,versions the position will be 10 (0-based).
             Legend: | - tab hit; ¦ - result. */
-        ArgumentsSizeType multiValueOptionPosition = kUndefinedPosition;
+        SizeType multiValueOptionPosition = kUndefinedPosition;
     };
 
     /*! Return type for initializePrintArrayOptionValues() (multi-value options). */

@@ -37,19 +37,19 @@ namespace Tom::Commands::Complete
         using enum TomCursorPostion;
 
         /*! Get the currently processed Tom command. */
-        GuessedCommandName getCurrentTomCommand(ArgumentsSizeType argumentsCount) const;
+        GuessedCommandName getCurrentTomCommand(SizeType argumentsCount) const;
         /*! Get the raw Tom command name (positional argument number 1). */
         QStringView getRawTomCommandName() const;
 
         /* Positional arguments */
         /*! Get the number of positional arguments on the command-line. */
-        inline ArgumentsSizeType getArgumentsCount() const;
+        inline SizeType getArgumentsCount() const;
 
         /*! Get number of positional arguments between all commands (from signature). */
-        ArgumentsSizeType getMaxArgumentsCount(bool hasAnyTomCommand) const;
+        SizeType getMaxArgumentsCount(bool hasAnyTomCommand) const;
         /*! Get number of positional arguments for the given command (from signature). */
-        ArgumentsSizeType getMaxArgumentsCount(const QString &command,
-                                               bool hasAnyTomCommand = true) const;
+        SizeType getMaxArgumentsCount(const QString &command,
+                                      bool hasAnyTomCommand = true) const;
 
         /* Complete conditions */
         /*! Print all commands after the tom command itself or for the help command. */
@@ -122,12 +122,9 @@ namespace Tom::Commands::Complete
 
         /* Others */
         /*! Determine whether the given value is between min/max (inclusive). */
-        inline static bool
-        between(ArgumentsSizeType value, ArgumentsSizeType min,
-                                         ArgumentsSizeType max) noexcept;
+        inline static bool between(SizeType value, SizeType min, SizeType max) noexcept;
         /*! Determine whether the given value is between min/max (inclusive) (alias). */
-        inline static bool bw(ArgumentsSizeType value, ArgumentsSizeType min,
-                                                       ArgumentsSizeType max) noexcept;
+        inline static bool bw(SizeType value, SizeType min, SizeType max) noexcept;
 
         /*! Validate the required option arguments (checks isSet()). */
         virtual void validateInputOptions() const;
@@ -177,7 +174,7 @@ namespace Tom::Commands::Complete
 
     /* Positional arguments */
 
-    ArgumentsSizeType BaseCompleteCommand::getArgumentsCount() const
+    SizeType BaseCompleteCommand::getArgumentsCount() const
     {
         return std::ranges::count_if(m_commandlineArgSplitted,
                                      [](const QStringView argument)
@@ -358,9 +355,8 @@ namespace Tom::Commands::Complete
 
     /* Others */
 
-    bool BaseCompleteCommand::between(
-            const ArgumentsSizeType value, const ArgumentsSizeType min,
-                                           const ArgumentsSizeType max) noexcept
+    bool BaseCompleteCommand::between(const SizeType value, const SizeType min,
+                                                            const SizeType max) noexcept
     {
         return value >= min && value <= max;
     }
@@ -381,9 +377,8 @@ namespace Tom::Commands::Complete
         return prepareResultValue(std::move(completionText), std::nullopt, toolTip);
     }
 
-    bool BaseCompleteCommand::bw(
-            const ArgumentsSizeType value, const ArgumentsSizeType min,
-                                           const ArgumentsSizeType max) noexcept
+    bool BaseCompleteCommand::bw(const SizeType value, const SizeType min,
+                                                       const SizeType max) noexcept
     {
         return between(value, min, max);
     }

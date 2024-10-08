@@ -42,7 +42,7 @@ namespace Tom::Commands::Complete
         /* Context - Positional arguments */
         /*! Get the Tom command (positional argument) position under the cursor (0-based)
             or kOnOptionArgument if the cursor is on the long/short option. */
-        ArgumentsSizeType
+        SizeType
         getCurrentArgumentPosition(QStringView commandlineArg, QStringView wordArg) const;
 
         /*! Get the entire command-line before the cursor. */
@@ -56,9 +56,9 @@ namespace Tom::Commands::Complete
         MultiValueOptionType findCurrentWord() const;
         /*! Compute a multi-value option value position without the long option prefix,
             eg. for --only=env,mac|ros,versions the position will be 7 (0-based). */
-        inline ArgumentsSizeType
+        inline SizeType
         computeMultiValueOptionPosition(QStringView currentWord,
-                                        ArgumentsSizeType currentWordPostion) const;
+                                        SizeType currentWordPostion) const;
 
         /*! Determine if the given word is a long option argument with multi-value. */
         static bool isLongOptionWithArrayValue(QStringView wordArg);
@@ -101,7 +101,7 @@ namespace Tom::Commands::Complete
         inline QStringView
         getOptionValuesBeforeCursor(QStringView optionValuesArg) const;
         /*! Get the last character position for the value/s before the cursor (multi). */
-        ArgumentsSizeType
+        SizeType
         getOptionValuesLastPosition(QStringView optionValuesArg) const;
         /*! Filter out option values that are already completed on the command-line. */
         static QList<QStringView>
@@ -123,13 +123,13 @@ namespace Tom::Commands::Complete
         void validateInputOptionValues() const override;
 
         /*! Get cursor position after the tom executable including the space (0-based). */
-        ArgumentsSizeType getCursorPositionAfterExecutable() const;
+        SizeType getCursorPositionAfterExecutable() const;
 
         /* Data members */
         /*! The current position of the cursor on the command-line (0-based). */
-        ArgumentsSizeType m_positionArg = kUndefinedPosition;
+        SizeType m_positionArg = kUndefinedPosition;
         /*! Size of the --commandline= option value. */
-        ArgumentsSizeType m_commandlineArgSize = -1;
+        SizeType m_commandlineArgSize = -1;
         /*! Determine if the cursor is at the end on the command-line, in this case
             positionArg > commandlineArgSize (this is pwsh specific). */
         bool m_isNewArgumentPositionAtEnd = false;
@@ -161,10 +161,9 @@ namespace Tom::Commands::Complete
 
     /* Context - Option arguments */
 
-    ArgumentsSizeType
-    PwshCommand::computeMultiValueOptionPosition(
-            const QStringView currentWord,
-            const ArgumentsSizeType currentWordPostion) const
+    SizeType
+    PwshCommand::computeMultiValueOptionPosition(const QStringView currentWord,
+                                                 const SizeType currentWordPostion) const
     {
         /* Find the first character position after the =; it's the same like:
            m_positionArg - currentWordPostion - indexOf(EQ_C) - 1. */

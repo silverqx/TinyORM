@@ -65,7 +65,7 @@ int BaseCompleteCommand::run()
 /* Current Tom command */
 
 GuessedCommandName
-BaseCompleteCommand::getCurrentTomCommand(const ArgumentsSizeType argumentsCount) const
+BaseCompleteCommand::getCurrentTomCommand(const SizeType argumentsCount) const
 {
     // Nothing to do, no Tom command on the command-line (only the tom executable name)
     if (argumentsCount <= 1)
@@ -77,7 +77,7 @@ BaseCompleteCommand::getCurrentTomCommand(const ArgumentsSizeType argumentsCount
 
 QStringView BaseCompleteCommand::getRawTomCommandName() const
 {
-    for (ArgumentsSizeType index = kUndefinedPosition;
+    for (SizeType index = kUndefinedPosition;
          const auto argument : m_commandlineArgSplitted
     ) {
         if (isOptionArgument(argument))
@@ -97,14 +97,13 @@ QStringView BaseCompleteCommand::getRawTomCommandName() const
 #endif
 }
 
-ArgumentsSizeType
-BaseCompleteCommand::getMaxArgumentsCount(const bool hasAnyTomCommand) const
+SizeType BaseCompleteCommand::getMaxArgumentsCount(const bool hasAnyTomCommand) const
 {
     using CommandType = std::shared_ptr<Application::Command>;
 
     // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
     return 1 + (hasAnyTomCommand ? 1 : 0) +
-            static_cast<ArgumentsSizeType>(
+            static_cast<SizeType>(
                 (*std::ranges::max_element(application().createCommandsVector(),
                                            std::less(), [](const CommandType &command)
     {
@@ -113,13 +112,13 @@ BaseCompleteCommand::getMaxArgumentsCount(const bool hasAnyTomCommand) const
         ->positionalArguments().size());
 }
 
-ArgumentsSizeType
+SizeType
 BaseCompleteCommand::getMaxArgumentsCount(const QString &command,
                                           const bool hasAnyTomCommand) const
 {
     // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
     return 1 + (hasAnyTomCommand ? 1 : 0) +
-            static_cast<ArgumentsSizeType>(
+            static_cast<SizeType>(
                 application().createCommand(command, std::nullopt, false)
                             ->positionalArguments().size());
 }

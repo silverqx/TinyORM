@@ -64,7 +64,7 @@ namespace Commands
 
     public:
         /*! Alias for the QList command-line option size type. */
-        using ArgumentsSizeType = QStringList::size_type;
+        using SizeType = QStringList::size_type;
 
         /*! Constructor. */
         Command(Application &application, QCommandLineParser &parser);
@@ -132,7 +132,7 @@ namespace Commands
         static QString longOption(const QString &name, const QString &value);
 
         /*! Check whether a positional argument at the given index was set. */
-        bool hasArgument(ArgumentsSizeType index) const;
+        bool hasArgument(SizeType index) const;
         /*! Check whether a positional argument by the given name was set. */
         bool hasArgument(const QString &name) const;
 
@@ -140,7 +140,7 @@ namespace Commands
         QStringList arguments() const;
 
         /*! Get a positional argument at the given index position. */
-        QString argument(ArgumentsSizeType index, bool useDefault = true) const;
+        QString argument(SizeType index, bool useDefault = true) const;
         /*! Get a positional argument by the given name. */
         QString argument(const QString &name, bool useDefault = true) const;
 
@@ -171,7 +171,7 @@ namespace Commands
         QStringList m_arguments;
 
         /*! Map positional argument names to the index for obtaining values. */
-        std::unordered_map<QString, ArgumentsSizeType> m_positionalArguments;
+        std::unordered_map<QString, SizeType> m_positionalArguments;
 
     private:
         /*! Initialize positional arguments map. */
@@ -184,8 +184,8 @@ namespace Commands
         void validateRequiredArguments() const;
 
         /*! Get a positional argument at the given index position. */
-        QString argumentInternal(const QStringList &positionalArguments,
-                                 ArgumentsSizeType index) const;
+        QString
+        argumentInternal(const QStringList &positionalArguments, SizeType index) const;
 
         /*! Count the number of commas in the values list for reserve. */
         static QStringList::size_type

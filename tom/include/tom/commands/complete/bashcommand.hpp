@@ -57,7 +57,7 @@ namespace Tom::Commands::Complete
 
         /* Data members */
         /*! Index of the current word under the cursor on the command-line (0-based). */
-        ArgumentsSizeType m_cwordArg = 0;
+        SizeType m_cwordArg = 0;
     };
 
     /* public */
