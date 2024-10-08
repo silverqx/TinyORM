@@ -69,11 +69,11 @@ GuessCommandName::guessCommandNameForComplete(const QString &name)
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsForComplete(const QString &name)
 {
-    const auto isNamespacedCmd = name.contains(COLON);
+    const auto isNamespacedCommand = name.contains(COLON);
 
     // Here we need to print all Tom commands in all namespaces after <TAB> pressed
-    return isNamespacedCmd ? guessCommandsWithNamespace(name)
-                           : guessCommandsInAllNamespaces(name);
+    return isNamespacedCommand ? guessCommandsWithNamespace(name)
+                               : guessCommandsInAllNamespaces(name);
 }
 
 /* private */
@@ -165,14 +165,14 @@ GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsInternal(const QString &name)
 {
-    const auto isGlobalCmd = !name.contains(COLON);
+    const auto isGlobalCommand = !name.contains(COLON);
 
     /* The reason why the first is the guessCommandsWithoutNamespace() and not
        the guessCommandsInAllNamespaces() is that eg. the tom mig must match only
        the tom migrate, with the guessCommandsInAllNamespaces() it would match
        all migrate:xyz and it would be ambiguous. */
-    return isGlobalCmd ? guessCommandsWithoutNamespace(name)
-                       : guessCommandsWithNamespace(name);
+    return isGlobalCommand ? guessCommandsWithoutNamespace(name)
+                           : guessCommandsWithNamespace(name);
 }
 
 /* Others */
