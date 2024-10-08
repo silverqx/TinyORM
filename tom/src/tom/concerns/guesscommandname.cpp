@@ -60,10 +60,10 @@ GuessCommandName::guessCommandNameForComplete(const QString &name)
 
     // No Tom command found
     if (commands.empty())
-        return {kNotFound, std::nullopt};
+        return {kNotFound};
 
     // More Tom commands found
-    return {kAmbiguous, std::nullopt};
+    return {kAmbiguous};
 }
 
 std::vector<std::shared_ptr<Command>>
