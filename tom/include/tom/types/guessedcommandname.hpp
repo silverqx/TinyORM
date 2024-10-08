@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOM_TYPES_GUESSCOMMANDNAMETYPE_HPP
-#define TOM_TYPES_GUESSCOMMANDNAMETYPE_HPP
+#ifndef TOM_TYPES_GUESSEDCOMMANDNAME_HPP
+#define TOM_TYPES_GUESSEDCOMMANDNAME_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -17,7 +17,7 @@ namespace Types
 {
 
     /*! Enum result for guessing the Tom command name (for the complete command). */
-    enum struct GuessCommandNameResult : quint8
+    enum struct GuessedCommandNameResult : quint8
     {
         /*! Tom command name was found. */
         kFound,
@@ -28,10 +28,10 @@ namespace Types
     };
 
     /*! Result for guessing the Tom command name (for the complete command). */
-    struct GuessCommandNameType
+    struct GuessedCommandName
     {
         /*! Guessing result for the Tom command name. */
-        GuessCommandNameResult result = GuessCommandNameResult::kNotFound;
+        GuessedCommandNameResult result = GuessedCommandNameResult::kNotFound;
         /*! Guessed Tom command name. */
         std::optional<QString> commandName = std::nullopt;
 
@@ -44,13 +44,13 @@ namespace Types
 
         /*! Equality comparison operator for the std::optional<QString> (commandName). */
         template<typename T>
-        requires (std::convertible_to<T, const GuessCommandNameType::value_type &>)
+        requires (std::convertible_to<T, const GuessedCommandName::value_type &>)
         [[nodiscard]] constexpr bool operator==(const T &other) const
         noexcept(noexcept(commandName == other));
 
-        /*! Equality comparison operator for the GuessCommandNameResult (result). */
+        /*! Equality comparison operator for the GuessedCommandNameResult (result). */
         template<typename T>
-        requires (std::convertible_to<T, GuessCommandNameType::ResultType>)
+        requires (std::convertible_to<T, GuessedCommandName::ResultType>)
         [[nodiscard]] constexpr bool operator==(T other) const noexcept;
 
         /*! Determine whether the std::optional<> contains a Tom command name. */
@@ -69,56 +69,56 @@ namespace Types
     /* public */
 
     template<typename T>
-    requires (std::convertible_to<T, const GuessCommandNameType::value_type &>)
-    [[nodiscard]] constexpr bool GuessCommandNameType::operator==(const T &other) const
+    requires (std::convertible_to<T, const GuessedCommandName::value_type &>)
+    [[nodiscard]] constexpr bool GuessedCommandName::operator==(const T &other) const
     noexcept(noexcept(commandName == other))
     {
         return commandName == other;
     }
 
     template<typename T>
-    requires (std::convertible_to<T, GuessCommandNameType::ResultType>)
-    constexpr bool GuessCommandNameType::operator==(const T other) const noexcept
+    requires (std::convertible_to<T, GuessedCommandName::ResultType>)
+    constexpr bool GuessedCommandName::operator==(const T other) const noexcept
     {
         return result == other;
     }
 
-    constexpr GuessCommandNameType::operator bool() const noexcept
+    constexpr GuessedCommandName::operator bool() const noexcept
     {
         return static_cast<bool>(commandName);
     }
 
-    constexpr GuessCommandNameType::value_type &
-    GuessCommandNameType::operator*() & noexcept
+    constexpr GuessedCommandName::value_type &
+    GuessedCommandName::operator*() & noexcept
     {
         return *commandName; // NOLINT(bugprone-unchecked-optional-access)
     }
 
-    constexpr const GuessCommandNameType::value_type &
-    GuessCommandNameType::operator*() const & noexcept
+    constexpr const GuessedCommandName::value_type &
+    GuessedCommandName::operator*() const & noexcept
     {
         return *commandName; // NOLINT(bugprone-unchecked-optional-access)
     }
 
-    constexpr GuessCommandNameType::value_type &&
-    GuessCommandNameType::operator*() && noexcept
+    constexpr GuessedCommandName::value_type &&
+    GuessedCommandName::operator*() && noexcept
     {
         return *std::move(commandName); // NOLINT(bugprone-unchecked-optional-access)
     }
 
-    constexpr const GuessCommandNameType::value_type &&
-    GuessCommandNameType::operator*() const && noexcept
+    constexpr const GuessedCommandName::value_type &&
+    GuessedCommandName::operator*() const && noexcept
     {
         return *std::move(commandName); // NOLINT(bugprone-unchecked-optional-access, performance-move-const-arg)
     }
 
 } // namespace Types
 
-    using GuessCommandNameResult = Tom::Types::GuessCommandNameResult;
-    using GuessCommandNameType   = Tom::Types::GuessCommandNameType;
+    using GuessedCommandNameResult = Tom::Types::GuessedCommandNameResult;
+    using GuessedCommandName       = Tom::Types::GuessedCommandName;
 
 } // namespace Tom
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // TOM_TYPES_GUESSCOMMANDNAMETYPE_HPP
+#endif // TOM_TYPES_GUESSEDCOMMANDNAME_HPP

@@ -78,7 +78,7 @@ headersList += \
     $$PWD/tom/tomtypes.hpp \
     $$PWD/tom/tomutils.hpp \
     $$PWD/tom/types/commandlineoption.hpp \
-    $$PWD/tom/types/guesscommandnametype.hpp \
+    $$PWD/tom/types/guessedcommandname.hpp \
     $$PWD/tom/version.hpp \
 
 HEADERS += $$sorted(headersList)

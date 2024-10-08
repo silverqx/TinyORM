@@ -32,7 +32,7 @@ using Tom::Constants::ShZsh;
 
 using TomUtils = Tom::Utils;
 
-using enum Tom::GuessCommandNameResult;
+using enum Tom::GuessedCommandNameResult;
 
 namespace Tom::Commands::Complete
 {
@@ -64,7 +64,7 @@ int BaseCompleteCommand::run()
 
 /* Current Tom command */
 
-GuessCommandNameType
+GuessedCommandName
 BaseCompleteCommand::getCurrentTomCommand(const ArgumentsSizeType argumentsCount) const
 {
     // Nothing to do, no Tom command on the command-line (only the tom executable name)

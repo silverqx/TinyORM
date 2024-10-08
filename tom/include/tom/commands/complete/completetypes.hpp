@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
-#include "tom/types/guesscommandnametype.hpp"
+#include "tom/types/guessedcommandname.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -40,7 +40,7 @@ namespace Tom::Commands::Complete
     struct CompleteContext
     {
         /*! Currently processed Tom command. */
-        GuessCommandNameType currentCommandArg;
+        GuessedCommandName currentCommandArg;
         /*! The current word that is being completed. */
         QStringView wordArg;
         /*! Number of all positional arguments on the command-line. */

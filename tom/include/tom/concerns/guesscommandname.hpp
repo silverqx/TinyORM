@@ -27,7 +27,7 @@ namespace Commands
 }
 namespace Types
 {
-    struct GuessCommandNameType;
+    struct GuessedCommandName;
 }
 
 namespace Concerns
@@ -40,8 +40,8 @@ namespace Concerns
 
         /*! Alias for the Command. */
         using Command = Commands::Command;
-        /*! Alias for the GuessCommandNameType. */
-        using GuessCommandNameType = Types::GuessCommandNameType;
+        /*! Alias for the GuessedCommandName. */
+        using GuessedCommandName = Types::GuessedCommandName;
 
     public:
         /*! Pure virtual destructor. */
@@ -57,7 +57,7 @@ namespace Concerns
 
         /* For the complete command */
         /*! Try to guess one Tom command name by the given name (for complete logic). */
-        GuessCommandNameType
+        GuessedCommandName
         guessCommandNameForComplete(QStringView name); // The name can be partial
 
         /*! Try to guess all Tom commands by the given name (for printing to the cout). */

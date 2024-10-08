@@ -31,13 +31,13 @@ namespace Tom::Commands::Complete
         inline const CompleteContext &context() const;
 
         /* Current Tom command */
-        /*! Alias for the GuessCommandNameType. */
-        using GuessCommandNameType = Types::GuessCommandNameType;
+        /*! Alias for the GuessedCommandName. */
+        using GuessedCommandName = Types::GuessedCommandName;
         /*! Expose the TomCursorPostion enum. */
         using enum TomCursorPostion;
 
         /*! Get the currently processed Tom command. */
-        GuessCommandNameType getCurrentTomCommand(ArgumentsSizeType argumentsCount) const;
+        GuessedCommandName getCurrentTomCommand(ArgumentsSizeType argumentsCount) const;
         /*! Get the raw Tom command name (positional argument number 1). */
         QStringView getRawTomCommandName() const;
 
@@ -268,7 +268,7 @@ namespace Tom::Commands::Complete
                 _1, hasAnyTomCommand, isNewArgumentPositionAtEnd, _2
         ] = context();
 
-        using enum Tom::GuessCommandNameResult;
+        using enum Tom::GuessedCommandNameResult;
 
         return isLongOptionName(wordArg, Constants::database_) &&
                 ((currentCommandArg == kFound && argumentsCount == 2) ||

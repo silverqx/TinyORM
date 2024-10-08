@@ -18,7 +18,7 @@ using Tom::Constants::cword_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
-using enum Tom::GuessCommandNameResult;
+using enum Tom::GuessedCommandNameResult;
 
 namespace Tom::Commands::Complete
 {

@@ -8,7 +8,7 @@
 
 #include "tom/application.hpp"
 #include "tom/commands/command.hpp"
-#include "tom/types/guesscommandnametype.hpp"
+#include "tom/types/guessedcommandname.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -22,7 +22,7 @@ using Tom::Constants::NsNamespaced;
 
 using Tom::Commands::Command;
 
-using enum Tom::GuessCommandNameResult;
+using enum Tom::GuessedCommandNameResult;
 
 namespace Tom::Concerns
 {
@@ -49,7 +49,7 @@ QString GuessCommandName::guessCommandName(const QString &name)
 
 /* For the complete command */
 
-GuessCommandNameType
+GuessedCommandName
 GuessCommandName::guessCommandNameForComplete(const QStringView name)
 {
     const auto commands = guessCommandsInternal(name);

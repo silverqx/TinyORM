@@ -40,7 +40,7 @@ using Tom::Constants::position_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
-using enum Tom::GuessCommandNameResult;
+using enum Tom::GuessedCommandNameResult;
 
 namespace Tom::Commands::Complete
 {

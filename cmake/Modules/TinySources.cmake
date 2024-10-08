@@ -548,7 +548,7 @@ function(tinytom_sources out_headers out_sources)
         tomtypes.hpp
         tomutils.hpp
         types/commandlineoption.hpp
-        types/guesscommandnametype.hpp
+        types/guessedcommandname.hpp
         version.hpp
     )
 
