@@ -4,48 +4,36 @@
 
 #include <fstream>
 
-#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
 
 #include <orm/constants.hpp>
-#include <orm/macros/likely.hpp>
 #include <orm/utils/string.hpp>
+#include <orm/utils/type.hpp>
 
 #include "tom/application.hpp"
-#include "tom/types/guesscommandnametype.hpp"
-
-#ifndef TINYTOM_DEBUG
-#  include "tom/exceptions/runtimeerror.hpp"
-#endif
+#include "tom/exceptions/invalidargumenterror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
 
 using Orm::Constants::COMMA_C;
-using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
-using Orm::Constants::NEWLINE_C;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
-using Orm::Constants::database_;
 
 using StringUtils = Orm::Utils::String;
 
-using Tom::Constants::About;
-using Tom::Constants::DbSeed;
 using Tom::Constants::EMPTY;
+using Tom::Constants::EQ_C;
 using Tom::Constants::Env;
-using Tom::Constants::Help;
-using Tom::Constants::Integrate;
-using Tom::Constants::List;
-using Tom::Constants::LongOption;
 using Tom::Constants::LongOptionEq;
 using Tom::Constants::TMPL_RESULT2;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
 using Tom::Constants::connection_;
+using Tom::Constants::database_;
 using Tom::Constants::only_;
 using Tom::Constants::position_;
 using Tom::Constants::position_up;
@@ -72,106 +60,40 @@ QList<CommandLineOption> PwshCommand::optionsSignature() const
         {word_,       u"The current word that is being completed"_s, word_up}, // Value
         {commandline, u"The entire current command-line"_s, commandline_up}, // Value
         {position_,   u"The current position of the cursor on the command-line"_s,
-                      position_up, u"0"_s}, // Value
+                      position_up}, // Value (can't have the default value as it's required)
     };
 }
 
-int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
+int PwshCommand::run()
 {
     BaseCompleteCommand::run();
 
-    /* Initialization section */
-    const auto commandlineArg = value(commandline);
-    const auto positionArg    = value(position_).toLongLong();
-
-    // Common for both (Tom command and option)
-    const auto commandlineArgSize     = commandlineArg.size();      // CUR1 finish silverqx
-    const auto commandlineArgSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // Already trimmed by pwsh
-    Q_ASSERT(!commandlineArgSplitted.isEmpty());
-
-    // Get an option value for the --word= option (with workaround for pwsh)
-    const auto wordArg = getWordOptionValue(commandlineArgSplitted, positionArg,
-                                            commandlineArgSize);
-
-    // Currently processed Tom command
-//    const auto isCommandLineEndPosition   = positionArg == commandlineArgSize;
-    const auto isNewArgumentPositionAtEnd = positionArg > commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
-    const auto argumentsCount             = getArgumentsCount(commandlineArgSplitted);
-    const auto currentCommandArg          = getCurrentTomCommand(commandlineArgSplitted,
-                                                                 argumentsCount);
-    const auto currentArgumentPosition    = getCurrentArgumentPosition(
-                                                {commandlineArg.constData(),
-                                                 isNewArgumentPositionAtEnd
-                                                 ? positionArg - 1 : positionArg},
-                                                wordArg, isNewArgumentPositionAtEnd);
-    m_hasAnyTomCommand = currentCommandArg != kNotFound; // kFound || kAmbiguous
-    const auto maxArgumentsCount = getMaxArgumentsCount();
-
     /* Main logic section */
 
-    // Print all commands after tom command itself or for the help command
-    if (wordArg.isEmpty() &&
-        ((currentArgumentPosition == TomCommandPosition && bw(argumentsCount, 1, 2)) || // tom | ; tom | a
-         (currentCommandArg == Help && argumentsCount == 2 &&
-                                       currentArgumentPosition == 2)) // tom help |
-    )
-        return printGuessedCommands(application().guessCommandsForComplete({}));
-
-    // Print all guessed commands by the word argument after tom or for the help command
-    if (!wordArg.isEmpty() && !isOptionArgument(wordArg) &&
-        ((bw(argumentsCount, 2, maxArgumentsCount) &&       // tom db:se|           ; tom db:see|d           ; tom db:seed|
-          currentArgumentPosition == TomCommandPosition) || // tom db:se| XyzSeeder ; tom db:see|d XyzSeeder ; tom db:seed| XyzSeeder
-         (currentCommandArg == Help && argumentsCount == 3 &&
-          (currentArgumentPosition == TomCommandPosition || // tom he| a   ; tom hel|p a ; tom help| a
-           currentArgumentPosition == 2)))                  // tom help a| ; tom help ab|out
-    )
-        return printGuessedCommands(application().guessCommandsForComplete(wordArg));
+    // Print all commands after the tom command itself or for the help command
+    // Print all guessed commands after tom by word option (context) or for help command
+    if (completeAllCommands() || completeCommand())
+        return printGuessedCommands();
 
     // Print all or guessed namespace names for the list command
-    if (currentCommandArg == List && !isOptionArgument(wordArg) &&
-        currentArgumentPosition == 2 &&
-        ((argumentsCount == 2 && wordArg.isEmpty()) || // tom list |
-         (argumentsCount == 3 && !wordArg.isEmpty()))  // tom list g| ; tom list gl|obal
-    )
-        return printGuessedNamespaces(wordArg);
+    if (completeList_NamespacesArgument())
+        return printGuessedNamespaces();
 
     // Print all or guessed shell names for the integrate command
-    if (currentCommandArg == Integrate && !isOptionArgument(wordArg) &&
-        currentArgumentPosition == 2 &&
-        ((argumentsCount == 2 && wordArg.isEmpty()) || // tom integrate |
-         (argumentsCount == 3 && !wordArg.isEmpty()))  // tom integrate p| ; tom integrate p|wsh
-    )
-        return printGuessedShells(wordArg);
+    if (completeIntegrate_ShellsArgument())
+        return printGuessedShells();
 
-    // Print all or guessed section names for the about command --only= option
-    if (currentCommandArg == About && isLongOptionName(wordArg, only_) &&
-        argumentsCount == 2 && currentArgumentPosition == kOnOptionArgument && // tom about --only=m| ; tom about --only=m|acros
-        !isNewArgumentPositionAtEnd // < : tom about --only=| --ansi ; = : tom about --only=|
-    )
-        return printGuessedSectionNamesForAbout(getOptionValue(wordArg));
+    // Print all or guessed section names for the --only= option of about command
+    if (completeAbout_OnlyOption())
+        return printGuessedSectionNamesForAbout();
 
     // Print all or inferred database connection names for the --database= option
-    if (isLongOptionName(wordArg, database_) &&
-        ((currentCommandArg == kFound && argumentsCount == 2) ||
-         /* db:seed is the only command that has positional argument,
-            all other commands with the --database= option don't have any. */
-         (currentCommandArg == DbSeed && // tom db:seed Xyz --database=|
-          argumentsCount == getMaxArgumentsCount(DbSeed))) &&
-        currentArgumentPosition == kOnOptionArgument && // tom migrate --database=t| ; tom migrate --database=tiny|orm_tom_mysql
-        !isNewArgumentPositionAtEnd && // < : tom migrate --database=| --ansi ; = : tom migrate --database=|
-        currentCommandArg && commandHasLongOption(*currentCommandArg, database_) // All migrate/: and db: commands have the --database= option
-    )
-        return printGuessedConnectionNames(getOptionValue(wordArg));
+    if (completeDatabaseOption())
+        return printGuessedConnectionNames();
 
-    // Print environment names for the --env= option
-    if (isLongOptionName(wordArg, Env) &&
-        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
-        (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
-          // Don't print/complete the --env= option for unknown commands eg. tom xyz --|
-         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom migrate --env=| ; tom migrate --env=d| ; tom db:seed --env=d|ev Xyz
-                                                                           // kAmbiguous : tom migrate:re --env=| (migrate:refresh or migrate:reset)
-    )
-        return printGuessedEnvironmentNames(getOptionValue(wordArg));
+    // Print all or guessed environment names for the --env= option
+    if (completeEnvOption())
+        return printGuessedEnvironmentNames();
 
     /* This could provide directory path completion for all commands with the --path=
        option, but pwsh isn't able to complete file/dir paths after --path=| (after
@@ -183,34 +105,20 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
 //        currentArgumentPosition == kOnOptionArgument && // tom integrate --path=|
 //        !isNewArgumentPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
 //        bw(argumentsCount, 2, maxArgumentsCount)
-//    ) {
-//        printCompletionResult(<Nothing works here>);
-//        return EXIT_SUCCESS;
-//    }
+//    )
+//        return printCompletionResult(<Nothing works here>);
 
     /* Print long/short options always, the completer is context specific, meaning
        it prints options based on the current command, or prints common options if
        there is no command on the command-line. */
 
     // Print all or guessed long option parameter names
-    if (isLongOption(wordArg) &&
-        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
-        (argumentsCount == 1 || // tom --| ; tom --e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
-          // Don't print/complete options for unknown commands eg. tom xyz --|
-         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom list --| ; tom list --r| ; tom list --r|aw
-                                                                           // kAmbiguous : tom i --| ; tom i --a| (inspire or integrate)
-    )
-        return printGuessedLongOptions(currentCommandArg.commandName, wordArg);
+    if (completeLongOptions())
+        return printGuessedLongOptions();
 
     // Print all or guessed short option parameter names
-    if (isShortOption(wordArg) &&
-        currentArgumentPosition == kOnOptionArgument && !isNewArgumentPositionAtEnd &&
-        (argumentsCount == 1 || // tom -| ; tom -e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
-          // Don't print/complete options for unknown commands eg. tom xyz -|
-         (m_hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount))) // kFound : tom list -| ; tom list -h|
-                                                                           // kAmbiguous : tom i -| ; tom i -h| (inspire or integrate)
-    )
-        return printGuessedShortOptions(currentCommandArg.commandName);
+    if (completeShortOptions())
+        return printGuessedShortOptions();
 
     /* Block file/dir paths completion, our pwsh Register-ArgumentCompleter will Trim()
        this output and returns $null if output is empty (preventing paths completion). */
@@ -221,47 +129,54 @@ int PwshCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
 /* private */
 
-/* Current Tom command */
+/* Prepare Context */
 
-GuessCommandNameType
-PwshCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted,
-                                  const ArgumentsSizeType argumentsCount) const
+CompleteContext PwshCommand::initializeCompletionContext()
 {
-    // No Tom command on the command-line (only the tom.exe executable name)
-    if (argumentsCount <= 1)
-        return {kNotFound, std::nullopt};
+    // Values from the command-line
+    // Both below must be defined as the data member to be available for QStringView-s!
+    m_wordArg            = value(word_);
+    m_commandlineArg     = value(commandline); // Already trimmed() by pwsh
+    m_positionArg        = value(position_).toLongLong();
+    m_commandlineArgSize = m_commandlineArg.size(); // pwsh only
 
-    // Try to guess one Tom command name (detects kFound, kNotFound, kAmbiguous)
-    return application().guessCommandNameForComplete(
-                             getRawTomCommandName(commandlineArgSplitted));
+    // Validate the required option values (needs m_commandlineArgSize)
+    validateInputOptionValues();
+
+    // Common for both (Tom command and option)
+                                                                      // CUR1 finish silverqx
+    const auto commandlineArgSplitted = m_commandlineArg.split(SPACE, Qt::SkipEmptyParts); // Already trimmed by pwsh
+    m_isNewArgumentPositionAtEnd      = m_positionArg > m_commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
+
+    // Get an option value for the --word= option (with workaround for pwsh)
+    const auto [wordArg, multiValueOptionPosition] = getWordArgOptionValue();
+
+    // Currently processed Tom command
+//    const auto isCommandLineEndPosition = positionArg == commandlineArgSize;
+    const auto argumentsCount          = getArgumentsCount(commandlineArgSplitted);
+          auto currentCommandArg       = getCurrentTomCommand(commandlineArgSplitted,
+                                                              argumentsCount);
+    const auto currentArgumentPosition = getCurrentArgumentPosition(
+                                             getCommadlineBeforeCursor(), wordArg);
+    const auto hasAnyTomCommand        = currentCommandArg != kNotFound; // kFound || kAmbiguous
+
+    return {
+        .currentCommandArg          = std::move(currentCommandArg),
+        .wordArg                    = wordArg,
+        .argumentsCount             = argumentsCount,
+        .currentArgumentPosition    = currentArgumentPosition,
+        .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
+        .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
+        .isNewArgumentPositionAtEnd = m_isNewArgumentPositionAtEnd,
+        .multiValueOptionPosition   = multiValueOptionPosition,
+    };
 }
 
-QString
-PwshCommand::getRawTomCommandName(const QStringList &commandlineArgSplitted)
-{
-    for (ArgumentsSizeType index = kUndefinedPosition;
-         const auto &argument : commandlineArgSplitted
-    ) {
-        if (isOptionArgument(argument))
-            continue;
+/* Context - Positional arguments */
 
-        if (++index == TomCommandPosition)
-            return argument;
-    }
-
-#ifndef TINYTOM_DEBUG
-    throw Exceptions::RuntimeError(
-                u"Unexpected return value, it can't be empty if argumentsCount > 1."_s);
-#else
-    // Guaranteed by the argumentsCount <= 1 above, there are always 2 commands
-    Q_UNREACHABLE();
-#endif
-}
-
-PwshCommand::ArgumentsSizeType
-PwshCommand::getCurrentArgumentPosition(
-        const QStringView commandlineArg, const QString &wordArg,
-        const bool isNewArgumentPositionAtEnd)
+ArgumentsSizeType
+PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
+                                        const QStringView wordArg) const
 {
     // Cursor is on the long/short option
     if (isOptionArgument(wordArg))
@@ -283,43 +198,100 @@ PwshCommand::getCurrentArgumentPosition(
 
     /* pwsh truncates the commandlineArg in this case: tom list |,
        it truncates it like this: tom list|, so the index must be incremented manually
-       to detect/specify that the cursor is at position 3. */
-    if (isNewArgumentPositionAtEnd || wordArg.isEmpty()) // tom list | || tom list | --ansi
+       to detect/specify that the cursor is at position 3.
+       Also, this condition can be source of bugs because of this wordArg.isEmpty() check,
+       there is a chance I didn't catch up all cases. See the blockCompletion()
+       at the end of the getWordArgOptionValue() method for more info. */
+    if (m_isNewArgumentPositionAtEnd || wordArg.isEmpty()) // tom list | || tom list | --ansi
         ++index;
 
     return index;
 }
 
-PwshCommand::ArgumentsSizeType
-PwshCommand::getMaxArgumentsCount()
-{
-    using CommandType = std::shared_ptr<Application::Command>;
+/* Context - Multi-value Option arguments */
 
-    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
-    return 1 + (m_hasAnyTomCommand ? 1 : 0) +
-            static_cast<ArgumentsSizeType>(
-                (*std::ranges::max_element(application().createCommandsVector(),
-                                           std::less(), [](const CommandType &command)
-    {
-        return command->positionalArguments().size();
-    }))
-        ->positionalArguments().size());
+MultiValueOptionType
+PwshCommand::getWordArgOptionValue() const
+{
+    /* This method contains a special handling (alternative to getOptionValue() method)
+       with workaround for the --word= pwsh option from the Register-ArgumentCompleter.
+       It fixes cases when the option value to complete on the command-line contains
+       multiple values like --only=version,| in this case, pwsh provides/fills
+       the $wordToComplete in the Register-ArgumentCompleter with an empty string so
+       there is no way how to correctly complete these values.
+       This method workarounds/fixes this behavior and instead of returning an empty
+       string returns the correct wordArg value you would expect, like --only=versions,|
+       or --only=versions,ma|,env which enables to complete the given partial/ values. */
+
+    /* Nothing to do, cursor is already after an option, eg: --only=env | or --only=env, |
+       or somewhere after (pwsh trims the --commandline= option value). */
+    if (m_isNewArgumentPositionAtEnd)
+        return {m_wordArg};
+
+    // Get the current word under the cursor (workaround for multi-value options)
+    const auto [currentWord, currentWordPostion] = findCurrentWord();
+
+    /* Reason for this is to ensures that our completion will work correctly if this
+       will be by any chance fixed in future pwsh versions. 🙃
+       I found out later that it's also true in cases like this:
+       tom about --jso|n| or tom about --only=mac|ros|
+       It virtually means that the current word under the cursor is correct and needs no
+       further processing. The wordArg is incorrect only for multi-value options or
+       if tab hit happened at the beginning of the current word like tom |about. */
+    if (m_wordArg == currentWord)
+        return {m_wordArg};
+
+        // Targets --only=macros,|,versio|ns and returns --only=macros,,versions
+    if ((m_wordArg.isEmpty() && isLongOption(currentWord) &&
+         currentWord.endsWith(COMMA_C)) ||
+        // Targets --only=macros,vers|,en| and returns --only=macros,vers,en
+        isLongOptionWithArrayValue(currentWord)
+    )
+        return {currentWord, computeMultiValueOptionPosition(currentWord,
+                                                             currentWordPostion)};
+
+    /* tom |about or tom about |--json there may be other cases that I'm not aware of,
+       but generally, it gets until here when the pwsh doesn't know what to do, and
+       in those cases the value of the --word= option is usually empty. */
+    blockCompletion(); // [[noreturn]]
 }
 
-PwshCommand::ArgumentsSizeType
-PwshCommand::getMaxArgumentsCount(const QString &command)
+MultiValueOptionType PwshCommand::findCurrentWord() const
 {
-    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
-    return 1 + (m_hasAnyTomCommand ? 1 : 0) +
-            static_cast<ArgumentsSizeType>(
-                application().createCommand(command, std::nullopt, false)
-                            ->positionalArguments().size());
+    constexpr static ArgumentsSizeType Position0 = 0; // Needed by the std::max()
+
+    const auto firstCharIdx  = m_commandlineArg.lastIndexOf(
+                                   SPACE, std::max(Position0, m_positionArg - 1) // The lowest must always be 0
+                               ) + 1; // +1 because it finds the first space position before, so +1 will be the first character after this space
+    // The last character index must point after the last character for the QStringView
+    const auto spaceAfterIdx = m_commandlineArg.indexOf(SPACE, m_positionArg);
+    const auto lastCharIdx   = spaceAfterIdx == -1 ? m_commandlineArgSize : spaceAfterIdx;
+
+    const auto *const commandlineArgData = m_commandlineArg.constData();
+
+    return {
+        {commandlineArgData + firstCharIdx, commandlineArgData + lastCharIdx}, // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        firstCharIdx,
+    };
+}
+
+bool PwshCommand::isLongOptionWithArrayValue(const QStringView wordArg)
+{
+    // Nothing to check, not a long option
+    if (!isLongOption(wordArg) || !wordArg.contains(EQ_C))
+        return false;
+
+    const auto wordArgSplitted = StringUtils::splitAtFirst(wordArg, EQ_C,
+                                                           Qt::KeepEmptyParts);
+    Q_ASSERT(wordArgSplitted.size() == 2);
+
+    // Checks --only=macros, or --only=macros,en
+    return wordArgSplitted.constLast().contains(COMMA_C);
 }
 
 /* Result output */
 
-int PwshCommand::printGuessedSectionNamesForAbout(
-        const QStringView sectionNamesArg) const
+int PwshCommand::printGuessedSectionNamesForAbout() const
 {
     static const QStringList allSectionNames {
         u"environment"_s, u"macros"_s, u"versions"_s, u"connections"_s,
@@ -330,14 +302,12 @@ int PwshCommand::printGuessedSectionNamesForAbout(
                 allSectionNamesFiltered,
                 isFirstSectionNameArg,
                 printAllSectionNames
-    ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
+    ] = initializePrintMultiValueOption(allSectionNames);
 
     /* Print only one space if all array option values have already been entered,
        it also prevents printing file/dir paths completion. */
-    if (allSectionNamesFiltered.isEmpty()){
-        printCompletionResult(u" ; "_s);
-        return EXIT_SUCCESS;
-    }
+    if (allSectionNamesFiltered.isEmpty())
+        printOneSpace(); // [[noreturn]]
 
     QStringList sectionNames;
     sectionNames.reserve(allSectionNamesFiltered.size());
@@ -353,8 +323,7 @@ int PwshCommand::printGuessedSectionNamesForAbout(
         if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
             sectionNames << TMPL_RESULT2.arg(
                                 isFirstSectionNameArg
-                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C),
-                                              allSectionName)
+                                ? NOSPACE.arg(LongOptionEq.arg(only_), allSectionName)
                                 : allSectionName,
                                 allSectionName);
 
@@ -363,7 +332,7 @@ int PwshCommand::printGuessedSectionNamesForAbout(
     return EXIT_SUCCESS;
 }
 
-int PwshCommand::printGuessedConnectionNames(const QString &connectionNamesArg) const
+int PwshCommand::printGuessedConnectionNames() const
 {
     const auto allConnectionNames = getConnectionNamesFromFile();
 
@@ -376,14 +345,12 @@ int PwshCommand::printGuessedConnectionNames(const QString &connectionNamesArg) 
                 allConnectionNamesFiltered,
                 isFirstConnectionNameArg,
                 printAllConnectionNames
-    ] = initializePrintArrayOptionValues(connectionNamesArg, allConnectionNames);
+    ] = initializePrintMultiValueOption(allConnectionNames);
 
     /* Print only one space if all array option values have already been entered,
        it also prevents printing file/dir paths completion. */
-    if (allConnectionNamesFiltered.isEmpty()){
-        printCompletionResult(u" ; "_s);
-        return EXIT_SUCCESS;
-    }
+    if (allConnectionNamesFiltered.isEmpty())
+        printOneSpace(); // [[noreturn]]
 
     QStringList connectionNames;
     connectionNames.reserve(allConnectionNamesFiltered.size());
@@ -400,7 +367,7 @@ int PwshCommand::printGuessedConnectionNames(const QString &connectionNamesArg) 
         if (printAllConnectionNames || allConnectionName.startsWith(connectionNameArg))
             connectionNames << TMPL_RESULT2.arg(
                                    isFirstConnectionNameArg
-                                   ? NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
+                                   ? NOSPACE.arg(LongOptionEq.arg(database_),
                                                  allConnectionName)
                                    : allConnectionName,
                                    allConnectionName);
@@ -410,7 +377,7 @@ int PwshCommand::printGuessedConnectionNames(const QString &connectionNamesArg) 
     return EXIT_SUCCESS;
 }
 
-int PwshCommand::printGuessedEnvironmentNames(const QString &environmentNameArg) const
+int PwshCommand::printGuessedEnvironmentNames() const
 {
     static const QStringList allEnvironmentNames {
         u"dev"_s,     u"development"_s, u"local"_s,
@@ -418,6 +385,8 @@ int PwshCommand::printGuessedEnvironmentNames(const QString &environmentNameArg)
         u"test"_s,    u"testing"_s,
         u"staging"_s,
     };
+
+    const auto environmentNameArg = getOptionValue(context().wordArg);
 
     QStringList environmentNames;
     environmentNames.reserve(allEnvironmentNames.size());
@@ -427,10 +396,9 @@ int PwshCommand::printGuessedEnvironmentNames(const QString &environmentNameArg)
        Also, --env= has to be prepended because pwsh overwrites whole option. */
     for (const auto &environment : allEnvironmentNames)
         if (environment.startsWith(environmentNameArg))
-            environmentNames
-                    << TMPL_RESULT2.arg(
-                           NOSPACE.arg(LongOption.arg(Env).append(EQ_C), environment),
-                           environment);
+            environmentNames << TMPL_RESULT2.arg(
+                                    NOSPACE.arg(LongOptionEq.arg(Env), environment),
+                                    environment);
 
     printCompletionResult(environmentNames);
 
@@ -439,9 +407,26 @@ int PwshCommand::printGuessedEnvironmentNames(const QString &environmentNameArg)
 
 /* Printing support */
 
-QChar PwshCommand::getResultDelimiter() const noexcept
+/* These two methods exit immediately, the previous logic correctly saved the state,
+   all the completion logic was invoked, and based on that state it blocked or printed
+   a single space at the end of the run() method (as the last thing).
+   But, I had to adapt all the logic (it had to handle these edge cases properly) and
+   it also needed a lot more if() conditions, so I decided to quit immediately when
+   possible, this is a worse way to do this though as it doesn't allow to invoke
+   any post actions, but I don't have any now, so it's OK. 😁 */
+
+void PwshCommand::printOneSpace() const
 {
-    return NEWLINE_C;
+    printCompletionResult(u" ; "_s);
+
+    Application::exitApplication(EXIT_SUCCESS);
+}
+
+void PwshCommand::blockCompletion() const
+{
+    printCompletionResult(EMPTY);
+
+    Application::exitApplication(EXIT_SUCCESS);
 }
 
 void PwshCommand::appendShortVerboseOptions(QStringList &options,
@@ -452,127 +437,109 @@ void PwshCommand::appendShortVerboseOptions(QStringList &options,
             << u"-vvv;-vvv;%1"_s.arg(description);
 }
 
-/* Option arguments */
+/* Printing - Multi-value Option arguments */
 
-QString
-PwshCommand::getWordOptionValue(
-        const QStringList &commandlineArgSplitted, const QString::size_type positionArg,
-        const ArgumentsSizeType commandlineArgSize) const
+PrintMultiValueOptionType
+PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
 {
-    /* This method contains a special handling (alternative to getOptionValue() method)
-       with workaround for the --word= pwsh option from the Register-ArgumentCompleter.
-       It fixes cases when the option value on the command-line to complete contains
-       array value like --only=version,| in this case, pwsh provides/fills
-       the $wordToComplete in the Register-ArgumentCompleter with an empty string so
-       there is no way how to correctly complete these values.
-       This method workarounds/fixes this behavior and instead of an empty string provides
-       the correct value you would expect like --only=version,| or --only=version,ma|
-       which enables to complete the given partial array values. */
+    // Get the value of the option argument (eg. --only=macros)
+    const auto optionValuesArg = getOptionValue(context().wordArg);
 
-    auto wordArg = value(word_);
-
-    /* Nothing to do, cursor is already after an option, eg: --only=env | or --only=env, |
-       or somewhere before. */
-    if (positionArg > commandlineArgSize)
-        return wordArg;
-
-    const auto &lastArg = commandlineArgSplitted.constLast();
-
-    /* Reason for this is to ensures that our completion will work correctly if this
-       will be by any chance fixed in future pwsh versions. 🙃
-       I found out later that it's also true in cases like this:
-       tom about --json| or tom about --only=macros|
-       So when the last word is already completed and there is nothing to complete. */
-    if (wordArg == lastArg)
-        return wordArg;
-
-    const auto isLongOption = BaseCompleteCommand::isLongOption(lastArg);
-    const auto isWordArgEmpty = wordArg.isEmpty();
-
-        // Targets --only=macros,| and returns --only=macros,
-    if ((isLongOption && isWordArgEmpty && lastArg.endsWith(COMMA_C)) ||
-        // Targets --only=macros,versions,en| and returns --only=macros,versions,en
-        isLongOptionWithArrayValue(lastArg)
-    ) T_UNLIKELY
-        return lastArg;
-
-    else T_LIKELY
-        return wordArg;
-}
-
-PwshCommand::PrintArrayOptionValuesType
-PwshCommand::initializePrintArrayOptionValues(const QStringView optionValuesArg,
-                                              const QStringList &allValues)
-{
-    // Nothing to do, option values are empty, return right away as we know the result
+    /* Nothing to do, option value/s are empty like --only=|, complete/print all values
+       for the first option value. */
     if (optionValuesArg.isEmpty())
-        return {EMPTY, ranges::to<QList<QStringView>>(allValues), true, true};
+        return {
+            .optionValues       = ranges::to<QList<QStringView>>(allValues),
+            .isFirstOptionValue = true,
+            .printAllValues     = true,
+        };
 
-    // Option values already displayed on the command-line (from getOptionValue())
+    // Get the value/s before the cursor of the multi-value option argument
+    const auto optionValuesBeforeCursor = getOptionValuesBeforeCursor(optionValuesArg);
+    // Get the current value index (0-based) among other values
+    const auto currentOptionValueIndex = optionValuesBeforeCursor.count(COMMA_C);
+
+    // Option values that are already on the command-line (from getOptionValue())
     auto optionValuesArgSplitted = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
     // Needed for pwsh, determines an output format
-    const auto isFirstOptionValue = optionValuesArgSplitted.size() == 1;
+    const auto isFirstOptionValue = currentOptionValueIndex == 0;
+    /* This is for one special case like --only=environment,|macros,versions, or
+       --only=environment,|macros,,versions, (there must be an extra comma)
+       in this case return {} which means print all remaining options and don't
+       remove the current word macros so it will be filtered out. After the tab it
+       prints:
+       --only=environment,connections|macros,versions, instead of
+       --only=environment,macros|macros,versions, */
+    const auto shouldRemoveOptionValue = !(optionValuesBeforeCursor.endsWith(COMMA_C) && // NOLINT(readability-simplify-boolean-expr)
+                                           optionValuesArg.size() >
+                                           optionValuesBeforeCursor.size());
     /* The currently completing option value needs to be removed, so that this option
        value is not filtered out in the ranges::views::filter() algorithm below. */
-    const auto lastOptionValueArg = optionValuesArgSplitted.takeLast();
-    const auto printAllValues = lastOptionValueArg.isEmpty();
+    const auto currentOptionValue = shouldRemoveOptionValue
+                                    ? optionValuesArgSplitted.takeAt(
+                                          currentOptionValueIndex)
+                                    : EMPTY;
+    const auto printAllValues = currentOptionValue.isEmpty();
 
     // Remove all empty and null strings (it would print all option values w/o this)
     optionValuesArgSplitted.removeAll({});
 
-    // Filter out option values that are already displayed on the command-line
-    auto allValuesFiltered = allValues
-            | ranges::views::filter([&optionValuesArgSplitted]
+    return {
+        .currentOptionValue = currentOptionValue,
+        // Filter out option values that are already completed on the command-line
+        .optionValues       = filterOptionValues(allValues, optionValuesArgSplitted),
+        .isFirstOptionValue = isFirstOptionValue,
+        .printAllValues     = printAllValues,
+    };
+}
+
+ArgumentsSizeType
+PwshCommand::getOptionValuesLastPosition(const QStringView optionValuesArg) const
+{
+    const auto multiValueOptionPosition = context().multiValueOptionPosition;
+
+    /* Tab hit happened inside the multi-value option value like
+       --only=envi|ronment,macro| or --only=envi|,macr|os. */
+    if (multiValueOptionPosition >= 0)
+        return multiValueOptionPosition;
+
+    /* Tab hit happened before the = character inside the option name itself, both cases
+       below happen only for multi-value options. */
+
+    // With multiple option values like -|-on|ly|=environment,versions
+    if (const auto firstCommaPosition = optionValuesArg.indexOf(COMMA_C);
+        firstCommaPosition != -1
+    )
+        return firstCommaPosition;
+
+    // With one option value like -|-on|ly|=environment
+    return optionValuesArg.size();
+}
+
+QList<QStringView>
+PwshCommand::filterOptionValues(const QStringList &allValues,
+                                const QList<QStringView> &optionValues)
+{
+    // Filter out option values that are already completed on the command-line
+    return allValues
+            | ranges::views::filter([&optionValues]
                                     (const QString &allValue)
     {
         // Include all option values that aren't already on the command-line
-        return std::ranges::none_of(optionValuesArgSplitted,
+        return std::ranges::none_of(optionValues,
                                     [&allValue](const QStringView optionValueArg)
         {
             return allValue.startsWith(optionValueArg);
         });
     })
-            | ranges::to<QList<QStringView>>();
-
-    return {lastOptionValueArg.toString(), std::move(allValuesFiltered),
-            isFirstOptionValue, printAllValues};
+            | ranges::to<QList<QStringView>>();;
 }
 
-bool PwshCommand::isLongOptionWithArrayValue(const QString &wordArg)
-{
-    // Nothing to check, not a long option
-    if (!isLongOption(wordArg))
-        return false;
-
-    const auto wordArgSplitted = StringUtils::splitAtFirst(wordArg, EQ_C,
-                                                           Qt::KeepEmptyParts);
-
-    // Checks --only=macros, or --only=macros,en
-    return wordArgSplitted.size() == 2 && wordArgSplitted.constLast().contains(COMMA_C);
-}
-
-QString PwshCommand::getOptionValue(const QString &wordArg)
+QStringView PwshCommand::getOptionValue(const QStringView wordArg)
 {
     Q_ASSERT(wordArg.contains(EQ_C));
 
-    const auto wordArgSplitted = wordArg.split(EQ_C);
-
-    Q_ASSERT(wordArgSplitted.size() <= 2);
-
-    return wordArgSplitted.size() == 1 ? QString() : wordArgSplitted.last();
-}
-
-bool PwshCommand::commandHasLongOption(const QString &command, const QString &option)
-{
-    /* Currently, used for the --database= option only, so checking for hidden options
-       doesn't make sense. */
-    return ranges::contains(getCommandOptionsSignature(command), true,
-                            [&option](const QCommandLineOption &optionItem)
-    {
-        Q_ASSERT(!optionItem.names().isEmpty());
-
-        return optionItem.names().constFirst() == option;
-    });
+    return StringUtils::splitAtFirst(wordArg, EQ_C, Qt::KeepEmptyParts).constLast();
 }
 
 QStringList PwshCommand::getConnectionNamesFromFile()
@@ -586,6 +553,7 @@ QStringList PwshCommand::getConnectionNamesFromFile()
 
     std::ifstream mainFileStream("main.cpp");
 
+    // Nothing to do, file opening failed
     if (mainFileStream.fail())
         return {};
 
@@ -596,7 +564,7 @@ QStringList PwshCommand::getConnectionNamesFromFile()
     static const QRegularExpression
     regex(uR"T("(?<connection>[\w\.-]+)".*// shell:connection$)T"_s);
 
-    // No need to care about \r\n at the end
+    // No need to worry about \r\n at the end
     while (getline(mainFileStream, line))
 
         if (const auto match = regex.match(QString::fromStdString(line));
@@ -607,6 +575,55 @@ QStringList PwshCommand::getConnectionNamesFromFile()
     mainFileStream.close();
 
     return connectionNames;
+}
+
+/* Others */
+
+void PwshCommand::validateInputOptions() const
+{
+    // Validate the required common options for all complete:xyz commands (checks isSet())
+    BaseCompleteCommand::validateInputOptions();
+
+    // Pwsh specific
+    constexpr static auto optionsToValidate = std::to_array<
+                                              std::reference_wrapper<const QString>>({
+        position_,
+    });
+
+    // TODO parser, add support for required positional arguments and options silverqx
+    for (const auto &optionName : optionsToValidate)
+        if (!isSet(optionName))
+            throw Exceptions::InvalidArgumentError(
+                    u"The --%1= option must be set for the complete:pwsh command "
+                     "in %2()."_s
+                    .arg(optionName, __tiny_func__));
+}
+
+void PwshCommand::validateInputOptionValues() const
+{
+    // Validate the required common option values for all complete:xyz commands
+    BaseCompleteCommand::validateInputOptionValues();
+
+    // Pwsh specific
+    // Get cursor position after the tom executable including the space (0-based)
+    const auto minRequiredPosition = getCursorPositionAfterExecutable();
+
+    // Nothing to do
+    if (m_positionArg >= minRequiredPosition)
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The --position= option value must be >=%1 for complete:pwsh command "
+                 "in %2()."_s
+                .arg(minRequiredPosition).arg(__tiny_func__));
+}
+
+ArgumentsSizeType PwshCommand::getCursorPositionAfterExecutable() const
+{
+    const auto firstSpacePosition = m_commandlineArg.indexOf(SPACE);
+
+    // +1 to include the space after the tom executable
+    return (firstSpacePosition == -1 ? m_commandlineArgSize : firstSpacePosition) + 1;
 }
 
 } // namespace Tom::Commands::Complete

@@ -7,6 +7,9 @@ namespace Tom::Constants
 
     const QString DateTimePrefix   = u"yyyy_MM_dd_HHmmss"_s;
 
+    // Common chars - QChar(u'') is faster than ''_L1
+    const QChar EQ_C = QChar(u'=');
+
     // Common strings
     const QString EMPTY            = u""_s; // This is the fastest
     const QString LongOption       = u"--%1"_s;
@@ -51,6 +54,7 @@ namespace Tom::Constants
     const QString json_        = u"json"_s;
     const QString pretty       = u"pretty"_s;
     const QString only_        = u"only"_s;
+    const QString database_    = u"database"_s;
     // Default value names
     const QString env_up             = u"ENV"_s;
     const QString class_up           = u"CLASS"_s;
@@ -62,6 +66,8 @@ namespace Tom::Constants
     const QString position_up        = u"POSITION"_s;
     const QString word_up            = u"WORD"_s;
     const QString cword_up           = u"CWORD"_s;
+    const QString carg_up            = u"CARG"_s;
+    const QString cargs_up           = u"CARGS"_s;
     const QString path_up            = u"PATH"_s;
     const QString create_up          = u"CREATE"_s;
     const QString table_up           = u"TABLE"_s;
@@ -94,6 +100,7 @@ namespace Tom::Constants
     const QString position_          = u"position"_s;
     const QString word_              = u"word"_s;
     const QString cword_             = u"cword"_s;
+    const QString carg_              = u"carg"_s;
     // list
     const QString raw_               = u"raw"_s;
     // db:seed

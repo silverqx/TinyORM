@@ -20,6 +20,7 @@ headersList += \
     $$PWD/tom/commands/aboutcommand.hpp \
     $$PWD/tom/commands/command.hpp \
     $$PWD/tom/commands/complete/basecompletecommand.hpp \
+    $$PWD/tom/commands/complete/completetypes.hpp \
     $$PWD/tom/commands/complete/pwshcommand.hpp \
     $$PWD/tom/commands/database/seedcommand.hpp \
     $$PWD/tom/commands/database/wipecommand.hpp \

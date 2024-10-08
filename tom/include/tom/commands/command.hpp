@@ -63,6 +63,9 @@ namespace Commands
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
 
     public:
+        /*! Alias for the QList command-line option size type. */
+        using ArgumentsSizeType = QStringList::size_type;
+
         /*! Constructor. */
         Command(Application &application, QCommandLineParser &parser);
         /*! Pure virtual destructor. */
@@ -127,9 +130,6 @@ namespace Commands
         static QString longOption(const QString &name);
         /*! Create the long option with value (--database=xyz). */
         static QString longOption(const QString &name, const QString &value);
-
-        /*! Alias for the QList command-line option size type. */
-        using ArgumentsSizeType = QStringList::size_type;
 
         /*! Check whether a positional argument at the given index was set. */
         bool hasArgument(ArgumentsSizeType index) const;

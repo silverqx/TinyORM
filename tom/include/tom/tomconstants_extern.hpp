@@ -26,6 +26,9 @@ namespace Constants
     /*! Migration files datetime prefix format. */
     TINYORM_EXPORT extern const QString DateTimePrefix;
 
+    // Common chars - QChar(u'') is faster than ''_L1
+    TINYORM_EXPORT extern const QChar EQ_C;
+
     // Common strings
     TINYORM_EXPORT extern const QString EMPTY;
     TINYORM_EXPORT extern const QString LongOption;
@@ -70,6 +73,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString json_;
     TINYORM_EXPORT extern const QString pretty;
     TINYORM_EXPORT extern const QString only_;
+    TINYORM_EXPORT extern const QString database_;
     // Default value names
     TINYORM_EXPORT extern const QString env_up;
     TINYORM_EXPORT extern const QString class_up;
@@ -81,6 +85,8 @@ namespace Constants
     TINYORM_EXPORT extern const QString position_up;
     TINYORM_EXPORT extern const QString word_up;
     TINYORM_EXPORT extern const QString cword_up;
+    TINYORM_EXPORT extern const QString carg_up;
+    TINYORM_EXPORT extern const QString cargs_up;
     TINYORM_EXPORT extern const QString path_up;
     TINYORM_EXPORT extern const QString create_up;
     TINYORM_EXPORT extern const QString table_up;
@@ -113,6 +119,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString position_;
     TINYORM_EXPORT extern const QString word_;
     TINYORM_EXPORT extern const QString cword_;
+    TINYORM_EXPORT extern const QString carg_;
     // list
     TINYORM_EXPORT extern const QString raw_;
     // db:seed

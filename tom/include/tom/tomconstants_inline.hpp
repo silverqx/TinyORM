@@ -25,6 +25,9 @@ namespace Constants
     /*! Migration files datetime prefix format. */
     inline const QString DateTimePrefix  = u"yyyy_MM_dd_HHmmss"_s;
 
+    // Common chars - QChar(u'') is faster than ''_L1
+    inline const QChar EQ_C = QChar(u'=');
+
     // Common strings
     inline const QString EMPTY           = u""_s; // This is the fastest
     inline const QString LongOption      = u"--%1"_s;
@@ -69,6 +72,7 @@ namespace Constants
     inline const QString json_        = u"json"_s;
     inline const QString pretty       = u"pretty"_s;
     inline const QString only_        = u"only"_s;
+    inline const QString database_    = u"database"_s;
     // Default value names
     inline const QString env_up             = u"ENV"_s;
     inline const QString class_up           = u"CLASS"_s;
@@ -80,6 +84,8 @@ namespace Constants
     inline const QString position_up        = u"POSITION"_s;
     inline const QString word_up            = u"WORD"_s;
     inline const QString cword_up           = u"CWORD"_s;
+    inline const QString cargs_up           = u"CARGS"_s;
+    inline const QString carg_up            = u"CARG"_s;
     inline const QString path_up            = u"PATH"_s;
     inline const QString create_up          = u"CREATE"_s;
     inline const QString table_up           = u"TABLE"_s;
@@ -112,6 +118,7 @@ namespace Constants
     inline const QString position_          = u"position"_s;
     inline const QString word_              = u"word"_s;
     inline const QString cword_             = u"cword"_s;
+    inline const QString carg_              = u"carg"_s;
     // list
     inline const QString raw_               = u"raw"_s;
     // db:seed

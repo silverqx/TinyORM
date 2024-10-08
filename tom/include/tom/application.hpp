@@ -64,14 +64,12 @@ namespace Concerns
         friend Commands::AboutCommand;
         // To access saveOptions()
         friend Commands::Command;
-        /* To access namespaceNames(), getCommandOptionsSignature(), m_options,
-           isCommandHidden(), isNamespaceHidden(). */
+        /* To access Application::Command, createCommandsVector(), createCommand(),
+           isCommandHidden(), namespaceNames(), isNamespaceHidden(), m_options,
+           guessCommandNameForComplete(), getCommandOptionsSignature(),
+           guessCommandsForComplete(). */
         friend Commands::Complete::BaseCompleteCommand;
-#if defined(__linux__) || defined(__MINGW32__)
-        // To access guessCommandsForComplete()
-        friend Commands::Complete::BashCommand;
-#endif
-        // To access createCommand(), createCommandsVector(), guessCommandXyz() methods
+        // To access exitApplication()
         friend Commands::Complete::PwshCommand;
         // To access createCommand(), m_options
         friend Commands::HelpCommand;

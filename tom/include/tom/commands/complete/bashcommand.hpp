@@ -35,14 +35,10 @@ namespace Tom::Commands::Complete
         int run() override;
 
     private:
-        /* Current Tom command */
-        /*! Get the currently processed Tom command. */
-        static std::optional<QString>
-        getCurrentTomCommand(const QString &commandlineArg, QString::size_type cword);
+        /*! Initialize context for tab-completion. */
+        CompleteContext initializeCompletionContext() override;
 
         /* Printing support */
-        /*! Get the delimiter for result values (space for bash). */
-        QChar getResultDelimiter() const noexcept override;
         /*! Prepare one result value (argument or option) for printing. */
         inline QString
         prepareResultValue(
@@ -52,6 +48,16 @@ namespace Tom::Commands::Complete
         /*! Append short verbose options (-v,-vv,-vvv) to the tab-completion result. */
         inline void appendShortVerboseOptions(QStringList &options,
                                               const QString &description) const override;
+
+        /* Others */
+        /*! Validate the required option arguments (check isSet()). */
+        void validateInputOptions() const override;
+        /*! Validate the required option values. */
+        void validateInputOptionValues() const override;
+
+        /* Data members */
+        /*! Index of the current word under the cursor on the command-line (0-based). */
+        ArgumentsSizeType m_cwordArg = 0;
     };
 
     /* public */

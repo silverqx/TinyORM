@@ -1,23 +1,24 @@
 #include "tom/commands/complete/bashcommand.hpp"
 
 #include <orm/constants.hpp>
+#include <orm/utils/type.hpp>
 
 #include "tom/application.hpp"
+#include "tom/exceptions/invalidargumenterror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::SPACE;
 
 using Tom::Constants::EMPTY;
-using Tom::Constants::Help;
-using Tom::Constants::Integrate;
-using Tom::Constants::List;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
 using Tom::Constants::cword_;
 using Tom::Constants::cword_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
+
+using enum Tom::GuessCommandNameResult;
 
 namespace Tom::Commands::Complete
 {
@@ -37,7 +38,7 @@ QList<CommandLineOption> BashCommand::optionsSignature() const
         {word_,       u"The current word that is being completed"_s, word_up}, // Value
         {commandline, u"The entire current command-line"_s, commandline_up}, // Value
         {cword_,      u"Position of the current word on the command-line that is being "
-                       "completed"_s, cword_up, u"0"_s}, // Value
+                       "completed"_s, cword_up}, // Value (can't have the default value as it's required)
     };
 }
 
@@ -45,33 +46,18 @@ int BashCommand::run()
 {
     BaseCompleteCommand::run();
 
-    /* Initialization section */
-    const auto wordArg        = value(word_);
-    const auto commandlineArg = value(commandline);
-    const auto cwordArg       = value(cword_).toLongLong();
-
-    // Currently processed Tom command
-    const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
-
-    /* Main logic section */
-
-    // Print all commands after tom command itself or for the help command
-    if (wordArg.isEmpty() && (!currentCommandArg || currentCommandArg == Help))
-        return printGuessedCommands(application().guessCommandsForComplete({}));
-
-    // Print all guessed commands by the word argument after tom or for the help command
-    if (!isOptionArgument(wordArg) && !wordArg.isEmpty() &&
-        (!currentCommandArg || currentCommandArg == Help)
-    )
-        return printGuessedCommands(application().guessCommandsForComplete(wordArg));
+    // Print all commands after the tom command itself or for the help command
+    // Print all guessed commands after tom by word option (context) or for help command
+    if (completeAllCommands() || completeCommand())
+        return printGuessedCommands();
 
     // Print all or guessed namespace names for the list command
-    if (!isOptionArgument(wordArg) && currentCommandArg == List)
-        return printGuessedNamespaces(wordArg);
+    if (completeList_NamespacesArgument())
+        return printGuessedNamespaces();
 
     // Print all or guessed shell names for the integrate command
-    if (!isOptionArgument(wordArg) && currentCommandArg == Integrate)
-        return printGuessedShells(wordArg);
+    if (completeIntegrate_ShellsArgument())
+        return printGuessedShells();
 
     /* Bash has it's own guess logic in the tom.bash bash-completion file
        for the following cases:
@@ -85,12 +71,12 @@ int BashCommand::run()
        there is no command on the command-line. */
 
     // Print all or guessed long option parameter names
-    if (isLongOption(wordArg) && cwordArg >= 1)
-        return printGuessedLongOptions(currentCommandArg, wordArg);
+    if (completeLongOptions())
+        return printGuessedLongOptions();
 
     // Print all or guessed short option parameter names
-    if (isShortOption(wordArg) && cwordArg >= 1)
-        return printGuessedShortOptions(currentCommandArg);
+    if (completeShortOptions())
+        return printGuessedShortOptions();
 
     /* This doesn't block directory paths completion on bash, the _filedir like function
        must be called explicitly to invoke directory paths completion, it's done
@@ -102,43 +88,74 @@ int BashCommand::run()
 
 /* private */
 
-/* Current Tom command */
-
-std::optional<QString>
-BashCommand::getCurrentTomCommand(const QString &commandlineArg,
-                                  const QString::size_type cword)
+CompleteContext BashCommand::initializeCompletionContext()
 {
-    const auto commandlineArgSplitted = commandlineArg.trimmed()
-                                                      // CUR1 finish silverqx
-                                        .split(SPACE, Qt::KeepEmptyParts);
-    const auto currentSplittedSize = commandlineArgSplitted.size();
-    Q_ASSERT(!commandlineArgSplitted.isEmpty());
+    // Values from the command-line
+    // Both below must be defined as the data member to be available for QStringView-s!
+    m_wordArg        = value(word_);
+    m_commandlineArg = value(commandline).trimmed(); // Our logic is optimized for the trimmed command-line because pwsh depends on it
+    m_cwordArg       = value(cword_).toLongLong();
 
-    // Nothing to do, no Tom command (only the tom executable)
-    if (currentSplittedSize <= 1)
-        return std::nullopt;
+    // Validate the required option values (doesn't need m_commandlineArgSize)
+    validateInputOptionValues();
 
-    for (ArgumentsSizeType i = 1; i < currentSplittedSize; ++i) {
-        const auto &currentCommand = commandlineArgSplitted[i];
+    // Common for both (Tom command and options)
+    const auto commandlineArgSplitted = m_commandlineArg.split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
 
-        if (isOptionArgument(currentCommand))
-            continue;
+    // Currently processed Tom command and positional arguments
+    const auto argumentsCount          = getArgumentsCount(commandlineArgSplitted);
+          auto currentCommandArg       = getCurrentTomCommand(commandlineArgSplitted,
+                                                              argumentsCount);
+                                         // CUR1 complete finish silverqx
+    const auto currentArgumentPosition = getCurrentArgumentPosition();
+    const auto hasAnyTomCommand        = currentCommandArg != kNotFound; // kFound || kAmbiguous
 
-        // Tom command is being completed, return the nullopt to invoke the guess logic
-        if (i == cword)
-            return std::nullopt;
-
-        return currentCommand;
-    }
-
-    return std::nullopt;
+    return {
+        .currentCommandArg          = std::move(currentCommandArg),
+        .wordArg                    = std::move(m_wordArg),
+        .argumentsCount             = argumentsCount,
+        .currentArgumentPosition    = currentArgumentPosition,
+        .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
+        .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
+    };
 }
 
-/* Printing support */
+/* Others */
 
-QChar BashCommand::getResultDelimiter() const noexcept
+void BashCommand::validateInputOptions() const
 {
-    return SPACE;
+    // Validate the required common options for all complete:xyz commands (checks isSet())
+    BaseCompleteCommand::validateInputOptions();
+
+    // Bash specific
+    constexpr static auto optionsToValidate = std::to_array<
+                                              std::reference_wrapper<const QString>>({
+        cword_,
+    });
+
+    // TODO parser, add support for required positional arguments and options silverqx
+    for (const auto &optionName : optionsToValidate)
+        if (!isSet(optionName))
+            throw Exceptions::InvalidArgumentError(
+                    u"The --%1= option must be set for the complete:bash command "
+                     "in %2()."_s
+                    .arg(optionName, __tiny_func__));
+}
+
+void BashCommand::validateInputOptionValues() const
+{
+    // Validate the required common option values for all complete:xyz commands
+    BaseCompleteCommand::validateInputOptionValues();
+
+    // Bash specific
+    // Nothing to do
+    if (m_cwordArg > 0)
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The --cword= option value must be >0 for complete:bash command "
+                 "in %2()."_s
+                .arg(__tiny_func__));
 }
 
 } // namespace Tom::Commands::Complete

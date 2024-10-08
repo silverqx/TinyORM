@@ -490,6 +490,7 @@ function(tinytom_sources out_headers out_sources)
         commands/aboutcommand.hpp
         commands/command.hpp
         commands/complete/basecompletecommand.hpp
+        commands/complete/completetypes.hpp
         commands/complete/pwshcommand.hpp
         commands/database/seedcommand.hpp
         commands/database/wipecommand.hpp

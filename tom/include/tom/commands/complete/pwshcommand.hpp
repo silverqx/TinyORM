@@ -9,23 +9,13 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Tom
-{
-namespace Types
-{
-    struct GuessCommandNameType;
-}
-
-namespace Commands::Complete
+namespace Tom::Commands::Complete
 {
 
     /*! Complete command names and options in the pwsh shell (tab-completion only). */
     class PwshCommand : public BaseCompleteCommand
     {
         Q_DISABLE_COPY_MOVE(PwshCommand)
-
-        /*! Alias for the GuessCommandNameType. */
-        using GuessCommandNameType = Types::GuessCommandNameType;
 
     public:
         /*! Constructor. */
@@ -45,57 +35,53 @@ namespace Commands::Complete
         int run() override;
 
     private:
-        /* Current Tom command */
-        /*! Cursor positions on the command-line. */
-        enum TomCursorPostion : qint8
-        {
-            /*! Undefined cursor position (used as an initial value). */
-            kUndefinedPosition = -1, // Must be -1!
-            /*! Cursor is on the long/short option. */
-            kOnOptionArgument  = -2,
-            /*! Cursor is on the multi-value long option. */
-//            kOnMultiValueOptionArgument = -3, // CUR1 finish, search all kOnOptionArgument, comments too silverqx
-        };
-        /*! Tom command positional argument position. */
-        constexpr static qint8 TomCommandPosition = 1;
+        /* Prepare Context */
+        /*! Initialize context for tab-completion. */
+        CompleteContext initializeCompletionContext() override;
 
-        /*! Get the currently processed Tom command. */
-        GuessCommandNameType
-        getCurrentTomCommand(const QStringList &commandlineArgSplitted,
-                             ArgumentsSizeType argumentsCount) const;
-        /*! Get the raw Tom command name (positional argument number 1). */
-        static QString getRawTomCommandName(const QStringList &commandlineArgSplitted);
-
+        /* Context - Positional arguments */
         /*! Get the Tom command (positional argument) position under the cursor (0-based)
             or kOnOptionArgument if the cursor is on the long/short option. */
-        static ArgumentsSizeType
-        getCurrentArgumentPosition(QStringView commandlineArg, const QString &wordArg,
-                                   bool isNewArgumentPositionAtEnd);
-        /*! Get positional arguments count on the command-line. */
-        inline static ArgumentsSizeType
-        getArgumentsCount(const QStringList &commandlineArgSplitted);
+        ArgumentsSizeType
+        getCurrentArgumentPosition(QStringView commandlineArg, QStringView wordArg) const;
 
-        /*! Get positional arguments count for all commands (from signature). */
-        ArgumentsSizeType getMaxArgumentsCount();
-        /*! Get positional arguments count for the given command (from signature). */
-        ArgumentsSizeType getMaxArgumentsCount(const QString &command);
+        /*! Get the entire command-line before the cursor. */
+        inline QStringView getCommadlineBeforeCursor() const;
+
+        /* Context - Multi-value Option arguments */
+        /*! Get an option value for the --word= option (with workaround for pwsh). */
+        MultiValueOptionType getWordArgOptionValue() const;
+
+        /*! Find a current word under the cursor (workaround for multi-value options). */
+        MultiValueOptionType findCurrentWord() const;
+        /*! Compute a multi-value option value position without the long option prefix,
+            eg. for --only=env,mac|ros,versions the position will be 7 (0-based). */
+        inline ArgumentsSizeType
+        computeMultiValueOptionPosition(QStringView currentWord,
+                                        ArgumentsSizeType currentWordPostion) const;
+
+        /*! Determine if the given word is a long option argument with multi-value. */
+        static bool isLongOptionWithArrayValue(QStringView wordArg);
 
         /* Result output */
         /*! Print all or guessed section names for the --only= option of about command. */
-        int printGuessedSectionNamesForAbout(QStringView sectionNamesArg) const;
+        int printGuessedSectionNamesForAbout() const;
         /*! Print all or guessed connection names for the --database= option. */
-        int printGuessedConnectionNames(const QString &connectionNamesArg) const;
+        int printGuessedConnectionNames() const;
         /*! Print all or guessed environment names for the --env= option. */
-        int printGuessedEnvironmentNames(const QString &environmentNameArg) const;
+        int printGuessedEnvironmentNames() const;
 
         /* Printing support */
-        /*! Print the completion result. */
-        inline void printCompletionResult(const QStringList &result) const;
         /*! Print completion result (used to print one space or block paths complete). */
-        inline void printCompletionResult(const QString &result) const override;
+        inline int printCompletionResult(const QString &result) const override;
+        /*! Print the tab-completion result. */
+        inline int printCompletionResult(const QStringList &result) const;
 
-        /*! Get the delimiter for result values (newline for pwsh). */
-        QChar getResultDelimiter() const noexcept override;
+        /*! Print one space (used by multi-value options). */
+        [[noreturn]] void printOneSpace() const;
+        /*! Block the tab-completion and print nothing. */
+        [[noreturn]] void blockCompletion() const;
+
         /*! Prepare one result value (argument or option) for printing. */
         inline QString
         prepareResultValue(
@@ -106,52 +92,47 @@ namespace Commands::Complete
         void appendShortVerboseOptions(QStringList &options,
                                        const QString &description) const override;
 
-        /* Option arguments */
-        /*! Get an option value for the --word= option (with workaround for pwsh). */
-        QString getWordOptionValue(
-                const QStringList &commandlineArgSplitted, QString::size_type positionArg,
-                ArgumentsSizeType commandlineArgSize) const;
-
-        /*! Return type for the initializePrintArrayOptionValues() method. */
-        struct PrintArrayOptionValuesType
-        {
-            /*! Option value to guess/complete (given on the command-line). */
-            QString lastOptionValueArg;
-            /*! All values for printing (excluding already printed/completed values). */
-            QList<QStringView> allValuesFiltered;
-            /*! Determine whether guessing/printing the first value (need by pwsh). */
-            bool isFirstOptionValue;
-            /*! Print all option values? (if the current option value is empty) */
-            bool printAllValues;
-        };
-
+        /* Printing - Multi-value Option arguments */
         /*! Initialize local variables for printing and guessing multi-value options. */
-        static PrintArrayOptionValuesType
-        initializePrintArrayOptionValues(QStringView optionValuesArg,
-                                         const QStringList &allValues);
+        PrintMultiValueOptionType
+        initializePrintMultiValueOption(const QStringList &allValues) const;
 
-        /*! Determine if the given word is a long option argument with multi-value. */
-        static bool isLongOptionWithArrayValue(const QString &wordArg);
-        /*! Determine whether the word is a long option argument with the given name. */
-        inline static bool isLongOptionName(const QString &wordArg, const QString &name);
+        /*! Get the value/s before the cursor of the multi-value option argument. */
+        inline QStringView
+        getOptionValuesBeforeCursor(QStringView optionValuesArg) const;
+        /*! Get the last character position for the value/s before the cursor (multi). */
+        ArgumentsSizeType
+        getOptionValuesLastPosition(QStringView optionValuesArg) const;
+        /*! Filter out option values that are already completed on the command-line. */
+        static QList<QStringView>
+        filterOptionValues(const QStringList &allValues,
+                           const QList<QStringView> &optionValues);
+
+        /* Option arguments */
         /*! Get the value of the option argument (eg. --database=value). */
-        static QString getOptionValue(const QString &wordArg);
-
-        /*! Determine if the given command contains the given option (in signature). */
-        bool commandHasLongOption(const QString &command, const QString &option);
+        static QStringView getOptionValue(QStringView wordArg);
 
         /*! Obtain all connection names tagged with // shell:connection comment
             (in the main.cpp). */
         static QStringList getConnectionNamesFromFile();
 
         /* Others */
-        /*! Determine whether the given value is between min/max (inclusive) (alias). */
-        inline static bool bw(ArgumentsSizeType value, ArgumentsSizeType min,
-                                                       ArgumentsSizeType max) noexcept;
+        /*! Validate the required option arguments (check isSet()). */
+        void validateInputOptions() const override;
+        /*! Validate the required option values. */
+        void validateInputOptionValues() const override;
+
+        /*! Get cursor position after the tom executable including the space (0-based). */
+        ArgumentsSizeType getCursorPositionAfterExecutable() const;
 
         /* Data members */
-        /*! Is known/our or ambiguous Tom command on the command-line? (!kNotFound). */
-        bool m_hasAnyTomCommand = false;
+        /*! The current position of the cursor on the command-line (0-based). */
+        ArgumentsSizeType m_positionArg = kUndefinedPosition;
+        /*! Size of the --commandline= option value. */
+        ArgumentsSizeType m_commandlineArgSize = -1;
+        /*! Determine if the cursor is at the end on the command-line, in this case
+            positionArg > commandlineArgSize (this is pwsh specific). */
+        bool m_isNewArgumentPositionAtEnd = false;
     };
 
     /* public */
@@ -168,28 +149,50 @@ namespace Commands::Complete
 
     /* private */
 
-    /* Current Tom command */
+    /* Context - Positional arguments */
 
-    PwshCommand::ArgumentsSizeType
-    PwshCommand::getArgumentsCount(const QStringList &commandlineArgSplitted)
+    QStringView PwshCommand::getCommadlineBeforeCursor() const
     {
-        return std::ranges::count_if(commandlineArgSplitted, [](const QString &argument)
-        {
-            return !isOptionArgument(argument);
-        });
+        return {m_commandlineArg.constData(),
+                m_isNewArgumentPositionAtEnd ? m_positionArg -
+                                              (m_positionArg - m_commandlineArgSize)
+                                             : m_positionArg};
+    }
+
+    /* Context - Option arguments */
+
+    ArgumentsSizeType
+    PwshCommand::computeMultiValueOptionPosition(
+            const QStringView currentWord,
+            const ArgumentsSizeType currentWordPostion) const
+    {
+        /* Find the first character position after the =; it's the same like:
+           m_positionArg - currentWordPostion - indexOf(EQ_C) - 1. */
+        const auto equalSignPosition = currentWord.indexOf(Constants::EQ_C) + 1;
+        const auto position = m_positionArg - currentWordPostion - equalSignPosition;
+
+        /* Fix a special case where a tab hit happened at the beginning of a multi-value
+           option like |--only=versions, (in this case complete nothing). */
+        if (position == equalSignPosition * -1)
+            blockCompletion(); // [[noreturn]]
+
+        return position;
     }
 
     /* Printing support */
 
-    void PwshCommand::printCompletionResult(const QStringList &result) const
-    {
-        printCompletionResult(result.join(getResultDelimiter()));
-    }
-
-    void PwshCommand::printCompletionResult(const QString &result) const
+    int PwshCommand::printCompletionResult(const QString &result) const
     {
         // Print a newline if the result is empty to block file/dir paths completion
         note(result, result.isEmpty());
+
+        // For nicer/shorter if() conditions, to be able return right away
+        return EXIT_SUCCESS;
+    }
+
+    int PwshCommand::printCompletionResult(const QStringList &result) const
+    {
+        return printCompletionResult(result.join(QChar::LineFeed));
     }
 
     QString
@@ -201,24 +204,19 @@ namespace Commands::Complete
                 .arg(completionText, listItemText.value_or(completionText), toolTip);
     }
 
-    /* Option arguments */
+    /* Printing - Multi-value Option arguments */
 
-    bool PwshCommand::isLongOptionName(const QString &wordArg, const QString &name)
+    QStringView
+    PwshCommand::getOptionValuesBeforeCursor(const QStringView optionValuesArg) const
     {
-        return wordArg.startsWith(Constants::LongOptionEq.arg(name));
+        const auto *const optionValuesArgData = optionValuesArg.constData();
+
+        // The last character index must point after the last character for QStringView
+        return {optionValuesArgData,
+                optionValuesArgData + getOptionValuesLastPosition(optionValuesArg)}; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
-    /* Others */
-
-    bool PwshCommand::bw(
-            const ArgumentsSizeType value, const ArgumentsSizeType min,
-                                           const ArgumentsSizeType max) noexcept
-    {
-        return between(value, min, max);
-    }
-
-} // namespace Commands::Complete
-} // namespace Tom
+} // namespace Tom::Commands::Complete
 
 TINYORM_END_COMMON_NAMESPACE
 

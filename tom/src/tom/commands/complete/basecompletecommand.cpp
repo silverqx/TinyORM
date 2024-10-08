@@ -1,27 +1,29 @@
 #include "tom/commands/complete/basecompletecommand.hpp"
 
+#include <range/v3/algorithm/contains.hpp>
+
 #include <orm/constants.hpp>
 #include <orm/macros/likely.hpp>
+#include <orm/utils/type.hpp>
 
 #include "tom/application.hpp"
+#include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomutils.hpp"
-
-#ifndef TINYTOM_DEBUG
-#  include "tom/exceptions/runtimeerror.hpp"
-#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::DASH;
-using Orm::Constants::EQ_C;
 using Orm::Constants::NOSPACE;
 
 using Tom::Constants::DoubleDash;
 using Tom::Constants::EMPTY;
 using Tom::Constants::LongOption;
+using Tom::Constants::LongOptionEq;
 using Tom::Constants::LongOptionValue;
 using Tom::Constants::ShPwsh;
 using Tom::Constants::ShortOption;
+using Tom::Constants::commandline;
+using Tom::Constants::word_;
 
 #if defined(__linux__) || defined(__MINGW32__)
 using Tom::Constants::ShBash;
@@ -29,6 +31,8 @@ using Tom::Constants::ShZsh;
 #endif
 
 using TomUtils = Tom::Utils;
+
+using enum Tom::GuessCommandNameResult;
 
 namespace Tom::Commands::Complete
 {
@@ -45,16 +49,90 @@ BaseCompleteCommand::BaseCompleteCommand(Application &application,
 
 int BaseCompleteCommand::run()
 {
-    return Command::run();
+    const auto exitCode = Command::run();
+
+    // Validate the required option arguments (checks isSet())
+    validateInputOptions();
+
+    // Initialize context for tab-completion
+    m_context = initializeCompletionContext();
+
+    return exitCode;
 }
 
 /* protected */
 
+/* Current Tom command */
+
+GuessCommandNameType
+BaseCompleteCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted,
+                                          const ArgumentsSizeType argumentsCount) const
+{
+    // Nothing to do, no Tom command on the command-line (only the tom executable name)
+    if (argumentsCount <= 1)
+        return {kNotFound, std::nullopt};
+
+    // Try to guess one Tom command name (detects kFound, kNotFound, kAmbiguous)
+    return application().guessCommandNameForComplete(
+                             getRawTomCommandName(commandlineArgSplitted));
+}
+
+QString
+BaseCompleteCommand::getRawTomCommandName(const QStringList &commandlineArgSplitted)
+{
+    for (ArgumentsSizeType index = kUndefinedPosition;
+         const auto &argument : commandlineArgSplitted
+    ) {
+        if (isOptionArgument(argument))
+            continue;
+
+        if (++index == ArgTomCommand)
+            return argument;
+    }
+
+#ifndef TINYTOM_DEBUG
+    throw Exceptions::RuntimeError(
+                u"Unexpected return value, it can't be empty if argumentsCount > 1 "
+                 "in %1()."_s.arg(__tiny_func__));
+#else
+    // Guaranteed by the argumentsCount <= 1 above, there are always 2 commands
+    Q_UNREACHABLE();
+#endif
+}
+
+ArgumentsSizeType
+BaseCompleteCommand::getMaxArgumentsCount(const bool hasAnyTomCommand) const
+{
+    using CommandType = std::shared_ptr<Application::Command>;
+
+    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
+    return 1 + (hasAnyTomCommand ? 1 : 0) +
+            static_cast<ArgumentsSizeType>(
+                (*std::ranges::max_element(application().createCommandsVector(),
+                                           std::less(), [](const CommandType &command)
+    {
+        return command->positionalArguments().size();
+    }))
+        ->positionalArguments().size());
+}
+
+ArgumentsSizeType
+BaseCompleteCommand::getMaxArgumentsCount(const QString &command,
+                                          const bool hasAnyTomCommand) const
+{
+    // +1 for tom.exe and +1 for any known/our or ambiguous Tom command
+    return 1 + (hasAnyTomCommand ? 1 : 0) +
+            static_cast<ArgumentsSizeType>(
+                application().createCommand(command, std::nullopt, false)
+                            ->positionalArguments().size());
+}
+
 /* Result output */
 
-int BaseCompleteCommand::printGuessedCommands(
-        const std::vector<std::shared_ptr<Command>> &commands) const
+int BaseCompleteCommand::printGuessedCommands() const
 {
+    const auto commands = application().guessCommandsForComplete(
+                                            context().wordArg.toString());
     // Nothing to print
     if (commands.empty())
         return EXIT_SUCCESS;
@@ -81,12 +159,13 @@ int BaseCompleteCommand::printGuessedCommands(
     return EXIT_SUCCESS;
 }
 
-int BaseCompleteCommand::printGuessedNamespaces(const QString &wordArg) const
+int BaseCompleteCommand::printGuessedNamespaces() const
 {
     const auto &allNamespaceNames = Application::namespaceNames();
 
     // No need to check empty(), there are always some namespaces
 
+    const auto wordArg = context().wordArg;
     const auto printAll = wordArg.isEmpty();
 
     QStringList namespaceNames;
@@ -110,7 +189,7 @@ int BaseCompleteCommand::printGuessedNamespaces(const QString &wordArg) const
 }
 
 // FUTURE complete, printGuessedNamespaces and printGuessedShells are practically the same methods, if I will implement another method of this simple list type, then create common method and reuse code silverqx
-int BaseCompleteCommand::printGuessedShells(const QString &wordArg) const
+int BaseCompleteCommand::printGuessedShells() const
 {
     /* There is no need to complete the bash and zsh for other platforms.
        The pwsh can run on all our supported platforms so always complete it. */
@@ -124,6 +203,7 @@ int BaseCompleteCommand::printGuessedShells(const QString &wordArg) const
 #endif
     };
 
+    const auto wordArg = context().wordArg;
     const auto printAll = wordArg.isEmpty();
 
     QStringList shellNames;
@@ -141,13 +221,12 @@ int BaseCompleteCommand::printGuessedShells(const QString &wordArg) const
     return EXIT_SUCCESS;
 }
 
-int BaseCompleteCommand::printGuessedLongOptions(
-        const std::optional<QString> &currentCommand, const QString &wordArg) const
+int BaseCompleteCommand::printGuessedLongOptions() const
 {
-    const auto commandOptions = getCommandOptionsSignature(currentCommand);
+    const auto commandOptions = getCommandOptionsSignature();
 
     // The -- is guaranteed by the isLongOption(wordArg)
-    const auto wordToGuess = wordArg.sliced(2);
+    const auto wordToGuess = context().wordArg.sliced(2);
     const auto printAll = wordToGuess.isEmpty();
 
     QStringList options;
@@ -167,48 +246,41 @@ int BaseCompleteCommand::printGuessedLongOptions(
             if (optionName.size() > 1 &&
                 (printAll || optionName.startsWith(wordToGuess))
             ) {
-                // Without a value
+                // Without value (eg. --ansi)
                 if (const auto valueName = option.valueName();
                     valueName.isEmpty()
-                ) {
-                    auto longOption = LongOption.arg(optionName);
-
-                    options << prepareResultValue(std::move(longOption),
+                ) T_LIKELY
+                    options << prepareResultValue(LongOption.arg(optionName),
                                                   option.description());
-                }
-                // With a value
-                else {
-                    // Text to be used as the tab-completion result
-                    auto longOption = LongOption.arg(optionName).append(EQ_C);
-                    // Text to be displayed in the completion list
-                    const auto longOptionList = LongOptionValue.arg(optionName,
-                                                                    valueName);
-
+                // With value (eg. --only=)
+                else T_UNLIKELY
                     options << prepareResultValue(
-                                   std::move(longOption), longOptionList,
+                                   // Text to use as the tab-completion result eg. --only=
+                                   LongOptionEq.arg(optionName),
+                                   // Text that appears in the completion list
+                                   LongOptionValue.arg(optionName, valueName),
+                                   // Description that appears in the completion list
                                    NOSPACE.arg(option.description(),
                                                getOptionDefaultValue(option)));
-                }
             }
     }
 
-    // Want to have them always unsorted
+    // Want to have them always unsorted (sorted as they are defined in the source code)
 
     printCompletionResult(options);
 
     return EXIT_SUCCESS;
 }
 
-int BaseCompleteCommand::printGuessedShortOptions(
-            const std::optional<QString> &currentCommand) const
+int BaseCompleteCommand::printGuessedShortOptions() const
 {
-    const auto commandOptions = getCommandOptionsSignature(currentCommand);
+    const auto commandOptions = getCommandOptionsSignature();
 
     QStringList options;
     options.reserve(commandOptions.size());
 
     for (const auto &option : commandOptions) {
-        auto optionNames = option.names();
+        const auto optionNames = option.names();
 
         // Some validation
         Q_ASSERT(between(optionNames.size(), 1, 2));
@@ -217,7 +289,7 @@ int BaseCompleteCommand::printGuessedShortOptions(
         if (option.hidden())
             continue;
 
-        for (auto &optionName : optionNames)
+        for (const auto &optionName : optionNames)
             // Short option
             if (optionName.size() == 1) {
                 // All other short options
@@ -239,36 +311,86 @@ int BaseCompleteCommand::printGuessedShortOptions(
 
 /* Option arguments */
 
-QList<CommandLineOption>
-BaseCompleteCommand::getCommandOptionsSignature(
-        const std::optional<QString> &command) const
+QList<CommandLineOption> BaseCompleteCommand::getCommandOptionsSignature() const
 {
-    // Nothing to do, no command passed so print only the common options
-    if (!command)
-        return application().m_options;
+    /* There's no case where we need to pass a custom command name, so always use
+       the value from the context for a nicer/shorter syntax, even if it's a little
+       confusing. */
+    const auto &currentCommandArg = context().currentCommandArg;
+    auto &application = this->application();
 
-    return application().getCommandOptionsSignature(*command) + application().m_options;
+    // Nothing to do, no command passed so print only the common options
+    if (!currentCommandArg)
+        return application.m_options;
+
+    return application.getCommandOptionsSignature(*currentCommandArg) +
+           application.m_options;
 }
 
-bool BaseCompleteCommand::isOptionArgument(const QString &wordArg, const OptionType type)
+bool
+BaseCompleteCommand::isOptionArgument(const QStringView wordArg, const OptionType type)
 {
-    const auto isLong = wordArg.startsWith(DoubleDash);
-    const auto isShort = isLong ? false : wordArg.startsWith(DASH);
+    const auto isLongOption  = wordArg.startsWith(DoubleDash);
+    const auto isShortOption = isLongOption ? false : wordArg.startsWith(DASH);
 
     // Consider both long and short option arguments
     if (type == kAnyOption)
-        return isLong || isShort;
+        return isLongOption || isShortOption;
 
     if (type == kLongOption)
-        return isLong;
+        return isLongOption;
     if (type == kShortOption)
-        return isShort;
+        return isShortOption;
 
 #ifndef TINYTOM_DEBUG
-    throw Exceptions::RuntimeError(u"Unexpected value for enum struct OptionType."_s);
+    throw Exceptions::RuntimeError(
+                u"Unexpected value for enum struct OptionType in %1()."_s
+                .arg(__tiny_func__));
 #else
     Q_UNREACHABLE();
 #endif
+}
+
+bool BaseCompleteCommand::commandHasLongOption(const QString &optionName) const
+{
+    /* Currently, used for the --database= option only, so checking for hidden options
+       doesn't make sense. */
+    return ranges::contains(getCommandOptionsSignature(), true,
+                            [&optionName](const QCommandLineOption &option)
+    {
+        Q_ASSERT(!option.names().isEmpty());
+
+        return option.names().constFirst() == optionName;
+    });
+}
+
+void BaseCompleteCommand::validateInputOptions() const
+{
+    constexpr static auto optionsToValidate = std::to_array<
+                                              std::reference_wrapper<const QString>>({
+        commandline,
+        word_,
+    });
+
+    // TODO parser, add support for required positional arguments and options silverqx
+    for (const auto &optionName : optionsToValidate)
+        if (!isSet(optionName))
+            throw Exceptions::InvalidArgumentError(
+                    u"The --%1= option must be set for complete:bash/pwsh commands "
+                     "in %2()."_s
+                    .arg(optionName, __tiny_func__));
+}
+
+void BaseCompleteCommand::validateInputOptionValues() const
+{
+    // Nothing to do
+    if (!m_commandlineArg.isEmpty())
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The --commandline= option value cannot be empty for complete:bash/pwsh "
+                 "commands in %1()."_s
+                .arg(__tiny_func__));
 }
 
 /* private */
