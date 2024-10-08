@@ -51,16 +51,16 @@ namespace Concerns
 
         /* For classic command guesser */
         /*! Try to guess the command name by the given name (to create/invoke command). */
-        QString guessCommandName(const QString &name); // name can be partial
+        QString guessCommandName(const QString &name); // The name can be partial
 
         /* For the complete command */
         /*! Try to guess one Tom command name by the given name (for complete logic). */
         GuessCommandNameType
-        guessCommandNameForComplete(const QString &name); // name can be partial
+        guessCommandNameForComplete(const QString &name); // The name can be partial
 
         /*! Try to guess all Tom commands by the given name (for printing to the cout). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsForComplete(const QString &name); // name can be partial
+        guessCommandsForComplete(const QString &name); // The name can be partial
 
     private:
         /* For classic command guesser */
