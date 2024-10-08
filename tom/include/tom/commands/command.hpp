@@ -188,7 +188,7 @@ namespace Commands
         argumentInternal(const QStringList &positionalArguments, SizeType index) const;
 
         /*! Count the number of commas in the option values list (for reserve). */
-        static SizeType commasCount(const QStringList &values);
+        static SizeType countCommas(const QStringList &values);
     };
 
     /* public */

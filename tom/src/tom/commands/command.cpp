@@ -208,7 +208,7 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
     auto values = parser().values(name);
 
     QStringList valuesSplitted;
-    valuesSplitted.reserve(values.size() + commasCount(values));
+    valuesSplitted.reserve(values.size() + countCommas(values));
 
     // Allow to escape , char using \,
     static const QRegularExpression regex(uR"((?<!\\),)"_s);
@@ -425,7 +425,7 @@ QString Command::argumentInternal(const QStringList &positionalArguments,
     return positionalArguments.value(index, defaultValue);
 }
 
-Command::SizeType Command::commasCount(const QStringList &values)
+Command::SizeType Command::countCommas(const QStringList &values)
 {
     SizeType result = 0;
 
