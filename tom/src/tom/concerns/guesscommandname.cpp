@@ -117,7 +117,7 @@ GuessCommandName::guessCommandsInAllNamespaces(const QString &commandName)
     return guessCommandsInNamespace(NsAll, commandName);
 }
 
-/* Common */
+/* Common for both */
 
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsWithNamespace(const QString &name)

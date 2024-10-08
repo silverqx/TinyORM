@@ -75,7 +75,7 @@ namespace Concerns
         std::vector<std::shared_ptr<Command>>
         guessCommandsInAllNamespaces(const QString &commandName);
 
-        /* Common */
+        /* Common for both */
         /*! Try to guess the namespaced Tom command. */
         std::vector<std::shared_ptr<Command>>
         guessCommandsWithNamespace(const QString &name);
