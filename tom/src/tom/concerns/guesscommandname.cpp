@@ -92,7 +92,7 @@ void GuessCommandName::printAmbiguousCommands(
     const auto commandsMaxSize = (*it)->name().size();
 
     // Prepare commands for the errorWall()
-    auto formattedCommands = commands
+    const auto formattedCommands = commands
             | ranges::views::transform([commandsMaxSize](const auto &command) -> QString
     {
         const auto commandName_ = command->name();
