@@ -100,21 +100,19 @@ CompleteContext BashCommand::initializeCompletionContext()
     validateInputOptionValues();
 
     // Common for both (Tom command and options)
-    const auto commandlineArgSplitted = m_commandlineArg.split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
+    m_commandlineArgSplitted = QStringView(m_commandlineArg)
+                               .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
 
     // Currently processed Tom command and positional arguments
-    const auto argumentsCount          = getArgumentsCount(commandlineArgSplitted);
-          auto currentCommandArg       = getCurrentTomCommand(commandlineArgSplitted,
-                                                              argumentsCount);
-                                         // CUR1 complete finish silverqx
-    const auto currentArgumentPosition = getCurrentArgumentPosition();
-    const auto hasAnyTomCommand        = currentCommandArg != kNotFound; // kFound || kAmbiguous
+    const auto argumentsCount    = getArgumentsCount();
+          auto currentCommandArg = getCurrentTomCommand(argumentsCount);
+    const auto hasAnyTomCommand  = currentCommandArg != kNotFound; // kFound || kAmbiguous
 
     return {
         .currentCommandArg          = std::move(currentCommandArg),
         .wordArg                    = std::move(m_wordArg),
         .argumentsCount             = argumentsCount,
-        .currentArgumentPosition    = currentArgumentPosition,
+        .currentArgumentPosition    = getCurrentArgumentPosition(), // CUR1 complete finish silverqx
         .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
         .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
     };

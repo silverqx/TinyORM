@@ -37,16 +37,13 @@ namespace Tom::Commands::Complete
         using enum TomCursorPostion;
 
         /*! Get the currently processed Tom command. */
-        GuessCommandNameType
-        getCurrentTomCommand(const QStringList &commandlineArgSplitted,
-                             ArgumentsSizeType argumentsCount) const;
+        GuessCommandNameType getCurrentTomCommand(ArgumentsSizeType argumentsCount) const;
         /*! Get the raw Tom command name (positional argument number 1). */
-        static QString getRawTomCommandName(const QStringList &commandlineArgSplitted);
+        QStringView getRawTomCommandName() const;
 
         /* Positional arguments */
         /*! Get the number of positional arguments on the command-line. */
-        inline static ArgumentsSizeType
-        getArgumentsCount(const QStringList &commandlineArgSplitted);
+        inline ArgumentsSizeType getArgumentsCount() const;
 
         /*! Get number of positional arguments between all commands (from signature). */
         ArgumentsSizeType getMaxArgumentsCount(bool hasAnyTomCommand) const;
@@ -143,6 +140,9 @@ namespace Tom::Commands::Complete
         /*! The current word that is being completed (to be able to use QStringView). */
         QString m_wordArg;
 
+        /*! The entire current command-line split using the SPACE character. */
+        QList<QStringView> m_commandlineArgSplitted;
+
     private:
         /*! Initialize context for tab-completion. */
         virtual CompleteContext initializeCompletionContext() = 0;
@@ -177,10 +177,10 @@ namespace Tom::Commands::Complete
 
     /* Positional arguments */
 
-    ArgumentsSizeType
-    BaseCompleteCommand::getArgumentsCount(const QStringList &commandlineArgSplitted)
+    ArgumentsSizeType BaseCompleteCommand::getArgumentsCount() const
     {
-        return std::ranges::count_if(commandlineArgSplitted, [](const QString &argument)
+        return std::ranges::count_if(m_commandlineArgSplitted,
+                                     [](const QStringView argument)
         {
             return !isOptionArgument(argument);
         });

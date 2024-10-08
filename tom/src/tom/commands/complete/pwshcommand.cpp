@@ -144,27 +144,25 @@ CompleteContext PwshCommand::initializeCompletionContext()
     validateInputOptionValues();
 
     // Common for both (Tom command and option)
-                                                                      // CUR1 finish silverqx
-    const auto commandlineArgSplitted = m_commandlineArg.split(SPACE, Qt::SkipEmptyParts); // Already trimmed by pwsh
-    m_isNewArgumentPositionAtEnd      = m_positionArg > m_commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
+    m_commandlineArgSplitted     = QStringView(m_commandlineArg) // Already trimmed by pwsh
+                                   .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
+    m_isNewArgumentPositionAtEnd = m_positionArg > m_commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
 
     // Get an option value for the --word= option (with workaround for pwsh)
     const auto [wordArg, multiValueOptionPosition] = getWordArgOptionValue();
 
     // Currently processed Tom command
 //    const auto isCommandLineEndPosition = positionArg == commandlineArgSize;
-    const auto argumentsCount          = getArgumentsCount(commandlineArgSplitted);
-          auto currentCommandArg       = getCurrentTomCommand(commandlineArgSplitted,
-                                                              argumentsCount);
-    const auto currentArgumentPosition = getCurrentArgumentPosition(
-                                             getCommadlineBeforeCursor(), wordArg);
-    const auto hasAnyTomCommand        = currentCommandArg != kNotFound; // kFound || kAmbiguous
+    const auto argumentsCount    = getArgumentsCount();
+          auto currentCommandArg = getCurrentTomCommand(argumentsCount);
+    const auto hasAnyTomCommand  = currentCommandArg != kNotFound; // kFound || kAmbiguous
 
     return {
         .currentCommandArg          = std::move(currentCommandArg),
         .wordArg                    = wordArg,
         .argumentsCount             = argumentsCount,
-        .currentArgumentPosition    = currentArgumentPosition,
+        .currentArgumentPosition    = getCurrentArgumentPosition(
+                                          getCommadlineBeforeCursor(), wordArg),
         .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
         .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
         .isNewArgumentPositionAtEnd = m_isNewArgumentPositionAtEnd,
@@ -187,8 +185,7 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
     for (const auto commandlineSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach; Already trimmed by pwsh
          const auto argument : commandlineSplitted
     ) {
-        // CUR1 tom FINISH QStringView silverqx
-        if (isOptionArgument(argument.toString()))
+        if (isOptionArgument(argument))
             continue;
 
         ++index;

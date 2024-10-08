@@ -13,6 +13,8 @@ TINY_SYSTEM_HEADER
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
 
+class QStringView;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Tom
@@ -56,11 +58,11 @@ namespace Concerns
         /* For the complete command */
         /*! Try to guess one Tom command name by the given name (for complete logic). */
         GuessCommandNameType
-        guessCommandNameForComplete(const QString &name); // The name can be partial
+        guessCommandNameForComplete(QStringView name); // The name can be partial
 
         /*! Try to guess all Tom commands by the given name (for printing to the cout). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsForComplete(const QString &name); // The name can be partial
+        guessCommandsForComplete(QStringView name); // The name can be partial
 
     private:
         /* For classic command guesser */
@@ -73,24 +75,23 @@ namespace Concerns
         /* For the complete command */
         /*! Try to guess all commands in all namespaces (also in the global namespace). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsInAllNamespaces(const QString &commandName);
+        guessCommandsInAllNamespaces(QStringView commandName);
 
         /* Common for both */
         /*! Try to guess the namespaced Tom command. */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsWithNamespace(const QString &name);
+        guessCommandsWithNamespace(QStringView name);
         /*! Try to guess a Tom command in the global namespace (without namespace). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsWithoutNamespace(const QString &commandName);
+        guessCommandsWithoutNamespace(QStringView commandName);
 
         /*! Try to guess a Tom command in the given namespace. */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsInNamespace(const QString &namespaceName,
-                                 const QString &commandName);
+        guessCommandsInNamespace(const QString &namespaceName, QStringView commandName);
 
         /*! Try to guess the Tom command name by the given name (common logic). */
         std::vector<std::shared_ptr<Command>>
-        guessCommandsInternal(const QString &name);
+        guessCommandsInternal(QStringView name);
 
         /* Others */
         /*! Get the tom application. */

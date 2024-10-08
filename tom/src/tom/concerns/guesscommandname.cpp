@@ -50,7 +50,7 @@ QString GuessCommandName::guessCommandName(const QString &name)
 /* For the complete command */
 
 GuessCommandNameType
-GuessCommandName::guessCommandNameForComplete(const QString &name)
+GuessCommandName::guessCommandNameForComplete(const QStringView name)
 {
     const auto commands = guessCommandsInternal(name);
 
@@ -67,7 +67,7 @@ GuessCommandName::guessCommandNameForComplete(const QString &name)
 }
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsForComplete(const QString &name)
+GuessCommandName::guessCommandsForComplete(const QStringView name)
 {
     const auto isNamespacedCommand = name.contains(COLON);
 
@@ -112,7 +112,7 @@ void GuessCommandName::printAmbiguousCommands(
 /* For the complete command */
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsInAllNamespaces(const QString &commandName)
+GuessCommandName::guessCommandsInAllNamespaces(QStringView commandName)
 {
     return guessCommandsInNamespace(NsAll, commandName);
 }
@@ -120,15 +120,16 @@ GuessCommandName::guessCommandsInAllNamespaces(const QString &commandName)
 /* Common for both */
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsWithNamespace(const QString &name)
+GuessCommandName::guessCommandsWithNamespace(const QStringView name)
 {
     const auto namespacedCommands = application().getCommandsInNamespace(NsNamespaced);
 
     return namespacedCommands
-            | ranges::views::filter([&name](const auto &command)
+            | ranges::views::filter([name](const auto &command)
     {
         const auto nameSplitted = name.split(COLON);
-        const auto commandNameSplitted = command->name().split(COLON);
+        const auto commandName = command->name();
+        const auto commandNameSplitted = QStringView(commandName).split(COLON);
 
         Q_ASSERT(nameSplitted.size() == 2 && commandNameSplitted.size() == 2);
 
@@ -142,19 +143,19 @@ GuessCommandName::guessCommandsWithNamespace(const QString &name)
 }
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsWithoutNamespace(const QString &commandName)
+GuessCommandName::guessCommandsWithoutNamespace(const QStringView commandName)
 {
     return guessCommandsInNamespace(NsGlobal, commandName);
 }
 
 std::vector<std::shared_ptr<GuessCommandName::Command>>
 GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
-                                           const QString &commandName)
+                                           const QStringView commandName)
 {
     const auto allCommands = application().getCommandsInNamespace(namespaceName);
 
     return allCommands
-            | ranges::views::filter([&commandName](const auto &command)
+            | ranges::views::filter([commandName](const auto &command)
     {
         return commandName.isEmpty() ||
                 command->name().startsWith(commandName, Qt::CaseInsensitive);
@@ -163,7 +164,7 @@ GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,
 }
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsInternal(const QString &name)
+GuessCommandName::guessCommandsInternal(const QStringView name)
 {
     const auto isGlobalCommand = !name.contains(COLON);
 

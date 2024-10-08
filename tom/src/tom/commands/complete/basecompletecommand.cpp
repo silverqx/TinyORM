@@ -65,23 +65,20 @@ int BaseCompleteCommand::run()
 /* Current Tom command */
 
 GuessCommandNameType
-BaseCompleteCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted,
-                                          const ArgumentsSizeType argumentsCount) const
+BaseCompleteCommand::getCurrentTomCommand(const ArgumentsSizeType argumentsCount) const
 {
     // Nothing to do, no Tom command on the command-line (only the tom executable name)
     if (argumentsCount <= 1)
         return {kNotFound, std::nullopt};
 
     // Try to guess one Tom command name (detects kFound, kNotFound, kAmbiguous)
-    return application().guessCommandNameForComplete(
-                             getRawTomCommandName(commandlineArgSplitted));
+    return application().guessCommandNameForComplete(getRawTomCommandName());
 }
 
-QString
-BaseCompleteCommand::getRawTomCommandName(const QStringList &commandlineArgSplitted)
+QStringView BaseCompleteCommand::getRawTomCommandName() const
 {
     for (ArgumentsSizeType index = kUndefinedPosition;
-         const auto &argument : commandlineArgSplitted
+         const auto argument : m_commandlineArgSplitted
     ) {
         if (isOptionArgument(argument))
             continue;
@@ -131,8 +128,7 @@ BaseCompleteCommand::getMaxArgumentsCount(const QString &command,
 
 int BaseCompleteCommand::printGuessedCommands() const
 {
-    const auto commands = application().guessCommandsForComplete(
-                                            context().wordArg.toString());
+    const auto commands = application().guessCommandsForComplete(context().wordArg);
     // Nothing to print
     if (commands.empty())
         return EXIT_SUCCESS;
