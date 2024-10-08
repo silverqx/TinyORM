@@ -131,9 +131,9 @@ QStringList Command::optionNames() const
 {
     /* This algorithm, inserts the same amount of option names as is a count of commas
        in the option's value. Eg. xyz option at position 3 has value with 2 commas,
-       --xyz=aa,bb,cc; so insert two more xyz option names before 3. position.
+       --xyz=aa,bb,cc so insert two more xyz option names before 3. position.
        This method is counterpart for our values() method and it's needed because our
-       values() method added support for more values per one option --xyz=aa,bb,cc
+       values() method have added support for more values per one option --xyz=aa,bb,cc
        using the , character 🤯. */
 
     // Allow to escape , char using \,
