@@ -4012,3 +4012,79 @@ The _comp__reassemble_words is defined in the /usr/share/bash-completion/bash_co
 The _count_args is deprecated so I refactored it to the _comp_count_args.
 The _comp_count_args returns the value using the REPLY variable.
 The _count_args returns the value using the args variable.
+
+
+Patching Qt FW and QtCreator after upgrades:
+--------------------------------------------
+tags: qt, qtcreator, patch, upgrade, update
+--
+
+Clang LLDB debugging doesn't work with qmake on Linux
+--
+
+ - See: todo-poznámky.txt[qmake bugs]
+ - Error message:
+objcopy: xxxx: debuglink section already exists
+
+ - add --remove-section=.gnu_debuglink before --add-gnu-debuglink= like:
+objcopy --remove-section=.gnu_debuglink --add-gnu-debuglink=libTinyOrm.so.0.36.5.debug libTinyOrm.so.0.36.5
+
+ - source file to patch
+:\Qt\6.X.Y\Src\qtbase\mkspecs\features\unix\separate_debug_info.prf:103
+~103 line
+        clang: \
+            link_debug_info = $$QMAKE_OBJCOPY --remove-section=.gnu_debuglink --add-gnu-debuglink=$$shell_target_debug_info $$shell_target
+        else: \
+            link_debug_info = $$QMAKE_OBJCOPY --add-gnu-debuglink=$$shell_target_debug_info $$shell_target
+
+
+auto-setup.cmake vcpkg bugfix for QtCreator:
+--
+
+ - I have also backup/example files at:
+qMedia\_backup\qtcreator\latest\{auto-setup.cmake,auto-setup.cmake.orig}
+
+ - source file to patch
+:\Qt\Tools\QtCreator\share\qtcreator\package-manager\auto-setup.cmake:234
+~234 line
+
+      # message("1 ${CMAKE_TOOLCHAIN_FILE}")
+      # message("2 ${CMAKE_BINARY_DIR}/vcpkg-dependencies/toolchain.cmake")
+      # message("3 ${cmakeToolchainFile}")
+      set(vpkgRootUniversal)
+      file(TO_CMAKE_PATH "${vpkg_root}" vpkgRootUniversal)
+      set(vcpkgToolchain "${vpkgRootUniversal}/scripts/buildsystems/vcpkg.cmake")
+
+      if (CMAKE_TOOLCHAIN_FILE)
+        set(cmakeToolchainFile)
+        file(TO_CMAKE_PATH "${CMAKE_TOOLCHAIN_FILE}" cmakeToolchainFileUniversal)
+        set(vcpkgQtToolchain "${CMAKE_BINARY_DIR}/vcpkg-dependencies/toolchain.cmake")
+
+        if (NOT cmakeToolchainFileUniversal STREQUAL vcpkgQtToolchain AND
+            NOT cmakeToolchainFileUniversal STREQUAL vcpkgToolchain
+        )
+          file(APPEND "${CMAKE_BINARY_DIR}/vcpkg-dependencies/toolchain.cmake"
+              "include(\"${cmakeToolchainFileUniversal}\")\n")
+        endif()
+      endif()
+
+	  ...
+
+      file(APPEND "${CMAKE_BINARY_DIR}/vcpkg-dependencies/toolchain.cmake" "
+        set(VCPKG_TARGET_TRIPLET ${vcpkg_triplet})
+        include(\"${vcpkgToolchain}\")
+      ")
+
+
+Qt6TestTargets.cmake CMake bugfix to re-use PCH file for all auto tests
+--
+
+ - See: QTBUG-126729
+ - simple remove everything after QT_TESTLIB_LIB in set_target_properties(Qt6::Test)
+
+ - source file to patch
+:\Qt\6.X.Y\msvc2022_64\lib\cmake\Qt6Test\Qt6TestTargets.cmake:63
+~63 line
+
+  INTERFACE_COMPILE_DEFINITIONS "QT_TESTLIB_LIB"
+#  INTERFACE_COMPILE_DEFINITIONS "QT_TESTLIB_LIB;QT_TESTCASE_BUILDDIR=\"\$<IF:\$<BOOL:\$<TARGET_PROPERTY:QT_TESTCASE_BUILDDIR>>,\$<TARGET_PROPERTY:QT_TESTCASE_BUILDDIR>,\$<TARGET_PROPERTY:BINARY_DIR>>\";QT_TESTCASE_SOURCEDIR=\"\$<TARGET_PROPERTY:SOURCE_DIR>\""
