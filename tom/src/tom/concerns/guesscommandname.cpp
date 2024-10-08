@@ -47,33 +47,38 @@ QString GuessCommandName::guessCommandName(const QString &name)
     printAmbiguousCommands(name, commands);
 }
 
-std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsWithNamespace(const QString &name)
+/* For the complete command */
+
+GuessCommandNameType
+GuessCommandName::guessCommandNameForComplete(const QString &name)
 {
-    const auto namespacedCommands = application().getCommandsInNamespace(NsNamespaced);
+    const auto commands = guessCommandsInternal(name);
 
-    return namespacedCommands
-            | ranges::views::filter([&name](const auto &command)
-    {
-        const auto nameSplitted = name.split(COLON);
-        const auto commandNameSplitted = command->name().split(COLON);
+    // Found exactly one Tom command
+    if (commands.size() == 1)
+        return {kFound, commands.front()->name()};
 
-        Q_ASSERT(nameSplitted.size() == 2 && commandNameSplitted.size() == 2);
+    // No Tom command found
+    if (commands.empty())
+        return {kNotFound, std::nullopt};
 
-        return commandNameSplitted.constFirst().startsWith(nameSplitted.constFirst(),
-                                                           Qt::CaseInsensitive) &&
-                commandNameSplitted[1].startsWith(nameSplitted[1], Qt::CaseInsensitive);
-    })
-            /* I have to materialize this view because namespacedCommands variable is
-               destroyed after return, it's good enough 😎. */
-            | ranges::to<std::vector<std::shared_ptr<Command>>>();
+    // More Tom commands found
+    return {kAmbiguous, std::nullopt};
 }
 
 std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsWithoutNamespace(const QString &commandName)
+GuessCommandName::guessCommandsForComplete(const QString &name)
 {
-    return guessCommandsInNamespace(NsGlobal, commandName);
+    const auto isNamespacedCmd = name.contains(COLON);
+
+    // Here we need to print all Tom commands in all namespaces after <TAB> pressed
+    return isNamespacedCmd ? guessCommandsWithNamespace(name)
+                           : guessCommandsInAllNamespaces(name);
 }
+
+/* private */
+
+/* For classic command guesser */
 
 void GuessCommandName::printAmbiguousCommands(
         const QString &commandName,
@@ -106,44 +111,41 @@ void GuessCommandName::printAmbiguousCommands(
 
 /* For the complete command */
 
-GuessCommandNameType
-GuessCommandName::guessCommandNameForComplete(const QString &name)
-{
-    const auto commands = guessCommandsInternal(name);
-
-    // Found exactly one Tom command
-    if (commands.size() == 1)
-        return {kFound, commands.front()->name()};
-
-    // No Tom command found
-    if (commands.empty())
-        return {kNotFound, std::nullopt};
-
-    // More Tom commands found
-    return {kAmbiguous, std::nullopt};
-}
-
-std::vector<std::shared_ptr<Command>>
-GuessCommandName::guessCommandsForComplete(const QString &name)
-{
-    const auto isNamespacedCmd = name.contains(COLON);
-
-    // Here we need to print all Tom commands in all namespaces after <TAB> pressed
-    return isNamespacedCmd ? guessCommandsWithNamespace(name)
-                           : guessCommandsInAllNamespaces(name);
-}
-
-/* Common */
-
 std::vector<std::shared_ptr<Command>>
 GuessCommandName::guessCommandsInAllNamespaces(const QString &commandName)
 {
     return guessCommandsInNamespace(NsAll, commandName);
 }
 
-/* private */
-
 /* Common */
+
+std::vector<std::shared_ptr<Command>>
+GuessCommandName::guessCommandsWithNamespace(const QString &name)
+{
+    const auto namespacedCommands = application().getCommandsInNamespace(NsNamespaced);
+
+    return namespacedCommands
+            | ranges::views::filter([&name](const auto &command)
+    {
+        const auto nameSplitted = name.split(COLON);
+        const auto commandNameSplitted = command->name().split(COLON);
+
+        Q_ASSERT(nameSplitted.size() == 2 && commandNameSplitted.size() == 2);
+
+        return commandNameSplitted.constFirst().startsWith(nameSplitted.constFirst(),
+                                                           Qt::CaseInsensitive) &&
+                commandNameSplitted[1].startsWith(nameSplitted[1], Qt::CaseInsensitive);
+    })
+            /* I have to materialize this view because namespacedCommands variable is
+               destroyed after return, it's good enough 😎. */
+            | ranges::to<std::vector<std::shared_ptr<Command>>>();
+}
+
+std::vector<std::shared_ptr<Command>>
+GuessCommandName::guessCommandsWithoutNamespace(const QString &commandName)
+{
+    return guessCommandsInNamespace(NsGlobal, commandName);
+}
 
 std::vector<std::shared_ptr<GuessCommandName::Command>>
 GuessCommandName::guessCommandsInNamespace(const QString &namespaceName,

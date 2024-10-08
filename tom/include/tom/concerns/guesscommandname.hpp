@@ -53,13 +53,17 @@ namespace Concerns
         /*! Try to guess the command name by the given name (to create/invoke command). */
         QString guessCommandName(const QString &name); // name can be partial
 
-        /*! Try to guess the namespaced Tom command. */
-        std::vector<std::shared_ptr<Command>>
-        guessCommandsWithNamespace(const QString &name);
-        /*! Try to guess a Tom command in the global namespace (without namespace). */
-        std::vector<std::shared_ptr<Command>>
-        guessCommandsWithoutNamespace(const QString &commandName);
+        /* For the complete command */
+        /*! Try to guess one Tom command name by the given name (for complete logic). */
+        GuessCommandNameType
+        guessCommandNameForComplete(const QString &name); // name can be partial
 
+        /*! Try to guess all Tom commands by the given name (for printing to the cout). */
+        std::vector<std::shared_ptr<Command>>
+        guessCommandsForComplete(const QString &name); // name can be partial
+
+    private:
+        /* For classic command guesser */
         /*! Print the error wall with ambiguous commands. */
         [[noreturn]] void
         printAmbiguousCommands(
@@ -67,20 +71,18 @@ namespace Concerns
                 const std::vector<std::shared_ptr<Command>> &commands) const;
 
         /* For the complete command */
-        /*! Try to guess one Tom command name by the given name (for complete logic). */
-        GuessCommandNameType guessCommandNameForComplete(const QString &name); // name can be partial
-
-        /*! Try to guess all Tom commands by the given name (for printing to the cout). */
-        std::vector<std::shared_ptr<Command>>
-        guessCommandsForComplete(const QString &name); // name can be partial
-
-        /* Common */
         /*! Try to guess all commands in all namespaces (also in the global namespace). */
         std::vector<std::shared_ptr<Command>>
         guessCommandsInAllNamespaces(const QString &commandName);
 
-    private:
         /* Common */
+        /*! Try to guess the namespaced Tom command. */
+        std::vector<std::shared_ptr<Command>>
+        guessCommandsWithNamespace(const QString &name);
+        /*! Try to guess a Tom command in the global namespace (without namespace). */
+        std::vector<std::shared_ptr<Command>>
+        guessCommandsWithoutNamespace(const QString &commandName);
+
         /*! Try to guess a Tom command in the given namespace. */
         std::vector<std::shared_ptr<Command>>
         guessCommandsInNamespace(const QString &namespaceName,
