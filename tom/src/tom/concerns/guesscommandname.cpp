@@ -88,8 +88,7 @@ void GuessCommandName::printAmbiguousCommands(
 
     // Prepare commands for the errorWall()
     auto formattedCommands = commands
-            | ranges::views::transform([commandsMaxSize](const auto &command)
-                                       -> QString
+            | ranges::views::transform([commandsMaxSize](const auto &command) -> QString
     {
         const auto commandName_ = command->name();
         const auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
