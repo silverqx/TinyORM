@@ -67,6 +67,8 @@ namespace Tom::Commands::Complete
         inline bool completeDatabaseOption() const;
         /*! Print all or guessed environment names for the --env= option. */
         inline bool completeEnvOption() const;
+        /*! Print file/dir paths completion for the --path= option. */
+        // inline bool completePathOption() const;
         /*! Print all or guessed long option parameter names. */
         inline bool completeLongOptions() const;
         /*! Print all or guessed short option parameter names. */
@@ -294,6 +296,25 @@ namespace Tom::Commands::Complete
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom migrate --env=| ; tom migrate --env=d| ; tom db:seed --env=d|ev Xyz
                                                                                   // kAmbiguous : tom migrate:re --env=| (migrate:refresh or migrate:reset)
     }
+
+//    bool BaseCompleteCommand::completePathOption() const
+//    {
+//        const auto &[
+//                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+//                maxArgumentsCount, _1, isNewArgPositionAtEnd, _2
+//        ] = context();
+
+//        /* This could provide directory path completion for all commands with the --path=
+//           option, but pwsh isn't able to complete file/dir paths after --path=| (after
+//           long options that end with the = character). I leave it here, maybe it will be
+//           supported in future versions. */
+//        return (currentCommandArg == Integrate || currentCommandArg == MakeMigration ||
+//                currentCommandArg == MakeModel || currentCommandArg == MakeSeeder) &&
+//                isLongOptionName(wordArg, path_) &&
+//                currentArgumentPosition == kOnOptionArgument && // tom integrate --path=|
+//                !isNewArgPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
+//                bw(argumentsCount, 2, maxArgumentsCount);
+//    }
 
     bool BaseCompleteCommand::completeLongOptions() const
     {
