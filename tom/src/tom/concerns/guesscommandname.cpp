@@ -127,15 +127,15 @@ GuessCommandName::guessCommandsWithNamespace(const QStringView name)
     return namespacedCommands
             | ranges::views::filter([name](const auto &command)
     {
-        const auto nameSplitted = name.split(COLON);
+        const auto nameSplit = name.split(COLON);
         const auto commandName = command->name();
-        const auto commandNameSplitted = QStringView(commandName).split(COLON);
+        const auto commandNameSplit = QStringView(commandName).split(COLON);
 
-        Q_ASSERT(nameSplitted.size() == 2 && commandNameSplitted.size() == 2);
+        Q_ASSERT(nameSplit.size() == 2 && commandNameSplit.size() == 2);
 
-        return commandNameSplitted.constFirst().startsWith(nameSplitted.constFirst(),
-                                                           Qt::CaseInsensitive) &&
-                commandNameSplitted[1].startsWith(nameSplitted[1], Qt::CaseInsensitive);
+        return commandNameSplit.constFirst().startsWith(nameSplit.constFirst(),
+                                                        Qt::CaseInsensitive) &&
+                commandNameSplit[1].startsWith(nameSplit[1], Qt::CaseInsensitive);
     })
             /* I have to materialize this view because namespacedCommands variable is
                destroyed after return, it's good enough 😎. */

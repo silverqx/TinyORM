@@ -89,8 +89,8 @@ jobs:
         $tinyormBuildName
         "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
 
-        $qtSpecSplitted = $env:TINY_QT_SPEC.Split('_')
-        $qtSpecPlain = $qtSpecSplitted[1..($qtSpecSplitted.Count - 1)] -join '_'
+        $qtSpecSplit = $env:TINY_QT_SPEC.Split('_')
+        $qtSpecPlain = $qtSpecSplit[1..($qtSpecSplit.Count - 1)] -join '_'
         "TinyQtSpecPlain=$qtSpecPlain" >> $env:GITHUB_ENV
 
     - name: MySQL add libmysql.dll on the $env:Path, INCLUDE, and LIB

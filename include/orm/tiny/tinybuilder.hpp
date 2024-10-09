@@ -1303,9 +1303,9 @@ namespace Orm::Tiny
     template<typename Model>
     WithItem Builder<Model>::createSelectWithConstraint(const QString &name)
     {
-        auto splitted = name.split(COLON);
-        auto relation = splitted.constFirst().trimmed();
-        auto &columns = splitted[1];
+        auto nameSplit = name.split(COLON);
+        auto relation  = nameSplit.constFirst().trimmed();
+        auto &columns  = nameSplit[1];
 
         /* Get the Related model table name if the relation is BelongsToMany, otherwise
            return an empty std::optional. */
@@ -1319,18 +1319,18 @@ namespace Orm::Tiny
              belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
             (QueryBuilder &query)
             {
-                const auto columnsSplitted = QStringView(columns)
-                                             .split(COMMA_C, Qt::SkipEmptyParts);
+                const auto columnsSplit = QStringView(columns)
+                                          .split(COMMA_C, Qt::SkipEmptyParts);
 
                 // Nothing to do
-                if (columnsSplitted.isEmpty())
+                if (columnsSplit.isEmpty())
                     return;
 
                 QList<Column> columnsList;
-                columnsList.reserve(columnsSplitted.size());
+                columnsList.reserve(columnsSplit.size());
 
                 // Avoid 'clazy might detach' warning
-                for (const auto column_ : columnsSplitted)
+                for (const auto column_ : columnsSplit)
                 {
                     const auto column = column_.trimmed();
 

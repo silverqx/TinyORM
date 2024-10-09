@@ -138,7 +138,7 @@ namespace Tom::Commands::Complete
         QString m_wordArg;
 
         /*! The entire current command-line split using the SPACE character. */
-        QList<QStringView> m_commandlineArgSplitted;
+        QList<QStringView> m_commandlineArgSplit;
 
     private:
         /*! Initialize context for tab-completion. */
@@ -176,7 +176,7 @@ namespace Tom::Commands::Complete
 
     SizeType BaseCompleteCommand::getArgumentsCount() const
     {
-        return std::ranges::count_if(m_commandlineArgSplitted,
+        return std::ranges::count_if(m_commandlineArgSplit,
                                      [](const QStringView argument)
         {
             return !isOptionArgument(argument);

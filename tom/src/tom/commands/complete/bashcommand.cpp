@@ -100,8 +100,8 @@ CompleteContext BashCommand::initializeCompletionContext()
     validateInputOptionValues();
 
     // Common for both (Tom command and options)
-    m_commandlineArgSplitted = QStringView(m_commandlineArg)
-                               .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
+    m_commandlineArgSplit = QStringView(m_commandlineArg)
+                            .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
 
     // Currently processed Tom command and positional arguments
     const auto argumentsCount    = getArgumentsCount();

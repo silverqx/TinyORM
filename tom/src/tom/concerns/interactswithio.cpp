@@ -553,17 +553,18 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     QStringList lines;
 
     {
-        const auto splitted = string.split(NEWLINE_C, Qt::SkipEmptyParts);
+        const auto stringSplit = string.split(NEWLINE_C, Qt::SkipEmptyParts);
 
         /* Compute the max. box width */
         // Get max. line width after the split with the newline in all rendered lines
         const auto maxLineWidth = std::min(m_terminal->width() - 4,
-                                           static_cast<int>(getMaxLineWidth(splitted)));
+                                           static_cast<int>(
+                                               getMaxLineWidth(stringSplit)));
 
-        lines.reserve(computeReserveForErrorWall(splitted, maxLineWidth));
+        lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
         // Split lines by the given width
-        for (const auto &lineNl : splitted)
+        for (const auto &lineNl : stringSplit)
             for (auto &&line : StringUtils::splitStringByWidth(lineNl, maxLineWidth))
                 lines << std::move(line);
     }
@@ -573,7 +574,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     {
         // ANSI template
         static const auto tmpl = u"\033[37;41m%1\033[0m"_s;
-        // Get final max. line width in all rendered lines (after splitted by the width)
+        // Get final max. line width in all rendered lines (after split by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
         // Full line width (with spaces at the beginning and end)
         const auto fullLineWidth = maxLineWidth + 4;
@@ -606,12 +607,12 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
 }
 
 QStringList::size_type
-InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
+InteractsWithIO::computeReserveForErrorWall(const QStringList &stringSplit,
                                             const int maxLineWidth)
 {
     QStringList::size_type size = 0;
 
-    for (const auto &line : splitted)
+    for (const auto &line : stringSplit)
         /* +2 serves as a reserve because the splitting algorithm can decided
            to start a new line if there is <30% free space, +2 is enough. */
         size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;

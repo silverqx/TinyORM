@@ -207,8 +207,8 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
 {
     auto values = parser().values(name);
 
-    QStringList valuesSplitted;
-    valuesSplitted.reserve(values.size() + countCommas(values));
+    QStringList valuesSplit;
+    valuesSplit.reserve(values.size() + countCommas(values));
 
     // Allow to escape , char using \,
     static const QRegularExpression regex(uR"((?<!\\),)"_s);
@@ -216,14 +216,14 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
     // Support passing more values delimited by comma
     for (auto &&value : values) {
         if (!value.contains(regex)) {
-            valuesSplitted << std::move(value);
+            valuesSplit << std::move(value);
             continue;
         }
 
-        valuesSplitted << value.split(regex, behavior);
+        valuesSplit << value.split(regex, behavior);
     }
 
-    return valuesSplitted;
+    return valuesSplit;
 }
 
 QString Command::valueCmd(const QString &name, const QString &key) const

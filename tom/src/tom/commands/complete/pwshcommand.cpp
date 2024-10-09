@@ -144,8 +144,8 @@ CompleteContext PwshCommand::initializeCompletionContext()
     validateInputOptionValues();
 
     // Common for both (Tom command and option)
-    m_commandlineArgSplitted     = QStringView(m_commandlineArg) // Already trimmed by pwsh
-                                   .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
+    m_commandlineArgSplit   = QStringView(m_commandlineArg) // Already trimmed by pwsh
+                              .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
     m_isNewArgumentPositionAtEnd = m_positionArg > m_commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
 
     // Get an option value for the --word= option (with workaround for pwsh)
@@ -182,8 +182,8 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
 
     SizeType index = kUndefinedPosition;
                                                                       // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
-    for (const auto commandlineSplitted = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach; Already trimmed by pwsh
-         const auto argument : commandlineSplitted
+    for (const auto commandlineArgSplit = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach; Already trimmed by pwsh
+         const auto argument : commandlineArgSplit
     ) {
         if (isOptionArgument(argument))
             continue;
@@ -278,12 +278,12 @@ bool PwshCommand::isLongOptionWithArrayValue(const QStringView wordArg)
     if (!isLongOption(wordArg) || !wordArg.contains(EQ_C))
         return false;
 
-    const auto wordArgSplitted = StringUtils::splitAtFirst(wordArg, EQ_C,
-                                                           Qt::KeepEmptyParts);
-    Q_ASSERT(wordArgSplitted.size() == 2);
+    const auto wordArgSplit = StringUtils::splitAtFirst(wordArg, EQ_C,
+                                                        Qt::KeepEmptyParts);
+    Q_ASSERT(wordArgSplit.size() == 2);
 
     // Checks --only=macros, or --only=macros,en
-    return wordArgSplitted.constLast().contains(COMMA_C);
+    return wordArgSplit.constLast().contains(COMMA_C);
 }
 
 /* Result output */
@@ -457,7 +457,7 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
     const auto currentOptionValueIndex = optionValuesBeforeCursor.count(COMMA_C);
 
     // Option values that are already on the command-line (from getOptionValue())
-    auto optionValuesArgSplitted = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
+    auto optionValuesArgSplit = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
     // Needed for pwsh, determines an output format
     const auto isFirstOptionValue = currentOptionValueIndex == 0;
     /* This is for one special case like --only=environment,|macros,versions, or
@@ -473,18 +473,17 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
     /* The currently completing option value needs to be removed, so that this option
        value is not filtered out in the ranges::views::filter() algorithm below. */
     const auto currentOptionValue = shouldRemoveOptionValue
-                                    ? optionValuesArgSplitted.takeAt(
-                                          currentOptionValueIndex)
+                                    ? optionValuesArgSplit.takeAt(currentOptionValueIndex)
                                     : EMPTY;
     const auto printAllValues = currentOptionValue.isEmpty();
 
     // Remove all empty and null strings (it would print all option values w/o this)
-    optionValuesArgSplitted.removeAll({});
+    optionValuesArgSplit.removeAll({});
 
     return {
         .currentOptionValue = currentOptionValue,
         // Filter out option values that are already completed on the command-line
-        .optionValues       = filterOptionValues(allValues, optionValuesArgSplitted),
+        .optionValues       = filterOptionValues(allValues, optionValuesArgSplit),
         .isFirstOptionValue = isFirstOptionValue,
         .printAllValues     = printAllValues,
     };

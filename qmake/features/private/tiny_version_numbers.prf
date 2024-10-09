@@ -101,8 +101,8 @@ defineTest(tiny_version_numbers) {
 
     # Assign version numbers to the <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> variables
     for(versionLine, versionLines) {
-        splittedLine  = $$split(versionLine, ' ')
-        versionNumber = $$take_last(splittedLine)
+        lineSplit     = $$split(versionLine, ' ')
+        versionNumber = $$take_last(lineSplit)
         versionNumber = $$replace(versionNumber, ' ', '')
 
         for(versionToken, versionTokens) {

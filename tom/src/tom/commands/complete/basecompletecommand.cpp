@@ -78,7 +78,7 @@ BaseCompleteCommand::getCurrentTomCommand(const SizeType argumentsCount) const
 QStringView BaseCompleteCommand::getRawTomCommandName() const
 {
     for (SizeType index = kUndefinedPosition;
-         const auto argument : m_commandlineArgSplitted
+         const auto argument : m_commandlineArgSplit
     ) {
         if (isOptionArgument(argument))
             continue;

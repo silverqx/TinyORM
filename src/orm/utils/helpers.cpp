@@ -47,25 +47,25 @@ void Helpers::logException(const std::exception &e, const bool fatal)
 bool Helpers::isStandardDateFormat(const QString &value)
 {
     // Avoid RegEx for performance reasons
-    const auto splitted = QStringView(value).split(DASH, Qt::KeepEmptyParts);
+    const auto valueSplit = QStringView(value).split(DASH, Qt::KeepEmptyParts);
 
-    if (splitted.size() != 3)
+    if (valueSplit.size() != 3)
         return false;
 
     // Year
-    if (const auto year = splitted.at(0);
+    if (const auto year = valueSplit.at(0);
         year.size() != 4 || !StringUtils::isNumber(year)
     )
         return false;
 
     // Month
-    const auto month = splitted.at(1);
+    const auto month = valueSplit.at(1);
     const auto monthSize = month.size();
     if ((monthSize != 1 && monthSize != 2) || !StringUtils::isNumber(month))
         return false;
 
     // Day
-    const auto day = splitted.at(2);
+    const auto day = valueSplit.at(2);
     const auto daySize = day.size();
     return (daySize == 1 || daySize == 2) && StringUtils::isNumber(day);
 }
