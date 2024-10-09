@@ -39,7 +39,7 @@ namespace Tom::Commands::Complete
     /*! Context for the tab-completion. */
     struct CompleteContext
     {
-        /*! Currently processed Tom command. */
+        /*! Currently processed/guessed Tom command. */
         GuessedCommandName currentCommandArg;
         /*! The current word that is being completed. */
         QStringView wordArg;
