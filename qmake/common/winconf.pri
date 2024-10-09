@@ -5,18 +5,25 @@
 # https://microsoft.fandom.com/wiki/List_of_Windows_codenames
 # https://en.wikipedia.org/wiki/Windows_11_version_history
 # https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
+# https://en.wikipedia.org/wiki/List_of_Microsoft_codenames
 
 # The ideal case would be not to define these and rely on what is defined
 # in <qt_windows.h> but Qt uses too old values for these, eg. MSYS2 patches these and
 # uses the latest versions, so we have to define these manually because the original
 # Qt code doesn't maintain these correctly.
 # All have to be defined because of checks at the beginning of <qt_windows.h> (fixed)
-# Windows 11 "22H2" - 0x0A00000C
-DEFINES *= WINVER=_WIN32_WINNT_WIN10
-DEFINES *= NTDDI_VERSION=NTDDI_WIN10_NI
-DEFINES *= _WIN32_WINNT=_WIN32_WINNT_WIN10
+# Also, don't use the names like _WIN32_WINNT_WIN10 because eg. fileapi.h #include-ed
+# inside the windows.h - winbase.h fails to compile and I don't know why, I think
+# it doesn't have access to these macro names and it doesn't know the actual value,
+# even if the sdkddkver.h is included before!
+# The previous Windows SDK 22621 worked with these names, so maybe there is a bug
+# in Windows SDK 26100.
+# Windows 11 "24H2" - 0x0A000010 - Germanium
+DEFINES *= WINVER=0x0A00            # _WIN32_WINNT_WIN10
+DEFINES *= NTDDI_VERSION=0x0A000010 # NTDDI_WIN10_GE
+DEFINES *= _WIN32_WINNT=0x0A00      # _WIN32_WINNT_WIN10
 # Internet Explorer 11
-DEFINES *= _WIN32_IE=_WIN32_IE_IE110
+DEFINES *= _WIN32_IE=0xA00          # _WIN32_IE_IE110
 # Exclude unneeded header files
 DEFINES *= WIN32_LEAN_AND_MEAN
 DEFINES *= NOMINMAX

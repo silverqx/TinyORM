@@ -91,20 +91,26 @@ ${TINY_UNPARSED_ARGUMENTS}")
         # So these C macros are set on MSVC (in <sdkddkver.h> is advanced guess logic)
         # and are not set on mingw-w64/MSYS2 in the <windows.h> file.
         # What means we can't set them on MSYS2 because it throws [-Wmacro-redefined].
+        # Also, don't use the names like _WIN32_WINNT_WIN10 because eg. fileapi.h
+        # #include-ed inside the windows.h - winbase.h fails to compile and I don't know
+        # why, I think it doesn't have access to these macro names and it doesn't know
+        # the actual value, even if the sdkddkver.h is included before!
+        # The previous Windows SDK 22621 worked with these names, so maybe there is a bug
+        # in Windows SDK 26100.
         # Flipped expression of : if(MINGW AND QT_VERSION_MAJOR GREATER_EQUAL 6)
         if(NOT MINGW OR NOT QT_VERSION_MAJOR GREATER_EQUAL 6)
             target_compile_definitions(${target} INTERFACE
-                # Windows 11 "22H2" - 0x0A00000C
-                WINVER=_WIN32_WINNT_WIN10
-                _WIN32_WINNT=_WIN32_WINNT_WIN10
+                # Windows 11 "24H2" - 0x0A000010 - Germanium
+                WINVER=0x0A00       # _WIN32_WINNT_WIN10
+                _WIN32_WINNT=0x0A00 # _WIN32_WINNT_WIN10
             )
         endif()
 
         target_compile_definitions(${target} INTERFACE
-            # Windows 11 "22H2" - 0x0A00000C
-            NTDDI_VERSION=NTDDI_WIN10_NI
+            # Windows 11 "24H2" - 0x0A000010 - Germanium
+            NTDDI_VERSION=0x0A000010 # NTDDI_WIN10_GE
             # Internet Explorer 11
-            _WIN32_IE=_WIN32_IE_IE110
+            _WIN32_IE=0x0A00         # _WIN32_IE_IE110
             # Exclude unneeded header files
             WIN32_LEAN_AND_MEAN
             NOMINMAX
