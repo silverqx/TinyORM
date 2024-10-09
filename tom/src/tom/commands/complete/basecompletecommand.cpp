@@ -311,14 +311,14 @@ QList<CommandLineOption> BaseCompleteCommand::getCommandOptionsSignature() const
     /* There's no case where we need to pass a custom command name, so always use
        the value from the context for a nicer/shorter syntax, even if it's a little
        confusing. */
-    const auto &currentCommandArg = context().currentCommandArg;
+    const auto &guessedTomCommand = context().guessedTomCommand;
     auto &application = this->application();
 
     // Nothing to do, no Tom command passed/guessed so print only the common options
-    if (!currentCommandArg)
+    if (!guessedTomCommand)
         return application.m_options;
 
-    return application.getCommandOptionsSignature(*currentCommandArg) +
+    return application.getCommandOptionsSignature(*guessedTomCommand) +
            application.m_options;
 }
 

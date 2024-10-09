@@ -105,11 +105,11 @@ CompleteContext BashCommand::initializeCompletionContext()
 
     // Currently processed Tom command and positional arguments
     const auto argumentsCount    = getArgumentsCount();
-          auto currentCommandArg = getCurrentTomCommand(argumentsCount);
-    const auto hasAnyTomCommand  = currentCommandArg != kNotFound; // kFound || kAmbiguous
+          auto guessedTomCommand = getCurrentTomCommand(argumentsCount);
+    const auto hasAnyTomCommand  = guessedTomCommand != kNotFound; // kFound || kAmbiguous
 
     return {
-        .currentCommandArg          = std::move(currentCommandArg),
+        .guessedTomCommand          = std::move(guessedTomCommand),
         .wordArg                    = std::move(m_wordArg),
         .argumentsCount             = argumentsCount,
         .currentArgumentPosition    = getCurrentArgumentPosition(), // CUR1 complete finish silverqx

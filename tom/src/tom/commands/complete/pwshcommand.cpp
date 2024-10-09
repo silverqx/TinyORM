@@ -145,11 +145,11 @@ CompleteContext PwshCommand::initializeCompletionContext()
     // Currently processed Tom command
 //    const auto isCommandLineEndPosition = positionArg == commandlineArgSize;
     const auto argumentsCount    = getArgumentsCount();
-          auto currentCommandArg = getCurrentTomCommand(argumentsCount);
-    const auto hasAnyTomCommand  = currentCommandArg != kNotFound; // kFound || kAmbiguous
+          auto guessedTomCommand = getCurrentTomCommand(argumentsCount);
+    const auto hasAnyTomCommand  = guessedTomCommand != kNotFound; // kFound || kAmbiguous
 
     return {
-        .currentCommandArg        = std::move(currentCommandArg),
+        .guessedTomCommand        = std::move(guessedTomCommand),
         .wordArg                  = wordArg,
         .argumentsCount           = argumentsCount,
         .currentArgumentPosition  = getCurrentArgumentPosition(

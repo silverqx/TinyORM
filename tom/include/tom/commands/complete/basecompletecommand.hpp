@@ -190,7 +190,7 @@ namespace Tom::Commands::Complete
     bool BaseCompleteCommand::completeAllCommands() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 _1, _2, _3, _4
         ] = context();
 
@@ -198,21 +198,21 @@ namespace Tom::Commands::Complete
 
         return wordArg.isEmpty() &&
                 ((currentArgumentPosition == ArgTomCommand/* && bw(argumentsCount, 1, maxArguments)*/) || // tom | ; tom | xyz
-                 (currentCommandArg == Constants::Help &&
+                 (guessedTomCommand == Constants::Help &&
                   /*argumentsCount == 2 && */currentArgumentPosition == Arg2)); // tom help |
     }
 
     bool BaseCompleteCommand::completeCommand() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 maxArgumentsCount, _1, _2, _3
         ] = context();
 
         return !wordArg.isEmpty() && !isOptionArgument(wordArg) &&
                 ((/*bw(argumentsCount, 2, maxArgumentsCount) &&*/  // tom db:se|           ; tom db:see|d           ; tom db:seed|
                   currentArgumentPosition == ArgTomCommand) || // tom db:se| XyzSeeder ; tom db:see|d XyzSeeder ; tom db:seed| XyzSeeder
-                 (currentCommandArg == Constants::Help && /*argumentsCount == 3 &&*/
+                 (guessedTomCommand == Constants::Help && /*argumentsCount == 3 &&*/
                   (currentArgumentPosition == ArgTomCommand || // tom he| a   ; tom hel|p a ; tom help| a
                    currentArgumentPosition == Arg2)));         // tom help a| ; tom help ab|out
     }
@@ -220,13 +220,13 @@ namespace Tom::Commands::Complete
     bool BaseCompleteCommand::completeList_NamespacesArgument() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 _1, _2, _3, _4
         ] = context();
 
 //        const auto maxArguments = getMaxArgumentsCount(Constants::List);
 
-        return currentCommandArg == Constants::List && !isOptionArgument(wordArg) &&
+        return guessedTomCommand == Constants::List && !isOptionArgument(wordArg) &&
                 currentArgumentPosition == Arg2 &&
                 (( wordArg.isEmpty()/* && argumentsCount == 2*/) ||           // tom list |
                  (!wordArg.isEmpty()/* && argumentsCount == maxArguments*/)); // tom list g| ; tom list gl|obal
@@ -235,13 +235,13 @@ namespace Tom::Commands::Complete
     bool BaseCompleteCommand::completeIntegrate_ShellsArgument() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 _1, _2, _3, _4
         ] = context();
 
 //        const auto maxArguments = getMaxArgumentsCount(Constants::Integrate);
 
-        return currentCommandArg == Constants::Integrate && !isOptionArgument(wordArg) &&
+        return guessedTomCommand == Constants::Integrate && !isOptionArgument(wordArg) &&
                 currentArgumentPosition == Arg2 &&
                 (( wordArg.isEmpty()/* && argumentsCount == 2*/) ||           // tom integrate |
                  (!wordArg.isEmpty()/* && argumentsCount == maxArguments*/)); // tom integrate p| ; tom integrate p|wsh
@@ -250,11 +250,11 @@ namespace Tom::Commands::Complete
     bool BaseCompleteCommand::completeAbout_OnlyOption() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 _1, _2, isNewArgPositionAtEnd, _3
         ] = context();
 
-        return currentCommandArg == Constants::About &&
+        return guessedTomCommand == Constants::About &&
                 isLongOptionName(wordArg, Constants::only_) &&
                 /*argumentsCount == 2 && */currentArgumentPosition == kOnOptionArgument && // tom about --only=m| ; tom about --only=m|acros
                 !isNewArgPositionAtEnd; // < : tom about --only=| --ansi ; = : tom about --only=|
@@ -263,22 +263,22 @@ namespace Tom::Commands::Complete
     bool BaseCompleteCommand::completeDatabaseOption() const
     {
         const auto &[
-                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
                 _1, hasAnyTomCommand, isNewArgPositionAtEnd, _2
         ] = context();
 
         using enum Tom::GuessedCommandNameResult;
 
         return isLongOptionName(wordArg, Constants::database_) &&
-                ((currentCommandArg == kFound && argumentsCount == 2) ||
+                ((guessedTomCommand == kFound && argumentsCount == 2) ||
                  /* db:seed is the only command that has positional argument,
                     all other commands with the --database= option don't have any. */
-                 (currentCommandArg == Constants::DbSeed && // tom db:seed Xyz --database=|
+                 (guessedTomCommand == Constants::DbSeed && // tom db:seed Xyz --database=|
                   argumentsCount == getMaxArgumentsCount(Constants::DbSeed,
                                                          hasAnyTomCommand))) &&
                 currentArgumentPosition == kOnOptionArgument && // tom migrate --database=t| ; tom migrate --database=tiny|orm_tom_mysql
                 !isNewArgPositionAtEnd && // < : tom migrate --database=| --ansi ; = : tom migrate --database=|
-                currentCommandArg && commandHasLongOption(Constants::database_); // All migrate/: and db: commands have the --database= option
+                guessedTomCommand && commandHasLongOption(Constants::database_); // All migrate/: and db: commands have the --database= option
     }
 
     bool BaseCompleteCommand::completeEnvOption() const
@@ -291,7 +291,7 @@ namespace Tom::Commands::Complete
         return isLongOptionName(wordArg, Constants::Env) &&
                 currentArgumentPosition == kOnOptionArgument &&
                 !isNewArgPositionAtEnd;/* &&
-                (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+                (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !guessedTomCommand)
                   // Don't print/complete the --env= option for unknown commands eg. tom xyz --|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom migrate --env=| ; tom migrate --env=d| ; tom db:seed --env=d|ev Xyz
                                                                                   // kAmbiguous : tom migrate:re --env=| (migrate:refresh or migrate:reset)
@@ -300,7 +300,7 @@ namespace Tom::Commands::Complete
 //    bool BaseCompleteCommand::completePathOption() const
 //    {
 //        const auto &[
-//                currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
+//                guessedTomCommand, wordArg, argumentsCount, currentArgumentPosition,
 //                maxArgumentsCount, _1, isNewArgPositionAtEnd, _2
 //        ] = context();
 
@@ -308,8 +308,8 @@ namespace Tom::Commands::Complete
 //           option, but pwsh isn't able to complete file/dir paths after --path=| (after
 //           long options that end with the = character). I leave it here, maybe it will be
 //           supported in future versions. */
-//        return (currentCommandArg == Integrate || currentCommandArg == MakeMigration ||
-//                currentCommandArg == MakeModel || currentCommandArg == MakeSeeder) &&
+//        return (guessedTomCommand == Integrate || guessedTomCommand == MakeMigration ||
+//                guessedTomCommand == MakeModel || guessedTomCommand == MakeSeeder) &&
 //                isLongOptionName(wordArg, path_) &&
 //                currentArgumentPosition == kOnOptionArgument && // tom integrate --path=|
 //                !isNewArgPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
@@ -325,7 +325,7 @@ namespace Tom::Commands::Complete
 
         return isLongOption(wordArg) && currentArgumentPosition == kOnOptionArgument &&
                 !isNewArgPositionAtEnd;/* &&
-                (argumentsCount == 1 || // tom --| ; tom --e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+                (argumentsCount == 1 || // tom --| ; tom --e| (argumentsCount == 1 implies the kNotFound aka !guessedTomCommand)
                   // Don't print/complete options for unknown commands eg. tom xyz --|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom list --| ; tom list --r| ; tom list --r|aw
                                                                                   // kAmbiguous : tom i --| ; tom i --a| (inspire or integrate)
@@ -340,7 +340,7 @@ namespace Tom::Commands::Complete
 
         return isShortOption(wordArg) && currentArgumentPosition == kOnOptionArgument &&
                 !isNewArgPositionAtEnd;/* &&
-                (argumentsCount == 1 || // tom -| ; tom -e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
+                (argumentsCount == 1 || // tom -| ; tom -e| (argumentsCount == 1 implies the kNotFound aka !guessedTomCommand)
                   // Don't print/complete options for unknown commands eg. tom xyz -|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom list -| ; tom list -h|
                                                                                   // kAmbiguous : tom i -| ; tom i -h| (inspire or integrate)

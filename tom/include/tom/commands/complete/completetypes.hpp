@@ -40,7 +40,7 @@ namespace Tom::Commands::Complete
     struct CompleteContext
     {
         /*! Currently processed/guessed Tom command. */
-        GuessedCommandName currentCommandArg;
+        GuessedCommandName guessedTomCommand;
         /*! The current word that is being completed. */
         QStringView wordArg;
         /*! Number of all positional arguments on the command-line. */
