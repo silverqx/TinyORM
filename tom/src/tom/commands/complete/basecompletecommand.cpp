@@ -314,7 +314,7 @@ QList<CommandLineOption> BaseCompleteCommand::getCommandOptionsSignature() const
     const auto &currentCommandArg = context().currentCommandArg;
     auto &application = this->application();
 
-    // Nothing to do, no command passed so print only the common options
+    // Nothing to do, no Tom command passed/guessed so print only the common options
     if (!currentCommandArg)
         return application.m_options;
 
