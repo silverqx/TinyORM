@@ -13,8 +13,8 @@ using Orm::Constants::SPACE;
 using Tom::Constants::EMPTY;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
-using Tom::Constants::cword_;
-using Tom::Constants::cword_up;
+using Tom::Constants::cargs_;
+using Tom::Constants::cargs_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
@@ -37,8 +37,8 @@ QList<CommandLineOption> BashCommand::optionsSignature() const
     return {
         {word_,       u"The current word that is being completed"_s, word_up}, // Value
         {commandline, u"The entire current command-line"_s, commandline_up}, // Value
-        {cword_,      u"Position of the current word on the command-line that is being "
-                       "completed"_s, cword_up}, // Value (can't have the default value as it's required)
+        {cargs_,      u"The number of positional arguments before the current word "
+                       "excluding options"_s, cargs_up}, // Value (can't have the default value as it's required)
     };
 }
 
@@ -88,13 +88,15 @@ int BashCommand::run()
 
 /* private */
 
+/* Prepare Context */
+
 CompleteContext BashCommand::initializeCompletionContext()
 {
     // Values from the command-line
     // Both below must be defined as the data member to be available for QStringView-s!
-    m_wordArg        = value(word_);
+    m_wordArg        = value(word_); // Trimmed in tom.bash
     m_commandlineArg = value(commandline).trimmed(); // Our logic is optimized for the trimmed command-line because pwsh depends on it
-    m_cwordArg       = value(cword_).toLongLong();
+    m_cargsArg       = value(cargs_).toLongLong();
 
     // Validate the required option values (doesn't need m_commandlineArgSize)
     validateInputOptionValues();
@@ -112,7 +114,7 @@ CompleteContext BashCommand::initializeCompletionContext()
         .guessedTomCommand          = std::move(guessedTomCommand),
         .wordArg                    = std::move(m_wordArg),
         .argumentsCount             = argumentsCount,
-        .currentArgumentPosition    = getCurrentArgumentPosition(), // CUR1 complete finish silverqx
+        .currentArgumentPosition    = getCurrentArgumentPosition(),
         .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
         .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
     };
@@ -128,7 +130,7 @@ void BashCommand::validateInputOptions() const
     // Bash specific
     constexpr static auto optionsToValidate = std::to_array<
                                               std::reference_wrapper<const QString>>({
-        cword_,
+        cargs_,
     });
 
     // TODO parser, add support for required positional arguments and options silverqx
@@ -147,11 +149,11 @@ void BashCommand::validateInputOptionValues() const
 
     // Bash specific
     // Nothing to do
-    if (m_cwordArg > 0)
+    if (m_cargsArg > 0)
         return;
 
     throw Exceptions::InvalidArgumentError(
-                u"The --cword= option value must be >0 for complete:bash command "
+                u"The --cargs= option value must be >0 for complete:bash command "
                  "in %2()."_s
                 .arg(__tiny_func__));
 }

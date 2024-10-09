@@ -35,8 +35,14 @@ namespace Tom::Commands::Complete
         int run() override;
 
     private:
+        /* Prepare Context */
         /*! Initialize context for tab-completion. */
         CompleteContext initializeCompletionContext() override;
+
+        /* Context - Positional arguments */
+        /*! Get the Tom command (positional argument) position under the cursor (0-based)
+            or kOnOptionArgument if the cursor is on the long/short option. */
+        inline SizeType getCurrentArgumentPosition() const;
 
         /* Printing support */
         /*! Prepare one result value (argument or option) for printing. */
@@ -56,8 +62,9 @@ namespace Tom::Commands::Complete
         void validateInputOptionValues() const override;
 
         /* Data members */
-        /*! Index of the current word under the cursor on the command-line (0-based). */
-        SizeType m_cwordArg = 0;
+        /*! The number of positional arguments before the current word excluding options
+            and the current word (0-based and default is 1 for tom.exe). */
+        SizeType m_cargsArg = 0;
     };
 
     /* public */
@@ -73,6 +80,21 @@ namespace Tom::Commands::Complete
     }
 
     /* private */
+
+    /* Context - Positional arguments */
+
+    SizeType BashCommand::getCurrentArgumentPosition() const
+    {
+        // Cursor is on the long/short option
+        if (isOptionArgument(m_wordArg))
+            return kOnOptionArgument;
+
+        /* This method returns the positional argument position (0-based) and m_cargsArg
+           contains the number of positional arguments BEFORE the current word
+           which means it perfectly matches, eg. tom --ansi | contains one positional
+           argument (tom.exe) and the cursor is at 1. positional argument position. 😁 */
+        return m_cargsArg;
+    }
 
     /* Printing support */
 

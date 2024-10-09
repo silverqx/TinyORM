@@ -84,8 +84,6 @@ namespace Constants
     TINYORM_EXPORT extern const QString commandline_up;
     TINYORM_EXPORT extern const QString position_up;
     TINYORM_EXPORT extern const QString word_up;
-    TINYORM_EXPORT extern const QString cword_up;
-    TINYORM_EXPORT extern const QString carg_up;
     TINYORM_EXPORT extern const QString cargs_up;
     TINYORM_EXPORT extern const QString path_up;
     TINYORM_EXPORT extern const QString create_up;
@@ -118,8 +116,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString commandline;
     TINYORM_EXPORT extern const QString position_;
     TINYORM_EXPORT extern const QString word_;
-    TINYORM_EXPORT extern const QString cword_;
-    TINYORM_EXPORT extern const QString carg_;
+    TINYORM_EXPORT extern const QString cargs_;
     // list
     TINYORM_EXPORT extern const QString raw_;
     // db:seed

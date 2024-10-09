@@ -173,31 +173,18 @@ __tom_guess_command()
     return $exit_code
 }
 
-#
-__tom_get_carg()
+# Trim spaces in the current word ($cur)
+__tom_trim_cur()
 {
-    local -i carg=-1
-    local -i cword_reverse=$cword
-    local word
-
-    for word in "${words[@]}"; do
-        if [[ $word == -* ]]; then
-            continue
-        fi
-
-        if (( ++carg, --cword_reverse < 0 )); then
-            echo "$carg"
-            return 0
-        fi
-    done
-
-    return 1
+    cur=${cur##+([[:space:]])}
+    cur=${cur%%+([[:space:]])}
 }
 
 # Main tab-completion logic for the tom command
 _comp_cmd_tom()
 {
     # Don't set local -i for cword, _comp_initialize internally calls unset -v cword anyway
+    # cword is 0-based (tom.exe is at position 0)
     local cur prev words cword was_split comp_args
 
     # -n removes characters from list of word completion separators ($COMP_WORDBREAKS) but
@@ -207,6 +194,12 @@ _comp_cmd_tom()
     # For the : character to work properly with the set menu-complete-display-prefix on,
     # export COMP_WORDBREAKS=${COMP_WORDBREAKS//:} must also be added to ~/.bashrc. 🤔
     _comp_initialize -s -n : -- "$@" || return
+
+    # Trim spaces in the current word ($cur) because bash completion takes eg. tom   | --ansi
+    # as $cur == '  ' and even the tom complete:bash returns the correct result eg. abc\nxyz
+    # it doesn't match because bash internally also tries to match the $cur against abc\nxyz
+    # result, it would only match if all words would begin with the same amount of spaces. 🤔
+    __tom_trim_cur
 
     # Prevent ^M in the complete output on MSYS2/MinGW-w64
     if [ ! "x${MSYSTEM}" = "x" ]; then
@@ -234,7 +227,7 @@ _comp_cmd_tom()
     _comp_count_args
     local -i cargs=$REPLY
 
-    echo "complete:bash --commandline=\"${words[*]}\" --word=\"$cur\" --cword=$cword" > ~/tmp/tom.txt
+    echo "complete:bash --commandline=\"${words[*]}\" --word=\"$cur\" --cargs=$cargs" > ~/tmp/tom.txt
     echo "cargs: $cargs" >> ~/tmp/tom.txt
     # echo "cur '$cur' prev '$prev' words '${words[*]}' cword '$cword' was_split '$was_split' comp_args '${was_split[*]}'" > ~/tmp/a.txt
     # echo "'$IFS'" >> ~/tmp/a.txt
@@ -256,9 +249,6 @@ _comp_cmd_tom()
         return
     fi
 
-    # __tom_get_carg
-    # local -i carg=$REPLY
-
     # Complete section names for the --only= option of the about command
     if [[ -v tom_command ]] && [[ 'about' =~ ^$tom_command  ]] && [[ $prev == '--only' ]]; then
         COMPREPLY=($(compgen -W "$(__tom_about_sections)" -- "$cur"))
@@ -273,7 +263,7 @@ _comp_cmd_tom()
             __tom_guess_command "$tom_command" help list integrate)
         then
             COMPREPLY=($(compgen -W "$(tom complete:bash --commandline="${words[*]}" \
-                 --word="$cur" --cword=$cword 2>/dev/null)" -- "$cur"))
+                 --word="$cur" --cargs=$cargs 2>/dev/null)" -- "$cur"))
 echo "COMPREPLY: '${COMPREPLY[*]}'" >> ~/tmp/tom.txt
             return
         fi

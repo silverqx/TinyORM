@@ -65,8 +65,6 @@ namespace Tom::Constants
     const QString commandline_up     = u"COMMANDLINE"_s;
     const QString position_up        = u"POSITION"_s;
     const QString word_up            = u"WORD"_s;
-    const QString cword_up           = u"CWORD"_s;
-    const QString carg_up            = u"CARG"_s;
     const QString cargs_up           = u"CARGS"_s;
     const QString path_up            = u"PATH"_s;
     const QString create_up          = u"CREATE"_s;
@@ -99,8 +97,7 @@ namespace Tom::Constants
     const QString commandline        = u"commandline"_s;
     const QString position_          = u"position"_s;
     const QString word_              = u"word"_s;
-    const QString cword_             = u"cword"_s;
-    const QString carg_              = u"carg"_s;
+    const QString cargs_             = u"cargs"_s;
     // list
     const QString raw_               = u"raw"_s;
     // db:seed
