@@ -103,7 +103,7 @@ int PwshCommand::run()
 //         currentCommandArg == MakeModel || currentCommandArg == MakeSeeder) &&
 //        isLongOptionName(wordArg, path_) &&
 //        currentArgumentPosition == kOnOptionArgument && // tom integrate --path=|
-//        !isNewArgumentPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
+//        !isNewArgPositionAtEnd && // < : tom integrate --path=| --ansi ; = : tom integrate --path=|
 //        bw(argumentsCount, 2, maxArgumentsCount)
 //    )
 //        return printCompletionResult(<Nothing works here>);
@@ -146,7 +146,7 @@ CompleteContext PwshCommand::initializeCompletionContext()
     // Common for both (Tom command and option)
     m_commandlineArgSplit   = QStringView(m_commandlineArg) // Already trimmed by pwsh
                               .split(SPACE, Qt::SkipEmptyParts); // CUR1 finish silverqx
-    m_isNewArgumentPositionAtEnd = m_positionArg > m_commandlineArgSize; // !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
+    m_isNewArgPositionAtEnd = m_positionArg > m_commandlineArgSize; // !isNewArgPositionAtEnd implies positionArg <= commandlineArgSize
 
     // Get an option value for the --word= option (with workaround for pwsh)
     const auto [wordArg, multiValueOptionPosition] = getWordArgOptionValue();
@@ -158,15 +158,15 @@ CompleteContext PwshCommand::initializeCompletionContext()
     const auto hasAnyTomCommand  = currentCommandArg != kNotFound; // kFound || kAmbiguous
 
     return {
-        .currentCommandArg          = std::move(currentCommandArg),
-        .wordArg                    = wordArg,
-        .argumentsCount             = argumentsCount,
-        .currentArgumentPosition    = getCurrentArgumentPosition(
-                                          getCommadlineBeforeCursor(), wordArg),
-        .maxArgumentsCount          = getMaxArgumentsCount(hasAnyTomCommand),
-        .hasAnyTomCommand           = hasAnyTomCommand, // kFound || kAmbiguous
-        .isNewArgumentPositionAtEnd = m_isNewArgumentPositionAtEnd,
-        .multiValueOptionPosition   = multiValueOptionPosition,
+        .currentCommandArg        = std::move(currentCommandArg),
+        .wordArg                  = wordArg,
+        .argumentsCount           = argumentsCount,
+        .currentArgumentPosition  = getCurrentArgumentPosition(
+                                        getCommadlineBeforeCursor(), wordArg),
+        .maxArgumentsCount        = getMaxArgumentsCount(hasAnyTomCommand),
+        .hasAnyTomCommand         = hasAnyTomCommand, // kFound || kAmbiguous
+        .isNewArgPositionAtEnd    = m_isNewArgPositionAtEnd,
+        .multiValueOptionPosition = multiValueOptionPosition,
     };
 }
 
@@ -199,7 +199,7 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
        Also, this condition can be source of bugs because of this wordArg.isEmpty() check,
        there is a chance I didn't catch up all cases. See the blockCompletion()
        at the end of the getWordArgOptionValue() method for more info. */
-    if (m_isNewArgumentPositionAtEnd || wordArg.isEmpty()) // tom list | || tom list | --ansi
+    if (m_isNewArgPositionAtEnd || wordArg.isEmpty()) // tom list | || tom list | --ansi
         ++index;
 
     return index;
@@ -222,7 +222,7 @@ PwshCommand::getWordArgOptionValue() const
 
     /* Nothing to do, cursor is already after an option, eg: --only=env | or --only=env, |
        or somewhere after (pwsh trims the --commandline= option value). */
-    if (m_isNewArgumentPositionAtEnd)
+    if (m_isNewArgPositionAtEnd)
         return {m_wordArg};
 
     // Get the current word under the cursor (workaround for multi-value options)

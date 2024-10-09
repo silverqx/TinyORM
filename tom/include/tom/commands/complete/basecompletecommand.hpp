@@ -249,20 +249,20 @@ namespace Tom::Commands::Complete
     {
         const auto &[
                 currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
-                _1, _2, isNewArgumentPositionAtEnd, _3
+                _1, _2, isNewArgPositionAtEnd, _3
         ] = context();
 
         return currentCommandArg == Constants::About &&
                 isLongOptionName(wordArg, Constants::only_) &&
                 /*argumentsCount == 2 && */currentArgumentPosition == kOnOptionArgument && // tom about --only=m| ; tom about --only=m|acros
-                !isNewArgumentPositionAtEnd; // < : tom about --only=| --ansi ; = : tom about --only=|
+                !isNewArgPositionAtEnd; // < : tom about --only=| --ansi ; = : tom about --only=|
     }
 
     bool BaseCompleteCommand::completeDatabaseOption() const
     {
         const auto &[
                 currentCommandArg, wordArg, argumentsCount, currentArgumentPosition,
-                _1, hasAnyTomCommand, isNewArgumentPositionAtEnd, _2
+                _1, hasAnyTomCommand, isNewArgPositionAtEnd, _2
         ] = context();
 
         using enum Tom::GuessedCommandNameResult;
@@ -275,7 +275,7 @@ namespace Tom::Commands::Complete
                   argumentsCount == getMaxArgumentsCount(Constants::DbSeed,
                                                          hasAnyTomCommand))) &&
                 currentArgumentPosition == kOnOptionArgument && // tom migrate --database=t| ; tom migrate --database=tiny|orm_tom_mysql
-                !isNewArgumentPositionAtEnd && // < : tom migrate --database=| --ansi ; = : tom migrate --database=|
+                !isNewArgPositionAtEnd && // < : tom migrate --database=| --ansi ; = : tom migrate --database=|
                 currentCommandArg && commandHasLongOption(Constants::database_); // All migrate/: and db: commands have the --database= option
     }
 
@@ -283,12 +283,12 @@ namespace Tom::Commands::Complete
     {
         const auto &[
                 _1, wordArg, argumentsCount, currentArgumentPosition, maxArgumentsCount,
-                hasAnyTomCommand, isNewArgumentPositionAtEnd, _2
+                hasAnyTomCommand, isNewArgPositionAtEnd, _2
         ] = context();
 
         return isLongOptionName(wordArg, Constants::Env) &&
                 currentArgumentPosition == kOnOptionArgument &&
-                !isNewArgumentPositionAtEnd;/* &&
+                !isNewArgPositionAtEnd;/* &&
                 (argumentsCount == 1 || // tom --env=| ; tom --env=d| ; tom --env=d|ev (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
                   // Don't print/complete the --env= option for unknown commands eg. tom xyz --|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom migrate --env=| ; tom migrate --env=d| ; tom db:seed --env=d|ev Xyz
@@ -299,11 +299,11 @@ namespace Tom::Commands::Complete
     {
         const auto &[
                 _1, wordArg, argumentsCount, currentArgumentPosition, maxArgumentsCount,
-                hasAnyTomCommand, isNewArgumentPositionAtEnd, _2
+                hasAnyTomCommand, isNewArgPositionAtEnd, _2
         ] = context();
 
         return isLongOption(wordArg) && currentArgumentPosition == kOnOptionArgument &&
-                !isNewArgumentPositionAtEnd;/* &&
+                !isNewArgPositionAtEnd;/* &&
                 (argumentsCount == 1 || // tom --| ; tom --e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
                   // Don't print/complete options for unknown commands eg. tom xyz --|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom list --| ; tom list --r| ; tom list --r|aw
@@ -314,11 +314,11 @@ namespace Tom::Commands::Complete
     {
         const auto &[
                 _1, wordArg, argumentsCount, currentArgumentPosition, maxArgumentsCount,
-                hasAnyTomCommand, isNewArgumentPositionAtEnd, _2
+                hasAnyTomCommand, isNewArgPositionAtEnd, _2
         ] = context();
 
         return isShortOption(wordArg) && currentArgumentPosition == kOnOptionArgument &&
-                !isNewArgumentPositionAtEnd;/* &&
+                !isNewArgPositionAtEnd;/* &&
                 (argumentsCount == 1 || // tom -| ; tom -e| (argumentsCount == 1 implies the kNotFound aka !currentCommandArg)
                   // Don't print/complete options for unknown commands eg. tom xyz -|
                  (hasAnyTomCommand && bw(argumentsCount, 2, maxArgumentsCount)));*/ // kFound : tom list -| ; tom list -h|

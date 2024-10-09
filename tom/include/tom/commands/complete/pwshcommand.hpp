@@ -132,7 +132,7 @@ namespace Tom::Commands::Complete
         SizeType m_commandlineArgSize = -1;
         /*! Determine if the cursor is at the end on the command-line, in this case
             positionArg > commandlineArgSize (this is pwsh specific). */
-        bool m_isNewArgumentPositionAtEnd = false;
+        bool m_isNewArgPositionAtEnd = false;
     };
 
     /* public */
@@ -154,9 +154,9 @@ namespace Tom::Commands::Complete
     QStringView PwshCommand::getCommadlineBeforeCursor() const
     {
         return {m_commandlineArg.constData(),
-                m_isNewArgumentPositionAtEnd ? m_positionArg -
-                                              (m_positionArg - m_commandlineArgSize)
-                                             : m_positionArg};
+                m_isNewArgPositionAtEnd ? m_positionArg -
+                                         (m_positionArg - m_commandlineArgSize)
+                                        : m_positionArg};
     }
 
     /* Context - Option arguments */

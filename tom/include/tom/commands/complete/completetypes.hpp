@@ -55,7 +55,7 @@ namespace Tom::Commands::Complete
         /*! Determine if the cursor is at the end on the command-line, in this case
             positionArg > commandlineArgSize (pwsh only, all others are false
             in all cases). */
-        bool isNewArgumentPositionAtEnd = false; // pwsh only; !isNewArgumentPositionAtEnd implies positionArg <= commandlineArgSize
+        bool isNewArgPositionAtEnd = false; // pwsh only; !isNewArgPositionAtEnd implies positionArg <= commandlineArgSize
         /*! Multi-value option value position without the long option prefix,
             eg. for --only=env,mac|ros,versions the position will be 7 (0-based). */
         SizeType multiValueOptionPosition = kUndefinedPosition; // pwsh only
