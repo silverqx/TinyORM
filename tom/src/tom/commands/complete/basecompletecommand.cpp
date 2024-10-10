@@ -128,6 +128,7 @@ BaseCompleteCommand::getMaxArgumentsCount(const QString &command,
 int BaseCompleteCommand::printGuessedCommands() const
 {
     const auto commands = application().guessCommandsForComplete(context().wordArg);
+
     // Nothing to print
     if (commands.empty())
         return EXIT_SUCCESS;
