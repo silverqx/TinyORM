@@ -56,7 +56,7 @@ QList<CommandLineOption> IntegrateCommand::optionsSignature() const
     return {
         {stdout_, u"Print content of the <info>integrate</info> command "
                    "(instead of writing to the disk)"_s},
-        {path_,   u"The location where the completion file should be created "
+        {path_,   u"The directory location where the completion file is to be created "
                    "(zsh only)"_s, path_up}, // Value
     };
 }

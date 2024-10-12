@@ -39,7 +39,7 @@ QList<CommandLineOption> ProjectCommand::optionsSignature() const
         {u"cmake"_s,   u"Create CMake project"_s},
         {u"tinyorm"_s, u"Create TinyORM project"_s},
         {u"tom"_s,     u"Create tom project"_s},
-        {path_,        u"The location where the project should be created"_s,
+        {path_,        u"The directory location where the project is to be created"_s,
                        path_up}, // Value
         {realpath_,    u"Indicate the <info>path</info> argument is an absolute path"_s},
     };

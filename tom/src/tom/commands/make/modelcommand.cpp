@@ -199,8 +199,8 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
                                 "command-line"_s},
 
         // Paths related
-        {path_,                u"The location where the model file should be created"_s,
-                               path_up}, // Value
+        {path_,                u"The directory location where the model file is to be "
+                                "created"_s, path_up}, // Value
         {realpath_,            u"Indicate that any provided model file paths are "
                                 "pre-resolved absolute paths"_s},
         {fullpath,             u"Output the full path of the created model"_s},

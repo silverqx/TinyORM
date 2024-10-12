@@ -46,7 +46,7 @@ const std::vector<PositionalArgument> &SeederCommand::positionalArguments() cons
 QList<CommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
-        {path_,        u"The location where the seeder file should be created"_s,
+        {path_,        u"The directory location where the seeder file is to be created"_s,
                        path_up}, // Value
         {realpath_,    u"Indicate that any provided seeder file paths are "
                         "pre-resolved absolute paths"_s},

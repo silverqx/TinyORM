@@ -60,8 +60,8 @@ QList<CommandLineOption> MigrationCommand::optionsSignature() const
     return {
         {create_,      u"The table name to be created"_s, create_up}, // Value
         {table_,       u"The table name to migrate (update)"_s, table_up}, // Value
-        {path_,        u"The location where the migration file should be created"_s,
-                       path_up}, // Value
+        {path_,        u"The directory location where the migration file is to be "
+                        "created"_s, path_up}, // Value
         {realpath_,    u"Indicate that any provided migration file paths are "
                         "pre-resolved absolute paths"_s},
         {fullpath,     u"Output the full path of the created migration"_s},
