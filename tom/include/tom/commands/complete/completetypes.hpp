@@ -48,7 +48,7 @@ namespace Tom::Commands::Complete
         /*! Tom command (positional argument) position under the cursor (0-based) or
             kOnOptionArgument if the cursor is on the long/short option. */
         SizeType currentArgumentPosition = kUndefinedPosition;
-        /*! Number of positional arguments for all commands. (from signature). */
+        /*! Maximum number of positional arguments for all commands. (from signature). */
         SizeType maxArgumentsCount = 0;
         /*! Is known/our or ambiguous Tom command on the command-line? (!kNotFound) */
         bool hasAnyTomCommand = false; // true = kFound || kAmbiguous; false = kNotFound

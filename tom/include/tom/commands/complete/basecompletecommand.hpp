@@ -45,7 +45,7 @@ namespace Tom::Commands::Complete
         /*! Get the number of positional arguments on the command-line. */
         inline SizeType getArgumentsCount() const;
 
-        /*! Get number of positional arguments between all commands (from signature). */
+        /*! Get max. number of positional arguments for all commands (from signature). */
         SizeType getMaxArgumentsCount(bool hasAnyTomCommand) const;
         /*! Get number of positional arguments for the given command (from signature). */
         SizeType getMaxArgumentsCount(const QString &command,
