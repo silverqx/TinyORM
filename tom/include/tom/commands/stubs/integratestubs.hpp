@@ -447,7 +447,7 @@ _tom() {
                 '--with=[The relations to eager load on every query]:relationship names' \
                 '--fillable=[The attributes that are mass assignable]:attribute names' \
                 "--guarded=[The guarded attributes that aren't mass assignable]:attribute names" \
-                '--disable-timestamps[Disable timestamping of the model]' \
+                '--disable-timestamps[Disable timestamping of the model (created_at/updated_at columns)]' \
                 "--dateformat=[The storage format of the model's date columns]:date format" \
                 '--dates=[The attributes that should be mutated to dates]:attribute names' \
                 '--touches=[All of the relationships to be touched]:relationship names' \

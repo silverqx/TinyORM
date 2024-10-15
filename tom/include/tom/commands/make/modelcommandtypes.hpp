@@ -110,7 +110,7 @@ namespace Tom::Commands::Make
         bool incrementing;
         /*! Disable auto-incrementing for the model's primary key. */
         bool disableIncrementing;
-        /*! Disable timestamping of the model. */
+        /*! Disable timestamping of the model (created_at/updated_at columns). */
         bool disableTimestamps;
         /*! Create the u_casts map example. */
         bool castsExample;

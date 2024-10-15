@@ -166,7 +166,7 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
         {guarded,              u"The guarded attributes that aren't mass assignable "
                                 "<comment>(multiple values allowed) </comment>"_s,
                                guarded_up}, // Value
-        {disable_timestamps,   u"Disable timestamping of the model"_s},
+        {disable_timestamps,   u"Disable timestamping of the model (created_at/updated_at columns)"_s},
         {dateformat,           u"The storage format of the model's date columns"_s,
                                dateformat_up}, // Value
         {dates,                u"The attributes that should be mutated to dates "
