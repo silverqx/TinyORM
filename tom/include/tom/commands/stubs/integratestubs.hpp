@@ -379,7 +379,7 @@ _tom() {
         list)
             _arguments \
                 $common_options \
-                '1::namepace name:__tom_namespaces'
+                '1::namespace name:__tom_namespaces'
             ;;
 
         migrate)
