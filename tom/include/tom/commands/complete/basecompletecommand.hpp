@@ -274,8 +274,7 @@ namespace Tom::Commands::Complete
                                                                   hasAnyTomCommand);
 
         return isLongOptionName(wordArg, Constants::database_) &&
-                ((guessedTomCommand == kFound &&
-                  bw(argumentsCount, 2, maxArgumentsCount)) ||
+                ((guessedTomCommand == kFound && argumentsCount == 2) ||
                  /* db:seed is the only command that has positional argument,
                     all other commands with the --database= option don't have any. */
                  (guessedTomCommand == Constants::DbSeed && // tom db:seed Xyz --database=|
