@@ -1,0 +1,6 @@
+shell=bash
+enable=deprecate-which
+enable=require-double-brackets
+
+disable=SC1090  # Hard to fix and maintain
+disable=SC1091  # Similar as the above
