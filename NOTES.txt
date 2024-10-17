@@ -590,7 +590,7 @@ MySQL Timezone tables:
 mysql_config_editor print --all
 mysql --login-path=root -p mysql
 source timezone_posix.sql;
-Restart-Service MySQL90
+Restart-Service MySQL91
 
 
 Versions info:
@@ -1290,7 +1290,7 @@ TinyDrivers output of operator<<()-s:
 
 Output of all TinyDrivers operator<<()-s SqlDatabase, SqlRecord, SqlField, DummySqlError
 
-SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_9.0/data/client-cert.pem;SSL_CA=C:/mysql/mysql_9.0/data/ca.pem;SSL_KEY=C:/mysql/mysql_9.0/data/client-key.pem")
+SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_9.1/data/client-cert.pem;SSL_CA=C:/mysql/mysql_9.1/data/ca.pem;SSL_KEY=C:/mysql/mysql_9.1/data/client-key.pem")
 --
 SqlRecord(7)
  0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: true, tableName: "users")
@@ -3763,10 +3763,10 @@ MariaDB11
 NT SERVICE\MariaDB11
 mysqld.exe --install MariaDB11 --defaults-file="E:\mysql\mariadb_11\data\my.ini"
 
-MySQL90
-"C:\Program Files\MySQL\MySQL Server 9.0\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 9.0\my.ini" MySQL90
-NT SERVICE\MySQL90
-mysqld.exe --install MySQL90 --defaults-file="C:\ProgramData\MySQL\MySQL Server 9.0\my.ini"
+MySQL91
+"C:\Program Files\MySQL\MySQL Server 9.1\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 9.1\my.ini" MySQL91
+NT SERVICE\MySQL91
+mysqld.exe --install MySQL91 --defaults-file="C:\ProgramData\MySQL\MySQL Server 9.1\my.ini"
 
 postgresql-x64-16
 "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" runservice -N "postgresql-x64-16" -D "E:\postgres\16\data" -w
@@ -3852,11 +3852,11 @@ MySQL option files syntax:
      - C API client library as well
    - [mysql] is applied for MySQL programs only
    - options in last sections override the previous one
-   - the best order is: [client], [mysqlXYZ], [mysqld], [mysqld-9.0]
-   - [mysqld-9.0] targets specific MySQL version
+   - the best order is: [client], [mysqlXYZ], [mysqld], [mysqld-9.1]
+   - [mysqld-9.1] targets specific MySQL version
    - the [DEFAULT] section can be used for own variables, if some variable value can't be resolved
      the this section is checked at first
-   - https://dev.mysql.com/doc/refman/9.0/en/option-files.html#option-file-syntax
+   - https://dev.mysql.com/doc/refman/9.1/en/option-files.html#option-file-syntax
 
 
 vcpkg CMake build command:

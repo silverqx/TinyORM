@@ -35,7 +35,7 @@ jobs:
       # Settings (constant variables)
       TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: win64_msvc2019_64
-      TINY_MYSQL_SERVICE: MySQL90
+      TINY_MYSQL_SERVICE: MySQL91
       # My system is unresponsive with 10
       TINY_PARALLEL: 8
 

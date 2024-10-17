@@ -614,7 +614,7 @@ namespace Orm
             const QString &queryString, const QList<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
-        // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/9.0/en/c-api-auto-reconnect.html silverqx
+        // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/9.1/en/c-api-auto-reconnect.html silverqx
         if (!causedByLostConnection(errorMessage))
             std::rethrow_exception(ePtr);
 

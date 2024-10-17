@@ -134,7 +134,7 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
    in MySQL v8.3, what means connector C API doesn't provide this default field value,
    also both IS_NULLABLE and COLUMN_DEFAULT must be checked to correctly obtain this
    information, there is also some info at about NO_DEFAULT_VALUE_FLAG:
-   https://dev.mysql.com/doc/c-api/9.0/en/c-api-data-structures.html:
+   https://dev.mysql.com/doc/c-api/9.1/en/c-api-data-structures.html:
 - SHOW COLUMNS FROM users;
 - describe users; (the same as SHOW COLUMNS)
 - select c.COLUMN_NAME, c.IS_NULLABLE, c.COLUMN_DEFAULT from information_schema.`COLUMNS` c where c.TABLE_SCHEMA = 'tinyorm_test_1' and c.TABLE_NAME = 'users'; (this select-s as little info as possible)

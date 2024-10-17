@@ -97,7 +97,7 @@ namespace Orm::Drivers::MySql
     int
     MySqlDriver::maximumIdentifierLength(const IdentifierType /*unused*/) const noexcept
     {
-        // https://dev.mysql.com/doc/refman/9.0/en/identifier-length.html
+        // https://dev.mysql.com/doc/refman/9.1/en/identifier-length.html
         return 64;
     }
 

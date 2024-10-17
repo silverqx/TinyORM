@@ -74,7 +74,7 @@ The following list summarizes the main features of the `TinyDrivers` and `TinyMy
    - this is only true for our `TinyDrivers` library ❗
    - all database drivers described in the [Database](https://www.tinyorm.org/database/getting-started#introduction) documentation are supported when linking against the [`QtSql`](https://doc.qt.io/qt/qtsql-index.html) module
  - both, normal and prepared statements are supported
- - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/9.0/en/mysql-options.html) (verify_ca, verify_identity) 🔥
+ - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/9.1/en/mysql-options.html) (verify_ca, verify_identity) 🔥
  - setting many other MySQL connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
  - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/) 🕺
  - transactions

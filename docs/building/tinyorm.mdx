@@ -1019,7 +1019,7 @@ These are <u>`qmake`</u> and <u>`environment`</u> variables that affect the `Aut
 | -------------------- | ----------- |
 | `TINY_VCPKG_ROOT`    | Path to the `vcpkg` installation folder.<br/>If not defined, then it tries to use the `VCPKG_ROOT` environment variable. |
 | `TINY_VCPKG_TRIPLET` | The `vcpkg` `triplet` to use <small>(vcpkg/installed/$$TINY_VCPKG_TRIPLET/)</small>.<br/>If not defined, then it tries to guess the `vcpkg` `triplet` based on the current compiler and OS (based on the `QMAKESPEC`), and as the last thing, it tries to use the `VCPKG_DEFAULT_TRIPLET` environment variable. |
-| `TINY_MYSQL_ROOT`    | Path to the `MySQL` installation folder.<br/>If not defined, then it tries to guess the `MySQL` installation folder (`win32` only): <code>$$(ProgramFiles)/MySQL/MySQL Server (9.0&vert;8.4&vert;8.3&vert;8.2&vert;8.1&vert;8.0&vert;5.7)/</code> |
+| `TINY_MYSQL_ROOT`    | Path to the `MySQL` installation folder.<br/>If not defined, then it tries to guess the `MySQL` installation folder (`win32` only): <code>$$(ProgramFiles)/MySQL/MySQL Server (9.1&vert;9.0&vert;8.4&vert;8.3&vert;8.2&vert;8.1&vert;8.0&vert;5.7)/</code> |
 
 You can set these variables in the `.env` (recommended) or `conf.pri` files, in the `.qmake.conf` file (or wherever you want), or as environment variables.
 
@@ -1028,8 +1028,8 @@ These variables will be set after `auto-configuration` is done:
 | Variable Name        | Description |
 | -------------------- | ----------- |
 | `TINY_VCPKG_INCLUDE` | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
-| `TINY_MYSQL_INCLUDE` | Path to the `MySQL` `include` folder <small>(MySQL Server 9.0/include/)</small>. |
-| `TINY_MYSQL_LIB`     | Path to the `MySQL` `lib` folder <small>(MySQL Server 9.0/lib/)</small>. |
+| `TINY_MYSQL_INCLUDE` | Path to the `MySQL` `include` folder <small>(MySQL Server 9.1/include/)</small>. |
+| `TINY_MYSQL_LIB`     | Path to the `MySQL` `lib` folder <small>(MySQL Server 9.1/lib/)</small>. |
 
 The `TINY_MYSQL_INCLUDE` and `TINY_MYSQL_LIB` are only set on `win32` platform except `mingw`.
 

@@ -23,7 +23,7 @@ jobs:
 
     env:
       # Settings (constant variables)
-      TINY_MYSQL_SERVICE: MySQL90
+      TINY_MYSQL_SERVICE: MySQL91
       TINY_PARALLEL: 10
 
       # State variables
