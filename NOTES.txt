@@ -3997,6 +3997,93 @@ Get-ChildItem -File -Recurse *.hpp
     | Set-Clipboard
 
 
+bash confusions:
+----------------
+
+If I would have a time then this section would be the longest from all. 🤬
+
+- tom.bash debug messages (pasting also the commands above/below for context where they was):
+    _comp_initialize -s -n : -- "$@" || return 0
+echo "cur: '$cur' prev: '$prev' words: '${words[*]}' was_split: '$was_split'" > ~/tmp/tom.txt
+
+    local -r tom_command=$(__tom_command)
+echo "tom_command: '$tom_command' cargs: '$cargs'" >> ~/tmp/tom.txt
+
+echo "complete:bash --commandline=\"${words[*]}\" --word=\"$cur\" --cargs=\"$cargs\"" >> ~/tmp/tom.txt
+    __tom_compgen \
+        "$(command tom complete:bash --commandline="${words[*]}" --word="$cur" --cargs="$cargs")"
+
+local es=$EPOCHREALTIME ee=''
+ee=$EPOCHREALTIME
+printf '%.0fms' "$(echo "($ee - $es) * 1000" | bc)" >> ~/tmp/tom.txt
+
+- ❗at first follow this: https://github.com/scop/bash-completion/blob/main/doc/styleguide.md
+
+- Assign the command output of multiple lines divided by \n to the array variable
+  - the following are the same but the latter generates SC2207 diagnostic
+  - <<< is Here String - A variant of here documents
+  - -t - Remove a trailing delim (default newline) from each line read
+  - it's impossible to do it with the read command as it only process the first/one line, always
+  - only one difference is that the later returns exit code of the command inside $() which is
+    an advantage, the mapfile version returns exit code of the mapfile command
+  - and here it is fucking bash, it doesn't work because if the command returns an empty output
+    then the mapfile result will be the declare -a r=([0]=""), so it's unusable, the solution is
+    shopt -s lastpipe and set +o m but that are 4-6 more lines to prepare for this mapfile command
+    and then it must be restored, fuck 🤬
+mapfile -t COMPREPLY <<< "$(compgen -W "$common_long_options" -- "$cur")"
+COMPREPLY=($(compgen -W "$common_long_options" -- "$cur"))
+  - ❗be very careful about the following command because <<< (Here String) always appends
+    a new line even if the string is empty, so the result with en empty string will be an array
+    with one empty string like declare -a r=([0]="")
+    - this isn't happening with <()!
+    - ❗don't use the <<< with the mapfile, only with the read -r2
+mapfile -t COMPREPLY <<< "$(compgen -W "$common_long_options" -- "$cur")"
+mapfile -t COMPREPLY <<< "$result"
+
+- set vs shopt
+  - see: https://unix.stackexchange.com/a/305256/345215
+  - set can only set the set -o related options
+    - old shell related options as /bin/sh
+    - enable: +o monitor
+    - disable: -o monitor
+    - updates $SHELLOPTS
+  - shopt can set both the set -o related options and also the new shopt related options
+    - bash-related options (/bin/bash)
+    - -s (set)
+    - -u (unset)
+    - set -o related
+      - -o selects/forces this mode
+      - enable: shopt -os monitor
+      - disable: shopt -ou monitor
+    - shopt related
+      - enable: shopt -s lastpipe
+      - disable: shopt -u lastpipe
+    - updates $BASHOPTS
+    - -p returns the real command that can be executed later
+      - it mirrors the current state of the given option or all options if no option was given
+      - this mode doesn't accept -s and -u options
+      - shopt -po monitor
+      - shopt -p lastpipe
+    - -q can be used to determine whether the given option is set
+      - shopt -q nocasematch && return 1
+
+- variables
+  - check how the given variable was declared (prints the exact command)
+    - declare -p VAR
+  - readonly doesn't obey the function scope, it declares at the script scope
+    - use local -r to declare at the function scope
+
+- ${p:-X} vs ${p:=X} vs ${p-X}
+  - ${p:-X} only returns the X
+  - ${p:=X} returns the X and also assigns the X to the p, so also the p will be changed
+  - ${p-X} tests only whether the p is unset
+  - ${p:-X} and ${p:=X} tests whether the p is unset or null (empty)
+
+- [[:lower:]] in pattern matching overrides the nocasematch=on (doesn't matches uppercase)
+  - [a-z] obeys nocasematch=on (it matches also upper case)
+  - it will be similar also with the [[:upper:]]
+
+
 bash completion:
 ----------------
 
