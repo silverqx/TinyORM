@@ -18,13 +18,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
 
-using Orm::Constants::COMMA_C;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 
 using StringUtils = Orm::Utils::String;
 
+using Tom::Constants::COMMA_C;
 using Tom::Constants::EMPTY;
 using Tom::Constants::EQ_C;
 using Tom::Constants::Env;

@@ -26,7 +26,8 @@ namespace Constants
     inline const QString DateTimePrefix  = u"yyyy_MM_dd_HHmmss"_s;
 
     // Common chars - QChar(u'') is faster than ''_L1
-    inline const QChar EQ_C = QChar(u'=');
+    inline const QChar COMMA_C = QChar(u',');
+    inline const QChar EQ_C    = QChar(u'=');
 
     // Common strings
     inline const QString EMPTY           = u""_s; // This is the fastest

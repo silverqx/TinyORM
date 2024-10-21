@@ -16,9 +16,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::ConnectionResolverInterface;
 
-using Orm::Constants::COMMA_C;
 using Orm::Constants::SPACE;
 
+using Tom::Constants::COMMA_C;
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
 using Tom::Constants::pretty;

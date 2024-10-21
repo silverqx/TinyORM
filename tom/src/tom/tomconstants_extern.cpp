@@ -8,7 +8,8 @@ namespace Tom::Constants
     const QString DateTimePrefix   = u"yyyy_MM_dd_HHmmss"_s;
 
     // Common chars - QChar(u'') is faster than ''_L1
-    const QChar EQ_C = QChar(u'=');
+    const QChar COMMA_C = QChar(u',');
+    const QChar EQ_C    = QChar(u'=');
 
     // Common strings
     const QString EMPTY            = u""_s; // This is the fastest

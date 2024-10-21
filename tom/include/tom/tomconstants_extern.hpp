@@ -27,6 +27,7 @@ namespace Constants
     TINYORM_EXPORT extern const QString DateTimePrefix;
 
     // Common chars - QChar(u'') is faster than ''_L1
+    TINYORM_EXPORT extern const QChar COMMA_C;
     TINYORM_EXPORT extern const QChar EQ_C;
 
     // Common strings
