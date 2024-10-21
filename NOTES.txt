@@ -1158,9 +1158,24 @@ Be sure the clazy-standalone binary is located in the same folder as the clang b
 So the clazy-standalone binary MUST be in the same location as the clang binary.
 
 
-pwsh autocomeplete:
--------------------
-For a fast lookup for debugging.
+pwsh tab-completion:
+--------------------
+tags: pwsh, complete
+--
+
+- Register-ArgumentCompleter debug messages (pasting also the commands above/below for context where they was):
+    Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
+    "complete:pwsh --commandline=`"$commandAst`" --word=`"$wordToComplete`" --position=$cursorPosition" >> E:\tmp\tom.txt
+
+            $completionText, $listText, $toolTip = $_ -split ';', 3
+            "'$completionText;$listText;$toolTip'" >> E:\tmp\tom.txt
+
+- the following completions are assumed not to work even if the complete:pwsh returns the correct result
+  - the reason for this is that pwsh doesn't know what to do with them
+  - in this case the problem is the ,, the Register-ArgumentCompleter isn't even invoked in these cases!
+tom about --onl|y|=|enviro|nment|,vers|ions|,mac|ros|,,|
+
+- for a fast lookup for debugging
 
  - tom command:
    - argument:
@@ -4002,21 +4017,6 @@ bash confusions:
 
 If I would have a time then this section would be the longest from all. 🤬
 
-- tom.bash debug messages (pasting also the commands above/below for context where they was):
-    _comp_initialize -s -n : -- "$@" || return 0
-echo "cur: '$cur' prev: '$prev' words: '${words[*]}' was_split: '$was_split'" > ~/tmp/tom.txt
-
-    local -r tom_command=$(__tom_command)
-echo "tom_command: '$tom_command' cargs: '$cargs'" >> ~/tmp/tom.txt
-
-echo "complete:bash --commandline=\"${words[*]}\" --word=\"$cur\" --cargs=\"$cargs\"" >> ~/tmp/tom.txt
-    __tom_compgen \
-        "$(command tom complete:bash --commandline="${words[*]}" --word="$cur" --cargs="$cargs")"
-
-local es=$EPOCHREALTIME ee=''
-ee=$EPOCHREALTIME
-printf '%.0fms' "$(echo "($ee - $es) * 1000" | bc)" >> ~/tmp/tom.txt
-
 - ❗at first follow this: https://github.com/scop/bash-completion/blob/main/doc/styleguide.md
 
 - Assign the command output of multiple lines divided by \n to the array variable
@@ -4086,7 +4086,25 @@ mapfile -t COMPREPLY <<< "$result"
 
 bash completion:
 ----------------
+tags: complete
+--
 
+- tom.bash debug messages (pasting also the commands above/below for context where they was):
+    _comp_initialize -s -n : -- "$@" || return 0
+echo "cur: '$cur' prev: '$prev' words: '${words[*]}' was_split: '$was_split'" > ~/tmp/tom.txt
+
+    local -r tom_command=$(__tom_command)
+echo "tom_command: '$tom_command' cargs: '$cargs'" >> ~/tmp/tom.txt
+
+echo "complete:bash --commandline=\"${words[*]}\" --word=\"$cur\" --cargs=\"$cargs\"" >> ~/tmp/tom.txt
+    __tom_compgen \
+        "$(command tom complete:bash --commandline="${words[*]}" --word="$cur" --cargs="$cargs")"
+
+local es=$EPOCHREALTIME ee=''
+ee=$EPOCHREALTIME
+printf '%.0fms' "$(echo "($ee - $es) * 1000" | bc)" >> ~/tmp/tom.txt
+
+- notes:
 The _comp_count_args function is defined in the bash_completion and _count_args is defined
 in the 000_bash_completion_compat.bash. I used the _count_args = before instead of _comp_count_args.
 The following is true for the _count_args:
