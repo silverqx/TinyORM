@@ -111,7 +111,7 @@ using Status   = tst_Migrate::Status;
 /*! Type used for comparing results of the status command. */
 using StatusRow = tst_Migrate::StatusRow;
 
-/* Extracted common code to re-use. */
+/* Extracted common code for reuse. */
 namespace
 {
     // Status

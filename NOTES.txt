@@ -4163,7 +4163,7 @@ qMedia\_backup\qtcreator\latest\{auto-setup.cmake,auto-setup.cmake.orig}
       ")
 
 
-Qt6TestTargets.cmake CMake bugfix to re-use PCH file for all auto tests
+Qt6TestTargets.cmake CMake bugfix to reuse PCH file for all auto tests
 --
 
  - See: QTBUG-126729
