@@ -101,6 +101,8 @@ namespace Tom::Commands::Complete
         bool isFirstOptionValue = false;
         /*! Print all option values? (if the current option value is empty) */
         bool printAllValues = false;
+        /*! Append the , after the value (for middle values only; edge case). */
+        bool appendComma = false;
     };
 
 } // namespace Tom::Commands::Complete

@@ -289,7 +289,8 @@ int PwshCommand::printGuessedSectionNamesForAbout() const
     const auto [sectionNameArg,
                 allSectionNamesFiltered,
                 isFirstSectionNameArg,
-                printAllSectionNames
+                printAllSectionNames,
+                appendComma
     ] = initializePrintMultiValueOption(allSectionNames);
 
     /* Print only one space if all array option values have already been entered,
@@ -309,11 +310,9 @@ int PwshCommand::printGuessedSectionNamesForAbout() const
        the entire text of the --only= option, so we only need to print a section name. */
     for (const auto allSectionName : allSectionNamesFiltered)
         if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
-            sectionNames << TMPL_RESULT2.arg(
-                                isFirstSectionNameArg
-                                ? NOSPACE.arg(LongOptionEq.arg(only_), allSectionName)
-                                : allSectionName,
-                                allSectionName);
+            sectionNames << prepareMultiValueResult(
+                                only_, allSectionName, isFirstSectionNameArg,
+                                appendComma);
 
     printCompletionResult(sectionNames);
 
@@ -332,7 +331,8 @@ int PwshCommand::printGuessedConnectionNames() const
     const auto [connectionNameArg,
                 allConnectionNamesFiltered,
                 isFirstConnectionNameArg,
-                printAllConnectionNames
+                printAllConnectionNames,
+                appendComma
     ] = initializePrintMultiValueOption(allConnectionNames);
 
     /* Print only one space if all array option values have already been entered,
@@ -353,12 +353,9 @@ int PwshCommand::printGuessedConnectionNames() const
        the connection name. */
     for (const auto allConnectionName : allConnectionNamesFiltered)
         if (printAllConnectionNames || allConnectionName.startsWith(connectionNameArg))
-            connectionNames << TMPL_RESULT2.arg(
-                                   isFirstConnectionNameArg
-                                   ? NOSPACE.arg(LongOptionEq.arg(database_),
-                                                 allConnectionName)
-                                   : allConnectionName,
-                                   allConnectionName);
+            connectionNames << prepareMultiValueResult(
+                                   database_, allConnectionName,
+                                   isFirstConnectionNameArg, appendComma);
 
     printCompletionResult(connectionNames);
 
@@ -451,6 +448,9 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
     auto optionValuesArgSplit = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
     // Needed for pwsh, determines an output format
     const auto isFirstOptionValue = currentOptionValueIndex == 0;
+
+    const auto optionValuesArgSize = optionValuesArg.size();
+
     /* This is for one special case like --only=environment,|macros,versions, or
        --only=environment,|macros,,versions, (there must be an extra comma)
        in this case return {} which means print all remaining options and don't
@@ -459,7 +459,7 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
        --only=environment,connections|macros,versions, instead of
        --only=environment,macros|macros,versions, */
     const auto shouldRemoveOptionValue = !(optionValuesBeforeCursor.endsWith(COMMA_C) && // NOLINT(readability-simplify-boolean-expr)
-                                           optionValuesArg.size() >
+                                           optionValuesArgSize >
                                            optionValuesBeforeCursor.size());
     /* The currently completing option value needs to be removed, so that this option
        value is not filtered out in the ranges::views::filter() algorithm below. */
@@ -467,6 +467,12 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
                                     ? optionValuesArgSplit.takeAt(currentOptionValueIndex)
                                     : EMPTY;
     const auto printAllValues = currentOptionValue.isEmpty();
+
+    // Determine whether to append a comma after the multi-value option value
+    const auto appendComma = shouldAppendComma(
+                                 optionValuesArgSplit.size(), currentOptionValueIndex,
+                                 isCommaUnderCursor(optionValuesArg,
+                                                    optionValuesArgSize));
 
     // Remove all empty and null strings (it would print all option values w/o this)
     optionValuesArgSplit.removeAll({});
@@ -477,6 +483,8 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
         .optionValues       = filterOptionValues(allValues, optionValuesArgSplit),
         .isFirstOptionValue = isFirstOptionValue,
         .printAllValues     = printAllValues,
+        // For middle values only (edge case)
+        .appendComma        = appendComma,
     };
 }
 
@@ -503,6 +511,29 @@ PwshCommand::getOptionValuesLastPosition(const QStringView optionValuesArg) cons
     return optionValuesArg.size();
 }
 
+bool PwshCommand::isCommaUnderCursor(const QStringView optionValuesArg,
+                                     const SizeType optionValuesArgSize) const
+{
+    // This method works only in the context (if called from) of the shouldAppendComma()
+
+    const auto multiValueOptionPosition = context().multiValueOptionPosition;
+    constexpr static SizeType Position1 = 1;
+
+    /* This applies to cases where we know the result in advance:
+       - the cursor is at the end of the command-line
+       - the isFirstOptionValue == true (position is always kUndefinedPosition(-1)),
+         in this case the result is irrelevant
+       - minimum value is 0, in this case the result is also irrelevant because
+         the true value for this method can only happen if the minimum value is 1,
+         it looks like the following (both have minimum value 1):
+       tom about --only=,|, (return true)
+       tom about --only=,|macros (return false) */
+    if (!between(multiValueOptionPosition, Position1, optionValuesArgSize - 1))
+        return false;
+
+    return optionValuesArg.at(multiValueOptionPosition) == COMMA_C;
+}
+
 QList<QStringView>
 PwshCommand::filterOptionValues(const QStringList &allValues,
                                 const QList<QStringView> &optionValues)
@@ -520,6 +551,24 @@ PwshCommand::filterOptionValues(const QStringList &allValues,
         });
     })
             | ranges::to<QList<QStringView>>();;
+}
+
+QString
+PwshCommand::prepareMultiValueResult(
+        const QString &optionName, const QStringView value,
+        const bool isFirstOptionValue, const bool appendComma)
+{
+    // TMPL_RESULT2 format: completionText;listItemText
+
+    /* The first option value must be in the following format for pwsh to work properly:
+       --only=xyz */
+    if (isFirstOptionValue)
+        return TMPL_RESULT2.arg(NOSPACE.arg(LongOptionEq.arg(optionName), value), value);
+
+    if (appendComma)
+        return TMPL_RESULT2.arg(NOSPACE.arg(value, COMMA_C), value);
+
+    return TMPL_RESULT2.arg(/*completionText*/ value, /*listItemText*/ value);
 }
 
 QStringView PwshCommand::getOptionValue(const QStringView wordArg)

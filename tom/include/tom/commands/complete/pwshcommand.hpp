@@ -103,10 +103,25 @@ namespace Tom::Commands::Complete
         /*! Get the last character position for the value/s before the cursor (multi). */
         SizeType
         getOptionValuesLastPosition(QStringView optionValuesArg) const;
+
+        /*! Determine whether to append a comma after the multi-value option value. */
+        inline bool
+        shouldAppendComma(
+                SizeType optionValuesArgSplitSize, SizeType currentOptionValueIndex,
+                bool isCommaUnderCursor) const;
+        /*! Determine if there is a comma under the cursor (multi). */
+        bool isCommaUnderCursor(QStringView optionValuesArg,
+                                SizeType optionValuesArgSize) const;
+
         /*! Filter out option values that are already completed on the command-line. */
         static QList<QStringView>
         filterOptionValues(const QStringList &allValues,
                            const QList<QStringView> &optionValues);
+
+        /*! Prepare one completion result value for a multi-value option. */
+        static QString
+        prepareMultiValueResult(const QString &optionName, QStringView value,
+                                bool isFirstOptionValue, bool appendComma);
 
         /* Option arguments */
         /*! Get the value of the option argument (eg. --database=value). */
@@ -213,6 +228,25 @@ namespace Tom::Commands::Complete
         // The last character index must point after the last character for QStringView
         return {optionValuesArgData,
                 optionValuesArgData + getOptionValuesLastPosition(optionValuesArg)}; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    }
+
+    bool PwshCommand::shouldAppendComma(
+            const SizeType optionValuesArgSplitSize,
+            const SizeType currentOptionValueIndex, const bool isCommaUnderCursor) const
+    {
+        /* Append only in the following special case (in this case the m_word is empty):
+           tom about --only=env,|versions,macros
+                     --only=env,connections,¦versions,macros
+           Also, don't use the context().wordArg here because it's already processed,
+           the m_wordArg is the raw/original value passed on the command-line. */
+        return m_wordArg.isEmpty() &&
+               /* Should only append for values in the Middle, so there must be at least
+                  two values. */
+               optionValuesArgSplitSize >= 2 &&
+               // Not First and not Last
+               between(currentOptionValueIndex, 1, optionValuesArgSplitSize - 1) &&
+               // Avoid multiple commas
+               !isCommaUnderCursor;
     }
 
 } // namespace Tom::Commands::Complete
