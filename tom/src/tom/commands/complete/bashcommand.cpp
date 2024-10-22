@@ -78,10 +78,9 @@ int BashCommand::run()
     if (completeShortOptions())
         return printGuessedShortOptions();
 
-    /* This doesn't block directory paths completion on bash, the _filedir like function
+    /* Don't need to block directory paths completion on bash, the _filedir like function
        must be called explicitly to invoke directory paths completion, it's done
        based on the command name in the __tom_complete_dir function. */
-    printCompletionResult(EMPTY);
 
     return EXIT_SUCCESS;
 }
