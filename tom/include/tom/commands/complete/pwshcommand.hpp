@@ -77,8 +77,6 @@ namespace Tom::Commands::Complete
         /*! Print the tab-completion result. */
         inline int printCompletionResult(const QStringList &result) const;
 
-        /*! Print one space (used by multi-value options). */
-        [[noreturn]] void printOneSpace() const;
         /*! Block the tab-completion and print nothing. */
         [[noreturn]] void blockCompletion() const;
 

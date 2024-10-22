@@ -392,20 +392,13 @@ int PwshCommand::printGuessedEnvironmentNames() const
 
 /* Printing support */
 
-/* These two methods exit immediately, the previous logic correctly saved the state,
+/* These method exits immediately, the previous logic correctly saved the state,
    all the completion logic was invoked, and based on that state it blocked or printed
    a single space at the end of the run() method (as the last thing).
    But, I had to adapt all the logic (it had to handle these edge cases properly) and
    it also needed a lot more if() conditions, so I decided to quit immediately when
    possible, this is a worse way to do this though as it doesn't allow to invoke
    any post actions, but I don't have any now, so it's OK. 😁 */
-
-void PwshCommand::printOneSpace() const
-{
-    printCompletionResult(u" ; "_s);
-
-    Application::exitApplication(EXIT_SUCCESS);
-}
 
 void PwshCommand::blockCompletion() const
 {
