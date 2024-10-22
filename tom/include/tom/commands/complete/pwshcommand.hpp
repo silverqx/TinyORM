@@ -107,8 +107,8 @@ namespace Tom::Commands::Complete
         /*! Determine whether to append a comma after the multi-value option value. */
         inline bool
         shouldAppendComma(
-                SizeType optionValuesArgSplitSize, SizeType currentOptionValueIndex,
-                bool isCommaUnderCursor) const;
+                SizeType optionValuesArgSplitSize, bool isCommaUnderCursor,
+                bool isFirstOptionValue, bool isLastOptionValue) const;
         /*! Determine if there is a comma under the cursor (multi). */
         bool isCommaUnderCursor(QStringView optionValuesArg,
                                 SizeType optionValuesArgSize) const;
@@ -120,8 +120,9 @@ namespace Tom::Commands::Complete
 
         /*! Prepare one completion result value for a multi-value option. */
         static QString
-        prepareMultiValueResult(const QString &optionName, QStringView value,
-                                bool isFirstOptionValue, bool appendComma);
+        prepareMultiValueResult(
+                const QString &optionName, QStringView value, bool isFirstOptionValue,
+                bool appendComma, bool appendSpace);
 
         /* Option arguments */
         /*! Get the value of the option argument (eg. --database=value). */
@@ -231,8 +232,8 @@ namespace Tom::Commands::Complete
     }
 
     bool PwshCommand::shouldAppendComma(
-            const SizeType optionValuesArgSplitSize,
-            const SizeType currentOptionValueIndex, const bool isCommaUnderCursor) const
+            const SizeType optionValuesArgSplitSize, const bool isCommaUnderCursor,
+            const bool isFirstOptionValue, const bool isLastOptionValue) const
     {
         /* Append only in the following special case (in this case the m_word is empty):
            tom about --only=env,|versions,macros
@@ -244,7 +245,7 @@ namespace Tom::Commands::Complete
                   two values. */
                optionValuesArgSplitSize >= 2 &&
                // Not First and not Last
-               between(currentOptionValueIndex, 1, optionValuesArgSplitSize - 1) &&
+               !isFirstOptionValue && !isLastOptionValue &&
                // Avoid multiple commas
                !isCommaUnderCursor;
     }

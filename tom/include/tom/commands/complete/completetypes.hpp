@@ -103,6 +103,8 @@ namespace Tom::Commands::Complete
         bool printAllValues = false;
         /*! Append the , after the value (for middle values only; edge case). */
         bool appendComma = false;
+        /*! Append the space after the value (for the last value only; edge case). */
+        bool appendSpace = false;
     };
 
 } // namespace Tom::Commands::Complete

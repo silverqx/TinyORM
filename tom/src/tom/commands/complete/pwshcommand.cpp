@@ -290,13 +290,13 @@ int PwshCommand::printGuessedSectionNamesForAbout() const
                 allSectionNamesFiltered,
                 isFirstSectionNameArg,
                 printAllSectionNames,
-                appendComma
+                appendComma,
+                appendSpace
     ] = initializePrintMultiValueOption(allSectionNames);
 
-    /* Print only one space if all array option values have already been entered,
-       it also prevents printing file/dir paths completion. */
-    if (allSectionNamesFiltered.isEmpty())
-        printOneSpace(); // [[noreturn]]
+    // Nothing to do
+    if (allSectionNamesFiltered.isEmpty() && !printAllSectionNames)
+        blockCompletion(); // [[noreturn]]
 
     QStringList sectionNames;
     sectionNames.reserve(allSectionNamesFiltered.size());
@@ -312,7 +312,7 @@ int PwshCommand::printGuessedSectionNamesForAbout() const
         if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
             sectionNames << prepareMultiValueResult(
                                 only_, allSectionName, isFirstSectionNameArg,
-                                appendComma);
+                                appendComma, appendSpace);
 
     printCompletionResult(sectionNames);
 
@@ -332,13 +332,13 @@ int PwshCommand::printGuessedConnectionNames() const
                 allConnectionNamesFiltered,
                 isFirstConnectionNameArg,
                 printAllConnectionNames,
-                appendComma
+                appendComma,
+                appendSpace
     ] = initializePrintMultiValueOption(allConnectionNames);
 
-    /* Print only one space if all array option values have already been entered,
-       it also prevents printing file/dir paths completion. */
-    if (allConnectionNamesFiltered.isEmpty())
-        printOneSpace(); // [[noreturn]]
+    // Nothing to do
+    if (allConnectionNamesFiltered.isEmpty() && !printAllConnectionNames)
+        blockCompletion(); // [[noreturn]]
 
     QStringList connectionNames;
     connectionNames.reserve(allConnectionNamesFiltered.size());
@@ -355,7 +355,7 @@ int PwshCommand::printGuessedConnectionNames() const
         if (printAllConnectionNames || allConnectionName.startsWith(connectionNameArg))
             connectionNames << prepareMultiValueResult(
                                    database_, allConnectionName,
-                                   isFirstConnectionNameArg, appendComma);
+                                   isFirstConnectionNameArg, appendComma, appendSpace);
 
     printCompletionResult(connectionNames);
 
@@ -427,6 +427,9 @@ void PwshCommand::appendShortVerboseOptions(QStringList &options,
 PrintMultiValueOptionType
 PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
 {
+    /* This method is a real porn 😎, it covers so many cases, it took me days/weeks
+       to debug it. */
+
     // Get the value of the option argument (eg. --only=macros)
     const auto optionValuesArg = getOptionValue(context().wordArg);
 
@@ -444,47 +447,64 @@ PwshCommand::initializePrintMultiValueOption(const QStringList &allValues) const
     // Get the current value index (0-based) among other values
     const auto currentOptionValueIndex = optionValuesBeforeCursor.count(COMMA_C);
 
+    // For appendComma and Register-ArgumentCompleter (determines an output format)
+    const auto isFirstOptionValue = currentOptionValueIndex == 0;
     // Option values that are already on the command-line (from getOptionValue())
     auto optionValuesArgSplit = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
-    // Needed for pwsh, determines an output format
-    const auto isFirstOptionValue = currentOptionValueIndex == 0;
 
+    // For currentOptionValue and appendComma
     const auto optionValuesArgSize = optionValuesArg.size();
+    // For appendComma and appendSpace (must be before optionValuesArgSplit.takeAt())
+    const auto optionValuesArgSplitSize = optionValuesArgSplit.size();
 
     /* This is for one special case like --only=environment,|macros,versions, or
-       --only=environment,|macros,,versions, (there must be an extra comma)
-       in this case return {} which means print all remaining options and don't
-       remove the current word macros so it will be filtered out. After the tab it
-       prints:
-       --only=environment,connections|macros,versions, instead of
-       --only=environment,macros|macros,versions, */
-    const auto shouldRemoveOptionValue = !(optionValuesBeforeCursor.endsWith(COMMA_C) && // NOLINT(readability-simplify-boolean-expr)
-                                           optionValuesArgSize >
-                                           optionValuesBeforeCursor.size());
+       --only=environment,|macros,,versions, (with an extra/double comma).
+       In this case set the currentOptionValue to an empty string and don't take/remove
+       the current word under the cursor (macros in our example), to prevent/avoid
+       this current 'macros' word from being removed from the completion results,
+       otherwise, it would be filtered out using the optionValuesArgSplit.takeAt() below.
+       After the tab hit it prints:
+       --only=environment,connections,¦macros,versions, (instead of)
+       --only=environment,macros,¦macros,versions, */
+    const auto printAllRemaining = m_wordArg.isEmpty() &&
+                                   optionValuesBeforeCursor.endsWith(COMMA_C) &&
+                                   optionValuesArgSize > optionValuesBeforeCursor.size();
     /* The currently completing option value needs to be removed, so that this option
-       value is not filtered out in the ranges::views::filter() algorithm below. */
-    const auto currentOptionValue = shouldRemoveOptionValue
+       value is not filtered out in the filterOptionValues() method below. */
+    const auto currentOptionValue = !printAllRemaining
                                     ? optionValuesArgSplit.takeAt(currentOptionValueIndex)
                                     : EMPTY;
     const auto printAllValues = currentOptionValue.isEmpty();
 
+    // For appendComma and appendSpace
+    const auto lastOptionValueIndex = optionValuesArgSplitSize - 1;
+    const auto isLastOptionValue = !printAllRemaining && // This can't be !printAllValues
+                                   currentOptionValueIndex == lastOptionValueIndex;
+
     // Determine whether to append a comma after the multi-value option value
     const auto appendComma = shouldAppendComma(
-                                 optionValuesArgSplit.size(), currentOptionValueIndex,
-                                 isCommaUnderCursor(optionValuesArg,
-                                                    optionValuesArgSize));
+                                 optionValuesArgSplitSize,
+                                 isCommaUnderCursor(optionValuesArg, optionValuesArgSize),
+                                 isFirstOptionValue, isLastOptionValue);
 
-    // Remove all empty and null strings (it would print all option values w/o this)
+    // Remove all empty and null strings (it would print all option values without this)
     optionValuesArgSplit.removeAll({});
+
+    // Filter out option values that are already completed on the command-line
+    const auto optionValues = filterOptionValues(allValues, optionValuesArgSplit);
+    /* If the last option value on the command-line is being completed and there is only
+       one value left to complete. */
+    const auto appendSpace = isLastOptionValue && optionValues.size() == 1;
 
     return {
         .currentOptionValue = currentOptionValue,
-        // Filter out option values that are already completed on the command-line
-        .optionValues       = filterOptionValues(allValues, optionValuesArgSplit),
+        .optionValues       = optionValues,
         .isFirstOptionValue = isFirstOptionValue,
         .printAllValues     = printAllValues,
         // For middle values only (edge case)
         .appendComma        = appendComma,
+        // For the last value only, if all values have already been completed (edge case)
+        .appendSpace        = appendSpace,
     };
 }
 
@@ -556,7 +576,7 @@ PwshCommand::filterOptionValues(const QStringList &allValues,
 QString
 PwshCommand::prepareMultiValueResult(
         const QString &optionName, const QStringView value,
-        const bool isFirstOptionValue, const bool appendComma)
+        const bool isFirstOptionValue, const bool appendComma, const bool appendSpace)
 {
     // TMPL_RESULT2 format: completionText;listItemText
 
@@ -565,8 +585,14 @@ PwshCommand::prepareMultiValueResult(
     if (isFirstOptionValue)
         return TMPL_RESULT2.arg(NOSPACE.arg(LongOptionEq.arg(optionName), value), value);
 
+    // Edge case if values in the middle are being completed
     if (appendComma)
         return TMPL_RESULT2.arg(NOSPACE.arg(value, COMMA_C), value);
+
+    /* If the last option value on the command-line is being completed and there is only
+       one value left to complete. */
+    if (appendSpace)
+        return TMPL_RESULT2.arg(NOSPACE.arg(value, SPACE), value);
 
     return TMPL_RESULT2.arg(/*completionText*/ value, /*listItemText*/ value);
 }
