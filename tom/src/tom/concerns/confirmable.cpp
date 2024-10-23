@@ -5,6 +5,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Tom::Constants::Prod;
+using Tom::Constants::Production;
 using Tom::Constants::force;
 
 namespace Tom::Concerns
@@ -50,7 +52,7 @@ std::function<bool()> Confirmable::defaultConfirmCallback() const
     {
         const auto &environment = command().application().environment();
 
-        return environment == "production"_L1 || environment == "prod"_L1;
+        return environment == Production || environment == Prod;
     };
 }
 

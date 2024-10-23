@@ -40,6 +40,16 @@ using Tom::Constants::position_up;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
+// Environment names for --env= option
+using Tom::Constants::Local;
+using Tom::Constants::Dev;
+using Tom::Constants::Development;
+using Tom::Constants::Prod;
+using Tom::Constants::Production;
+using Tom::Constants::Test;
+using Tom::Constants::Testing;
+using Tom::Constants::Staging;
+
 using enum Tom::GuessedCommandNameResult;
 
 namespace Tom::Commands::Complete
@@ -365,10 +375,10 @@ int PwshCommand::printGuessedConnectionNames() const
 int PwshCommand::printGuessedEnvironmentNames() const
 {
     static const QStringList allEnvironmentNames {
-        u"dev"_s,     u"development"_s, u"local"_s,
-        u"prod"_s,    u"production"_s,
-        u"test"_s,    u"testing"_s,
-        u"staging"_s,
+        Dev,     Development, Local,
+        Prod,    Production,
+        Test,    Testing,
+        Staging,
     };
 
     const auto environmentNameArg = getOptionValue(context().wordArg);

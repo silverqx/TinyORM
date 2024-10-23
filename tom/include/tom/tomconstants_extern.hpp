@@ -55,6 +55,16 @@ namespace Constants
     TINYORM_EXPORT extern const QString quiet;
     TINYORM_EXPORT extern const QString verbose;
 
+    // Environment names for --env= option
+    TINYORM_EXPORT extern const QString Local;
+    TINYORM_EXPORT extern const QString Dev;
+    TINYORM_EXPORT extern const QString Development;
+    TINYORM_EXPORT extern const QString Prod;
+    TINYORM_EXPORT extern const QString Production;
+    TINYORM_EXPORT extern const QString Test;
+    TINYORM_EXPORT extern const QString Testing;
+    TINYORM_EXPORT extern const QString Staging;
+
     // Commands' positional options
     // help
     TINYORM_EXPORT extern const QString command_name;

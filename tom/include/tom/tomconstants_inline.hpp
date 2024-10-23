@@ -54,6 +54,16 @@ namespace Constants
     inline const QString quiet         = u"quiet"_s;
     inline const QString verbose       = u"verbose"_s;
 
+    // Environment names for --env= option
+    inline const QString Local        = u"local"_s;
+    inline const QString Dev          = u"dev"_s;
+    inline const QString Development  = u"development"_s;
+    inline const QString Prod         = u"prod"_s;
+    inline const QString Production   = u"production"_s;
+    inline const QString Test         = u"test"_s;
+    inline const QString Testing      = u"testing"_s;
+    inline const QString Staging      = u"staging"_s;
+
     // Commands' positional options
     // help
     inline const QString command_name = u"command_name"_s;

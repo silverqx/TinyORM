@@ -30,6 +30,8 @@ using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
 using Tom::Constants::MigrateUninstall;
+using Tom::Constants::Prod;
+using Tom::Constants::Production;
 
 using TestUtils::Databases;
 
@@ -895,7 +897,7 @@ void tst_Migrate::throwIfWrongEnvironment(const char *const environmentEnvName)
 {
     const auto environment = qEnvironmentVariable(environmentEnvName);
 
-    if (environment != "production"_L1 && environment != "prod"_L1)
+    if (environment != Production && environment != Prod)
         return;
 
     throw RuntimeError(
