@@ -374,7 +374,7 @@ int PwshCommand::printGuessedConnectionNames() const
 
 int PwshCommand::printGuessedEnvironmentNames() const
 {
-    static const QStringList allEnvironmentNames {
+    static const QList<std::reference_wrapper<const QString>> allEnvironmentNames {
         Dev,     Development, Local,
         Prod,    Production,
         Test,    Testing,
@@ -389,7 +389,7 @@ int PwshCommand::printGuessedEnvironmentNames() const
     /* It also evaluates to true if the given environmentNameArg is an empty string "",
        so it prints all environment names in this case.
        Also, --env= has to be prepended because pwsh overwrites whole option. */
-    for (const auto &environment : allEnvironmentNames)
+    for (const QString &environment : allEnvironmentNames)
         if (environment.startsWith(environmentNameArg))
             environmentNames << TMPL_RESULT2.arg(
                                     NOSPACE.arg(LongOptionEq.arg(Env), environment),
