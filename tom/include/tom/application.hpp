@@ -177,7 +177,7 @@ namespace Concerns
         void parseCommandLine();
 
         /*! Initialize environment value, order:
-            local -> value from env. variable -> --env command-line argument. */
+            local -> value from env. variable -> --env= command-line option. */
         void initializeEnvironment();
         /*! Obtain command name to run. */
         QString getCommandName();
