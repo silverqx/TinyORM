@@ -366,6 +366,8 @@ void Application::parseCommandLine()
        the command itself. */
     m_parser.parse(arguments());
 
+    /* Initialize environment value, order:
+       local -> value from env. variable -> --env= command-line option. */
     initializeEnvironment();
 
     /* Command-line arguments are parsed now, so the InteractsWithIO() class can be
