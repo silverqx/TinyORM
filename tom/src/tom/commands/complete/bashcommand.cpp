@@ -126,19 +126,14 @@ void BashCommand::validateInputOptions() const
     // Validate the required common options for all complete:xyz commands (checks isSet())
     BaseCompleteCommand::validateInputOptions();
 
-    // Bash specific
-    constexpr static auto optionsToValidate = std::to_array<
-                                              std::reference_wrapper<const QString>>({
-        cargs_,
-    });
-
     // TODO parser, add support for required positional arguments and options silverqx
-    for (const auto &optionName : optionsToValidate)
-        if (!isSet(optionName))
-            throw Exceptions::InvalidArgumentError(
-                    u"The --%1= option must be set for the complete:bash command "
-                     "in %2()."_s
-                    .arg(optionName, __tiny_func__));
+    // Nothing to do
+    if (isSet(cargs_))
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The --cargs= option must be set for the complete:bash command "
+                 "in %1()."_s.arg(__tiny_func__));
 }
 
 void BashCommand::validateInputOptionValues() const
@@ -146,15 +141,13 @@ void BashCommand::validateInputOptionValues() const
     // Validate the required common option values for all complete:xyz commands
     BaseCompleteCommand::validateInputOptionValues();
 
-    // Bash specific
     // Nothing to do
     if (m_cargsArg > 0)
         return;
 
     throw Exceptions::InvalidArgumentError(
                 u"The --cargs= option value must be >0 for complete:bash command "
-                 "in %2()."_s
-                .arg(__tiny_func__));
+                 "in %2()."_s.arg(__tiny_func__));
 }
 
 } // namespace Tom::Commands::Complete

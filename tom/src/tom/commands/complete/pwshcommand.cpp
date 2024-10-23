@@ -649,19 +649,13 @@ void PwshCommand::validateInputOptions() const
     // Validate the required common options for all complete:xyz commands (checks isSet())
     BaseCompleteCommand::validateInputOptions();
 
-    // Pwsh specific
-    constexpr static auto optionsToValidate = std::to_array<
-                                              std::reference_wrapper<const QString>>({
-        position_,
-    });
+    // Nothing to do
+    if (isSet(position_))
+        return;
 
-    // TODO parser, add support for required positional arguments and options silverqx
-    for (const auto &optionName : optionsToValidate)
-        if (!isSet(optionName))
-            throw Exceptions::InvalidArgumentError(
-                    u"The --%1= option must be set for the complete:pwsh command "
-                     "in %2()."_s
-                    .arg(optionName, __tiny_func__));
+    throw Exceptions::InvalidArgumentError(
+                u"The --position= option must be set for the complete:pwsh command "
+                 "in %1()."_s.arg(__tiny_func__));
 }
 
 void PwshCommand::validateInputOptionValues() const
@@ -669,7 +663,6 @@ void PwshCommand::validateInputOptionValues() const
     // Validate the required common option values for all complete:xyz commands
     BaseCompleteCommand::validateInputOptionValues();
 
-    // Pwsh specific
     // Get cursor position after the tom executable including the space (0-based)
     const auto minRequiredPosition = getCursorPositionAfterExecutable();
 
