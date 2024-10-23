@@ -392,7 +392,11 @@ void Application::initializeEnvironment()
         has the highest priority.
         The local environment is set in the constructor's member initializer list and
         the --env= option also has the default value set to local. Both are needed and
-        that's why the environmentOpt != m_environment condition is used. */
+        that's why the environmentOpt != m_environment condition is used.
+        Reasons:
+        - the environment() getter can be called before the run() is invoked
+        - the default value for --env= option also appears it in the tab-completion
+          description and also in the tom list output */
 
     // A value from the --env command-line argument
     if (auto environmentOpt = m_parser.value(env);
