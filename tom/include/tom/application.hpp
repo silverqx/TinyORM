@@ -293,18 +293,18 @@ namespace Concerns
         QCommandLineParser m_parser;
 
         /*! Current environment. */
-        QString m_environment = u"local"_s;
+        QString m_environment = u"local"_s; // Default: local
         /*! Environment variable name that holds a current environment value
             (passed to the qEnvironmentVariable() so the type is const char *). */
-        const char *m_environmentEnvName;
+        const char *m_environmentEnvName; // Default using constructor: TOM_ENV
         /*! Migration repository table name. */
-        QString m_migrationTable;
+        QString m_migrationTable; // Default using constructor: migrations
         /*! Migrations path for the make:migration command. */
-        std::filesystem::path m_migrationsPath;
+        std::filesystem::path m_migrationsPath; // Default using C macro: TINYTOM_MIGRATIONS_DIR
         /*! Models path for the make:model command. */
-        std::filesystem::path m_modelsPath;
+        std::filesystem::path m_modelsPath; // Default using C macro: TINYTOM_MODELS_DIR
         /*! Seeders path for the make:seeder command. */
-        std::filesystem::path m_seedersPath;
+        std::filesystem::path m_seedersPath; // Default using C macro: TINYTOM_SEEDERS_DIR
 
         /*! Migrations vector to process. */
         std::vector<std::shared_ptr<Migration>> m_migrations;
