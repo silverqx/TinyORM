@@ -124,6 +124,7 @@ using Tom::Constants::Help;
 using Tom::Constants::Inspire;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
+using Tom::Constants::Local;
 using Tom::Constants::MakeMigration;
 using Tom::Constants::MakeModel;
 //using Tom::Constants::MakeProject;
@@ -200,6 +201,7 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
              static_cast<decltype (m_argv)::size_type>(argc))
     , m_db(std::move(db))
     , m_qtApplication(createQCoreApplication(argc, argv))
+    , m_environment(Local)
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
     , m_migrationsPath(initializePath(TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
@@ -311,7 +313,8 @@ void Application::initializeParser(QCommandLineParser &parser)
     parser.addOptions(saveOptions({
         {      ansi,           u"Force ANSI output"_s},
         {      noansi,         u"Disable ANSI output"_s},
-        {      env,            u"The environment the command should run under"_s, env_up}, // Value
+        {      env,            u"The environment the command should run under"_s, env_up,
+                               Local}, // Value
         {{QChar('h'),
           help},               u"Display help for a given command, when no command is "
                                 "given display help for the <info>list</info> command"_s},
@@ -386,11 +389,14 @@ void Application::initializeEnvironment()
 {
     /*! The default value is local, can be overridden by an environment variable which
         name is in the m_environmentEnvName data member, the --env command-line argument
-        has the highest priority. */
+        has the highest priority.
+        The local environment is set in the constructor's member initializer list and
+        the --env= option also has the default value set to local. Both are needed and
+        that's why the environmentOpt != m_environment condition is used. */
 
     // A value from the --env command-line argument
     if (auto environmentOpt = m_parser.value(env);
-        !environmentOpt.isEmpty()
+        !environmentOpt.isEmpty() && environmentOpt != m_environment
     )
         m_environment = std::move(environmentOpt);
 
@@ -398,7 +404,7 @@ void Application::initializeEnvironment()
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
                                    ? EMPTY
                                    : qEnvironmentVariable(m_environmentEnvName);
-             !environmentEnv.isEmpty()
+             !environmentEnv.isEmpty() && environmentEnv != m_environment
     )
         m_environment = std::move(environmentEnv);
 }

@@ -293,7 +293,7 @@ namespace Concerns
         QCommandLineParser m_parser;
 
         /*! Current environment. */
-        QString m_environment = u"local"_s; // Default: local
+        QString m_environment; // Default: local
         /*! Environment variable name that holds a current environment value
             (passed to the qEnvironmentVariable() so the type is const char *). */
         const char *m_environmentEnvName; // Default using constructor: TOM_ENV
