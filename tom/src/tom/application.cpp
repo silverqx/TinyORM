@@ -374,7 +374,7 @@ void Application::parseCommandLine()
     initializeEnvironment();
 
     /* Command-line arguments are parsed now, so the InteractsWithIO() class can be
-       instantiated. There's nothing wrong with being so late as output to the console
+       instantiated. There's nothing wrong with being so late as an output to the console
        is not needed until now. */
     m_io = std::make_unique<Concerns::InteractsWithIO>(m_parser);
 
