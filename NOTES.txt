@@ -3296,6 +3296,22 @@ struct T1
      - of course a new data members or methods can be added on partially specialized template
        classes
 
+ - constinit
+   - summary (always use for):
+     - static local variables (also with the thread_local)
+     - extern thread_local (to reducing overhead)
+   - constinit must have static storage duration (not local variable)
+   - guarantees it will be initialized at compile time
+   - can also be used for non-const variables like: constinit int i = 10;
+     - constexpr will always be const
+   - for references constinit is equivalent to constexpr
+   - when the declared variable is an object, constexpr mandates that the object must have
+     constant destruction and constinit doesn't have to (e.g. std::shared_ptr<T>)
+   - constinit helps to avoid the Static Initialization Order Fiasco
+   - constinit can also be used in a non-initializing declaration to tell the compiler that
+     a thread_local variable is already initialized, eg:
+extern thread_local constinit int x;
+
 
 c++ library confusions:
 -----------------------
