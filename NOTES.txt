@@ -3296,6 +3296,11 @@ struct T1
      - of course a new data members or methods can be added on partially specialized template
        classes
 
+ - constinit
+   - guarantees it will be initialized at compile time
+   - can also be used for non-const variables like: constinit int i = 10;
+     - constexpr will always be const
+
 
 c++ library confusions:
 -----------------------
