@@ -168,7 +168,7 @@ QString Grammar::compileRandom(const QString &/*unused*/) const
 const std::unordered_set<QString> &Grammar::getOperators() const
 {
     /* I make it this way, I don't declare it as pure virtual intentionally, this gives
-       me oportunity to instantiate the Grammar class eg. in tests. */
+       me opportunity to instantiate the Grammar class eg. in tests. */
     static const std::unordered_set<QString> cachedOperators;
 
     return cachedOperators;
