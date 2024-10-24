@@ -189,7 +189,8 @@ int BaseCompleteCommand::printGuessedShells() const
 {
     /* There is no need to complete the bash and zsh for other platforms.
        The pwsh can run on all our supported platforms so always complete it. */
-    static const std::array allShellNames {
+    constinit static const std::array allShellNames =
+    std::to_array<std::reference_wrapper<const QString>>({
 #if defined(__linux__) || defined(__MINGW32__)
         ShBash,
 #endif
@@ -197,7 +198,7 @@ int BaseCompleteCommand::printGuessedShells() const
 #if defined(__linux__) || defined(__MINGW32__)
         ShZsh,
 #endif
-    };
+    });
 
     const auto wordArg = context().wordArg;
     const auto printAll = wordArg.isEmpty();
