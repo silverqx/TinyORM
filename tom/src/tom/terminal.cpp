@@ -44,7 +44,7 @@ void Terminal::initialize()
 bool Terminal::isatty(FILE *stream) noexcept
 {
 #ifdef _WIN32
-    return _isatty(_fileno(stream)) != 0;
+    return _isatty(_fileno(stream)) != FALSE;
 #else
     return ::isatty(fileno(stream)) != 0;
 #endif
@@ -216,7 +216,7 @@ bool Terminal::hasVt100Support(const std::ostream &cout)
 {
     DWORD mode = 0;
 
-    if (GetConsoleMode(getStdHandleByCppStream(cout), &mode) == 0)
+    if (GetConsoleMode(getStdHandleByCppStream(cout), &mode) == FALSE)
         return false;
 
     return (mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) ==
@@ -227,7 +227,7 @@ bool Terminal::hasVt100Support(const std::wostream &wcout)
 {
     DWORD mode = 0;
 
-    if (GetConsoleMode(getStdHandleByCppStream(wcout), &mode) == 0)
+    if (GetConsoleMode(getStdHandleByCppStream(wcout), &mode) == FALSE)
         return false;
 
     return (mode & ENABLE_VIRTUAL_TERMINAL_PROCESSING) ==
