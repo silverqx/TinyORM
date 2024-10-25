@@ -52,9 +52,12 @@ bool Terminal::isatty(FILE *stream) noexcept
 
 Terminal::TerminalSize Terminal::terminalSize() noexcept
 {
+    constinit static const int InvalidWidth  = -1;
+    constinit static const int InvalidHeight = -1;
+
     // Don't change to short, int is MUCH easier to manage, helps to avoid static_cast<>-s
-    int width  = -1;
-    int height = -1;
+    int width  = InvalidWidth;
+    int height = InvalidHeight;
 
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbi;
