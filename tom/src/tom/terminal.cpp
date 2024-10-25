@@ -63,6 +63,7 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
     if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi) == FALSE)
         return {InvalidColumns, InvalidLines};
 
+    // +1 because they are 0-based
     return {.columns = (csbi.srWindow.Right  - csbi.srWindow.Left) + 1,
             .lines   = (csbi.srWindow.Bottom - csbi.srWindow.Top)  + 1};
 
@@ -77,6 +78,7 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
     if (ioctl(fileno, TIOCGWINSZ, &w) != 0) // NOLINT(cppcoreguidelines-pro-type-vararg)
         return {InvalidColumns, InvalidLines};
 
+    // Values are 1-based
     return {.columns = w.ws_col, .lines = w.ws_row};
 #else
 #  error Unsupported OS or platform in Tom::Terminal.
