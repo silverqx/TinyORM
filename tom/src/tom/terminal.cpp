@@ -44,9 +44,9 @@ void Terminal::initialize()
 bool Terminal::isatty(FILE *stream) noexcept
 {
 #ifdef _WIN32
-    return ::_isatty(::_fileno(stream)) != 0;
+    return _isatty(_fileno(stream)) != 0;
 #else
-    return ::isatty(::fileno(stream)) != 0;
+    return ::isatty(fileno(stream)) != 0;
 #endif
 }
 
