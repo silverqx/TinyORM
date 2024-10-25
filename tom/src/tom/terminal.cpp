@@ -54,29 +54,33 @@ bool Terminal::isatty(FILE *const stream) noexcept
 
 Terminal::TerminalSize Terminal::terminalSize() noexcept
 {
-    constinit static const int InvalidWidth  = -1;
-    constinit static const int InvalidHeight = -1;
-
-    int width  = InvalidWidth;
-    int height = InvalidHeight;
+    constinit static const int InvalidColumns = -1;
+    constinit static const int InvalidLines   = -1;
 
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbi {};
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 
-    width  = (csbi.srWindow.Right - csbi.srWindow.Left) + 1;
-    height = (csbi.srWindow.Bottom - csbi.srWindow.Top) + 1;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi) == FALSE)
+        return {InvalidColumns, InvalidLines};
+
+    return {.columns = (csbi.srWindow.Right  - csbi.srWindow.Left) + 1,
+            .lines   = (csbi.srWindow.Bottom - csbi.srWindow.Top)  + 1};
+
 #elif defined(__linux__)
-    winsize w {};
-    ioctl(fileno(stdout), TIOCGWINSZ, &w); // NOLINT(cppcoreguidelines-pro-type-vararg)
+    const auto fileno = ::fileno(stdout);
 
-    width  = w.ws_col;
-    height = w.ws_row;
+    if (fileno == -1)
+        return {InvalidColumns, InvalidLines};
+
+    winsize w {};
+
+    if (ioctl(fileno, TIOCGWINSZ, &w) != 0) // NOLINT(cppcoreguidelines-pro-type-vararg)
+        return {InvalidColumns, InvalidLines};
+
+    return {.columns = w.ws_col, .lines = w.ws_row};
 #else
 #  error Unsupported OS or platform in Tom::Terminal.
 #endif
-
-    return {width, height};
 }
 
 /* Operations on a Terminal instance */
