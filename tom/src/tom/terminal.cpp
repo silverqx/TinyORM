@@ -60,7 +60,7 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
     int height = InvalidHeight;
 
 #ifdef _WIN32
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    CONSOLE_SCREEN_BUFFER_INFO csbi {};
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 
     width  = (csbi.srWindow.Right - csbi.srWindow.Left) + 1;
