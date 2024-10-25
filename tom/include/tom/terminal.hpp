@@ -44,7 +44,7 @@ namespace Tom
         struct TerminalSize
         {
             /*! Visible columns. */
-            int columns;
+            int columns; // Don't change to short, int is MUCH easier to manage, helps to avoid static_cast<>-s
             /*! Visible lines. */
             int lines;
         };
