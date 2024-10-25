@@ -337,7 +337,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
 
     QString line;
 
-    for (auto &&token : QStringView(string).split(SPACE)) {
+    for (auto &&token : QStringView(string).split(SPACE, Qt::KeepEmptyParts)) {
         // If there is still a space on the line then append the token
         if (line.size() + token.size() + 1 <= width) {
             // Don't prepend the space at beginning of an empty line
