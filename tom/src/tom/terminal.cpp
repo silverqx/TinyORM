@@ -41,7 +41,7 @@ void Terminal::initialize()
 #endif
 }
 
-bool Terminal::isatty(FILE *stream) noexcept
+bool Terminal::isatty(FILE *const stream) noexcept
 {
 #ifdef _WIN32
     return _isatty(_fileno(stream)) != FALSE;
@@ -148,7 +148,7 @@ int Terminal::width() const
             return m_lastWidth = width;
     }
 
-    if (auto [width, _] = terminalSize(); width > 0)
+    if (const auto [width, _] = terminalSize(); width > 0)
         return m_lastWidth = width;
 
     return m_lastWidth;
@@ -166,7 +166,7 @@ int Terminal::height() const
             return m_lastHeight = height;
     }
 
-    if (auto [_, height] = terminalSize(); height > 0)
+    if (const auto [_, height] = terminalSize(); height > 0)
         return m_lastHeight = height;
 
     return m_lastHeight;
