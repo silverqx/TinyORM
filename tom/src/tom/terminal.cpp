@@ -180,35 +180,27 @@ namespace
     /*! Get Windows output handle by passed c++ output stream. */
     HANDLE getStdHandleByCppStream(const std::ostream &cout = std::cout)
     {
-        HANDLE handle = nullptr;
-
         if (std::addressof(cout) == std::addressof(std::cout))
-            handle = GetStdHandle(STD_OUTPUT_HANDLE);
-        else if (std::addressof(cout) == std::addressof(std::cerr))
-            handle = GetStdHandle(STD_ERROR_HANDLE);
-        else
-            throw Exceptions::InvalidArgumentError(
-                    u"Unsupported stream type passed in %1()."_s
-                    .arg(__tiny_func__));
+            return GetStdHandle(STD_OUTPUT_HANDLE);
 
-        return handle;
+        if (std::addressof(cout) == std::addressof(std::cerr))
+            return GetStdHandle(STD_ERROR_HANDLE);
+
+        throw Exceptions::InvalidArgumentError(
+                    u"Unsupported stream type passed in %1()."_s.arg(__tiny_func__));
     }
 
     /*! Get Windows output handle by passed c++ output stream, wide version. */
     HANDLE getStdHandleByCppStream(const std::wostream &wcout = std::wcout)
     {
-        HANDLE handle = nullptr;
-
         if (std::addressof(wcout) == std::addressof(std::wcout))
-            handle = GetStdHandle(STD_OUTPUT_HANDLE);
-        else if (std::addressof(wcout) == std::addressof(std::wcerr))
-            handle = GetStdHandle(STD_ERROR_HANDLE);
-        else
-            throw Exceptions::InvalidArgumentError(
-                    u"Unsupported stream type passed in %1()."_s
-                    .arg(__tiny_func__));
+            return GetStdHandle(STD_OUTPUT_HANDLE);
 
-        return handle;
+        else if (std::addressof(wcout) == std::addressof(std::wcerr))
+            return GetStdHandle(STD_ERROR_HANDLE);
+
+        throw Exceptions::InvalidArgumentError(
+                    u"Unsupported stream type passed in %1()."_s.arg(__tiny_func__));
     }
 } // namespace
 
