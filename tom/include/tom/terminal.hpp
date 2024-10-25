@@ -60,9 +60,9 @@ namespace Tom
         bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
 
         /*! Obtain the current terminal width. */
-        int width();
+        int width() const;
         /*! Obtain the current terminal height. */
-        int height();
+        int height() const;
 
         /*! Get the cached terminal width. */
         inline int lastWidth() const noexcept;
@@ -97,10 +97,10 @@ namespace Tom
         /*! Cache for detected ANSI output, wide version. */
         mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput;
 
-        /*! Current terminal width. */
-        int m_lastWidth = 80;
-        /*! Current terminal height. */
-        int m_lastHeight = 50;
+        /*! Terminal width cache. */
+        mutable int m_lastWidth = 80;
+        /*! Terminal height cache. */
+        mutable int m_lastHeight = 50;
     };
 
     /* public */

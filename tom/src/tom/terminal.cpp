@@ -136,7 +136,7 @@ bool Terminal::hasWColorSupport(const std::wostream &wcout) const
     return isAnsi;
 }
 
-int Terminal::width()
+int Terminal::width() const
 {
     if (const auto widthRaw = qEnvironmentVariable("COLUMNS");
         !widthRaw.isEmpty()
@@ -154,7 +154,7 @@ int Terminal::width()
     return m_lastWidth;
 }
 
-int Terminal::height()
+int Terminal::height() const
 {
     if (const auto heightRaw = qEnvironmentVariable("LINES");
         !heightRaw.isEmpty()
