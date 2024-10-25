@@ -45,8 +45,10 @@ bool Terminal::isatty(FILE *const stream) noexcept
 {
 #ifdef _WIN32
     return _isatty(_fileno(stream)) != FALSE;
-#else
+#elif defined(__linux__)
     return ::isatty(fileno(stream)) != 0;
+#else
+#  error Unsupported OS or platform in Tom::Terminal.
 #endif
 }
 
@@ -70,6 +72,8 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
 
     width  = w.ws_col;
     height = w.ws_row;
+#else
+#  error Unsupported OS or platform in Tom::Terminal.
 #endif
 
     return {width, height};
