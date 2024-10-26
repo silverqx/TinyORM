@@ -269,7 +269,7 @@ namespace
 {
     /*! Split the token to multiple lines by the given width. */
     bool splitLongToken(QStringView token, const int width, QString &line,
-                        std::vector<QString> &lines)
+                        QStringList &lines)
     {
         auto shouldContinue = false;
 
@@ -294,7 +294,7 @@ namespace
             }
 
             // In every case no more space on the line here, push to lines
-            lines.emplace_back(std::move(line));
+            lines << std::move(line);
             // Start a new line
             line.clear(); // NOLINT(bugprone-use-after-move)
 
@@ -312,7 +312,7 @@ namespace
                 // Cut the appended part
                 token = token.sliced(width);
                 // Push to lines
-                lines.emplace_back(std::move(line));
+                lines << std::move(line);
                 // Start a new line
                 line.clear(); // NOLINT(bugprone-use-after-move)
             }
@@ -325,19 +325,18 @@ namespace
 } // namespace
 
 /*! Split a string by the given width (not in the middle of a word). */
-std::vector<QString> String::splitStringByWidth(const QString &string, const int width)
+QStringList String::splitStringByWidth(const QStringView string, const int width)
 {
     // Nothing to split
     if (string.size() <= width)
-        return {string};
+        return {string.toString()};
 
-    std::vector<QString> lines;
-    lines.reserve(static_cast<decltype (lines)::size_type>( // omg 😵‍💫🤯
-                      std::llround(static_cast<double>(string.size()) / width)) + 4);
+    QStringList lines;
+    lines.reserve(std::llround(static_cast<double>(string.size()) / width) + 4);
 
     QString line;
 
-    for (auto &&token : QStringView(string).split(SPACE, Qt::KeepEmptyParts)) {
+    for (auto &&token : string.split(SPACE, Qt::KeepEmptyParts)) {
         // If there is still a space on the line then append the token
         if (line.size() + token.size() + 1 <= width) {
             // Don't prepend the space at beginning of an empty line
@@ -353,7 +352,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
             continue;
 
         // No space on the line, push to lines and start a new line
-        lines.emplace_back(std::move(line));
+        lines << std::move(line);
 
         // Start a new line
         line.clear(); // NOLINT(bugprone-use-after-move)
@@ -363,7 +362,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
     /* This can happen if a simple append of the token was the last operation, can happen
        on the two places above. */
     if (!line.isEmpty())
-        lines.emplace_back(std::move(line));
+        lines << std::move(line);
 
     return lines;
 }

@@ -197,8 +197,9 @@ namespace Concerns
         /*! Write a string as error output (red box with a white text). */
         QString errorWallInternal(const QString &string) const;
         /*! Compute a reserve value for the QStringList lines. */
-        static QStringList::size_type
-        computeReserveForErrorWall(const QStringList &stringSplit, int maxLineWidth);
+        static QList<QStringView>::size_type
+        computeReserveForErrorWall(const QList<QStringView> &stringSplit,
+                                   int maxLineWidth);
 
         /*! Is the input interactive? (don't ask any interactive question if false) */
         bool m_interactive = true;

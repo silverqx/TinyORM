@@ -18,6 +18,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using tabulate::Table;
 
+using Orm::QStringContainer;
+
 using Orm::Constants::ASTERISK;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NEWLINE_C;
@@ -531,10 +533,11 @@ bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
 namespace
 {
     /*! Get max. line size after the split with the newline in all rendered lines. */
-    QString::size_type getMaxLineWidth(const QStringList &lines)
+    template<QStringContainer T>
+    QStringView::size_type getMaxLineWidth(const T &lines)
     {
         const auto it = std::ranges::max_element(lines, std::less(),
-                                                 [](const QString &line)
+                                                 [](const QStringView line)
         {
             return line.size();
         });
@@ -546,14 +549,16 @@ namespace
 
 QString InteractsWithIO::errorWallInternal(const QString &string) const
 {
+    const auto stringTrimmed = QStringView(string).trimmed();
+
     // Nothing to print
-    if (QStringView(string).trimmed().isEmpty())
+    if (stringTrimmed.isEmpty())
         return string;
 
     QStringList lines;
 
     {
-        const auto stringSplit = string.split(NEWLINE_C, Qt::SkipEmptyParts);
+        const auto stringSplit = stringTrimmed.split(NEWLINE_C, Qt::SkipEmptyParts);
 
         /* Compute the max. box width */
         // Get max. line width after the split with the newline in all rendered lines
@@ -564,7 +569,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
         // Split lines by the given width
-        for (const auto &line : stringSplit)
+        for (const auto line : stringSplit)
             std::ranges::move(StringUtils::splitStringByWidth(line, maxLineWidth),
                               std::back_inserter(lines));
     }
@@ -608,13 +613,13 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     return output;
 }
 
-QStringList::size_type
-InteractsWithIO::computeReserveForErrorWall(const QStringList &stringSplit,
+QList<QStringView>::size_type
+InteractsWithIO::computeReserveForErrorWall(const QList<QStringView> &stringSplit,
                                             const int maxLineWidth)
 {
-    QStringList::size_type size = 0;
+    QList<QStringView>::size_type size = 0;
 
-    for (const auto &line : stringSplit)
+    for (const auto line : stringSplit)
         /* +2 serves as a reserve because the splitting algorithm can decided
            to start a new line if there is <30% free space, +2 is enough. */
         size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;

@@ -77,8 +77,8 @@ namespace Utils
         static T studly(T &&strings);
 
         /*! Split a string by the given width (not in the middle of a word). */
-        static std::vector<QString>
-        splitStringByWidth(const QString &string, int width);
+        static QStringList
+        splitStringByWidth(const QStringView string, int width);
         /*! Split a string at the first given character. */
         static QList<QStringView>
         splitAtFirst(QStringView string, QChar separator,
