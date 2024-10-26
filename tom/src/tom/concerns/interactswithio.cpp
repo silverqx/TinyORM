@@ -573,7 +573,9 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
 
     {
         // ANSI template
-        static const auto tmpl = u"\033[37;41m%1\033[0m"_s;
+        static const auto AnsiTmpl = u"\033[37;41m%1\033[0m"_s;
+        // Template for one line of error wall
+        static const auto LineSpacedTmpl = u"  %1  "_s;
         // Get final max. line width in all rendered lines (after split by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
         // Full line width (with spaces at the beginning and end)
@@ -584,23 +586,23 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         /* Length of line  - 'tmpl.size() - 2' : -2 to exclude %1; '+ 1' : NEWLINE;
            Number of lines - '* (2 +' : empty line above/below
            Final +32 as a reserve. */
-        output.reserve(((fullLineWidth + (tmpl.size() - 2) + 1) *
+        output.reserve(((fullLineWidth + (AnsiTmpl.size() - 2) + 1) *
                         (2 + lines.size())) + 32);
 
         // Empty line above
-        output += tmpl.arg(emptyLine).append(NEWLINE_C);
+        output += AnsiTmpl.arg(emptyLine).append(NEWLINE_C);
 
         for (const auto &line : std::as_const(lines)) {
             // Prepend/append spaces
-            auto lineSpaced = u"  %1  "_s.arg(line);
+            auto lineSpaced = LineSpacedTmpl.arg(line);
             // Fill a line to the end with spaces
             lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
             // ANSI wrap
-            output += tmpl.arg(lineSpaced).append(NEWLINE_C);
+            output += AnsiTmpl.arg(lineSpaced).append(NEWLINE_C);
         }
 
         // Empty line below
-        output += tmpl.arg(emptyLine);
+        output += AnsiTmpl.arg(emptyLine);
     }
 
     return output;
