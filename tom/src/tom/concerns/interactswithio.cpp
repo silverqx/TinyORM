@@ -564,9 +564,9 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
         // Split lines by the given width
-        for (const auto &lineNl : stringSplit)
-            for (auto &&line : StringUtils::splitStringByWidth(lineNl, maxLineWidth))
-                lines << std::move(line);
+        for (const auto &line : stringSplit)
+            std::ranges::move(StringUtils::splitStringByWidth(line, maxLineWidth),
+                              std::back_inserter(lines));
     }
 
     QString output;
