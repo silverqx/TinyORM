@@ -29,10 +29,22 @@ namespace Constants
 namespace Utils
 {
 
+    /*! The behavior of splitting the last word on a line. */
+    enum struct SplitWordsBehavior : quint8
+    {
+        /*! Split the word anywhere to fill the free space on a line. */
+        cSplitWords,
+        /*! Never split words, the word is placed at the beginning of the next line. */
+        cNeverSplitWords,
+    };
+
     /*! String related library class. */
     class TINYORM_EXPORT String
     {
         Q_DISABLE_COPY_MOVE(String)
+
+        /*! Expose the SplitWordsBehavior enum. */
+        using enum SplitWordsBehavior;
 
     public:
         /*! Deleted default constructor, this is a pure library class. */
@@ -76,9 +88,10 @@ namespace Utils
         template<ColumnContainer T>
         static T studly(T &&strings);
 
-        /*! Split a string by the given width (not in the middle of a word). */
+        /*! Split a string by the given width (with or w/o splitting words preference). */
         static QStringList
-        splitStringByWidth(const QStringView string, int width);
+        splitStringByWidth(const QStringView string, int width,
+                           SplitWordsBehavior splitBehavior = cNeverSplitWords);
         /*! Split a string at the first given character. */
         static QList<QStringView>
         splitAtFirst(QStringView string, QChar separator,
@@ -128,6 +141,9 @@ namespace Utils
 #endif
 
 } // namespace Utils
+
+using SplitWordsBehavior = Utils::SplitWordsBehavior;
+
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

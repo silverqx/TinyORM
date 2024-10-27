@@ -195,11 +195,15 @@ namespace Concerns
         bool dontOutput(Verbosity verbosity) const;
 
         /*! Write a string as error output (red box with a white text). */
-        QString errorWallInternal(const QString &string) const;
+        static QString errorWallInternal(const QString &string);
+        /*! Split/prepare the given string for the error wall. */
+        static QStringList splitStringForErrorWall(QStringView stringTrimmed);
         /*! Compute a reserve value for the QStringList lines. */
         static QList<QStringView>::size_type
         computeReserveForErrorWall(const QList<QStringView> &stringSplit,
                                    int maxLineWidth);
+        /*! Render the error wall using the given lines. */
+        static QString renderErrorWall(QStringList &&lines);
 
         /*! Is the input interactive? (don't ask any interactive question if false) */
         bool m_interactive = true;

@@ -142,8 +142,16 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     if (dontOutput(verbosity))
         return *this;
 
-    // Do not print an error wall when ANSI is disabled
-    if (!isAnsiOutput())
+    // There is no reason to render the Error Wall if the number of columns <20
+    constinit static const Terminal::SizeType MinRequiredColumns = 20;
+    const auto terminalWidth = m_terminal->width();
+
+    /* Do not print an error wall when ANSI is disabled, terminal doesn't report
+       the correct columns/width value (can indicate some basic console/terminal), or
+       there isn't enough free space. */
+    if (!isAnsiOutput() ||
+        (terminalWidth == -1 || terminalWidth < MinRequiredColumns)
+    )
         return line(string, true, verbosity, {}, std::cerr);
 
     static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
@@ -547,7 +555,7 @@ namespace
 
 } // namespace
 
-QString InteractsWithIO::errorWallInternal(const QString &string) const
+QString InteractsWithIO::errorWallInternal(const QString &string)
 {
     const auto stringTrimmed = QStringView(string).trimmed();
 
@@ -555,62 +563,29 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     if (stringTrimmed.isEmpty())
         return string;
 
+    return renderErrorWall(splitStringForErrorWall(stringTrimmed));
+}
+
+QStringList
+InteractsWithIO::splitStringForErrorWall(const QStringView stringTrimmed)
+{
+    const auto stringSplit = stringTrimmed.split(NEWLINE_C, Qt::SkipEmptyParts);
+
     QStringList lines;
 
-    {
-        const auto stringSplit = stringTrimmed.split(NEWLINE_C, Qt::SkipEmptyParts);
+    // Get max. line width after the split without the newline for all rendered lines
+    const auto maxLineWidth = static_cast<int>(getMaxLineWidth(stringSplit));
+    lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
-        /* Compute the max. box width */
-        // Get max. line width after the split with the newline in all rendered lines
-        const auto maxLineWidth = std::min(m_terminal->width() - 4,
-                                           static_cast<int>(
-                                               getMaxLineWidth(stringSplit)));
+    using Orm::SplitWordsBehavior::cNeverSplitWords;
 
-        lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
+    // Split lines by the given width
+    for (const auto line : stringSplit)
+        std::ranges::move(
+                    StringUtils::splitStringByWidth(line, maxLineWidth, cNeverSplitWords),
+                    std::back_inserter(lines));
 
-        // Split lines by the given width
-        for (const auto line : stringSplit)
-            std::ranges::move(StringUtils::splitStringByWidth(line, maxLineWidth),
-                              std::back_inserter(lines));
-    }
-
-    QString output;
-
-    {
-        // ANSI template
-        static const auto AnsiTmpl = u"\033[37;41m%1\033[0m"_s;
-        // Template for one line of error wall
-        static const auto LineSpacedTmpl = u"  %1  "_s;
-        // Get final max. line width in all rendered lines (after split by the width)
-        const auto maxLineWidth = getMaxLineWidth(lines);
-        // Full line width (with spaces at the beginning and end)
-        const auto fullLineWidth = maxLineWidth + 4;
-        // Above/below empty line
-        const auto emptyLine = QString(fullLineWidth, SPACE);
-
-        /* Length of line  - 'tmpl.size() - 2' : -2 to exclude %1; '+ 1' : NEWLINE;
-           Number of lines - '* (2 +' : empty line above/below
-           Final +32 as a reserve. */
-        output.reserve(((fullLineWidth + (AnsiTmpl.size() - 2) + 1) *
-                        (2 + lines.size())) + 32);
-
-        // Empty line above
-        output += AnsiTmpl.arg(emptyLine).append(NEWLINE_C);
-
-        for (const auto &line : std::as_const(lines)) {
-            // Prepend/append spaces
-            auto lineSpaced = LineSpacedTmpl.arg(line);
-            // Fill a line to the end with spaces
-            lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
-            // ANSI wrap
-            output += AnsiTmpl.arg(lineSpaced).append(NEWLINE_C);
-        }
-
-        // Empty line below
-        output += AnsiTmpl.arg(emptyLine);
-    }
-
-    return output;
+    return lines;
 }
 
 QList<QStringView>::size_type
@@ -620,11 +595,51 @@ InteractsWithIO::computeReserveForErrorWall(const QList<QStringView> &stringSpli
     QList<QStringView>::size_type size = 0;
 
     for (const auto line : stringSplit)
-        /* +2 serves as a reserve because the splitting algorithm can decided
-           to start a new line if there is <30% free space, +2 is enough. */
-        size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;
+        /* +4 serves as a reserve because the splitting algorithm can decide
+           to start a new line if there isn't enough free space, +4 is enough.
+           The splitStringByWidth() also uses +4, these two reserve() relate. */
+        size += static_cast<QStringList::size_type>(
+                    std::ceil(static_cast<double>(line.size()) / maxLineWidth)) + 4;
 
     return size;
+}
+
+QString InteractsWithIO::renderErrorWall(QStringList &&lines)
+{
+    // ANSI template
+    static const auto AnsiTmpl = u"\033[37;41m%1\033[0m"_s;
+    // Template for one line of error wall
+    static const auto LineSpacedTmpl = u"  %1  "_s;
+    // Get final max. line width in all rendered lines (after split by the width)
+    const auto maxLineWidth = getMaxLineWidth(lines);
+    // Full line width (with spaces at the beginning and end)
+    const auto fullLineWidth = maxLineWidth + 4;
+    // Above/below empty line
+    const auto emptyLine = QString(fullLineWidth, SPACE);
+
+    QString output;
+    /* Length of line  - 'tmpl.size() - 2' : -2 to exclude %1; '+ 1' : NEWLINE;
+       Number of lines - '* (2 +' : empty line above/below
+       Final +32 as a reserve. */
+    output.reserve(((fullLineWidth + (AnsiTmpl.size() - 2) + 1) *
+                    (2 + lines.size())) + 32);
+
+    // Empty line above
+    output += AnsiTmpl.arg(emptyLine).append(NEWLINE_C);
+
+    for (const auto &line : std::as_const(lines)) {
+        // Prepend/append spaces
+        auto lineSpaced = LineSpacedTmpl.arg(line);
+        // Fill a line to the end with spaces
+        lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
+        // ANSI wrap
+        output += AnsiTmpl.arg(lineSpaced).append(NEWLINE_C);
+    }
+
+    // Empty line below
+    output += AnsiTmpl.arg(emptyLine);
+
+    return output;
 }
 
 } // namespace Tom::Concerns

@@ -7,6 +7,7 @@
 #include <range/v3/view/reverse.hpp>
 
 #include "orm/constants.hpp"
+#include "orm/macros/likely.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -267,100 +268,108 @@ QString String::studly(QString string)
 
 namespace
 {
+    /*! Minimum free space size to append a space character. */
+    constinit const QString::size_type MinFreeSpace = 2;
+
+    /*! Push the current line to the lines and start processing a new line. */
+    void startNewLine(QString &line, QStringList &lines) {
+        // Push to lines
+        lines << std::move(line);
+        // Start a new line (don't use clear() as it also frees the allocated memory)
+        line.truncate(0); // NOLINT(bugprone-use-after-move)
+    }
+
     /*! Split the token to multiple lines by the given width. */
-    bool splitLongToken(QStringView token, const int width, QString &line,
+    void splitLongToken(QStringView token, const int width, QString &line,
                         QStringList &lines)
     {
-        auto shouldContinue = false;
-
-        const auto spaceSize = line.isEmpty() ? 0 : 1;
-
-        if (const auto emptySpace = width - line.size() + spaceSize;
-            token.size() > emptySpace
-        ) {
-            // If on the line is still more than 30% of an empty space, use/fill it
-            if (emptySpace > std::llround(static_cast<float>(width) * 0.3F)) {
-                // Position where to split the token
-                auto pos = width - line.size() - spaceSize;
-
-                // Don't prepend the space at beginning of an empty line
-                if (!line.isEmpty())
-                    line.append(SPACE);
-
-                // Guaranteed by the token.size() > emptySpace
-                line.append(token.first(pos));
-                // Cut the appended part
-                token = token.sliced(pos);
+        while (!token.isEmpty()) {
+            /* Token is shorter than the available free space (occurs when the last part
+               of the token is currently being processed). */
+            if (line.size() + token.size() <= width) {
+                line.append(token);
+                break;
             }
 
-            // In every case no more space on the line here, push to lines
-            lines << std::move(line);
-            // Start a new line
-            line.clear(); // NOLINT(bugprone-use-after-move)
+            // Available/remaining free space
+            const auto freeSpace = width - line.size();
 
-            // Process a long token or rest of the token after the previous 30% filling
-            while (!token.isEmpty()) {
-                // Token is shorter than the width, indicates processing of the last token
-                if (token.size() <= width) {
-                    line.append(token); // NOLINT(bugprone-use-after-move)
-                    break;
-                }
+            // Fill the entire line (entire free space)
+            line.append(token.first(freeSpace));
+            // Cut the currently/above appended token part
+            token = token.sliced(freeSpace);
 
-                // Guaranteed by the token.size() <= width, so token.size() > width
-                // Fill the whole line
-                line.append(token.first(width));
-                // Cut the appended part
-                token = token.sliced(width);
-                // Push to lines
-                lines << std::move(line);
-                // Start a new line
-                line.clear(); // NOLINT(bugprone-use-after-move)
-            }
-
-            shouldContinue = true;
+            startNewLine(line, lines);
         }
-
-        return shouldContinue;
     }
 } // namespace
 
-/*! Split a string by the given width (not in the middle of a word). */
-QStringList String::splitStringByWidth(const QStringView string, const int width)
+QStringList String::splitStringByWidth(const QStringView string, const int width,
+                                       const SplitWordsBehavior splitBehavior)
 {
     // Nothing to split
     if (string.size() <= width)
         return {string.toString()};
 
     QStringList lines;
-    lines.reserve(std::llround(static_cast<double>(string.size()) / width) + 4);
+    // The computeReserveForErrorWall() also uses +4, these two reserve() relate
+    lines.reserve(static_cast<QStringList::size_type>(
+                      std::ceil(static_cast<double>(string.size()) / width)) + 4);
 
     QString line;
+    line.reserve(width + 8);
 
     for (auto &&token : string.split(SPACE, Qt::KeepEmptyParts)) {
-        // If there is still a space on the line then append the token
-        if (line.size() + token.size() + 1 <= width) {
-            // Don't prepend the space at beginning of an empty line
-            if (!line.isEmpty())
-                line.append(SPACE);
+        /* If word splitting is not preferred, there must be free space for the entire
+           token with a space character before; if not, start a new line.
+           It also helps to avoid maintaining another bool or int state variable
+           for the following case: Append the token if there is enough free space
+           on the line, because this case also needs to know if a space character
+           was appended. */
+        if (!line.isEmpty() && splitBehavior == cNeverSplitWords &&
+            token.size() <= width && line.size() + 1 + token.size() > width
+        )
+            startNewLine(line, lines);
 
-            line.append(token);
-            continue;
+        /* Don't append a space character to the beginning of an empty line, and if
+           there is no free space for at least one more letter when word splitting is
+           preferred or if is not preferred, there must be free space for the entire
+           token, but only if the token fits or is smaller than a line; if not, use
+           the same logic as when word splitting is preferred. 😂😵‍💫🤯
+           (there is no reason to append a space character in these cases). */
+        if (!line.isEmpty() &&
+            ((splitBehavior == cSplitWords && line.size() + MinFreeSpace <= width) ||
+             (splitBehavior == cNeverSplitWords &&
+              ((token.size() > width && line.size() + MinFreeSpace <= width) ||
+               (token.size() <= width && line.size() + 1 + token.size() <= width))))
+        )
+            line.append(u'|');
+
+        /* An edge case for Qt::KeepEmptyParts if there are multiple spaces in the row,
+           then the token will be empty for each space character. */
+        if (token.isEmpty()) T_UNLIKELY {
+            /* In this case, we have to manually handle the start of the newline because
+               the splitLongToken() cannot be invoked. */
+            if (line.size() + 1 > width)
+                startNewLine(line, lines);
+
+            line.append(SPACE);
         }
 
-        // If a token is longer than the width or an empty space on the current line
-        if (splitLongToken(token, width, line, lines))
-            continue;
+        // Append the token if there is enough free space on the line
+        else if (line.size() + token.size() <= width) T_LIKELY
+            line.append(token);
 
-        // No space on the line, push to lines and start a new line
-        lines << std::move(line);
+        // If the token is longer than the available free space (exceeds the line width)
+        else
+            splitLongToken(token, width, line, lines);
 
-        // Start a new line
-        line.clear(); // NOLINT(bugprone-use-after-move)
-        line.append(token);
+        // The current line is already full (considering also the space character)
+        if (line.size() == width || line.size() + 1 == width)
+            startNewLine(line, lines);
     }
 
-    /* This can happen if a simple append of the token was the last operation, can happen
-       on the two places above. */
+    // Append the last line processed
     if (!line.isEmpty())
         lines << std::move(line);
 
