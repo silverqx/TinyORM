@@ -29,6 +29,9 @@ namespace Tom
         Q_DISABLE_COPY_MOVE(Terminal)
 
     public:
+        /*! Alias for the Terminal size type. */
+        using SizeType = int;
+
         /*! Default constructor. */
         Terminal() = default;
         /*! Default destructor. */
@@ -44,9 +47,9 @@ namespace Tom
         struct TerminalSize
         {
             /*! Visible columns. */
-            int columns; // Don't change to short, int is MUCH easier to manage, helps to avoid static_cast<>-s
+            SizeType columns; // Don't change to short, int is MUCH easier to manage, helps to avoid static_cast<>-s
             /*! Visible lines. */
-            int lines;
+            SizeType lines;
         };
 
         /*! Get terminal size of the visible area. */
@@ -60,14 +63,14 @@ namespace Tom
         bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
 
         /*! Obtain the current terminal width. */
-        int width() const;
+        SizeType width() const;
         /*! Obtain the current terminal height. */
-        int height() const;
+        SizeType height() const;
 
         /*! Get the cached terminal width. */
-        inline int lastWidth() const noexcept;
+        inline SizeType lastWidth() const noexcept;
         /*! Get the cached terminal height. */
-        inline int lastHeight() const noexcept;
+        inline SizeType lastHeight() const noexcept;
 
     private:
         /*! Supports the given output ANSI colors? (common logic). */
@@ -98,19 +101,19 @@ namespace Tom
         mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput;
 
         /*! Terminal width cache. */
-        mutable int m_lastWidth = 80;
+        mutable SizeType m_lastWidth = 80;
         /*! Terminal height cache. */
-        mutable int m_lastHeight = 50;
+        mutable SizeType m_lastHeight = 50;
     };
 
     /* public */
 
-    int Terminal::lastWidth() const noexcept
+    Terminal::SizeType Terminal::lastWidth() const noexcept
     {
         return m_lastWidth;
     }
 
-    int Terminal::lastHeight() const noexcept
+    Terminal::SizeType Terminal::lastHeight() const noexcept
     {
         return m_lastHeight;
     }

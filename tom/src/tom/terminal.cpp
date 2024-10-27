@@ -54,8 +54,8 @@ bool Terminal::isatty(FILE *const stream) noexcept
 
 Terminal::TerminalSize Terminal::terminalSize() noexcept
 {
-    constinit static const int InvalidColumns = -1;
-    constinit static const int InvalidLines   = -1;
+    constinit static const SizeType InvalidColumns = -1;
+    constinit static const SizeType InvalidLines   = -1;
 
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbi {};
@@ -145,7 +145,7 @@ bool Terminal::hasWColorSupport(const std::wostream &wcout) const
     return isAnsi;
 }
 
-int Terminal::width() const
+Terminal::SizeType Terminal::width() const
 {
     if (const auto widthRaw = qEnvironmentVariable("COLUMNS");
         !widthRaw.isEmpty()
@@ -163,7 +163,7 @@ int Terminal::width() const
     return m_lastWidth;
 }
 
-int Terminal::height() const
+Terminal::SizeType Terminal::height() const
 {
     if (const auto heightRaw = qEnvironmentVariable("LINES");
         !heightRaw.isEmpty()
