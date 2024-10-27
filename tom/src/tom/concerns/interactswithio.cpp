@@ -407,22 +407,28 @@ QString InteractsWithIO::stripAnsiTags(QString string)
 
 bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 {
-    // ANSI was explicitly set on the command-line, respect it
-    if (m_ansi)
+    const auto hasColorSupport = m_terminal->hasColorSupport(cout);
+
+    /* ANSI was explicitly set on the command-line, respect it, but only if the terminal
+       supports ANSI colors, to avoid trashy ANSI sequences output output. */
+    if (hasColorSupport && m_ansi)
         return *m_ansi;
 
     // Instead autodetect
-    return m_terminal->hasColorSupport(cout);
+    return hasColorSupport;
 }
 
 bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
 {
-    // ANSI was explicitly set on the command-line, respect it
-    if (m_ansi)
+    const auto hasColorSupport = m_terminal->hasWColorSupport(wcout);
+
+    /* ANSI was explicitly set on the command-line, respect it, but only if the terminal
+       supports ANSI colors, to avoid trashy ANSI sequences output output. */
+    if (hasColorSupport && m_ansi)
         return *m_ansi;
 
     // Instead autodetect
-    return m_terminal->hasWColorSupport(wcout);
+    return hasColorSupport;
 }
 
 void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
