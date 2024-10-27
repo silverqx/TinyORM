@@ -368,7 +368,7 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
 }
 
 QList<QStringView> String::splitAtFirst(const QStringView string, const QChar separator,
-                                        const Qt::SplitBehavior behavior)
+                                        const Qt::SplitBehavior splitBehavior)
 {
     // Nothing to do
     if (string.isEmpty())
@@ -390,7 +390,7 @@ QList<QStringView> String::splitAtFirst(const QStringView string, const QChar se
     // Standard development check, therefore is separated from the above
     Q_ASSERT(itAfterSeparator <= end);
 
-    if (behavior == Qt::SkipEmptyParts && itAfterSeparator == end)
+    if (splitBehavior == Qt::SkipEmptyParts && itAfterSeparator == end)
         return {{begin, itSeparator}};
 
     /* This is correct in all cases, overflow can't happen if there is nothing after

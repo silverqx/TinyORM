@@ -203,7 +203,8 @@ QString Command::value(const QString &name) const
     return parser().value(name);
 }
 
-QStringList Command::values(const QString &name, const Qt::SplitBehavior behavior) const
+QStringList Command::values(const QString &name,
+                            const Qt::SplitBehavior splitBehavior) const
 {
     auto values = parser().values(name);
 
@@ -220,7 +221,7 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
             continue;
         }
 
-        valuesSplit << value.split(regex, behavior);
+        valuesSplit << value.split(regex, splitBehavior);
     }
 
     return valuesSplit;

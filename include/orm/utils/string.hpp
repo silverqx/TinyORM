@@ -82,7 +82,7 @@ namespace Utils
         /*! Split a string at the first given character. */
         static QList<QStringView>
         splitAtFirst(QStringView string, QChar separator,
-                     Qt::SplitBehavior behavior = Qt::KeepEmptyParts);
+                     Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts);
 
         /*! Count number of the given character before the given position. */
         static QString::size_type countBefore(QString string, QChar character,

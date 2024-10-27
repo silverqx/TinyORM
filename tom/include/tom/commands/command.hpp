@@ -117,7 +117,7 @@ namespace Commands
         QString value(const QString &name) const;
         /*! Returns a option values found for the given option name (add , support). */
         QStringList values(const QString &name,
-                           Qt::SplitBehavior behavior = Qt::KeepEmptyParts) const;
+                           Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts) const;
 
         /*! Get a full command-line value option if value is set in the parser. */
         QString valueCmd(const QString &name,
