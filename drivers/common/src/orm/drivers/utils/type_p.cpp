@@ -23,10 +23,10 @@ QString TypePrivate::prettyFunction(const QString &function)
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression
-            regex(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
+    regex(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif defined(_MSC_VER)
     static const QRegularExpression
-            regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
+    regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw Exceptions::RuntimeError(
                 "Unsupported compiler in Drivers::Utils::TypePrivate::prettyFunction().");
