@@ -1006,6 +1006,7 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToRelation() const
     {
+        // static here is OK, every Related template will have own static relation
         static const auto relation = guessBelongsToRelationInternal<Related>();
 
         /* validateUserRelation() method call can not be cached, has to be called
@@ -1022,6 +1023,7 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
+        // static here is OK, every Related template will have own static relation
         static const auto relation = TMPL_PLURAL
                                      .arg(guessBelongsToRelationInternal<Related>());
 
