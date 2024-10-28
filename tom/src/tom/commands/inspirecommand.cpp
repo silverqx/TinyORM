@@ -20,7 +20,7 @@ int InspireCommand::run()
 
     // Don't use the _L1 here because the inspires can contain weird punctuation
 
-    constinit static const std::array inspires {
+    constexpr static std::array inspires {
         "Act only according to that maxim whereby you can, at the same time, will that it should become a universal law. - Immanuel Kant",
         "An unexamined life is not worth living. - Socrates",
         "Be present above all else. - Naval Ravikant",

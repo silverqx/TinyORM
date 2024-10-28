@@ -54,8 +54,8 @@ bool Terminal::isatty(FILE *const stream) noexcept
 
 Terminal::TerminalSize Terminal::terminalSize() noexcept
 {
-    constinit static const SizeType InvalidColumns = -1;
-    constinit static const SizeType InvalidLines   = -1;
+    constexpr static SizeType InvalidColumns = -1;
+    constexpr static SizeType InvalidLines   = -1;
 
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbi {};

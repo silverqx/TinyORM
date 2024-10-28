@@ -3297,9 +3297,17 @@ struct T1
        classes
 
  - constinit
-   - summary (always use for):
-     - static local variables (also with the thread_local)
-     - extern thread_local (to reducing overhead)
+   - ❗use constinit only when it's really necessary, prefer using the constexpr instead
+   - use when constant initialization is needed:
+     - but the variable must be non-const
+     - the variable is an object has constexpr constructor, but doesn't have constexpr destructor,
+       eg. std::shared_ptr<> is an example of such an object
+     - for extern thread_local variables with static storage duration when the initialization is
+       constexpr to inform the compiler that the extern variable is already initialized, eg:
+thread_local constexpr int MaxValue = 10;
+extern thread_local constinit int MaxValue;
+
+   - ❗constexpr implies constinit
    - constinit must have static storage duration (not local variable)
    - guarantees it will be initialized at compile time
    - can also be used for non-const variables like: constinit int i = 10;

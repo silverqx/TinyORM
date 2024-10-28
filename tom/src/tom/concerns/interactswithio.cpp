@@ -143,7 +143,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
         return *this;
 
     // There is no reason to render the Error Wall if the number of columns <20
-    constinit static const Terminal::SizeType MinRequiredColumns = 20;
+    constexpr static Terminal::SizeType MinRequiredColumns = 20;
     const auto terminalWidth = m_terminal->width();
 
     /* Do not print an error wall when ANSI is disabled, terminal doesn't report

@@ -269,7 +269,7 @@ QString String::studly(QString string)
 namespace
 {
     /*! Minimum free space size to append a space character. */
-    constinit const QString::size_type MinFreeSpace = 2;
+    constexpr QString::size_type MinFreeSpace = 2;
 
     /*! Push the current line to the lines and start processing a new line. */
     void startNewLine(QString &line, QStringList &lines) {

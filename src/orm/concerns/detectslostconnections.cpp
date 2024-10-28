@@ -13,11 +13,11 @@ bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
 {
     using Qt::StringLiterals::operator""_L1;
 
-    /* The _L1 allows constinit and is faster then the const char * during the contains()
+    /* The _L1 allows constexpr and is faster then the const char * during the contains()
        call, but all case-insensitive comparisons are very slow anyway. */
 
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
-    constinit static const std::array lostMessagesCache = std::to_array({
+    constexpr static std::array lostMessagesCache = std::to_array({
         "server has gone away"_L1,
         "no connection to the server"_L1,
         "Lost connection"_L1,
