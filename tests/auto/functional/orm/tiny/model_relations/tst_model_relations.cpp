@@ -19,6 +19,7 @@
 using Orm::Constants::ASTERISK;
 using Orm::Constants::AddedOn;
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::EQ;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::Progress;
@@ -184,6 +185,9 @@ private Q_SLOTS:
     /* QtTimeZoneType::DontConvert */
     /* Server timezone UTC */
     void timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const;
+
+    /* Tiny Builder on Relations */
+    void leftJoin_OnRelation_HasMany() const;
 };
 
 /* private slots */
@@ -3064,6 +3068,39 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
     // Restore
     DB::setQtTimeZone(QtTimeZoneConfig::utc(), connection);
     QCOMPARE(DB::qtTimeZone(connection), QtTimeZoneConfig::utc());
+}
+
+/* Tiny Builder on Relations */
+
+void tst_Model_Relations::leftJoin_OnRelation_HasMany() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    // TorrentPreviewableFile has-many relation
+    const auto files = torrent->torrentFiles()
+                       ->leftJoin("torrents", "torrent_previewable_files.id", EQ,
+                                  "torrents.id")
+                       .get({"torrents.id",
+                             "torrent_previewable_files.id",
+                             "torrent_previewable_files.torrent_id"});
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile>));
+
+    // Expected file IDs
+    QList<QVariant> fileIds {2, 3};
+
+    for (const auto &file : files) {
+        QVERIFY(file.exists);
+        QCOMPARE(file.getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file.getKey()));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile));
+    }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
