@@ -929,7 +929,7 @@ void Databases::throwIfNoManagerInstance()
 void Databases::throwIfConnectionsInitialized()
 {
     /*! Determines whether connections were initialized. */
-    static auto initialized = false;
+    constinit static auto initialized = false;
 
     if (initialized)
         throw RuntimeError(

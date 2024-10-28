@@ -263,7 +263,7 @@ private:
 
     /* Serialization */
     /*! Indicates whether attributes are snake_cased during serialization. */
-//    inline static const bool u_snakeAttributes = false;
+//    constexpr static bool u_snakeAttributes = false; // Or constinit if needed
 
     /* HidesAttributes */
     /*! The attributes that should be visible during serialization. */

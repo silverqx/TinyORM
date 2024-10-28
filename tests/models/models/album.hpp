@@ -49,7 +49,7 @@ private:
     };
 
     /*! Indicates whether attributes are snake_cased during serialization. */
-    inline static const bool u_snakeAttributes = false;
+    constexpr static bool u_snakeAttributes = false;
 };
 
 } // namespace Models
