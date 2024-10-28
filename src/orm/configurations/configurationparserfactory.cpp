@@ -26,9 +26,8 @@ ConfigurationParserFactory::cachedParser(const QVariantHash &config)
     // Get a normalized driver name (using the toUpper())
     const auto driver = getDriverName(config);
 
-    T_THREAD_LOCAL
-    static std::unordered_map<QString,
-    std::unique_ptr<ConfigurationParserInterface>> cache;
+    T_THREAD_LOCAL static
+    std::unordered_map<QString, std::unique_ptr<ConfigurationParserInterface>> cache;
 
     if (cache.contains(driver))
         return *cache.at(driver);
