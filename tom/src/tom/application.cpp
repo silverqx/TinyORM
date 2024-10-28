@@ -745,16 +745,14 @@ QStringList Application::prepareArguments() const
 const std::vector<std::shared_ptr<Application::Command>> &
 Application::createCommandsVector()
 {
-    static const std::vector<std::shared_ptr<Command>> cached = std::invoke([this]
+    static const std::vector<std::shared_ptr<Command>> cached = commandNames()
+
+            | ranges::views::transform([this](const QString &commandName)
+                                       -> std::shared_ptr<Command>
     {
-        return commandNames()
-                | ranges::views::transform([this](const QString &commandName)
-                                           -> std::shared_ptr<Command>
-        {
-            return createCommand(commandName);
-        })
-                | ranges::to<std::vector<std::shared_ptr<Command>>>();
-    });
+        return createCommand(commandName);
+    })
+            | ranges::to<std::vector<std::shared_ptr<Command>>>();
 
     return cached;
 }
