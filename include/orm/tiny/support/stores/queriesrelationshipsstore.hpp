@@ -75,13 +75,13 @@ namespace Support::Stores
         /*! The QueriesRelationships instance to which the visited relation will be
             dispatched. */
         NotNull<QueriesRelationships<Derived> *> m_origin;
-        /*! Comparison operator, used during querying relationship exitence. */
+        /*! Comparison operator, used during querying relationship existence. */
         NotNull<const QString *> m_comparison;
-        /*! Required number of records, used during querying relationship exitence. */
+        /*! Required number of records, used during querying relationship existence. */
         /*const*/ qint64 m_count;
-        /*! Condition operator, used during querying relationship exitence. */
+        /*! Condition operator, used during querying relationship existence. */
         NotNull<const QString *> m_condition;
-        /*! Builder callback, used during querying relationship exitence. */
+        /*! Builder callback, used during querying relationship existence. */
         NotNull<const std::function<void(
                 QueriesRelationshipsCallback<Related> &)> *> m_callback;
         /*! Nested relations for hasNested() method. */
