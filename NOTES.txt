@@ -3299,7 +3299,10 @@ struct T1
  - constinit
    - ❗use constinit only when it's really necessary, prefer using the constexpr instead
    - use when constant initialization is needed:
-     - but the variable must be non-const
+     - but the variable must be non-const, eg.
+       - this example also helps to avoid the Static Initialization Order Fiasco
+T_THREAD_LOCAL
+inline static constinit bool u_snakeAttributes = true;
      - the variable is an object has constexpr constructor, but doesn't have constexpr destructor,
        eg. std::shared_ptr<> is an example of such an object
      - for extern thread_local variables with static storage duration when the initialization is

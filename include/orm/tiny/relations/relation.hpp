@@ -198,7 +198,7 @@ namespace Relations
         std::shared_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         T_THREAD_LOCAL
-        inline static bool constraints = true;
+        constinit inline static bool constraints = true; // Don't use constexpr here
 
     private:
         /*! Indicates whether the eagerly loaded relation should implicitly return

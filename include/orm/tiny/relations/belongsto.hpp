@@ -149,7 +149,7 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
         /*! The count of self joins. */
         T_THREAD_LOCAL
-        inline static int selfJoinCount = 0;
+        constinit inline static int selfJoinCount = 0;
 
     private:
         /* Relation related operations */

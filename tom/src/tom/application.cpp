@@ -184,7 +184,7 @@ namespace
 {
     /*! Is enabled logic for unit testing? */
     T_THREAD_LOCAL
-    auto g_inUnitTests = false; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+    constinit auto g_inUnitTests = false; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 } // namespace
 #endif
 

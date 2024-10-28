@@ -470,7 +470,7 @@ namespace Orm::Tiny::Concerns
         /* Serialization */
         /*! Indicates whether attributes are snake_cased during serialization. */
         T_THREAD_LOCAL
-        inline static bool u_snakeAttributes = true;
+        constinit inline static bool u_snakeAttributes = true;
 
         /* Serialization - Appends */
         /*! Map of mutator names to methods. */
