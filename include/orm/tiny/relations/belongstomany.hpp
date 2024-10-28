@@ -1506,7 +1506,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     QString BelongsToMany<Model, Related, PivotType>::guessInverseRelation() const
     {
-        // FEATURE relations, add parent touches (eg parentTouchesName) to the Model::belongsToMany factory method silverqx
+        // FEATURE relations, add parent touches (eg. parentTouchesName) to the Model::belongsToMany factory method silverqx
         auto relation = TypeUtils::classPureBasename<Model>();
 
         relation[0] = relation[0].toLower();

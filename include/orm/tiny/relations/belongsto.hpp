@@ -289,7 +289,7 @@ namespace Orm::Tiny::Relations
     std::variant<ModelsCollection<Related>, std::optional<Related>>
     BelongsTo<Model, Related>::getResults() const
     {
-        // Model doesn't contain foreign key ( an empty Model instance )
+        // Model doesn't contain foreign key (eg. an empty Model instance)
         if (const auto foreignKey = m_child->getAttribute(m_foreignKey);
             !foreignKey.isValid() || foreignKey.isNull()
         )

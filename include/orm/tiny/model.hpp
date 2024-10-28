@@ -959,7 +959,7 @@ namespace Orm::Tiny
            by the timestamp. Then we will go ahead and delete the model instance. */
         this->touchOwners();
 
-        // FUTURE performDeleteOnModel() and return value, check logic here, eg what happens when no model is delete and combinations silverqx
+        // FUTURE performDeleteOnModel() and return value, check logic here, eg. what happens when no model is delete and combinations silverqx
         // FUTURE inconsistent return values save(), update(), remove(), ..., also Pivot::remove() silverqx
         if constexpr (Model::extendsSoftDeletes())
             model().SoftDeletes<Derived>::performDeleteOnModel();

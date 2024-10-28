@@ -315,7 +315,7 @@ private:
    This finding is surprising for me because I thought that these recursive #include-s
    are increasing the memory usage too. */
 
-// TODO finish this, move to base class and test eg in qvector, qhash, etc silverqx
+// TODO finish this, move to base class and test eg. in qvector, qhash, etc silverqx
 //QDebug operator<<(QDebug debug, const Models::Torrent &c);
 
 #endif // MODELS_TORRENT_HPP
