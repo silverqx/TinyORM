@@ -158,9 +158,9 @@ protected:
 
 private:
     /*! The name of the "created at" column. */
-    static const QString &CREATED_AT() noexcept { return Orm::CREATED_AT; }
+    constexpr static const QString &CREATED_AT() noexcept { return Orm::CREATED_AT; }
     /*! The name of the "updated at" column. */
-    static const QString &UPDATED_AT() noexcept { return Orm::UPDATED_AT; }
+    constexpr static const QString &UPDATED_AT() noexcept { return Orm::UPDATED_AT; }
 
     /* Serialization */
     /*! Prepare a date for vector, map, or JSON serialization. */

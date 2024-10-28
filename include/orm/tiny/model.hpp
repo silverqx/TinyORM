@@ -372,9 +372,9 @@ namespace Orm::Tiny
     protected:
         /* HasTimestamps */
         /*! The name of the "created at" column. */
-        inline static const QString &CREATED_AT() noexcept;
+        constexpr static const QString &CREATED_AT() noexcept;
         /*! The name of the "updated at" column. */
-        inline static const QString &UPDATED_AT() noexcept;
+        constexpr static const QString &UPDATED_AT() noexcept;
 
         /* Model Instance methods */
         /*! Get a new query builder instance for the connection. */
@@ -1643,14 +1643,14 @@ namespace Orm::Tiny
     /* HasTimestamps */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QString &
+    constexpr const QString &
     Model<Derived, AllRelations...>::CREATED_AT() noexcept
     {
         return Orm::Constants::CREATED_AT;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const QString &
+    constexpr const QString &
     Model<Derived, AllRelations...>::UPDATED_AT() noexcept
     {
         return Orm::Constants::UPDATED_AT;
