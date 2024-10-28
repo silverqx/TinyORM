@@ -69,6 +69,7 @@ namespace Orm::Tiny
     protected:
         /*! The name of the "created at" column. */
         inline static const QString &DELETED_AT = Constants::DELETED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+        // Don't use constexpr here, see NOTES.txt[constinit]
 
         /*! Perform the actual delete query on this model instance. */
         void performDeleteOnModel();

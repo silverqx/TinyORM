@@ -251,7 +251,7 @@ uR"(
 inline const auto ModelSnakeAttributesStub =
 uR"(
     /*! Indicates whether attributes are snake_cased during serialization. */
-    inline static const bool u_snakeAttributes = %1;)"_s;
+    constexpr static bool u_snakeAttributes = %1;)"_s;
 
 /*! Model u_visible stub. */
 inline const auto ModelVisibleStub =
