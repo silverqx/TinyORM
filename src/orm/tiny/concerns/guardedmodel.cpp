@@ -19,10 +19,10 @@ namespace Orm::Tiny::Concerns
 namespace
 {
     /*! Indicates if all mass assignment is enabled, atomic. */
-    std::atomic<bool> &g_unguarded() noexcept
+    std::atomic_bool &g_unguarded() noexcept
     {
         T_THREAD_LOCAL
-        static std::atomic<bool> cached = false;
+        static std::atomic_bool cached = false;
 
         return cached;
     }
