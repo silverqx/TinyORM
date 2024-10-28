@@ -3298,7 +3298,8 @@ struct T1
 
  - constinit
    - ❗use constinit only when it's really necessary, prefer using the constexpr instead
-   - use when constant initialization is needed:
+
+   - USE when constant initialization is needed:
      - but the variable must be non-const, eg.
        - this example also helps to avoid the Static Initialization Order Fiasco
 T_THREAD_LOCAL
@@ -3309,6 +3310,17 @@ inline static constinit bool u_snakeAttributes = true;
        constexpr to inform the compiler that the extern variable is already initialized, eg:
 thread_local constexpr int MaxValue = 10;
 extern thread_local constinit int MaxValue;
+
+   - DON'T use:
+     - for references, use constexpr instead (constinit is equivalent to constexpr),
+       this is coding style choice
+       (OT: the const is needed because const applies to the entire reference type, so in this case
+            it doesn't implies const, it even can't as there are no const or non-const references,
+            they are references to types), eg.:
+inline static constexpr const QString &DELETED_AT = Constants::DELETED_AT;
+     - ❗be very careful with constexpr references as they can be dangling very easily, like
+       the example above ❗😂😵‍💫, I leave this wrong example here to show how dangerous it can be,
+       without constexpr is the reference correct of course (with the correct TU order)
 
    - ❗constexpr implies constinit
    - constinit must have static storage duration (not local variable)
