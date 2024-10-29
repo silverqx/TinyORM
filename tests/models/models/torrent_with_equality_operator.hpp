@@ -48,7 +48,7 @@ private:
     QString u_table {u"torrents"_s};
 
     /*! Indicates whether to skip attributes comparison in the Derived model. */
-    constexpr static auto u_skipCompareDerived = true;
+    constexpr static const auto u_skipCompareDerived = true;
 };
 
 } // namespace Models

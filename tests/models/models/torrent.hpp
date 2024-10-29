@@ -233,7 +233,7 @@ private:
     };
 
     /*! The attributes that aren't mass assignable. */
-//    inline static QStringList u_guarded {
+//    inline static const QStringList u_guarded {
 //        password_,
 //    };
 
@@ -241,9 +241,9 @@ private:
 //    bool u_timestamps = true;
 
     /*! The storage format of the model's date columns. */
-//    inline static QString u_dateFormat {u"yyyy-MM-dd HH:mm:ss"_s};
+//    inline static const QString u_dateFormat {u"yyyy-MM-dd HH:mm:ss"_s};
     /*! The storage format of the model's time columns. */
-//    inline static QString u_timeFormat {u"HH:mm:ss"_s};
+//    inline static const QString u_timeFormat {u"HH:mm:ss"_s};
 
     /*! The attributes that should be mutated to dates. */
     inline static const QStringList u_dates {AddedOn, u"added_on_alt"_s}; // NOLINT(cppcoreguidelines-interfaces-global-init)

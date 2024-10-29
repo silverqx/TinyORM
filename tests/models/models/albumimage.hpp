@@ -35,7 +35,7 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         ID,
         NAME,
         u"ext"_s,

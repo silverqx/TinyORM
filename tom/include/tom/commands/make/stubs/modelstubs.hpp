@@ -207,7 +207,7 @@ uR"(
 inline const auto ModelGuardedStub =
 uR"(
     /*! The attributes that aren't mass assignable. */
-    inline static QStringList u_guarded {%1};)"_s;
+    inline static const QStringList u_guarded {%1};)"_s;
 
 /*! Model disable u_timestamps stub. */
 inline const auto ModelDisableTimestampsStub =
@@ -233,7 +233,7 @@ uR"(
 inline const auto ModelDateFormatStub =
 uR"(
     /*! The storage format of the model's date columns. */
-    inline static QString u_dateFormat {"%1"};)"_s;
+    inline static const QString u_dateFormat {"%1"};)"_s;
 
 /*! Model u_dates stub. */
 inline const auto ModelDatesStub =

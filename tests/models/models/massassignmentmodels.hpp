@@ -59,7 +59,7 @@ class Torrent_AllowedMassAssignment final : public Model<Torrent_AllowedMassAssi
     QString u_table {u"torrents"_s};
 
     /*! The attributes that aren't mass assignable. */
-    inline static QStringList u_guarded {}; // disabled when empty
+    inline static const QStringList u_guarded {}; // disabled when empty
 };
 
 class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // NOLINT(bugprone-exception-escape)
@@ -71,7 +71,7 @@ class Torrent_GuardableColumn final : public Model<Torrent_GuardableColumn> // N
     QString u_table {u"torrents"_s};
 
     /*! The attributes that aren't mass assignable. */
-    inline static QStringList u_guarded {u"xyz"_s};
+    inline static const QStringList u_guarded {u"xyz"_s};
 };
 
 } // namespace Models

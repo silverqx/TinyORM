@@ -121,7 +121,7 @@ private:
     };
 
     /*! The attributes that are mass assignable. */
-    inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         u"file_index"_s,
         u"filepath"_s,
         SIZE_,
