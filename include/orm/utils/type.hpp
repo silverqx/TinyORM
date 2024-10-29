@@ -7,16 +7,16 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
-#include <typeindex>
-
-#ifdef __GNUG__
-#  include <cxxabi.h>
-#endif
-
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
 class QVariant; // clazy:exclude=qt6-fwd-fixes
+
+namespace std
+{
+    class type_index;
+    class type_info;
+}
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

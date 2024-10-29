@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include <stack>
+#include <typeindex>
 
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/query/querybuilder.hpp" // IWYU pragma: keep

@@ -2,8 +2,14 @@
 
 #include <QRegularExpression>
 
+#include <typeindex>
+
 #ifndef _MSC_VER
 #  include <memory>
+#endif
+
+#ifdef __GNUG__
+#  include <cxxabi.h>
 #endif
 
 #include "orm/constants.hpp"
