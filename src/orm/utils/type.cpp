@@ -173,7 +173,7 @@ namespace
 #endif
 
 QString
-Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
+Type::classPureBasenameInternal(const char *const typeName, const bool withNamespace)
 {
 #ifdef _MSC_VER
     return classPureBasenameMsvc(typeName, withNamespace);
