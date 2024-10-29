@@ -275,8 +275,8 @@ namespace
     void startNewLine(QString &line, QStringList &lines) {
         // Push to lines
         lines << std::move(line);
-        // Start a new line (don't use clear() as it also frees the allocated memory)
-        line.truncate(0); // NOLINT(bugprone-use-after-move)
+        // Start a new line
+        line.clear(); // NOLINT(bugprone-use-after-move)
     }
 
     /*! Split the token to multiple lines by the given width. */
