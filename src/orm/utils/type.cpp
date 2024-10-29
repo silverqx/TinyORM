@@ -132,14 +132,6 @@ bool Type::isCMakeTrue(const QString &value)
            !value.endsWith("-NOTFOUND"_L1, Qt::CaseSensitive);
 }
 
-/* private */
-
-QString
-Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
-{
-    return classPureBasenameInternal(typeInfo.name(), withNamespace);
-}
-
 #ifdef __GNUG__
 namespace
 {
@@ -170,7 +162,28 @@ namespace
         }
     }
 } // namespace
+
+QString Type::demangleTypeNameGnuG(const char *const typeName)
+{
+    int status = 0;
+
+    const std::unique_ptr<char, decltype (std::free) &> typeNameDemangled(
+        abi::__cxa_demangle(typeName, nullptr, nullptr, &status), std::free);
+
+    // Throw if the abi::__cxa_demangle() status < 0
+    throwIfDemangleStatusFailed(status);
+
+    return QString::fromUtf8(typeNameDemangled.get());
+}
 #endif
+
+/* private */
+
+QString
+Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
+{
+    return classPureBasenameInternal(typeInfo.name(), withNamespace);
+}
 
 QString
 Type::classPureBasenameInternal(const char *const typeName, const bool withNamespace)
@@ -178,17 +191,7 @@ Type::classPureBasenameInternal(const char *const typeName, const bool withNames
 #ifdef _MSC_VER
     return classPureBasenameMsvc(typeName, withNamespace);
 #elif defined(__GNUG__)
-    // Demangle a type name
-    int status = 0;
-    const std::unique_ptr<char, decltype (std::free) &> typeNameDemangled_(
-        abi::__cxa_demangle(typeName, nullptr, nullptr, &status), std::free);
-
-    // Throw when abi::__cxa_demangle() status < 0
-    throwIfDemangleStatusFailed(status);
-
-    const QString typeNameDemangled(typeNameDemangled_.get());
-
-    return classPureBasenameGcc(typeNameDemangled, withNamespace);
+    return classPureBasenameGcc(demangleTypeNameGnuG(typeName), withNamespace);
 #else
     throw RuntimeError(
                 u"Unsupported compiler in Utils::Type::classPureBasenameInternal()."_s);

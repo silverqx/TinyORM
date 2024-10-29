@@ -79,6 +79,11 @@ namespace Orm::Utils
             or a non-zero number (including floating point numbers)). */
         static bool isCMakeTrue(const QString &value);
 
+#ifdef __GNUG__
+        /*! Demangle the given type name (from typeid()). */
+        static QString demangleTypeNameGnuG(const char *typeName);
+#endif
+
     private:
         /*! Class name with or w/o a namespace and w/o template parameters, common
             code. */
