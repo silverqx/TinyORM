@@ -2,10 +2,6 @@
 
 #include <QRegularExpression>
 
-#if !defined(__GNUG__) && !defined(__clang__) && !defined(_MSC_VER)
-#  include "orm/drivers/exceptions/runtimeerror.hpp"
-#endif
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Qt::StringLiterals::operator""_s;
@@ -28,9 +24,7 @@ QString TypePrivate::prettyFunction(const QString &function)
     static const QRegularExpression
     regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
-    throw Exceptions::RuntimeError(
-                "Unsupported compiler "
-                "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
+#  error Unsupported compiler in Orm::Drivers::Utils::TypePrivate::prettyFunction().
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",

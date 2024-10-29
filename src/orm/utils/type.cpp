@@ -55,8 +55,7 @@ QString Type::prettyFunction(const QString &function)
     static const QRegularExpression regex(
                 uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
-    throw RuntimeError(
-                u"Unsupported compiler in Orm::Utils::Type::prettyFunction()."_s);
+#  error Unsupported compiler in Orm::Utils::Type::prettyFunction().
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",
@@ -193,9 +192,7 @@ Type::classPureBasenameInternal(const char *const typeName, const bool withNames
 #elif defined(__GNUG__)
     return classPureBasenameGcc(demangleTypeNameGnuG(typeName), withNamespace);
 #else
-    throw RuntimeError(
-                u"Unsupported compiler "
-                "in Orm::Utils::Type::classPureBasenameInternal()."_s);
+#  error Unsupported compiler in Orm::Utils::Type::classPureBasenameInternal().
 #endif
 }
 
