@@ -177,7 +177,7 @@ Type::classPureBasenameInternal(const char *const typeName, const bool withNames
 {
 #ifdef _MSC_VER
     return classPureBasenameMsvc(typeName, withNamespace);
-#elif __GNUG__
+#elif defined(__GNUG__)
     // Demangle a type name
     int status = 0;
     const std::unique_ptr<char, decltype (std::free) &> typeNameDemangled_(
