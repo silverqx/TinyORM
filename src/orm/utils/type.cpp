@@ -126,6 +126,8 @@ bool Type::isCMakeTrue(const QString &value)
            !value.endsWith("-NOTFOUND"_L1, Qt::CaseSensitive);
 }
 
+/* private */
+
 QString
 Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
 {
