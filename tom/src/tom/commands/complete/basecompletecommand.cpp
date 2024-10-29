@@ -10,6 +10,10 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomutils.hpp"
 
+#ifndef TINYTOM_DEBUG
+#  include "tom/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::DASH;
