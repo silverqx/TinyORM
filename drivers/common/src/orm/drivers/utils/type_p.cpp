@@ -29,22 +29,23 @@ QString TypePrivate::prettyFunction(const QString &function)
     regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw Exceptions::RuntimeError(
-                "Unsupported compiler in Drivers::Utils::TypePrivate::prettyFunction().");
+                "Unsupported compiler "
+                "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",
                "The function name can't be empty "
-               "in Drivers::Utils::TypePrivate::prettyFunction().");
+               "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
 
     const auto match = regex.match(function);
 
     // This should never happen, but who knows 🤔
     Q_ASSERT_X(match.hasMatch(), "regex match",
                "Can not get the function name "
-               "in Drivers::Utils::TypePrivate::prettyFunction().");
+               "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
     Q_ASSERT_X(regex.captureCount() == 2, "regex match",
                "Can not get the function name "
-               "in Drivers::Utils::TypePrivate::prettyFunction().");
+               "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
 
     return u"%1::%2"_s.arg(match.captured(1), match.captured(2));
 }

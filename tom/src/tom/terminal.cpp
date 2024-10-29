@@ -48,7 +48,7 @@ bool Terminal::isatty(FILE *const stream) noexcept
 #elif defined(__linux__)
     return ::isatty(fileno(stream)) != 0;
 #else
-#  error Unsupported OS or platform in Tom::Terminal.
+#  error Unsupported OS or platform in Tom::Terminal::isatty().
 #endif
 }
 
@@ -81,7 +81,7 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
     // Values are 1-based
     return {.columns = w.ws_col, .lines = w.ws_row};
 #else
-#  error Unsupported OS or platform in Tom::Terminal.
+#  error Unsupported OS or platform in Tom::Terminal::terminalSize().
 #endif
 }
 

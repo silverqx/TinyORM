@@ -56,7 +56,7 @@ namespace Private
             else
                 // This should never happen :/
                 static_assert (false,
-                        "Unhandled code branch in the Private::IntegralTypeName<T>() "
+                        "Unhandled code branch in Orm::Private::IntegralTypeName<T>() "
                         "(long).");
 #endif
         }
@@ -78,7 +78,7 @@ namespace Private
             else
                 // This should never happen :/
                 static_assert (false,
-                        "Unhandled code branch in the Private::IntegralTypeName<T>() "
+                        "Unhandled code branch in Orm::Private::IntegralTypeName<T>() "
                         "(ulong).");
 #endif
         }
@@ -106,7 +106,7 @@ namespace Private
         else
             // This should never happen :/
             static_assert (false,
-                    "Unhandled code branch in the Private::IntegralTypeName<T>().");
+                    "Unhandled code branch in Orm::Private::IntegralTypeName<T>().");
 #endif
     }
 
@@ -235,7 +235,7 @@ namespace Private
         else
             // This should never happen :/
             static_assert (false,
-                    "Unhandled code branch in the Private::InRange<T, V>().");
+                    "Unhandled code branch in Orm::Private::InRange<T, V>().");
 #endif
     }
 } // namespace Private
@@ -251,7 +251,7 @@ auto IntegralCast(const V value)
     throw Exceptions::OutOfRangeError(
                 // BUG msvc user-defined string literal can't be divided to multiple lines IN TEMPLATED methods/functions, it only fails when the method/function is instantiated!!! Which means it can compile but will fail when user invokes/uses/instantiates this function; thx god is very simply reproducible; I found out that they can but the user-defined string literal ""_s must be on the first line and it only fails on some places and not everywhere, now I'm fucked and confused, I'm refactoring it 2 days and have everything done 😔; I'll risk it, this is very bad silverqx
                 u"The given value %1 of '%2' integer type can't be cast to the '%3' "_s
-                 "integer type with range [%4..%5]."
+                 "integer type with range [%4..%5] in Orm::IntegralCast()."
                 .arg(Private::formatNumber(value))
                 .arg(Private::IntegralTypeName<V>(),
                      Private::IntegralTypeName<T>())

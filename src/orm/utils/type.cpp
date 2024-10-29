@@ -56,19 +56,19 @@ QString Type::prettyFunction(const QString &function)
                 uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw RuntimeError(
-                u"Unsupported compiler in Utils::Type::prettyFunction()."_s);
+                u"Unsupported compiler in Orm::Utils::Type::prettyFunction()."_s);
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",
-               "The function name can't be empty in Utils::Type::prettyFunction().");
+               "The function name can't be empty in Orm::Utils::Type::prettyFunction().");
 
     const auto match = regex.match(function);
 
     // This should never happen, but who knows 🤔
     Q_ASSERT_X(match.hasMatch(), "regex match",
-               "Can not get the function name in Utils::Type::prettyFunction().");
+               "Can not get the function name in Orm::Utils::Type::prettyFunction().");
     Q_ASSERT_X(regex.captureCount() == 2, "regex match",
-               "Can not get the function name in Utils::Type::prettyFunction().");
+               "Can not get the function name in Orm::Utils::Type::prettyFunction().");
 
     return u"%1::%2"_s.arg(match.captured(1), match.captured(2));
 }
@@ -157,7 +157,7 @@ namespace
         default:
             throw RuntimeError(
                         u"Unexpected status code '%1' returned "
-                         "from abi::__cxa_demangle()."_s
+                         "from abi::__cxa_demangle() in class Orm::Utils::Type."_s
                         .arg(status));
         }
     }
@@ -194,7 +194,8 @@ Type::classPureBasenameInternal(const char *const typeName, const bool withNames
     return classPureBasenameGcc(demangleTypeNameGnuG(typeName), withNamespace);
 #else
     throw RuntimeError(
-                u"Unsupported compiler in Utils::Type::classPureBasenameInternal()."_s);
+                u"Unsupported compiler "
+                "in Orm::Utils::Type::classPureBasenameInternal()."_s);
 #endif
 }
 
@@ -204,7 +205,8 @@ QString
 Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 {
     Q_ASSERT_X(!className.isEmpty(), "empty string",
-               "The class name can't be empty in Utils::Type::classPureBasenameMsvc().");
+               "The class name can't be empty "
+               "in Orm::Utils::Type::classPureBasenameMsvc().");
 
     auto findBeginWithoutNS = [&className]
     {
@@ -247,7 +249,8 @@ QString
 Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
 {
     Q_ASSERT_X(!className.isEmpty(), "empty string",
-               "The class name can't be empty in Utils::Type::classPureBasenameGcc().");
+               "The class name can't be empty "
+               "in Orm::Utils::Type::classPureBasenameGcc().");
 
     // Find the beginning of the class name
     const auto *itBegin = className.cbegin();

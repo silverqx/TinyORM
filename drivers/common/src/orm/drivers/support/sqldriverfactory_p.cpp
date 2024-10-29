@@ -221,7 +221,7 @@ namespace
 #elif defined(__MINGW32__)
         return getDriverBasenameMinGW(driverBasenameRaw);
 #else
-#  error Unsupported OS or platform in getDriverBasenames().
+#  error Unsupported OS or platform in Orm::Drivers::Support::getDriverBasenames().
 #endif
     }
 } // namespace
