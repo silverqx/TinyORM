@@ -650,7 +650,7 @@ QString Grammar::removeLeadingBoolean(QString &&statement)
     static const auto AndTmpl = u"and "_s;
     static const auto OrTmpl =  u"or "_s;
 
-    // RegExp not used for performance reasons
+    // RegEx not used for performance reasons
     /* Before and/or could not be whitespace, current implementation doesn't include
        whitespaces before. */
     if (statement.startsWith(AndTmpl))

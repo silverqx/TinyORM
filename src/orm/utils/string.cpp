@@ -158,7 +158,7 @@ QString String::snake(QString string, const QChar delimiter)
     // Avoid underscores at the beginning and end
     string = trim(string, SPACE);
 
-    // RegExp not used for performance reasons
+    // RegEx not used for performance reasons
     std::vector<QString::size_type> positions;
     positions.reserve(
                 static_cast<decltype (positions)::size_type>(string.size() / 2) + 2);
