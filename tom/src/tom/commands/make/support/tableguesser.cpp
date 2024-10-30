@@ -22,6 +22,8 @@ TableGuesser::ChangePatterns =
 std::tuple<QString, bool> TableGuesser::guess(const QString &migration)
 {
     {
+        /* It's OK to have the same variable names for the local static until they are
+           in different block scopes. */
         static const QRegularExpression regex(CreatePatterns);
 
         const auto match = regex.match(migration);
