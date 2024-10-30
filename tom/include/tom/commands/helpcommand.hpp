@@ -60,7 +60,7 @@ namespace Tom::Commands
         /*! Count all argument sizes in the given container. */
         static QString::size_type
         countArgumentsSizes(const std::vector<PositionalArgument> &arguments);
-        /*! Print a positional's argument default value part. */
+        /*! Print the default value part of the given positional argument. */
         void printArgumentDefaultValue(const PositionalArgument &argument) const;
 
         /*! Print options section. */
