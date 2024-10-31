@@ -49,11 +49,11 @@ QString Type::prettyFunction(const QString &function)
     /* I can leave RegEx here because this function is used only during throwing
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
-    static const QRegularExpression RegEx(
-                uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
+    static const QRegularExpression
+    RegEx(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif defined(_MSC_VER)
-    static const QRegularExpression RegEx(
-                uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
+    static const QRegularExpression
+    RegEx(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
 #  error Unsupported compiler in Orm::Utils::Type::prettyFunction().
 #endif
