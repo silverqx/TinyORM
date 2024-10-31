@@ -132,7 +132,7 @@ namespace Orm::Tiny::Relations
         QString m_localKey;
         /*! The count of self joins. */
         T_THREAD_LOCAL
-        constinit inline static int selfJoinCount = 0; // Don't use constexpr here
+        constinit inline static int SelfJoinCount = 0; // Don't use constexpr here
 
     private:
         /* Relation related operations */
@@ -163,7 +163,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     void HasOneOrMany<Model, Related>::addConstraints() const
     {
-        if (!this->constraints)
+        if (!this->HasConstraints)
             return;
 
         this->m_query->where(m_foreignKey, EQ, getParentKey());

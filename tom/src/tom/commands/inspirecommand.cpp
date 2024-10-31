@@ -20,7 +20,7 @@ int InspireCommand::run()
 
     // Don't use the _L1 here because the inspires can contain weird punctuation
 
-    constexpr static std::array inspires {
+    constexpr static std::array InspiresCached {
         "Act only according to that maxim whereby you can, at the same time, will that it should become a universal law. - Immanuel Kant",
         "An unexamined life is not worth living. - Socrates",
         "Be present above all else. - Naval Ravikant",
@@ -59,21 +59,21 @@ int InspireCommand::run()
         "Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less. - Marie Curie",
     };
 
-    static const auto size = inspires.size();
+    static const auto InspiresSize = InspiresCached.size();
 
     // Obtain a random number from hardware
     std::random_device rd;
     // Seed the generator
     std::default_random_engine generator(rd());
     // Define the range
-    std::uniform_int_distribution<typename decltype (inspires)::size_type> // NOLINT(misc-const-correctness)
-    distribute(0, size - 1); // -1 is ok because it's 0-based
+    std::uniform_int_distribution<typename decltype (InspiresCached)::size_type> // NOLINT(misc-const-correctness)
+    distribute(0, InspiresSize - 1); // -1 is ok because it's 0-based
 
-    comment(QString::fromUtf8(inspires.at(distribute(generator))));
+    comment(QString::fromUtf8(InspiresCached.at(distribute(generator))));
 
     // Alternative implementation
 //    std::srand(std::time(nullptr));
-//    comment(inspires.at(std::rand() % size));
+//    comment(InspiresCached.at(std::rand() % InspiresSize));
 
     return EXIT_SUCCESS;
 }

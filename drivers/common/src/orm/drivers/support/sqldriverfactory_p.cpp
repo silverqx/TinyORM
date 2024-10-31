@@ -136,15 +136,15 @@ namespace
     /*! Get the MySQL driver shared library basename for MSVC. */
     inline QStringList getDriverBasenameMsvc(const QString &driverBasenameRaw)
     {
-        static const auto versionMajor = QString::number(TINYDRIVERS_VERSION_MAJOR);
-        static const auto driverBasenameVersion = driverBasenameRaw + versionMajor;
+        static const auto VersionMajor = QString::number(TINYDRIVERS_VERSION_MAJOR);
+        static const auto DriverBasenameVersion = driverBasenameRaw + VersionMajor;
 
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameVersion + u'd', // TinyMySql0d.dll
+            DriverBasenameVersion + u'd', // TinyMySql0d.dll
 #endif
-            driverBasenameVersion, // TinyMySql0.dll
+            DriverBasenameVersion, // TinyMySql0.dll
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasenameRaw, // TinyMySql.dll
@@ -156,14 +156,14 @@ namespace
     /*! Get the MySQL driver shared library basename on Linux. */
     inline QStringList getDriverBasenameLinux(const QString &driverBasenameRaw)
     {
-        static const auto driverBasenameLib = u"lib"_s + driverBasenameRaw;
+        static const auto DriverBasenameLib = u"lib"_s + driverBasenameRaw;
 
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameLib + u'd', // libTinyMySqld.so
+            DriverBasenameLib + u'd', // libTinyMySqld.so
 #endif
-            driverBasenameLib, // libTinyMySql.so
+            DriverBasenameLib, // libTinyMySql.so
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
             driverBasenameRaw + u'd', // TinyMySqld.so
 #endif
@@ -178,32 +178,32 @@ namespace
     /*! Get the MySQL driver shared library basename on MSYS2/MinGW. */
     inline QStringList getDriverBasenameMinGW(const QString &driverBasenameRaw)
     {
-        static const auto versionMajor = QString::number(TINYDRIVERS_VERSION_MAJOR);
+        static const auto VersionMajor = QString::number(TINYDRIVERS_VERSION_MAJOR);
 
         // qmake build doesn't prepend lib for shared libraries on MSYS2
 #ifdef TINY_QMAKE_BUILD_PRIVATE
-        static const auto driverBasename = driverBasenameRaw;
+        static const auto DriverBasename = driverBasenameRaw;
 #else
-        static const auto driverBasename = u"lib"_s + driverBasenameRaw;
-        static const auto driverBasenameVersion = driverBasename + versionMajor;
+        static const auto DriverBasename = u"lib"_s + driverBasenameRaw;
+        static const auto DriverBasenameVersion = DriverBasename + VersionMajor;
 #endif
-        static const auto driverBasenameRawVersion = driverBasenameRaw + versionMajor;
+        static const auto DriverBasenameRawVersion = driverBasenameRaw + VersionMajor;
 
         return {
             // CMake builds only (or any other build system that prepends lib prefix)
 #ifndef TINY_QMAKE_BUILD_PRIVATE
 #  ifdef TINYDRIVERS_DEBUG
-            driverBasenameVersion + u'd', // libTinyMySql0d.dll
+            DriverBasenameVersion + u'd', // libTinyMySql0d.dll
 #  endif
-            driverBasenameVersion, // libTinyMySql0.dll
-            driverBasename, // libTinyMySql.dll
+            DriverBasenameVersion, // libTinyMySql0.dll
+            DriverBasename, // libTinyMySql.dll
 #endif
             // Also, try all other combinations without the lib prefix
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
-            driverBasenameRawVersion + u'd',
+            DriverBasenameRawVersion + u'd',
 #endif
-            driverBasenameRawVersion,
+            DriverBasenameRawVersion,
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasenameRaw, // TinyMySql.dll
@@ -350,17 +350,17 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
     const auto isTinyDriversInBuildTree = SqlDriverFactoryPrivate::
                                           isTinyDriversInBuildTree();
 
-    constexpr static auto listSeparator = QDir::listSeparator();
+    constexpr static auto ListSeparator = QDir::listSeparator();
 
     QStringList result;
     // +1 for an empty path
-    result.reserve(envTinyPluginPath.count(listSeparator) +
+    result.reserve(envTinyPluginPath.count(ListSeparator) +
                    (hasTinyPluginPaths ? 1 : 0) + 1 +
                    (isTinyDriversInBuildTree ? 1 : 0));
 
     // Paths from the TINY_PLUGIN_PATH environment variable
     if (hasTinyPluginPaths)
-        result << envTinyPluginPath.split(listSeparator, Qt::SkipEmptyParts);
+        result << envTinyPluginPath.split(ListSeparator, Qt::SkipEmptyParts);
 
     // An empty path, QLibrary(driverBasename) will try system-specific prefixes/suffixes
     result << QString();

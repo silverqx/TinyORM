@@ -25,80 +25,80 @@ namespace Orm::Utils
 
 const QVariant &NullVariant::Bool()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::Bool));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::Bool));
+    return Cached;
 }
 
 const QVariant &NullVariant::Short()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::Short));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::Short));
+    return Cached;
 }
 
 const QVariant &NullVariant::UShort()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::UShort));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::UShort));
+    return Cached;
 }
 
 const QVariant &NullVariant::Int()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::Int));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::Int));
+    return Cached;
 }
 
 const QVariant &NullVariant::UInt()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::UInt));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::UInt));
+    return Cached;
 }
 
 const QVariant &NullVariant::LongLong()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::LongLong));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::LongLong));
+    return Cached;
 }
 
 const QVariant &NullVariant::ULongLong()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::ULongLong));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::ULongLong));
+    return Cached;
 }
 
 const QVariant &NullVariant::Double()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::Double));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::Double));
+    return Cached;
 }
 
 const QVariant &NullVariant::QByteArray()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::QByteArray));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::QByteArray));
+    return Cached;
 }
 
 const QVariant &NullVariant::QDate()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::QDate));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::QDate));
+    return Cached;
 }
 
 const QVariant &NullVariant::QDateTime()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::QDateTime));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::QDateTime));
+    return Cached;
 }
 
 const QVariant &NullVariant::QTime()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::QTime));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::QTime));
+    return Cached;
 }
 
 const QVariant &NullVariant::QString()
 {
-    static const QVariant cached = QVariant(QMetaType(QMetaType::QString));
-    return cached;
+    static const QVariant Cached = QVariant(QMetaType(QMetaType::QString));
+    return Cached;
 }
 
 } // namespace Orm::Utils

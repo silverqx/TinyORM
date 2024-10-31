@@ -196,12 +196,12 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         bind(&PostgresGrammar::whereYear),
     };
 
-    static const auto size = cached.size();
+    static const auto CachedSize = cached.size();
 
     // Check if whereType is in the range, just for sure 😏
     using SizeType = std::remove_const_t<decltype (cached)>::size_type;
     const auto type = static_cast<SizeType>(whereType);
-    Q_ASSERT((type >= 0) && (type < size));
+    Q_ASSERT((type >= 0) && (type < CachedSize));
 
     return cached.at(type);
 }

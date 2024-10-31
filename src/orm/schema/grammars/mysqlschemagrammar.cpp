@@ -346,7 +346,7 @@ QString MySqlSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 QString MySqlSchemaGrammar::addModifiers(QString &&sql,
                                          const ColumnDefinition &column) const
 {
-    constexpr static std::array modifierMethods {
+    constexpr static std::array ModifierMethods {
         &MySqlSchemaGrammar::modifyUnsigned,  &MySqlSchemaGrammar::modifyCharset,
         &MySqlSchemaGrammar::modifyCollate,   &MySqlSchemaGrammar::modifyVirtualAs,
         &MySqlSchemaGrammar::modifyStoredAs,  &MySqlSchemaGrammar::modifyNullable,
@@ -356,7 +356,7 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
         &MySqlSchemaGrammar::modifyAfter,     &MySqlSchemaGrammar::modifyFirst,
     };
 
-    for (const auto method : modifierMethods)
+    for (const auto method : ModifierMethods)
         sql += std::invoke(method, this, column);
 
     return std::move(sql);
@@ -365,43 +365,43 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
 void MySqlSchemaGrammar::compileCreateEncoding(
         QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
-    static const auto charsetTmpl = u" default character set %1"_s;
-    static const auto collateTmpl = u" collate %1"_s;
+    static const auto CharsetTmpl = u" default character set %1"_s;
+    static const auto CollateTmpl = u" collate %1"_s;
 
     /* First we will set the character set if one has been set on either the create
        blueprint itself or on the root configuration for the connection that the
        table is being created on. We will add these to the create table query. */
     if (!blueprint.charset.isEmpty())
-        sql += charsetTmpl.arg(blueprint.charset);
+        sql += CharsetTmpl.arg(blueprint.charset);
 
     else if (const auto charset = connection.getConfig(charset_).value<QString>();
              !charset.isEmpty()
     )
-        sql += charsetTmpl.arg(charset);
+        sql += CharsetTmpl.arg(charset);
 
     /* Next we will add the collation to the create table statement if one has been
        added to either this create table blueprint or the configuration for this
        connection that the query is targeting. We'll add it to this SQL query. */
     if (!blueprint.collation.isEmpty())
-        sql += collateTmpl.arg(quoteString(blueprint.collation));
+        sql += CollateTmpl.arg(quoteString(blueprint.collation));
     else if (const auto collation = connection.getConfig(collation_).value<QString>();
              !collation.isEmpty()
     )
-        sql += collateTmpl.arg(quoteString(collation));
+        sql += CollateTmpl.arg(quoteString(collation));
 }
 
 void MySqlSchemaGrammar::compileCreateEngine(
         QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
-    static const auto engineTmpl = u" engine = %1"_s;
+    static const auto EngineTmpl = u" engine = %1"_s;
 
     if (!blueprint.engine.isEmpty())
-        sql += engineTmpl.arg(blueprint.engine);
+        sql += EngineTmpl.arg(blueprint.engine);
 
     else if (const auto engine = connection.getConfig(engine_).value<QString>();
              !engine.isEmpty()
     )
-        sql += engineTmpl.arg(engine);
+        sql += EngineTmpl.arg(engine);
 }
 
 QList<QString>

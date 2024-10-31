@@ -627,12 +627,12 @@ QStringList PwshCommand::getConnectionNamesFromFile()
     line.reserve(256);
 
     static const QRegularExpression
-    regex(uR"T("(?<connection>[\w\.-]+)".*// shell:connection$)T"_s);
+    RegEx(uR"T("(?<connection>[\w\.-]+)".*// shell:connection$)T"_s);
 
     // No need to worry about \r\n at the end
     while (getline(mainFileStream, line))
 
-        if (const auto match = regex.match(QString::fromStdString(line));
+        if (const auto match = RegEx.match(QString::fromStdString(line));
             match.hasMatch()
         )
             connectionNames << match.captured(connection_);

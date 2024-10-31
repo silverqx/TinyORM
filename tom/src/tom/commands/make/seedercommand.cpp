@@ -86,7 +86,7 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
     static const auto Seeder    = u"Seeder"_s;
     static const auto Seeder_lc = u"seeder"_s;
 
-    static const auto Seeder_lc_size = Seeder_lc.size();
+    static const auto SeederSize_lc = Seeder_lc.size();
 
     className = StringUtils::studly(className);
 
@@ -98,7 +98,7 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
         return std::move(className.append(Seeder));
 
     // Change Xyzseeder to XyzSeeder
-    className[className.size() - Seeder_lc_size] = u'S';
+    className[className.size() - SeederSize_lc] = u'S';
 
     return std::move(className);
 }

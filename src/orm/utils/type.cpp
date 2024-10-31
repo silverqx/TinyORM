@@ -49,10 +49,10 @@ QString Type::prettyFunction(const QString &function)
     /* I can leave RegEx here because this function is used only during throwing
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
-    static const QRegularExpression regex(
+    static const QRegularExpression RegEx(
                 uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif defined(_MSC_VER)
-    static const QRegularExpression regex(
+    static const QRegularExpression RegEx(
                 uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
 #  error Unsupported compiler in Orm::Utils::Type::prettyFunction().
@@ -61,12 +61,12 @@ QString Type::prettyFunction(const QString &function)
     Q_ASSERT_X(!function.isEmpty(), "empty string",
                "The function name can't be empty in Orm::Utils::Type::prettyFunction().");
 
-    const auto match = regex.match(function);
+    const auto match = RegEx.match(function);
 
     // This should never happen, but who knows 🤔
-    Q_ASSERT_X(match.hasMatch(), "regex match",
+    Q_ASSERT_X(match.hasMatch(), "RegEx match",
                "Can not get the function name in Orm::Utils::Type::prettyFunction().");
-    Q_ASSERT_X(regex.captureCount() == 2, "regex match",
+    Q_ASSERT_X(RegEx.captureCount() == 2, "RegEx match",
                "Can not get the function name in Orm::Utils::Type::prettyFunction().");
 
     return u"%1::%2"_s.arg(match.captured(1), match.captured(2));

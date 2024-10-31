@@ -387,16 +387,16 @@ namespace Orm::Tiny::Concerns
 #endif
     {
 #ifdef TINYORM_DEBUG
-        static const auto message = u"You can not %1 the %2 model in the middle "_s
-                                     "of any relation store operation.";
+        static const auto MessageTmpl = u"You can not %1 the %2 model in the middle "_s
+                                         "of any relation store operation.";
         // Don't make it static
         const auto className = TypeUtils::classPureBasename<Derived>();
 
         switch (type) {
         case CopyMoveTemplateType::COPY:
-            return message.arg(u"copy"_s, className);
+            return MessageTmpl.arg(u"copy"_s, className);
         case CopyMoveTemplateType::MOVE:
-            return message.arg(u"move"_s, className);
+            return MessageTmpl.arg(u"move"_s, className);
         default:
             Q_UNREACHABLE();
         }

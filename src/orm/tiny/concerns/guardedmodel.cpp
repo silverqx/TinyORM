@@ -22,9 +22,8 @@ namespace
     std::atomic_bool &g_unguarded() noexcept
     {
         T_THREAD_LOCAL
-        static std::atomic_bool cached = false;
-
-        return cached;
+        static std::atomic_bool Cached = false;
+        return Cached;
     }
 } // namespace
 

@@ -19,10 +19,10 @@ QString TypePrivate::prettyFunction(const QString &function)
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression
-    regex(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
+    RegEx(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif defined(_MSC_VER)
     static const QRegularExpression
-    regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
+    RegEx(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
 #  error Unsupported compiler in Orm::Drivers::Utils::TypePrivate::prettyFunction().
 #endif
@@ -31,13 +31,13 @@ QString TypePrivate::prettyFunction(const QString &function)
                "The function name can't be empty "
                "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
 
-    const auto match = regex.match(function);
+    const auto match = RegEx.match(function);
 
     // This should never happen, but who knows 🤔
-    Q_ASSERT_X(match.hasMatch(), "regex match",
+    Q_ASSERT_X(match.hasMatch(), "RegEx match",
                "Can not get the function name "
                "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
-    Q_ASSERT_X(regex.captureCount() == 2, "regex match",
+    Q_ASSERT_X(RegEx.captureCount() == 2, "RegEx match",
                "Can not get the function name "
                "in Orm::Drivers::Utils::TypePrivate::prettyFunction().");
 

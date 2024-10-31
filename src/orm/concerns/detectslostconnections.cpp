@@ -17,7 +17,7 @@ bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
        call, but all case-insensitive comparisons are very slow anyway. */
 
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
-    constexpr static std::array lostMessagesCache = std::to_array({
+    constexpr static std::array LostMessagesCached = std::to_array({
         "server has gone away"_L1,
         "no connection to the server"_L1,
         "Lost connection"_L1,
@@ -48,7 +48,7 @@ bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
         "SSL: Handshake timed out"_L1,
     });
 
-    return std::ranges::any_of(lostMessagesCache,
+    return std::ranges::any_of(LostMessagesCached,
                                [&errorMessage](const QLatin1StringView lostMessage)
     {
         // found

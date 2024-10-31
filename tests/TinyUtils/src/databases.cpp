@@ -929,15 +929,15 @@ void Databases::throwIfNoManagerInstance()
 void Databases::throwIfConnectionsInitialized()
 {
     /*! Determines whether connections were initialized. */
-    constinit static auto initialized = false;
+    constinit static auto AlreadyInitialized = false;
 
-    if (initialized)
+    if (AlreadyInitialized)
         throw RuntimeError(
                 u"Databases::createConnections/createConnection methods can be called "
                  "only once in %1()."_s
                 .arg(__tiny_func__));
 
-    initialized = true;
+    AlreadyInitialized = true;
 }
 
 } // namespace TestUtils

@@ -98,9 +98,9 @@ void
 MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before) const
 {
 #ifndef MARIADB_VERSION_ID
-    constexpr static auto isMaria = false;
+    constexpr static auto IsMariaDB = false;
 #else
-    constexpr static auto isMaria = true;
+    constexpr static auto IsMariaDB = true;
 #endif
 
     for (const auto *const characterSetName : DefaultCharacterSets)
@@ -109,7 +109,7 @@ MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before)
            to the database exists and prepare charset based on it.
            On the other hand, MariaDB isn't able to do it this way and reports
            "Server has gone away" because it tries to execute "SET NAMES csname" query. */
-        if (before && isMaria) {
+        if (before && IsMariaDB) {
             if (mysql_options(mysql, MYSQL_SET_CHARSET_NAME, characterSetName) == 0) // Must be as the separate if
                 return;
         }
@@ -252,7 +252,7 @@ MySqlDriverPrivate::getMySqlOptionsHash()
     /* The u""_s is correct here, don't use latin1 literal because we need to use
        the hash.contains(QStringView) as our option names are QStrinView-s
        after the split() method call. So this is the best solution. */
-    static const MySqlOptionsHash cachedOptions = {
+    static const MySqlOptionsHash CachedOptions = {
         {u"SSL_KEY"_s,                   {MYSQL_OPT_SSL_KEY,         SetOptionString}},
         {u"SSL_CERT"_s,                  {MYSQL_OPT_SSL_CERT,        SetOptionString}},
         {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          SetOptionString}},
@@ -291,7 +291,7 @@ MySqlDriverPrivate::getMySqlOptionsHash()
 #endif
     };
 
-    return cachedOptions;
+    return CachedOptions;
 }
 
 void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView option) const

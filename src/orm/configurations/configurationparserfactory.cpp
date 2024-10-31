@@ -27,13 +27,13 @@ ConfigurationParserFactory::cachedParser(const QVariantHash &config)
     const auto driver = getDriverName(config);
 
     T_THREAD_LOCAL static
-    std::unordered_map<QString, std::unique_ptr<ConfigurationParserInterface>> cache;
+    std::unordered_map<QString, std::unique_ptr<ConfigurationParserInterface>> Cache;
 
-    if (cache.contains(driver))
-        return *cache.at(driver);
+    if (Cache.contains(driver))
+        return *Cache.at(driver);
 
     // Create a new configuration parser instance and save it to the cache
-    auto [it, ok] = cache.emplace(driver, make(driver));
+    auto [it, ok] = Cache.emplace(driver, make(driver));
     Q_ASSERT(ok);
 
     return *it->second;

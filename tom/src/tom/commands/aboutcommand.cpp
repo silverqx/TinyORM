@@ -176,16 +176,16 @@ void AboutCommand::displayJson(const QList<SectionItem> &sections)
 
 bool AboutCommand::shouldSkipSection(const QString &sectionName) const
 {
-    static const auto only = getOnlyValues();
+    static const auto OnlyValues = getOnlyValues();
 
-    const auto contains = ranges::contains(only, true,
+    const auto contains = ranges::contains(OnlyValues, true,
                                            [sectionName = sectionName.toLower()]
                                            (const QString &onlyValue)
     {
         return sectionName.contains(onlyValue);
     });
 
-    return !only.empty() && !contains;
+    return !OnlyValues.empty() && !contains;
 }
 
 std::unordered_set<QString> AboutCommand::getOnlyValues() const

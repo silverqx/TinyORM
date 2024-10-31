@@ -68,14 +68,14 @@ InteractsWithIO::line(const QString &string, const bool newline,
     if (dontOutput(verbosity))
         return *this;
 
-    static const auto tmplStyled = u"<%3>%1</%3>%2"_s;
+    static const auto StyledTmpl = u"<%3>%1</%3>%2"_s;
 
     const auto parsedString = parseOutput(string, isAnsiOutput(cout));
 
     if (style.isEmpty())
         cout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdString(); // Don't use the NEWLINE_C for these ternary operators
     else
-        cout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
+        cout << StyledTmpl.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                           .toStdString();
 
     return *this;
@@ -154,9 +154,9 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     )
         return line(string, true, verbosity, {}, std::cerr);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
+    static const auto WrapperTmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
-    line(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::cerr);
+    line(WrapperTmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::cerr);
 
     return *this;
 }
@@ -170,14 +170,14 @@ InteractsWithIO::wline(const QString &string, const bool newline,
     if (dontOutput(verbosity))
         return *this;
 
-    static const auto tmplStyled = u"<%3>%1</%3>%2"_s;
+    static const auto StyledTmpl = u"<%3>%1</%3>%2"_s;
 
     const auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
 
     if (style.isEmpty())
         wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdWString(); // Don't use the NEWLINE_C for these ternary operators
     else
-        wcout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
+        wcout << StyledTmpl.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                            .toStdWString();
 
     return *this;
@@ -247,9 +247,9 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
     if (!isAnsiWOutput())
         return wline(string, true, verbosity, {}, std::wcerr);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
+    static const auto WrapperTmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
-    wline(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::wcerr);
+    wline(WrapperTmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::wcerr);
 
     return *this;
 }

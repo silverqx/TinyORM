@@ -103,12 +103,12 @@ QList<QString> SQLiteSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                                const BasicCommand &/*unused*/) const
 {
     // TODO regex, avoid it silverqx
-    static const QRegularExpression regex(uR"(as \(.*\) stored)"_s);
+    static const QRegularExpression RegEx(uR"(as \(.*\) stored)"_s);
 
     const auto columns = prefixArray(u"add column"_s, getColumns(blueprint));
 
     return columns
-            | ranges::views::remove_if([&regex = regex](const auto &column)
+            | ranges::views::remove_if([&regex = RegEx](const auto &column)
     {
         return regex.match(column).hasMatch();
     })
@@ -375,13 +375,13 @@ SQLiteSchemaGrammar::getCommandsByName(const Blueprint &blueprint, const QString
 QString SQLiteSchemaGrammar::addModifiers(QString &&sql,
                                           const ColumnDefinition &column) const
 {
-    constexpr static std::array modifierMethods {
+    constexpr static std::array ModifierMethods {
         &SQLiteSchemaGrammar::modifyVirtualAs, &SQLiteSchemaGrammar::modifyStoredAs,
         &SQLiteSchemaGrammar::modifyNullable,  &SQLiteSchemaGrammar::modifyDefault,
         &SQLiteSchemaGrammar::modifyIncrement,
     };
 
-    for (const auto method : modifierMethods)
+    for (const auto method : ModifierMethods)
         sql += std::invoke(method, this, column);
 
     return std::move(sql);

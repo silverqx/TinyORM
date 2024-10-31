@@ -184,8 +184,8 @@ bool ManagesTransactions::savepoint(const QString &id)
 
     auto &connection = databaseConnection();
 
-    static const auto savepointQueryTmpl = u"SAVEPOINT %1_%2"_s;
-    const auto queryString = savepointQueryTmpl.arg(m_savepointNamespace, id);
+    static const auto SavepointQueryTmpl = u"SAVEPOINT %1_%2"_s;
+    const auto queryString = SavepointQueryTmpl.arg(m_savepointNamespace, id);
 
     // Is Elapsed timer needed?
     const auto countElapsed = connection.shouldCountElapsed();
@@ -230,8 +230,8 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
 
     auto &connection = databaseConnection();
 
-    static const auto rollbackToSavepointQueryTmpl = u"ROLLBACK TO SAVEPOINT %1_%2"_s;
-    const auto queryString = rollbackToSavepointQueryTmpl.arg(m_savepointNamespace, id);
+    static const auto RollbackToSavepointQueryTmpl = u"ROLLBACK TO SAVEPOINT %1_%2"_s;
+    const auto queryString = RollbackToSavepointQueryTmpl.arg(m_savepointNamespace, id);
 
     // Is Elapsed timer needed?
     const auto countElapsed = connection.shouldCountElapsed();

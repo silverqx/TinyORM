@@ -1720,7 +1720,7 @@ void tst_SQLite_SchemaBuilder::dropForeign() const
 
 QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
 {
-    static const auto cached = std::invoke([]
+    static const auto Cached = std::invoke([]
     {
         QString database;
         database.reserve(Firewalls.size() + 32);
@@ -1731,7 +1731,7 @@ QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
                 .append(u".sqlite3"_s);
     });
 
-    return cached;
+    return Cached;
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

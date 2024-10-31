@@ -149,7 +149,7 @@ namespace Orm::Tiny
 
         /*! Create a new TinyORM model instance, skip-filling default attribute
             values. */
-        explicit Model(DontFillDefaultAttributes /*unused*/); // NOLINT(bugprone-crtp-constructor-accessibility)
+        explicit Model(DontFillDefaultAttributesType /*unused*/); // NOLINT(bugprone-crtp-constructor-accessibility)
 
         /* Static operations on the Model class */
         /*! Create a new TinyORM model instance. */
@@ -621,7 +621,7 @@ namespace Orm::Tiny
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Model<Derived, AllRelations...>::Model(DontFillDefaultAttributes /*unused*/)
+    Model<Derived, AllRelations...>::Model(DontFillDefaultAttributesType /*unused*/)
     {
         // Compile time check if a primary key type is supported by a QVariant
         qMetaTypeId<typename Derived::KeyType>();
@@ -636,7 +636,7 @@ namespace Orm::Tiny
     Derived
     Model<Derived, AllRelations...>::instance()
     {
-        Derived model(dontFillDefaultAttributes);
+        Derived model(DontFillDefaultAttributes);
 
         // Default Attribute Values
         model.fill(Derived::u_attributes);
@@ -707,7 +707,7 @@ namespace Orm::Tiny
     std::unique_ptr<Derived>
     Model<Derived, AllRelations...>::instanceHeap()
     {
-        auto model = std::make_unique<Derived>(dontFillDefaultAttributes);
+        auto model = std::make_unique<Derived>(DontFillDefaultAttributes);
 
         // Default Attribute Values
         model->fill(Derived::u_attributes);
@@ -1950,7 +1950,7 @@ namespace Orm::Tiny
     void Model<Derived, AllRelations...>::throwIfQDateTimeAttribute(
             const QList<AttributeItem> &attributes)
     {
-        static const auto message =
+        static const auto MessageTmpl =
             u"Attributes passed to the '%1' model's constructor or Default Attribute "_s
              "Values defined in the '%1::u_attributes' data member can't contain the "
              "QDateTime attribute, to create a '%1' model instance with attributes that "
@@ -1963,7 +1963,7 @@ namespace Orm::Tiny
                 value.typeId() == QMetaType::QDateTime
             )
                 throw Orm::Exceptions::InvalidArgumentError(
-                        message.arg(TypeUtils::classPureBasename<Derived>(), key));
+                        MessageTmpl.arg(TypeUtils::classPureBasename<Derived>(), key));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

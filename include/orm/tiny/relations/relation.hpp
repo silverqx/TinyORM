@@ -198,7 +198,7 @@ namespace Relations
         std::shared_ptr<Builder<Related>> m_query;
         /*! Indicates if the relation is adding constraints. */
         T_THREAD_LOCAL
-        constinit inline static bool constraints = true; // Don't use constexpr here
+        constinit inline static bool HasConstraints = true; // Don't use constexpr here
 
     private:
         /*! Indicates whether the eagerly loaded relation should implicitly return
@@ -229,11 +229,11 @@ namespace Relations
     Relation<Model, Related>::noConstraints(
             const std::function<std::unique_ptr<Relation<Model, Related>>()> &callback)
     {
-        const auto previous = constraints;
+        const auto previous = HasConstraints;
 
-        constraints = false;
+        HasConstraints = false;
         auto relation = std::invoke(callback);
-        constraints = previous;
+        HasConstraints = previous;
 
         return relation;
     }

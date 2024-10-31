@@ -31,13 +31,14 @@ namespace TestUtils::Common
         ~Collection() = delete;
 
         /*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
-        inline static const Orm::Column album_id {std::in_place_index<0>, u"album_id"_s};
+        inline static
+        const Orm::Column AlbumIdColumn {std::in_place_index<0>, u"album_id"_s};
         /*! QString constant "album_id" (perf. reason, one time initialization). */
-        inline static const auto album_id_s  = u"album_id"_s;
+        inline static const auto AlbumId     = u"album_id"_s;
         /*! QString constant "albumImages" (perf. reason, one time initialization). */
-        inline static const auto albumImages = u"albumImages"_s;
+        inline static const auto AlbumImages = u"albumImages"_s;
         /*! QString constant "ext" (perf. reason, one time initialization). */
-        inline static const auto ext         = u"ext"_s;
+        inline static const auto Ext         = u"ext"_s;
 
         /*! Verify primary key IDs in the given collection. */
         template<typename M>

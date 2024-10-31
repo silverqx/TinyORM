@@ -771,12 +771,12 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
                                const std::vector<const char *> &arguments,
                                const QString &migrationTable)
 {
-    static const auto connectionTmpl = u"--database=%1"_s;
+    static const auto ConnectionOptionTmpl = u"--database=%1"_s;
 
     // Prepare fake argc and argv
     const auto nameArr = name.toUtf8();
     // DB connection to use
-    const auto connectionArr = connectionTmpl.arg(connection).toUtf8();
+    const auto connectionArr = ConnectionOptionTmpl.arg(connection).toUtf8();
 
     std::vector<const char *> argv {
 #ifdef _WIN32

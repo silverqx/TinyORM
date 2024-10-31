@@ -1567,8 +1567,8 @@ namespace Orm::Tiny::Concerns
 
         for (const auto &attribute : attributes) {
             // Initialize as late as possible
-            static const auto functionName = u"HasAttributes::syncOriginalAttributes"_s;
-            throwIfNoAttributeInHash(modelAttributesHash, attribute, functionName);
+            static const auto FunctionName = u"HasAttributes::syncOriginalAttributes"_s;
+            throwIfNoAttributeInHash(modelAttributesHash, attribute, FunctionName);
 
             const auto &modelAttributeValue =
                     modelAttributes.at(modelAttributesHash.at(attribute)).value;

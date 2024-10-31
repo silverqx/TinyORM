@@ -150,12 +150,12 @@ void PrintsOptions::validateOption(const QCommandLineOption &option)
                 u"Only two option names per option are allowed (options: %1)."_s
                 .arg(optionNames.join(COMMA)));
 
-    static const auto longOptionTmpl = u"Long option size has to be >1 (option: %1)."_s;
+    static const auto LongOptionTmpl = u"Long option size has to be >1 (option: %1)."_s;
 
     // One option name was passed
     if (optionsSize == 1) {
         if (const auto &longOption = optionNames.constFirst(); longOption.size() <= 1)
-            throw Exceptions::RuntimeError(longOptionTmpl.arg(longOption));
+            throw Exceptions::RuntimeError(LongOptionTmpl.arg(longOption));
     }
     // Two option names were passed
     else if (optionsSize == 2) {
@@ -165,7 +165,7 @@ void PrintsOptions::validateOption(const QCommandLineOption &option)
                     .arg(shortOption));
 
         if (const auto &longOption = optionNames[1]; longOption.size() <= 1)
-            throw Exceptions::RuntimeError(longOptionTmpl.arg(longOption));
+            throw Exceptions::RuntimeError(LongOptionTmpl.arg(longOption));
     }
 }
 

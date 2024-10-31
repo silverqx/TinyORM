@@ -130,7 +130,7 @@ namespace Private
     template<IntegralNoBoolChar T> requires (!std::is_reference_v<T>)
     QString formatNumber(const T integer, QChar groupSeparator = Constants::SQUOTE)
     {
-        constexpr static QString::size_type groupWidth = 3;
+        constexpr static QString::size_type GroupWidth = 3;
 
         auto number = QString::number(integer);
         // For reserve()
@@ -142,12 +142,12 @@ namespace Private
         const auto numberSize = hasSign ? numberSizeWithSign - 1 : numberSizeWithSign;
 
         // No number groups to process so we can return right away
-        if (numberSize <= groupWidth)
+        if (numberSize <= GroupWidth)
             return number;
 
         QString result;
         result.reserve(numberSizeWithSign + std::invoke(computeGroupSeparatorsCount,
-                                                        numberSize, groupWidth));
+                                                        numberSize, GroupWidth));
         // To find every 3th number
         quint8 groupIndex = 0;
         const auto itNumberPenultimate = number.crend() - 1;
@@ -157,7 +157,7 @@ namespace Private
         ) {
             /* Prepend group separator before every 3th number, the hasSign check
                prevents case like this: -'123'456. */
-            if (groupIndex == groupWidth &&
+            if (groupIndex == GroupWidth &&
                 (!hasSign || (hasSign && itNumber != itNumberPenultimate))
             ) {
                 result.prepend(groupSeparator);

@@ -175,8 +175,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     const QString &HasOne<Model, Related>::relationTypeName() const
     {
-        static const auto cached = u"HasOne"_s;
-        return cached;
+        static const auto Cached = u"HasOne"_s;
+        return Cached;
     }
 
     /* protected */

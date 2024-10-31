@@ -27,12 +27,12 @@ SelectsAllColumnsWithLimit0::selectAllColumnsWithLimit0(const QString &table) co
        it doesn't make sense, leave the defaults on the database server.
        The user can select from any database if the database server allows it. */
 
-    static const auto queryStringTmpl = u"select * from %1 limit 0"_s;
+    static const auto QueryStringTmpl = u"select * from %1 limit 0"_s;
 
     /*! Alias for the TableName. */
     constexpr static auto TableName = SqlDriver::IdentifierType::TableName;
 
-    query.exec(queryStringTmpl.arg(sqlDriver.escapeIdentifier(table, TableName)));
+    query.exec(QueryStringTmpl.arg(sqlDriver.escapeIdentifier(table, TableName)));
 
     return query;
 }

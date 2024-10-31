@@ -945,7 +945,7 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
 
 const QString &tst_DatabaseManager::checkDatabaseExistsFile()
 {
-    static const auto cached = std::invoke([]() -> QString
+    static const auto Cached = std::invoke([]() -> QString
     {
         auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
 
@@ -960,7 +960,7 @@ const QString &tst_DatabaseManager::checkDatabaseExistsFile()
         return databasePath.append(u"/tinyorm_test-check_exists.sqlite3"_s);
     });
 
-    return cached;
+    return Cached;
 }
 
 QTEST_MAIN(tst_DatabaseManager)

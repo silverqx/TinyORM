@@ -202,12 +202,12 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
 
     /* This is not 100% correct as the getCompileMap() is virtual, but it's guaranteed
        that all compileMap-s have the same size, so it's safe to cache this size. */
-    static const auto compileMapSize = compileMap.size();
+    static const auto CompileMapSize = compileMap.size();
     // The same size for all instances has to be guaranteed as it's static
-    Q_ASSERT(compileMapSize == 11);
+    Q_ASSERT(CompileMapSize == 11);
 
     QStringList sql;
-    sql.reserve(compileMapSize);
+    sql.reserve(CompileMapSize);
 
     for (const auto &component : compileMap)
         if (component.isset && component.isset(query))
@@ -647,16 +647,16 @@ QString Grammar::removeLeadingBoolean(QString &&statement)
         return from;
     };
 
-    static const auto AndTmpl = u"and "_s;
-    static const auto OrTmpl =  u"or "_s;
+    static const auto And_ = u"and "_s;
+    static const auto Or_  = u"or "_s;
 
     // RegEx not used for performance reasons
     /* Before and/or could not be whitespace, current implementation doesn't include
        whitespaces before. */
-    if (statement.startsWith(AndTmpl))
+    if (statement.startsWith(And_))
         return statement.sliced(firstChar(4));
 
-    if (statement.startsWith(OrTmpl))
+    if (statement.startsWith(Or_))
         return statement.sliced(firstChar(3));
 
     return std::move(statement);

@@ -134,8 +134,8 @@ ConnectionsHash &SqlDatabasePrivate::connections()
 
 std::atomic_bool &SqlDatabasePrivate::checkSameThread() noexcept
 {
-    static std::atomic_bool isEnabled = true;
-    return isEnabled;
+    static std::atomic_bool IsEnabled = true;
+    return IsEnabled;
 }
 
 /* Factory methods */

@@ -1007,15 +1007,15 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::guessBelongsToRelation() const
     {
         // static here is OK, every Related template will have own static relation
-        static const auto relation = guessBelongsToRelationInternal<Related>();
+        static const auto Relation = guessBelongsToRelationInternal<Related>();
 
         /* validateUserRelation() method call can not be cached, has to be called
            every time, to correctly inform the user about invalid relation name. */
 
         // Validate if the guessed relation name exists in the u_relations
-        validateUserRelation(relation, RelationFrom::BELONGS_TO);
+        validateUserRelation(Relation, RelationFrom::BELONGS_TO);
 
-        return relation;
+        return Relation;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1024,16 +1024,16 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
         // static here is OK, every Related template will have own static relation
-        static const auto relation = TMPL_PLURAL
+        static const auto Relation = TMPL_PLURAL
                                      .arg(guessBelongsToRelationInternal<Related>());
 
         /* validateUserRelation() method call can not be cached, has to be called
            every time, to correctly inform the user about invalid relation name. */
 
         // Validate if the guessed relation name exists in the u_relations
-        validateUserRelation(relation, RelationFrom::BELONGS_TO_MANY);
+        validateUserRelation(Relation, RelationFrom::BELONGS_TO_MANY);
 
-        return relation;
+        return Relation;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -1124,12 +1124,12 @@ namespace Concerns
             const QString &key, const QVariant &original,
             const QVariant &overwrite) const
     {
-        static const auto overwriteMessage =
+        static const auto OverwriteMessageTmpl =
                 u"You can not overwrite '%1' ID key; "_s
                  "original value : %2, your value : %3.";
 
         throw Orm::Exceptions::DomainError(
-                    overwriteMessage.arg(
+                    OverwriteMessageTmpl.arg(
                         qualifyPivotColumn_(key),
                         QString::number(original.template value<KeyType>()),
                         QString::number(overwrite.template value<KeyType>())));

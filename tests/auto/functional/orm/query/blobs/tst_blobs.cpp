@@ -53,7 +53,7 @@ private:
     static std::size_t getMaxAllowedPacketForMySql(const QString &connection);
 
     /*! Lorem ipsum paragraph size (number of characters including a newline). */
-    constexpr static auto m_paragraphSize = 512;
+    constexpr static auto ParagraphSize = 512;
     /*! An initial max_allowed_packet value cache (to be able to restore it). */
     mutable std::optional<std::size_t> m_initialMaxAllowedPacket = std::nullopt;
 };
@@ -97,15 +97,15 @@ void tst_Blobs::text() const
     // Prepare the max_allowed_packet MySQL variable (requires 16MB)
     prepareMaxAllowedPacketForMySql(16'777'216, connection);
 
-    constexpr static auto paragraphsCount = 128;
+    constexpr static auto ParagraphsCount = 128;
     /* 65'535 bytes (65kB without 1 byte).
        It's the max. size of the MySQL TEXT column type. */
-    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
+    constexpr auto expectedLoremIpsumSize = (ParagraphSize * ParagraphsCount) - 1;
 
-    static const auto loremIpsum = StringUtils::loremIpsum512Paragraph(paragraphsCount);
+    static const auto LoremIpsum = StringUtils::loremIpsum512Paragraph(ParagraphsCount);
     /* 128 paragraphs each has 511 characters + a newline;
        The last paragraph has 511 characters without a newline. */
-    QCOMPARE(loremIpsum.size(), expectedLoremIpsumSize);
+    QCOMPARE(LoremIpsum.size(), expectedLoremIpsumSize);
 
     QVariant lastId;
     quint64 lastIdInt = 0;
@@ -113,7 +113,7 @@ void tst_Blobs::text() const
     // Insert to the TEXT column
     {
         auto query = createQuery(connection)
-                     ->from(*TypesTable).insert({text_}, {{loremIpsum}});
+                     ->from(*TypesTable).insert({text_}, {{LoremIpsum}});
         QVERIFY(query->isActive());
         QVERIFY(!query->isSelect());
         QVERIFY(!query->isValid());
@@ -136,7 +136,7 @@ void tst_Blobs::text() const
         QVERIFY(query.first());
         QVERIFY(query.isValid());
 
-        QCOMPARE(query.value(text_), QVariant(loremIpsum));
+        QCOMPARE(query.value(text_), QVariant(LoremIpsum));
     }
 
     // Restore
@@ -166,15 +166,15 @@ void tst_Blobs::mediumText() const
     // Prepare the max_allowed_packet MySQL variable (requires 64MB)
     prepareMaxAllowedPacketForMySql(67'108'864, connection);
 
-    constexpr static auto paragraphsCount = 32'768;
+    constexpr static auto ParagraphsCount = 32'768;
     /* 16'777'215 bytes (16MB without 1 byte).
        It's the max. size of the MySQL MEDIUMTEXT column type. */
-    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
+    constexpr auto expectedLoremIpsumSize = (ParagraphSize * ParagraphsCount) - 1;
 
-    static const auto loremIpsum = StringUtils::loremIpsum512Paragraph(paragraphsCount);
+    static const auto LoremIpsum = StringUtils::loremIpsum512Paragraph(ParagraphsCount);
     /* 32768 paragraphs each has 511 characters + a newline;
        The last paragraph has 511 characters without a newline. */
-    QCOMPARE(loremIpsum.size(), expectedLoremIpsumSize);
+    QCOMPARE(LoremIpsum.size(), expectedLoremIpsumSize);
 
     QVariant lastId;
     quint64 lastIdInt = 0;
@@ -182,7 +182,7 @@ void tst_Blobs::mediumText() const
     // Insert to the TEXT column
     {
         auto query = createQuery(connection)
-                     ->from(*TypesTable).insert({*medium_text}, {{loremIpsum}});
+                     ->from(*TypesTable).insert({*medium_text}, {{LoremIpsum}});
         QVERIFY(query->isActive());
         QVERIFY(!query->isSelect());
         QVERIFY(!query->isValid());
@@ -205,7 +205,7 @@ void tst_Blobs::mediumText() const
         QVERIFY(query.first());
         QVERIFY(query.isValid());
 
-        QCOMPARE(query.value(*medium_text), QVariant(loremIpsum));
+        QCOMPARE(query.value(*medium_text), QVariant(LoremIpsum));
     }
 
     // Restore the types table
@@ -235,18 +235,17 @@ void tst_Blobs::binary() const
     // Prepare the max_allowed_packet MySQL variable (requires 16MB)
     prepareMaxAllowedPacketForMySql(16'777'216, connection);
 
-    constexpr static auto paragraphsCount = 128;
+    constexpr static auto ParagraphsCount = 128;
     /* 65'535 bytes (65kB without 1 byte).
        It's the max. size of the MySQL BLOB column type. */
-    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
+    constexpr auto expectedLoremIpsumSize = (ParagraphSize * ParagraphsCount) - 1;
 
-    static const auto loremIpsumString = StringUtils::loremIpsum512Paragraph(
-                                             paragraphsCount);
-    static const auto loremIpsum = QByteArray(loremIpsumString.toUtf8().constData());
+    static const auto LoremIpsum = StringUtils::loremIpsum512Paragraph(ParagraphsCount);
+    static const auto LoremIpsumBinary = QByteArray(LoremIpsum.toUtf8().constData());
 
     /* 128 paragraphs each has 511 characters + a newline;
        The last paragraph has 511 characters without a newline. */
-    QCOMPARE(loremIpsum.size(), expectedLoremIpsumSize);
+    QCOMPARE(LoremIpsumBinary.size(), expectedLoremIpsumSize);
 
     QVariant lastId;
     quint64 lastIdInt = 0;
@@ -254,7 +253,7 @@ void tst_Blobs::binary() const
     // Insert to the BLOB column
     {
         auto query = createQuery(connection)
-                     ->from(*TypesTable).insert({*medium_binary}, {{loremIpsum}});
+                     ->from(*TypesTable).insert({*medium_binary}, {{LoremIpsumBinary}});
         QVERIFY(query->isActive());
         QVERIFY(!query->isSelect());
         QVERIFY(!query->isValid());
@@ -278,7 +277,7 @@ void tst_Blobs::binary() const
         QVERIFY(query.isValid());
 
         auto val = query.value(*medium_binary);
-        QCOMPARE(val, QVariant(loremIpsum));
+        QCOMPARE(val, QVariant(LoremIpsumBinary));
     }
 
     // Restore the types table
@@ -308,18 +307,17 @@ void tst_Blobs::mediumBinary() const
     // Prepare the max_allowed_packet MySQL variable (requires 64MB)
     prepareMaxAllowedPacketForMySql(67'108'864, connection);
 
-    constexpr static auto paragraphsCount = 32'768;
+    constexpr static auto ParagraphsCount = 32'768;
     /* 16'777'215 bytes (16MB without 1 byte).
        It's the max. size of the MySQL MEDIUMBLOB column type. */
-    constexpr auto expectedLoremIpsumSize = (m_paragraphSize * paragraphsCount) - 1;
+    constexpr auto expectedLoremIpsumSize = (ParagraphSize * ParagraphsCount) - 1;
 
-    static const auto loremIpsumString = StringUtils::loremIpsum512Paragraph(
-                                             paragraphsCount);
-    static const auto loremIpsum = QByteArray(loremIpsumString.toUtf8().constData());
+    static const auto LoremIpsum = StringUtils::loremIpsum512Paragraph(ParagraphsCount);
+    static const auto LoremIpsumBinary = QByteArray(LoremIpsum.toUtf8().constData());
 
     /* 32768 paragraphs each has 511 characters + a newline;
        The last paragraph has 511 characters without a newline. */
-    QCOMPARE(loremIpsum.size(), expectedLoremIpsumSize);
+    QCOMPARE(LoremIpsumBinary.size(), expectedLoremIpsumSize);
 
     QVariant lastId;
     quint64 lastIdInt = 0;
@@ -327,7 +325,7 @@ void tst_Blobs::mediumBinary() const
     // Insert to the BLOB column
     {
         auto query = createQuery(connection)
-                     ->from(*TypesTable).insert({*medium_binary}, {{loremIpsum}});
+                     ->from(*TypesTable).insert({*medium_binary}, {{LoremIpsumBinary}});
         QVERIFY(query->isActive());
         QVERIFY(!query->isSelect());
         QVERIFY(!query->isValid());
@@ -351,7 +349,7 @@ void tst_Blobs::mediumBinary() const
         QVERIFY(query.isValid());
 
         auto val = query.value(*medium_binary);
-        QCOMPARE(val, QVariant(loremIpsum));
+        QCOMPARE(val, QVariant(LoremIpsumBinary));
     }
 
     // Restore the types table

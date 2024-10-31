@@ -249,19 +249,19 @@ void Application::logException(const std::exception &e, const bool noAnsi)
        instantiated again. */
     const Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
+    static const auto WrapperTmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
     const auto message = u"Caught '%1' Exception:\n%2"_s
                          .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     // --no-ansi output
     if (noAnsi || !io.isAnsiOutput(std::cerr)) {
-        qCritical().nospace().noquote() << tmpl.arg(message);
+        qCritical().nospace().noquote() << WrapperTmpl.arg(message);
         return;
     }
 
     /* Print error wall (red box with a white text) */
-    qCritical().nospace().noquote() << tmpl.arg(io.errorWallInternal(message));
+    qCritical().nospace().noquote() << WrapperTmpl.arg(io.errorWallInternal(message));
 }
 
 QStringList Application::arguments() const // NOLINT(readability-convert-member-functions-to-static)

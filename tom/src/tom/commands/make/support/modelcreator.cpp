@@ -560,7 +560,7 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
     if (pivotInverseClasses.isEmpty())
         return;
 
-    static const auto PivotConst = u"Pivot"_s;
+    static const auto Pivot = u"Pivot"_s;
 
     std::ranges::for_each(pivotInverseClasses, [this](const auto &inverseClass)
     {
@@ -571,8 +571,8 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
         m_pivotsList.emplace(inverseClass);
 
         // Pivot class needs <orm> include and also using Orm::...
-        if (inverseClass == PivotConst) {
-            m_usingsList.emplace(ModelUsingItemStub.arg(PivotConst));
+        if (inverseClass == Pivot) {
+            m_usingsList.emplace(ModelUsingItemStub.arg(Pivot));
             m_includesOrmList.emplace(ModelIncludeOrmItemStub
                                       .arg(u"tiny/relations/pivot.hpp"_s));
         } else

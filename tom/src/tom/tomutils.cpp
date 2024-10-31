@@ -28,14 +28,14 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
        after the split(_), every part has specific size and all parts has to be numbers.
        I want to avoid the RegEx where it's possible. */
 
-    static const auto datetimePrefixSize = DateTimePrefix.size();
+    static const auto DatetimePrefixSize = DateTimePrefix.size();
 
     /* 17 chars datetime prefix, 1 char the last _ character after the datetime prefix,
        and at least one character for the migration name; >18. */
-    if (migrationName.size() <= datetimePrefixSize + 1)
+    if (migrationName.size() <= DatetimePrefixSize + 1)
         return false;
 
-    const auto datetime = QStringView(migrationName.constBegin(), datetimePrefixSize)
+    const auto datetime = QStringView(migrationName.constBegin(), DatetimePrefixSize)
                           .split(UNDERSCORE);
 
     // 4 parts
@@ -94,7 +94,7 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
     using SizeType = QList<QStringView>::size_type;
 
     /*! Cached the datetime prefix parts sizes. */
-    static const auto prefixSizes = std::invoke([]
+    static const auto PrefixSizes = std::invoke([]
     {
         const auto prefixSplit = DateTimePrefix.split(UNDERSCORE);
 
@@ -118,7 +118,7 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
     };
 
     // The size of every part has to be equal
-    return prefixSizes == prefixPartsSizes();
+    return PrefixSizes == prefixPartsSizes();
 }
 
 } // namespace Tom

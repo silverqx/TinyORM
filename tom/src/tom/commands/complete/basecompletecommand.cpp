@@ -193,7 +193,7 @@ int BaseCompleteCommand::printGuessedShells() const
 {
     /* There is no need to complete the bash and zsh for other platforms.
        The pwsh can run on all our supported platforms so always complete it. */
-    constexpr static std::array allShellNames =
+    constexpr static std::array AllShellNames =
     std::to_array<std::reference_wrapper<const QString>>({
 #if defined(__linux__) || defined(__MINGW32__)
         ShBash,
@@ -209,9 +209,9 @@ int BaseCompleteCommand::printGuessedShells() const
 
     QStringList shellNames;
     shellNames.reserve(static_cast<decltype (shellNames)::size_type>(
-                           allShellNames.size()));
+                           AllShellNames.size()));
 
-    for (const QString &shellName : allShellNames)
+    for (const QString &shellName : AllShellNames)
         if (!shellName.isEmpty() && (printAll || shellName.startsWith(wordArg)))
             shellNames << shellName;
 
@@ -367,14 +367,14 @@ bool BaseCompleteCommand::commandHasLongOption(const QString &optionName) const
 
 void BaseCompleteCommand::validateInputOptions() const
 {
-    constexpr static auto optionsToValidate = std::to_array<
+    constexpr static auto OptionsToValidate = std::to_array<
                                               std::reference_wrapper<const QString>>({
         commandline,
         word_,
     });
 
     // TODO parser, add support for required positional arguments and options silverqx
-    for (const auto &optionName : optionsToValidate)
+    for (const auto &optionName : OptionsToValidate)
         if (!isSet(optionName))
             throw Exceptions::InvalidArgumentError(
                     u"The --%1= option must be set for complete:bash/pwsh commands "

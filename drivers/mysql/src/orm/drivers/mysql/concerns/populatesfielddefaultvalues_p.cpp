@@ -56,8 +56,8 @@ void PopulatesFieldDefaultValuesPrivate::populateFieldDefaultValuesInternal(
 
     sqlQuery.exec();
 
-    constexpr static SqlQuery::size_type COLUMN_NAME = 0;
-    constexpr static SqlQuery::size_type COLUMN_DEFAULT = 1;
+    constexpr static SqlQuery::size_type ColumnName    = 0;
+    constexpr static SqlQuery::size_type ColumnDefault = 1;
 
     /* The sqlQuery.value(1) QVariant's type is database dependent, MySQL returns
        QByteArray because it has set the BINARY attribute on the COLUMN_DEFAULT column
@@ -66,8 +66,8 @@ void PopulatesFieldDefaultValuesPrivate::populateFieldDefaultValuesInternal(
        MariaDB uses the utf8mb3_general_ci so it returns the QString,
        flags=4112 (BLOB_FLAG, NO_DEFAULT_VALUE_FLAG). */
     while (sqlQuery.next())
-        record.fieldInternal(sqlQuery.value(COLUMN_NAME).value<QString>())
-              .setDefaultValue(sqlQuery.value(COLUMN_DEFAULT));
+        record.fieldInternal(sqlQuery.value(ColumnName).value<QString>())
+              .setDefaultValue(sqlQuery.value(ColumnDefault));
 }
 
 PopulatesFieldDefaultValuesPrivate::QueryStringAndFieldNames
@@ -76,20 +76,20 @@ PopulatesFieldDefaultValuesPrivate::prepareQueryStringAndFieldNames(
 {
     // The order by ORDINAL_POSITION not needed (also it's better for performance w/o it)
     static const auto
-    queryStringTmpl = u"select `COLUMN_NAME`, `COLUMN_DEFAULT` "
+    QueryStringTmpl = u"select `COLUMN_NAME`, `COLUMN_DEFAULT` "
                        "from `information_schema`.`columns` "
                        "where `TABLE_SCHEMA` = ? and `TABLE_NAME` = ?%1"_s;
-    static const auto columnNamesTmpl = u" and `COLUMN_NAME` in (%1)"_s;
+    static const auto ColumnNamesTmpl = u" and `COLUMN_NAME` in (%1)"_s;
 
     // Select the Default Column Values for all columns
     if (allColumns)
-        return {queryStringTmpl.arg(EMPTY), std::nullopt};
+        return {QueryStringTmpl.arg(EMPTY), std::nullopt};
 
     /* Get all field names in the given record and select the Default Column Values only
        for them as we know these field names in advance. */
     auto fieldNames = record.fieldNames();
 
-    return {queryStringTmpl.arg(columnNamesTmpl.arg(u"?, "_s.repeated(fieldNames.size())
+    return {QueryStringTmpl.arg(ColumnNamesTmpl.arg(u"?, "_s.repeated(fieldNames.size())
                                                             .chopped(2))),
             std::move(fieldNames)};
 }

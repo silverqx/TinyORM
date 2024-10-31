@@ -440,7 +440,7 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
 {
     Q_ASSERT(count != 0);
 
-    static const auto lorem511 =
+    static const auto LoremIpsum511 =
     u"Lorem ipsum dolor sit amet consectetuer cursus euismod eget Vestibulum sodales. "
      "Pellentesque neque Phasellus id id Pellentesque Integer mauris nibh nibh. "
      "Non Morbi pharetra cursus in interdum fringilla Donec quam nunc vitae. "
@@ -451,7 +451,7 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
      "Risus nibh semper quis volutpat facilisi."_s;
 
 #  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    return QStringList(count, lorem511).join(NEWLINE_C);
+    return QStringList(count, LoremIpsum511).join(NEWLINE_C);
             // Insert the s character before the last . to make it 512, 1024, ...
             // .insert(-1, u's');
 #  else

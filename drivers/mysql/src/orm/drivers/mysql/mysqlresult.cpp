@@ -217,9 +217,9 @@ bool MySqlResult::exec()
 
         // Update the metadata MYSQL_FIELD->max_length value
         if (d->hasBlobs) {
-            constexpr static my_bool updateMaxLength = true;
+            constexpr static my_bool UpdateMaxLength = true;
 
-            mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &updateMaxLength);
+            mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &UpdateMaxLength);
         }
 
         /* Buffer a complete result set on the client (it will be prepared for fetching).

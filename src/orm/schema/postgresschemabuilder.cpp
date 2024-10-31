@@ -239,10 +239,10 @@ const QSet<QString> &PostgresSchemaBuilder::excludedViews() const
     /* For these, the PostgreSQL server throws that they are needed by the postgis
        extension and proposes to delete the postgis extension instead, so exclude them.
        This is happening during dropping of all views. */
-    static const auto cached(grammar().escapeNames(
+    static const auto Cached(grammar().escapeNames(
                                  QSet<QString> {u"geography_columns"_s,
                                                 u"geometry_columns"_s}));
-    return cached;
+    return Cached;
 }
 
 std::tuple<QString, QString>

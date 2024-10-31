@@ -122,15 +122,15 @@ namespace Types
     {};
 
     /*! Tag used to select a constructor without filling Default Attribute values. */
-    struct DontFillDefaultAttributes
+    struct DontFillDefaultAttributesType
     {
         /*! Default constructor. */
-        explicit DontFillDefaultAttributes() = default;
+        explicit DontFillDefaultAttributesType() = default;
     };
 
     /*! Instance of the tag used to select a constructor without filling Default
         Attribute values. */
-    inline constexpr DontFillDefaultAttributes dontFillDefaultAttributes {};
+    inline constexpr DontFillDefaultAttributesType DontFillDefaultAttributes {};
 
     /*! Cast types. */
     enum struct CastType : quint8

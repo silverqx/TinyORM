@@ -354,12 +354,12 @@ void ModelCommand::showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions)
         return;
 
     // Warning message templates
-    static const auto singular = u"Unused option %1; it depends on the "
-                                  "--belongs-to-many= option."_s;
-    static const auto plural =   u"Unused options %1; they depend on the "
-                                  "--belongs-to-many= option."_s;
+    static const auto SingularTmpl = u"Unused option %1; it depends on the "
+                                      "--belongs-to-many= option."_s;
+    static const auto PluralTmpl   = u"Unused options %1; they depend on the "
+                                      "--belongs-to-many= option."_s;
 
-    comment((m_unusedBtmOptions.size() == 1 ? singular : plural)
+    comment((m_unusedBtmOptions.size() == 1 ? SingularTmpl : PluralTmpl)
             .arg(ContainerUtils::join(m_unusedBtmOptions)));
 }
 
@@ -408,12 +408,12 @@ void ModelCommand::showUnusedPivotModelOptionsWarnings()
         return;
 
     // Warning message templates
-    static const auto singular = u"Unused option %1; it's not supported along with "
-                                  "the --pivot-model option."_s;
-    static const auto plural =   u"Unused options %1; they are not supported along "
-                                  "with the --pivot-model option."_s;
+    static const auto SingularTmpl = u"Unused option %1; it's not supported along with "
+                                      "the --pivot-model option."_s;
+    static const auto PluralTmpl   = u"Unused options %1; they are not supported along "
+                                      "with the --pivot-model option."_s;
 
-    comment((m_unusedPivotModelOptions.size() == 1 ? singular : plural)
+    comment((m_unusedPivotModelOptions.size() == 1 ? SingularTmpl : PluralTmpl)
             .arg(ContainerUtils::join(m_unusedPivotModelOptions)));
 }
 

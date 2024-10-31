@@ -451,7 +451,7 @@ namespace Orm::Tiny::Relations
     {
         performJoin();
 
-        if (this->constraints)
+        if (this->HasConstraints)
             addWhereConstraints();
     }
 
@@ -1341,8 +1341,8 @@ namespace Orm::Tiny::Relations
     const QString &
     BelongsToMany<Model, Related, PivotType>::relationTypeName() const
     {
-        static const auto cached = u"BelongsToMany"_s;
-        return cached;
+        static const auto Cached = u"BelongsToMany"_s;
+        return Cached;
     }
 
     // NOTE api different, Eloquent always use the guessed table name if the table is null during the belongsToMany() call, the table property is used only when the Model::class (class name) is passed to the belongsToMany() silverqx

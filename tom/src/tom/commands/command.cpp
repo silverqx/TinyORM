@@ -137,7 +137,7 @@ QStringList Command::optionNames() const
        using the , character 🤯. */
 
     // Allow to escape , char using \,
-    static const QRegularExpression regex(uR"((?<!\\),)"_s);
+    static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
 
     auto optionNames = parser().optionNames();
 
@@ -146,7 +146,7 @@ QStringList Command::optionNames() const
     optionNames.reserve(std::max<decltype (optionNames)::size_type>(
                             optionNamesSize * 2,
                             optionNamesSize + application().arguments().join(SPACE)
-                                              .count(regex)) + 1); // +1 for sure
+                                              .count(RegEx)) + 1); // +1 for sure
 
     /* Allows to loop through all values for every (unique) option name defined
        on the command-line. */
@@ -162,7 +162,7 @@ QStringList Command::optionNames() const
         QString::size_type nthOptionIdx = 0;
 
         for (const auto &value : values) {
-            const auto commasCount = value.count(regex);
+            const auto commasCount = value.count(RegEx);
 
             // Nothing to do
             if (commasCount == 0) {
@@ -212,16 +212,16 @@ QStringList Command::values(const QString &name,
     valuesSplit.reserve(values.size() + countCommas(values));
 
     // Allow to escape , char using \,
-    static const QRegularExpression regex(uR"((?<!\\),)"_s);
+    static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
 
     // Support passing more values delimited by comma
     for (auto &&value : values) {
-        if (!value.contains(regex)) {
+        if (!value.contains(RegEx)) {
             valuesSplit << std::move(value);
             continue;
         }
 
-        valuesSplit << value.split(regex, splitBehavior);
+        valuesSplit << value.split(RegEx, splitBehavior);
     }
 
     return valuesSplit;

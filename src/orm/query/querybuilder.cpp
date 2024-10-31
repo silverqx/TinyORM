@@ -1682,14 +1682,14 @@ QList<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
 
 QString Builder::stripTableForPluck(const Column &column)
 {
-    static const auto as = u" as "_s;
+    static const auto As_ = u" as "_s;
 
     const auto columnString = std::holds_alternative<Expression>(column)
                               ? QueryGrammar::getValue(
                                     std::get<Expression>(column)).value<QString>()
                               : std::get<QString>(column);
 
-    if (!columnString.contains(as))
+    if (!columnString.contains(As_))
         return QueryGrammar::unqualifyColumn(columnString);
 
     return QueryGrammar::getAliasFromColumn(columnString);

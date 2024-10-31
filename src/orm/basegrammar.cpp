@@ -37,16 +37,16 @@ namespace Orm
 
 const QString &BaseGrammar::getDateFormat() const
 {
-    static const auto cachedFormat = u"yyyy-MM-dd HH:mm:ss"_s;
+    static const auto DateFormatCached = u"yyyy-MM-dd HH:mm:ss"_s;
 
-    return cachedFormat;
+    return DateFormatCached;
 }
 
 const QString &BaseGrammar::getTimeFormat() const
 {
-    static const auto cachedFormat = u"HH:mm:ss"_s;
+    static const auto TimeFormatCached = u"HH:mm:ss"_s;
 
-    return cachedFormat;
+    return TimeFormatCached;
 }
 
 QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const // NOLINT(misc-no-recursion)

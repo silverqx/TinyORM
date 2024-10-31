@@ -887,7 +887,7 @@ namespace Orm::Query
 
         /*! Determine whether the T type is a query builder instance or a lambda expr. */
         template<typename T>
-        constexpr static auto isQueryable =
+        constexpr static auto IsQueryable =
                 std::is_convertible_v<T, Orm::QueryBuilder &> ||
                 std::is_invocable_v<T, Orm::QueryBuilder &>;
 
@@ -1347,7 +1347,7 @@ namespace Orm::Query
         /* If the value is queryable, it means the developer is performing an entire
            sub-select within the query and we will need to compile the sub-select
            within the where clause to get the appropriate query record results. */
-        if constexpr (isQueryable<T>)
+        if constexpr (IsQueryable<T>)
             return whereSub(column, comparison, std::forward<T>(value), condition);
         else
             return whereInternal(column, comparison, std::forward<T>(value), condition); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)

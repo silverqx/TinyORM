@@ -360,12 +360,12 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
     auto torrents = createQuery(connection);
 
     static const QString
-    query = u"select id, user_id, name, size, progress, added_on, note "
-             "from torrents "
-             "where id between 2 and 4 "
-             "order by id"_s;
+    QueryString = u"select id, user_id, name, size, progress, added_on, note "
+                   "from torrents "
+                   "where id between 2 and 4 "
+                   "order by id"_s;
 
-    const auto ok = torrents.exec(query);
+    const auto ok = torrents.exec(QueryString);
     QVERIFY(ok);
 
     QVERIFY(torrents.isActive());
@@ -377,7 +377,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(torrents.numRowsAffected(), 3);
     QCOMPARE(torrents.numericalPrecisionPolicy(), LowPrecisionDouble);
-    QCOMPARE(torrents.executedQuery(), query);
+    QCOMPARE(torrents.executedQuery(), QueryString);
     QCOMPARE(torrents.lastInsertId(), QVariant());
 
     // Populate values to compare
@@ -406,19 +406,19 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
 
     // Column definitions related
     static const auto Torrents = u"torrents"_s;
-    static const QStringList fieldNames({
+    static const QStringList FieldNames({
         ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });
-    static const auto fieldsCount = fieldNames.size();
+    static const auto FieldsCount = FieldNames.size();
 
     QList<bool> expectedAutoIncrements {true, false, false, false, false, false, false};
     QList<bool> actualAutoIncrements;
-    actualAutoIncrements.reserve(fieldsCount);
+    actualAutoIncrements.reserve(FieldsCount);
 
     // NULL in the table definition (not the QVariant value itself)
     QList<bool> expectedNullColumns {false, true, false, false, false, false, true};
     QList<bool> actualNullColumns;
-    actualNullColumns.reserve(fieldsCount);
+    actualNullColumns.reserve(FieldsCount);
 
     QList<QMetaType> expectedMetaTypes { // clazy:exclude=missing-typeinfo
         QMetaType::fromType<quint64>(), QMetaType::fromType<quint64>(),
@@ -427,22 +427,22 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
         QMetaType::fromType<QString>(),
     };
     QList<QMetaType> actualMetaTypes; // clazy:exclude=missing-typeinfo
-    actualMetaTypes.reserve(fieldsCount);
+    actualMetaTypes.reserve(FieldsCount);
 
     static const auto BIGINT = u"BIGINT"_s;
     QList<QString> expectedSqlTypeNames {
         BIGINT, BIGINT, "VARCHAR", BIGINT, "SMALLINT", "DATETIME", "VARCHAR",
     };
     QList<QString> actualSqlTypeNames;
-    actualSqlTypeNames.reserve(fieldsCount);
+    actualSqlTypeNames.reserve(FieldsCount);
 
     QList<qint64> expectedLengths {20, 20, 1020, 20, 5, 19, 1020};
     QList<qint64> actualLengths;
-    actualLengths.reserve(fieldsCount);
+    actualLengths.reserve(FieldsCount);
 
     QList<qint64> expectedPrecisions {0, 0, 0, 0, 0, 0, 0};
     QList<qint64> actualPrecisions;
-    actualPrecisions.reserve(fieldsCount);
+    actualPrecisions.reserve(FieldsCount);
 
     QList<QVariant> expectedDefaultValues = std::invoke([&connection]() -> QList<QVariant>
     {
@@ -473,7 +473,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
         Q_UNREACHABLE();
     });
     QList<QVariant> actualDefaultValues;
-    actualDefaultValues.reserve(fieldsCount);
+    actualDefaultValues.reserve(FieldsCount);
 
     while (torrents.next()) {
         QVERIFY(torrents.isValid());
@@ -492,7 +492,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithDefaultValues() const
         QCOMPARE(std::addressof(torrents.recordCached(false)), std::addressof(record));
 
         // Column definitions related
-        QCOMPARE(record.fieldNames(), fieldNames);
+        QCOMPARE(record.fieldNames(), FieldNames);
         for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
             const auto field = record.field(i);
             QVERIFY(field.isValid());
@@ -554,12 +554,12 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
     auto torrents = createQuery(connection);
 
     static const QString
-    query = u"select id, user_id, name, size, progress, added_on, note "
-             "from torrents "
-             "where id between 2 and 4 "
-             "order by id"_s;
+    QueryString = u"select id, user_id, name, size, progress, added_on, note "
+                   "from torrents "
+                   "where id between 2 and 4 "
+                   "order by id"_s;
 
-    const auto ok = torrents.exec(query);
+    const auto ok = torrents.exec(QueryString);
     QVERIFY(ok);
 
     QVERIFY(torrents.isActive());
@@ -571,7 +571,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(torrents.numRowsAffected(), 3);
     QCOMPARE(torrents.numericalPrecisionPolicy(), LowPrecisionDouble);
-    QCOMPARE(torrents.executedQuery(), query);
+    QCOMPARE(torrents.executedQuery(), QueryString);
     QCOMPARE(torrents.lastInsertId(), QVariant());
 
     // Populate values to compare
@@ -606,19 +606,19 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
 
     // Column definitions related
     static const auto Torrents = u"torrents"_s;
-    static const QStringList fieldNames({
+    static const QStringList FieldNames({
         ID, "user_id", NAME, SIZE_, Progress, AddedOn, NOTE,
     });
-    static const auto fieldsCount = fieldNames.size();
+    static const auto FieldsCount = FieldNames.size();
 
     QList<bool> expectedAutoIncrements {true, false, false, false, false, false, false};
     QList<bool> actualAutoIncrements;
-    actualAutoIncrements.reserve(fieldsCount);
+    actualAutoIncrements.reserve(FieldsCount);
 
     // NULL in the table definition (not the QVariant value itself)
     QList<bool> expectedNullColumns {false, true, false, false, false, false, true};
     QList<bool> actualNullColumns;
-    actualNullColumns.reserve(fieldsCount);
+    actualNullColumns.reserve(FieldsCount);
 
     QList<QMetaType> expectedMetaTypes { // clazy:exclude=missing-typeinfo
         QMetaType::fromType<quint64>(), QMetaType::fromType<quint64>(),
@@ -627,22 +627,22 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
         QMetaType::fromType<QString>(),
     };
     QList<QMetaType> actualMetaTypes; // clazy:exclude=missing-typeinfo
-    actualMetaTypes.reserve(fieldsCount);
+    actualMetaTypes.reserve(FieldsCount);
 
     static const auto BIGINT = u"BIGINT"_s;
     QList<QString> expectedSqlTypeNames {
         BIGINT, BIGINT, "VARCHAR", BIGINT, "SMALLINT", "DATETIME", "VARCHAR",
     };
     QList<QString> actualSqlTypeNames;
-    actualSqlTypeNames.reserve(fieldsCount);
+    actualSqlTypeNames.reserve(FieldsCount);
 
     QList<qint64> expectedLengths {20, 20, 1020, 20, 5, 19, 1020};
     QList<qint64> actualLengths;
-    actualLengths.reserve(fieldsCount);
+    actualLengths.reserve(FieldsCount);
 
     QList<qint64> expectedPrecisions {0, 0, 0, 0, 0, 0, 0};
     QList<qint64> actualPrecisions;
-    actualPrecisions.reserve(fieldsCount);
+    actualPrecisions.reserve(FieldsCount);
 
     QList<QVariant> expectedDefaultValues = std::invoke([&connection]() -> QList<QVariant>
     {
@@ -673,7 +673,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
         Q_UNREACHABLE();
     });
     QList<QVariant> actualDefaultValues;
-    actualDefaultValues.reserve(fieldsCount);
+    actualDefaultValues.reserve(FieldsCount);
 
     while (torrents.next()) {
         QVERIFY(torrents.isValid());
@@ -687,7 +687,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
         QCOMPARE(std::addressof(torrents.recordCached(false)), std::addressof(record));
 
         // Column definitions related
-        QCOMPARE(record.fieldNames(), fieldNames);
+        QCOMPARE(record.fieldNames(), FieldNames);
         for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
             const auto field = record.field(i);
             QVERIFY(field.isValid());
@@ -743,7 +743,7 @@ void tst_SqlQuery_Normal::select_recordCached_WithoutDefaultValues() const
            again as everything should stay the same, to correctly test it. */
 
         // Column definitions related
-        QCOMPARE(record.fieldNames(), fieldNames);
+        QCOMPARE(record.fieldNames(), FieldNames);
         for (SqlRecord::size_type i = 0; i < recordCount; ++i) {
             const auto field = record.field(i);
             QVERIFY(field.isValid());

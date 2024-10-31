@@ -149,7 +149,7 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
         /*! The count of self joins. */
         T_THREAD_LOCAL
-        constinit inline static int selfJoinCount = 0;
+        constinit inline static int SelfJoinCount = 0; // Don't use constexpr here
 
     private:
         /* Relation related operations */
@@ -211,7 +211,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     void BelongsTo<Model, Related>::addConstraints() const
     {
-        if (!this->constraints)
+        if (!this->HasConstraints)
             return;
 
         /* For belongs to relationships, which are essentially the inverse of has-one
@@ -392,8 +392,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     const QString &BelongsTo<Model, Related>::relationTypeName() const
     {
-        static const auto cached = u"BelongsTo"_s;
-        return cached;
+        static const auto Cached = u"BelongsTo"_s;
+        return Cached;
     }
 
     /* protected */

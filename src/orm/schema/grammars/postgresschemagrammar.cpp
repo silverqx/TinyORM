@@ -406,14 +406,14 @@ PostgresSchemaGrammar::getFluentCommands() const
 QString PostgresSchemaGrammar::addModifiers(QString &&sql,
                                             const ColumnDefinition &column) const
 {
-    constexpr static std::array modifierMethods {
+    constexpr static std::array ModifierMethods {
         &PostgresSchemaGrammar::modifyCollate,    &PostgresSchemaGrammar::modifyIncrement,
         &PostgresSchemaGrammar::modifyNullable,   &PostgresSchemaGrammar::modifyDefault,
         &PostgresSchemaGrammar::modifyVirtualAs,  &PostgresSchemaGrammar::modifyStoredAs,
         &PostgresSchemaGrammar::modifyGeneratedAs,
     };
 
-    for (const auto method : modifierMethods)
+    for (const auto method : ModifierMethods)
         /* Postgres is different here, it returns a vector as it needs to return
            2 modifiers from the modifyGeneratedAs(). */
         sql += ContainerUtils::join(std::invoke(method, this, column), EMPTY);

@@ -537,13 +537,13 @@ void tst_QueryBuilder::insert_select_diacritic() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // UTF-8 1 and 2 byte characters
-    static const auto value = u"ěščřžýáíéúůôäľĺŕéó"_s;
+    static const auto DiacriticValue = u"ěščřžýáíéúůôäľĺŕéó"_s;
 
     {
         auto builder = createQuery(connection);
 
         auto query = builder->from("settings")
-                      .insert({{"name", "t1"}, {"value", value}});
+                      .insert({{"name", "t1"}, {"value", DiacriticValue}});
 
         QVERIFY(query);
         QCOMPARE(query->numRowsAffected(), 1);
@@ -561,7 +561,7 @@ void tst_QueryBuilder::insert_select_diacritic() const
         QVERIFY(query.isActive());
         QVERIFY(query.isSelect());
         QVERIFY(query.isValid());
-        QCOMPARE(query.value("value").toString(), value);
+        QCOMPARE(query.value("value").toString(), DiacriticValue);
     }
 
     // Restore
@@ -579,13 +579,13 @@ void tst_QueryBuilder::insert_select_emoji() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // UTF-8 3 and 4 byte characters
-    static const auto value = u"🕺😁🤔😮😅👍😊❗🔥😭😞😔"_s;
+    static const auto EmojiValue = u"🕺😁🤔😮😅👍😊❗🔥😭😞😔"_s;
 
     {
         auto builder = createQuery(connection);
 
         auto query = builder->from("settings")
-                      .insert({{"name", "t1"}, {"value", value}});
+                      .insert({{"name", "t1"}, {"value", EmojiValue}});
 
         QVERIFY(query);
         QCOMPARE(query->numRowsAffected(), 1);
@@ -603,7 +603,7 @@ void tst_QueryBuilder::insert_select_emoji() const
         QVERIFY(query.isActive());
         QVERIFY(query.isSelect());
         QVERIFY(query.isValid());
-        QCOMPARE(query.value("value").toString(), value);
+        QCOMPARE(query.value("value").toString(), EmojiValue);
     }
 
     // Restore

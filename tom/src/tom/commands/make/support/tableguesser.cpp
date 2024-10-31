@@ -24,24 +24,24 @@ std::tuple<QString, bool> TableGuesser::guess(const QString &migration)
     {
         /* It's OK to have the same variable names for the local static until they are
            in different block scopes. */
-        static const QRegularExpression regex(CreatePatterns);
+        static const QRegularExpression RegEx(CreatePatterns);
 
-        const auto match = regex.match(migration);
+        const auto match = RegEx.match(migration);
 
         if (match.hasMatch()) {
-            Q_ASSERT(regex.captureCount() == 1);
+            Q_ASSERT(RegEx.captureCount() == 1);
 
             return {match.captured(1), true};
         }
     }
 
     {
-        static const QRegularExpression regex(ChangePatterns);
+        static const QRegularExpression RegEx(ChangePatterns);
 
-        const auto match = regex.match(migration);
+        const auto match = RegEx.match(migration);
 
         if (match.hasMatch()) {
-            Q_ASSERT(regex.captureCount() == 1);
+            Q_ASSERT(RegEx.captureCount() == 1);
 
             return {match.captured(1), false};
         }

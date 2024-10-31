@@ -188,7 +188,7 @@ DatabaseConnection::statement(const QString &queryString, QList<QVariant> bindin
             return query;
         }
 
-        // TODO perf, use __tiny_func__ but when I fix pref. problem with it, rewrite it w/o the QRegularExpression, look at and revert the 8e114524 and 03fc82ae commits, also use static local variable instead! ALSO create macro eg. T_FUNCTION_NAME - static const auto functionName = __tiny_func__; silverqx
+        // TODO perf, use __tiny_func__ but when I fix pref. problem with it, rewrite it w/o the QRegularExpression, look at and revert the 8e114524 and 03fc82ae commits, also use static local variable instead! ALSO create macro eg. T_FUNCTION_NAME - static const auto FunctionName = __tiny_func__; silverqx
 #ifdef TINYORM_USING_QTSQLDRIVERS
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
