@@ -1371,7 +1371,7 @@ ALTER TABLE `types` ADD `char_col` CHAR(20) NULL DEFAULT NULL AFTER `medium_bina
 
 CMake Guidelines:
 -----------------
-tags: code style
+tags: code style, cmake
 ---
 
 All are snake-case unless otherwise specified.
@@ -3620,6 +3620,30 @@ They can also be checked using, especially checking the IsDebug build:
 
 TinyORM C++ Coding Style:
 -------------------------
+tags: code style, c++
+---
+
+ - at first follow/see: https://google.github.io/styleguide/cppguide.html
+   - Google C++ code style is very carefully and good written, I like most of it, but there is also
+     many things I don't like and I don't follow
+
+ - variable names
+   - const and non-const local static variables or static data members which DON'T have x_ prefix
+     - start with an uppercase
+     - if contains the %1 or any characters intended for replacement (eg. for the QString::args())
+       end it with the Tmpl suffix
+     - reason for uppercase is that it indicates:
+       - for const the variable is constant and not a normal local variable
+       - for non-const that it isn't a normal local variable
+       - so I can immediately distinguish that it's not a normal local variable
+     - don't use the k prefix for constants (global or local), I don't like it 😎 because
+       it makes the code more messy and unreadable
+       - the k prefix is only used for enum-s
+   - at the end of the ~750 modifications refactor I found out that this naming convention can
+     cause name collisions between variable and type names 🙄, but I don't discard it, as
+     for types names that can collide can be appended the Type word, I already using it this way,
+     I found out this at this line:
+inline constexpr DontFillDefaultAttributes dontFillDefaultAttributes {};
 
  - Macro guard must copy what will be in the #include for the current header file,
    not how the namespace is named and isn't based on the folder structure.
