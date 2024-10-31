@@ -41,7 +41,7 @@ tom tab-completion:
 tags: tom, complete
 --
 
- - I'm using CMake RelWithDebInfo build for this 
+ - I'm using CMake RelWithDebInfo build for this
    - BUILD_TESTS to also deploy tom_testdata
    - MYSQL_PING
    - TOM_EXAMPLE
