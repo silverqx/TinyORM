@@ -3282,6 +3282,14 @@ struct T1
     mutable QString s2;
 };
 
+ - templates legend
+   - primary class/variable template
+     - is the template instantiation that isn't explicit or partial specialization
+     - it's just the main template defined
+   - alias template
+     - template<template-parameter-list> using identifier = type-id;
+     - see https://en.cppreference.com/w/cpp/language/type_alias
+
  - Class templates
    - this section isn't finished❗
    - !! verify explicit special. also do template instan.
@@ -3307,6 +3315,19 @@ struct T1
        you can create a partial specialization for pointer types
      - of course a new data members or methods can be added on partially specialized template
        classes
+
+ - function templates
+   - ❗type template parameter cannot be deduced from the type of a function default argument
+     - see https://en.cppreference.com/w/cpp/language/template_argument_deduction#Deduction_from_a_type
+       - it's a few pages down
+     - example
+template<typename T> // error: calling f() cannot deduce T
+void f(T = 5, T = 7);
+
+   - ❗in a function template, there are no restrictions on the parameters that follow a default, and
+     a parameter pack may be followed by more type parameters only if they have defaults or
+     can be deduced from the function arguments
+     - see https://en.cppreference.com/w/cpp/language/template_parameters#Default_template_arguments
 
  - constinit
    - ❗use constinit only when it's really necessary, prefer using the constexpr instead
@@ -3346,6 +3367,44 @@ inline static constexpr const QString &DELETED_AT = Constants::DELETED_AT;
    - constinit can also be used in a non-initializing declaration to tell the compiler that
      a thread_local variable is already initialized, eg:
 extern thread_local constinit int x;
+
+ - perfect forwarding, template vs function parameter types
+   - for const and non-const lvalue references the types will be the same for both
+   - ❗BUT if passed the rvalue then template parameter will NOT have the rvalue reference,
+     only a function parameter will have it; template parameter will be without any reference and
+     will be non-const!
+   - see: std::forward<> docs point 1); there it's written the same
+     https://en.cppreference.com/w/cpp/utility/forward
+   - example:
+template<typename T>
+void f1(T &&x)
+{
+    checkConstRef<T>();
+    checkConstRef<decltype (x)>();
+}
+QString s1("x");
+const QString s2("x");
+QString s3("x");
+f2(s1);             // x and T - non-const lvalue
+f3(s2);             // x and T - const lvalue
+f1(std::move(s3));  // x - non-const rvalue; ❗T - non-const without value category (all false)
+   - ❗❗also, this isn't true if template parameter isn't forwarding reference, in this case
+     it will be without const and without the value category, just type
+   - and also reference collapsing is important, see:
+     https://www.ibm.com/docs/en/xl-c-and-cpp-aix/16.1?topic=operators-reference-collapsing-c11
+   - ❗❗❗which means if using the forwarding reference and want to work with the template
+     argument the same way as with the normal template parameter (NON-forwarding) then
+     use the std::remove_cvref_t<>
+     - this is the reason why in the std library code is on many places std::remove_cvref_t<D>
+       or std::decay<>
+     - also that's why the std::move() is declared like this:
+std::remove_reference<T>::type&& move( T&& t )
+
+ - range-based for loop and auto &&
+   - it never contains the rvalue it can only contain const or non-const lvalue reference
+   - the reason for this is how the value is assigned/created,
+     - it's assigned using normal assign operator like:
+auto&& /* range */ = range-initializer ﻿;
 
 
 c++ library confusions:
