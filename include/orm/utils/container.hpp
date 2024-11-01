@@ -19,13 +19,25 @@ namespace Orm::Utils
         Q_DISABLE_COPY_MOVE(Container)
 
     public:
+        /*! The behavior of joining the container if an element is empty. */
+        enum struct JoinBehavior : quint8
+        {
+            /*! Keep empty elements. */
+            cKeepEmptyParts,
+            /*! Skip empty elements (don't include them in the result). */
+            cSkipEmptyParts,
+        };
+        /*! Expose the JoinBehavior enum. */
+        using enum JoinBehavior;
+
         /*! Deleted default constructor, this is a pure library class. */
         Container() = delete;
         /*! Deleted destructor. */
         ~Container() = delete;
 
         /*! Convert a string container into a (comma) delimited string. */
-        template<JoinContainer T, DelimiterConcept D = const QString &>
+        template<JoinBehavior J = cKeepEmptyParts, JoinContainer T,
+                 DelimiterConcept D = const QString &> // Must be const QString & as delimiter is forwarding reference, see NOTES.txt[c++ confusions-perfect forwarding]
         static QString
         join(const T &container, D &&delimiter = Constants::COMMA);
 
@@ -43,7 +55,7 @@ namespace Orm::Utils
 
     /* public */
 
-    template<JoinContainer T, DelimiterConcept D>
+    template<Container::JoinBehavior J, JoinContainer T, DelimiterConcept D>
     QString Container::join(const T &container, D &&delimiter)
     {
         // Nothing to join
@@ -68,11 +80,26 @@ namespace Orm::Utils
 
         // Don't prepend a delimiter before the first item
         if (it != end) {
-            joined.append(*it);
+            if constexpr (J == cSkipEmptyParts) {
+                if (!it->isEmpty())
+                    joined.append(*it);
+            }
+            else
+                joined.append(*it);
+
             ++it;
         }
 
         while (it != end) {
+            /* Made it constexpr for performance reasons (nano-optimization). It makes
+               20ms per 1'000'000 loop, but it still makes sense because this method is
+               invoked for every one parsed query! */
+            if constexpr (J == cSkipEmptyParts)
+                if (it->isEmpty()) {
+                    ++it;
+                    continue;
+                }
+
             // These append-s() are better for performance
             // No need to use the if statement if a delimiter is empty or null
             joined.append(std::forward<D>(delimiter))
