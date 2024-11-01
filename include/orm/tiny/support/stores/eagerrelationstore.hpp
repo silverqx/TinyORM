@@ -89,8 +89,7 @@ namespace Orm::Tiny::Support::Stores
     void EagerRelationStore<Derived, CollectionModel, AllRelations...>::visited(
             const Method method) const
     {
-        using Related = typename std::invoke_result_t<Method, Derived>
-                                    ::element_type::RelatedType;
+        using Related = std::invoke_result_t<Method, Derived>::element_type::RelatedType;
 
         /*! Helping model for eager loads, because Relation::m_parent has to be
             reference (Relation::m_parent == dummyModel), this dummy model prevents

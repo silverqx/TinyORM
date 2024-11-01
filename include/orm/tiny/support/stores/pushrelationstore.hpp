@@ -97,8 +97,7 @@ namespace Orm::Tiny::Support::Stores
     void
     PushRelationStore<Derived, AllRelations...>::visited(const Method /*unused*/) const
     {
-        using Related = typename std::invoke_result_t<Method, Derived>
-                                    ::element_type::RelatedType;
+        using Related = std::invoke_result_t<Method, Derived>::element_type::RelatedType;
 
         this->basemodel().template pushVisited<Related>();
     }

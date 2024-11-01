@@ -88,8 +88,8 @@ namespace Support::Stores
     void SerializeRelationStore<C, Derived, AllRelations...>::visited(
             const Method /*unused*/) const
     {
-        using Relation = typename std::invoke_result_t<Method, Derived>::element_type;
-        using Related  = typename Relation::RelatedType;
+        using Relation = std::invoke_result_t<Method, Derived>::element_type;
+        using Related  = Relation::RelatedType;
 
         /* Here is the last and only one chance where we can obtain the PivotType
            for the belongs-to-many relation, so we need to pass it down, so that

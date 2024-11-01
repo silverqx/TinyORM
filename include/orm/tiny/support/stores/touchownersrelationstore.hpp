@@ -67,8 +67,7 @@ namespace Orm::Tiny::Support::Stores
     {
         auto relationInstance = std::invoke(method, this->model());
 
-        using Related = typename std::invoke_result_t<Method, Derived>
-                                    ::element_type::RelatedType;
+        using Related = std::invoke_result_t<Method, Derived>::element_type::RelatedType;
 
         this->basemodel().template touchOwnersVisited<Related>(relationInstance,
                                                                *m_relation);

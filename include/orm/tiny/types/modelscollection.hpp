@@ -91,13 +91,13 @@ namespace Types
         /*! The base class type (used as the storage container). */
         using StorageType     = QList<Model>;
 
-        using value_type      = typename StorageType::value_type;
-        using pointer         = typename StorageType::pointer;
-        using const_pointer   = typename StorageType::const_pointer;
+        using value_type      = StorageType::value_type;
+        using pointer         = StorageType::pointer;
+        using const_pointer   = StorageType::const_pointer;
         using reference       = value_type &;
         using const_reference = const value_type &;
-        using size_type       = typename StorageType::size_type;
-        using difference_type = typename StorageType::difference_type;
+        using size_type       = StorageType::size_type;
+        using difference_type = StorageType::difference_type;
 
         /*! Model raw type, without the pointer. */
         using ModelRawType    = std::remove_pointer_t<value_type>;
@@ -108,18 +108,18 @@ namespace Types
         using ConstModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
                                                       const ModelRawType *const,
                                                       const ModelRawType &>;
-        using parameter_type  = typename StorageType::parameter_type;
+        using parameter_type  = StorageType::parameter_type;
 
         /* Iterators related */
-        using iterator               = typename StorageType::iterator;
-        using const_iterator         = typename StorageType::const_iterator;
-        using reverse_iterator       = typename StorageType::reverse_iterator;
-        using const_reverse_iterator = typename StorageType::const_reverse_iterator;
-        using Iterator               = typename StorageType::Iterator;
-        using ConstIterator          = typename StorageType::ConstIterator;
+        using iterator               = StorageType::iterator;
+        using const_iterator         = StorageType::const_iterator;
+        using reverse_iterator       = StorageType::reverse_iterator;
+        using const_reverse_iterator = StorageType::const_reverse_iterator;
+        using Iterator               = StorageType::Iterator;
+        using ConstIterator          = StorageType::ConstIterator;
 
         /*! The "type" of the primary key (ID). */
-        using KeyType = typename std::remove_pointer_t<value_type>::KeyType;
+        using KeyType = std::remove_pointer_t<value_type>::KeyType;
 
         /* Constructors */
         /* From QList<Model> */

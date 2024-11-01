@@ -1564,7 +1564,7 @@ namespace Orm::Tiny::Relations
             const QString &relation) const
     {
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         for (ModelLoopType model : models)
             Relation<Model,Related>::toPointer(model)
@@ -1583,7 +1583,7 @@ namespace Orm::Tiny::Relations
         auto dictionary = buildDictionary(std::move(results));
 
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         /* Once we have the dictionary of child objects, we can easily match the
            children back to their parent using the dictionary and the keys on the

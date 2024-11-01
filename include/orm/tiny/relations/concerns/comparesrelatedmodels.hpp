@@ -35,9 +35,9 @@ namespace Relations::Concerns
 
     public:
         /*! Alias for the parent model's key type (for shorter name). */
-        using ParentKeyType = typename BaseModel<Model>::KeyType;
+        using ParentKeyType  = BaseModel<Model>::KeyType;
         /*! Alias for the related model's key type (for shorter name). */
-        using RelatedKeyType = typename BaseModel<Related>::KeyType;
+        using RelatedKeyType = BaseModel<Related>::KeyType;
 
         /*! Pure virtual destructor. */
         inline virtual ~ComparesRelatedModels() = 0;

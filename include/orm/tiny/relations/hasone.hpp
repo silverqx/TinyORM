@@ -213,7 +213,7 @@ namespace Orm::Tiny::Relations
             const QString &relation) const
     {
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         for (ModelLoopType model : models)
             Relation<Model,Related>::toPointer(model)

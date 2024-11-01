@@ -200,8 +200,8 @@ namespace Support::Stores
         case RelationStoreType::RELATION_TO_MAP:
         case RelationStoreType::RELATION_TO_VECTOR:
         {
-            using Related = typename std::invoke_result_t<Method, Derived>
-                                        ::element_type::RelatedType;
+            using Related = std::invoke_result_t<Method, Derived>
+                               ::element_type::RelatedType;
 
             switch (storeType) {
             case RelationStoreType::LAZY_RESULTS:

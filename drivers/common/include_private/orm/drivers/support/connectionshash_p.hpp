@@ -21,18 +21,18 @@ namespace Orm::Drivers::Support
 
     public:
         /* Container related */
-        using ContainerType   = typename std::unordered_map<QString, SqlDatabase>;
-        using node_type       = typename ContainerType::node_type;
-        using key_type        = typename ContainerType::key_type;
-        using mapped_type     = typename ContainerType::mapped_type;
-        using value_type      = typename ContainerType::value_type;
+        using ContainerType   = std::unordered_map<QString, SqlDatabase>;
+        using node_type       = ContainerType::node_type;
+        using key_type        = ContainerType::key_type;
+        using mapped_type     = ContainerType::mapped_type;
+        using value_type      = ContainerType::value_type;
         using reference       = value_type &;
         using const_reference = const value_type &;
         /* Iterators related */
-        using iterator        = typename ContainerType::iterator;
-        using const_iterator  = typename ContainerType::const_iterator;
-        using difference_type = typename ContainerType::difference_type;
-        using size_type       = typename ContainerType::size_type;
+        using iterator        = ContainerType::iterator;
+        using const_iterator  = ContainerType::const_iterator;
+        using difference_type = ContainerType::difference_type;
+        using size_type       = ContainerType::size_type;
 
         /*! Default constructor. */
         ConnectionsHashPrivate() = default;

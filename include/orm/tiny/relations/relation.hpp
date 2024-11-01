@@ -384,8 +384,7 @@ namespace Relations
         keys.reserve(models.size());
 
         /*! Const Model type used in the for-ranged loops. */
-        using ConstModelLoopType = typename ModelsCollection<CollectionModel>::
-                                            ConstModelLoopType;
+        using ConstModelLoopType = ModelsCollection<CollectionModel>::ConstModelLoopType;
 
         for (ConstModelLoopType model : models)
             keys.append(key.isEmpty() ? toPointer(model)->getKey()

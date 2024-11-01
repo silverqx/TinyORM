@@ -58,7 +58,7 @@ namespace Orm::Tiny::Concerns
         /*! Alias for the attribute. */
         using Attribute = Orm::Tiny::Casts::Attribute;
         /*! Alias for the attributes vector size type. */
-        using AttributesSizeType = typename QList<AttributeItem>::size_type;
+        using AttributesSizeType = QList<AttributeItem>::size_type;
 
         /*! Equality comparison operator for the HasAttributes concern. */
         bool operator==(const HasAttributes &) const = default;

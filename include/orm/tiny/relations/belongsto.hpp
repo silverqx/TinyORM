@@ -411,8 +411,7 @@ namespace Orm::Tiny::Relations
         keys.reserve(models.size());
 
         /*! Const Model type used in the for-ranged loops. */
-        using ConstModelLoopType = typename ModelsCollection<CollectionModel>::
-                                            ConstModelLoopType;
+        using ConstModelLoopType = ModelsCollection<CollectionModel>::ConstModelLoopType;
 
         /* First we need to gather all of the keys from the parent models so we know what
            to query for via the eager loading query. We will add them to the vector then
@@ -493,7 +492,7 @@ namespace Orm::Tiny::Relations
             const QString &relation) const
     {
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         for (ModelLoopType model : models)
             Relation<Model,Related>::toPointer(model)
@@ -515,7 +514,7 @@ namespace Orm::Tiny::Relations
         const auto dictionary = buildDictionary(std::move(results));
 
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         /* Once we have the dictionary constructed, we can loop through all the parents
            and match back onto their children using these keys of the dictionary and

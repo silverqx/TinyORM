@@ -514,9 +514,8 @@ namespace Orm::Tiny
 
         /* HasRelationships */
         /*! Relation visitor lambda type (an alias for shorter declarations). */
-        using RelationVisitorAlias =
-                typename Concerns::HasRelationships<Derived, AllRelations...>
-                                 ::RelationVisitor;
+        using RelationVisitorAlias = Concerns::HasRelationships<Derived, AllRelations...>
+                                             ::RelationVisitor;
 
         /*! Get the u_relations map from the Derived model. */
         inline const QHash<QString, RelationVisitorAlias> &

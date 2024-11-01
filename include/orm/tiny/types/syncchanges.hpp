@@ -46,18 +46,18 @@ namespace Types
         /* Container related */
         using key_type               = QString;
         using mapped_type            = QList<QVariant>;
-        using value_type             = typename std::pair<const key_type, mapped_type>;
+        using value_type             = std::pair<const key_type, mapped_type>;
         using reference              = value_type &;
         using const_reference        = const value_type &;
-        using ContainerType          = typename std::map<key_type, mapped_type>;
+        using ContainerType          = std::map<key_type, mapped_type>;
         /* Iterators related */
-        using iterator               = typename ContainerType::iterator;
-        using const_iterator         = typename ContainerType::const_iterator;
-        using reverse_iterator       = typename ContainerType::reverse_iterator;
-        using const_reverse_iterator = typename ContainerType::const_reverse_iterator;
-        using difference_type        = typename ContainerType::difference_type;
-        using size_type              = typename ContainerType::size_type;
-        using mapped_size_type       = typename mapped_type::size_type;
+        using iterator               = ContainerType::iterator;
+        using const_iterator         = ContainerType::const_iterator;
+        using reverse_iterator       = ContainerType::reverse_iterator;
+        using const_reverse_iterator = ContainerType::const_reverse_iterator;
+        using difference_type        = ContainerType::difference_type;
+        using size_type              = ContainerType::size_type;
+        using mapped_size_type       = mapped_type::size_type;
 
         /*! Default constructor. */
         inline SyncChanges();

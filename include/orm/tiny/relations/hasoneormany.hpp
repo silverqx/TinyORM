@@ -378,7 +378,7 @@ namespace Orm::Tiny::Relations
         auto dictionary = buildDictionary<RelationType>(std::move(results));
 
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+        using ModelLoopType = ModelsCollection<CollectionModel>::ModelLoopType;
 
         /* Once we have the dictionary we can simply spin through the parent models to
            link them up with their children using the keyed dictionary to make the
