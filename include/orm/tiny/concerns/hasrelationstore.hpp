@@ -228,7 +228,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SameDerivedCollectionModel<Derived> CollectionModel>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
             const Tiny::TinyBuilder<Derived> &builder,
             ModelsCollection<CollectionModel> &models, const WithItem &relation) const
@@ -241,7 +241,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createPushStore(
             RelationsType<AllRelations...> &models) const
     {
@@ -253,7 +253,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createTouchOwnersStore(
             const QString &relation) const
     {
@@ -265,7 +265,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createLazyStore() const
     {
         m_relationStore.push(std::make_shared<LazyRelationStore<Related>>(
@@ -275,7 +275,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::
     createBelongsToManyRelatedTableStore() const
     {
@@ -287,7 +287,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createQueriesRelationshipsStore(
             QueriesRelationships<Derived> &origin, const QString &comparison,
             const qint64 count, const QString &condition,
@@ -303,7 +303,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
-    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createSerializeRelationStore(
             const QString &relation, const RelationsType<AllRelations...> &models,
             C &attributes) const
@@ -324,14 +324,14 @@ namespace Orm::Tiny::Concerns
     /* Getters for Relation stores */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
+    HasRelationStore<Derived, AllRelations...>::PushRelationStore &
     HasRelationStore<Derived, AllRelations...>::pushStore() const
     {
         return *std::static_pointer_cast<PushRelationStore>(m_relationStore.top());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const typename HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore &
+    const HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore &
     HasRelationStore<Derived, AllRelations...>::touchOwnersStore() const
     {
         return *std::static_pointer_cast<
@@ -340,7 +340,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    const typename HasRelationStore<Derived, AllRelations...>::
+    const HasRelationStore<Derived, AllRelations...>::
           template LazyRelationStore<Related> &
     HasRelationStore<Derived, AllRelations...>::lazyStore() const
     {
@@ -349,8 +349,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasRelationStore<Derived, AllRelations...>::
-             BelongsToManyRelatedTableStore &
+    HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
     {
         return *std::static_pointer_cast<
@@ -359,7 +358,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    const typename HasRelationStore<Derived, AllRelations...>::
+    const HasRelationStore<Derived, AllRelations...>::
           template QueriesRelationshipsStore<Related> &
     HasRelationStore<Derived, AllRelations...>::queriesRelationshipsStore() const
     {
@@ -369,7 +368,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
-    const typename HasRelationStore<Derived, AllRelations...>::
+    const HasRelationStore<Derived, AllRelations...>::
           template SerializeRelationStore<C> &
     HasRelationStore<Derived, AllRelations...>::serializeRelationStore() const
     {

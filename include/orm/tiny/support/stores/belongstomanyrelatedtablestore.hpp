@@ -157,7 +157,7 @@ namespace Support::Stores
     /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename BelongsToManyRelatedTableStore<Derived, AllRelations...>::CacheType &
+    BelongsToManyRelatedTableStore<Derived, AllRelations...>::CacheType &
     BelongsToManyRelatedTableStore<Derived, AllRelations...>::cache() const
     {
         /* I had also used mutex in the visitWithResult(), but I reverted it because

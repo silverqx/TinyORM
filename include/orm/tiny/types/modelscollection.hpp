@@ -886,7 +886,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::first(const std::function<bool(ModelRawType *)> &callback,
                                    ModelRawType *const defaultModel)
     {
@@ -904,7 +904,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::last(const std::function<bool(ModelRawType *)> &callback,
                                   ModelRawType *const defaultModel)
     {
@@ -1273,7 +1273,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::find(const KeyType id, ModelRawType *const defaultModel)
     {
         for (ModelLoopType model : *this)
@@ -1284,7 +1284,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::find(const ModelRawType &model,
                                   ModelRawType *const defaultModel)
     {
@@ -1990,7 +1990,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename V>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::firstWhere(const QString &column, const QString &comparison,
                                         V value)
     {
@@ -1999,7 +1999,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename V>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::firstWhereEq(const QString &column, V value)
     {
         return first(operatorForWhere(column, EQ, std::move(value)));
@@ -2156,7 +2156,7 @@ namespace Types
     /* protected */
 
     template<DerivedCollectionModel Model>
-    constexpr typename ModelsCollection<Model>::ModelRawType *
+    constexpr ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType *const model)
     {
         // I don't have enough courage to remove this
@@ -2166,7 +2166,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    constexpr const typename ModelsCollection<Model>::ModelRawType *
+    constexpr const ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType *const model)
     {
         // I don't have enough courage to remove this
@@ -2176,35 +2176,35 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType &model) noexcept
     {
         return &model;
     }
 
     template<DerivedCollectionModel Model>
-    const typename ModelsCollection<Model>::ModelRawType *
+    const ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType &model) noexcept
     {
         return &model;
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::KeyType
+    ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::castKey(const QVariant &key)
     {
         return key.template value<KeyType>();
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::KeyType
+    ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType *const model)
     {
         return castKey(getKey(model));
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::KeyType
+    ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType &model)
     {
         return castKey(getKey(model));
@@ -2290,14 +2290,14 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType
+    ModelsCollection<Model>::ModelRawType
     ModelsCollection<Model>::getModelCopy(const ModelRawType &model)
     {
         return model;
     }
 
     template<DerivedCollectionModel Model>
-    typename ModelsCollection<Model>::ModelRawType
+    ModelsCollection<Model>::ModelRawType
     ModelsCollection<Model>::getModelCopy(const ModelRawType *const model)
     {
         Q_CHECK_PTR(model);

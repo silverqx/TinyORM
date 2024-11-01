@@ -74,10 +74,10 @@ namespace TestUtils::Common
 
         /*! Get the value of the model's primary key casted to the Derived::KeyType. */
         template<typename M>
-        static typename M::KeyType getKeyCasted(M *model);
+        static M::KeyType getKeyCasted(M *model);
         /*! Get the value of the model's primary key casted to the Derived::KeyType. */
         template<typename M>
-        static typename M::KeyType getKeyCasted(const M &model);
+        static M::KeyType getKeyCasted(const M &model);
     };
 
     /* public */
@@ -144,14 +144,14 @@ namespace TestUtils::Common
     }
 
     template<typename M>
-    typename M::KeyType
+    M::KeyType
     Collection::getKeyCasted(M *const model)
     {
         return model->getKey().template value<typename M::KeyType>();
     }
 
     template<typename M>
-    typename M::KeyType
+    M::KeyType
     Collection::getKeyCasted(const M &model)
     {
         return model.getKey().template value<typename M::KeyType>();

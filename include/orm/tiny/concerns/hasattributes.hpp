@@ -1116,7 +1116,7 @@ namespace Orm::Tiny::Concerns
     /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations> // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
-    const typename HasAttributes<Derived, AllRelations...>::AttributeReference & // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
+    const HasAttributes<Derived, AllRelations...>::AttributeReference & // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
             const QVariant &value) const
     {
@@ -1126,7 +1126,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations> // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
-    const typename HasAttributes<Derived, AllRelations...>::AttributeReference & // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
+    const HasAttributes<Derived, AllRelations...>::AttributeReference & // NOLINT(misc-unconventional-assign-operator, cppcoreguidelines-c-copy-assignment-signature)
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
             const AttributeReference &attributeReference) const
     {
@@ -1174,7 +1174,7 @@ namespace Orm::Tiny::Concerns
     /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    typename HasAttributes<Derived, AllRelations...>::AttributeReference
+    HasAttributes<Derived, AllRelations...>::AttributeReference
     HasAttributes<Derived, AllRelations...>::operator[](const QString &attribute) &
     {
         return AttributeReference(basemodel(), attribute);

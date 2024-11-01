@@ -149,7 +149,7 @@ namespace Orm::SchemaNs
     {}
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::after(QString column)
     {
         m_columnDefinition.get().after = std::move(column);
@@ -158,7 +158,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::always()
     {
         m_columnDefinition.get().always = true;
@@ -167,7 +167,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::autoIncrement()
     {
         m_columnDefinition.get().autoIncrement = true;
@@ -176,7 +176,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::change()
     {
         m_columnDefinition.get().change = true;
@@ -185,7 +185,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::charset(QString charset)
     {
         m_columnDefinition.get().charset = std::move(charset);
@@ -194,7 +194,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::collation(QString collation)
     {
         m_columnDefinition.get().collation = std::move(collation);
@@ -203,7 +203,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::comment(QString comment)
     {
         m_columnDefinition.get().comment = std::move(comment);
@@ -212,7 +212,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::defaultValue(QVariant value)
     {
         m_columnDefinition.get().defaultValue = std::move(value);
@@ -221,7 +221,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::first()
     {
         m_columnDefinition.get().first = true;
@@ -230,7 +230,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::from(const int startingValue)
     {
         m_columnDefinition.get().from = startingValue;
@@ -239,7 +239,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::generatedAs(QString expression)
     {
         m_columnDefinition.get().generatedAs = std::move(expression);
@@ -248,7 +248,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::invisible()
     {
         m_columnDefinition.get().invisible = true;
@@ -257,7 +257,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
             ColumnDefinitionReference<R>::isGeometry()
     {
         m_columnDefinition.get().isGeometry = true;
@@ -266,7 +266,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::isUnsigned()
     {
         m_columnDefinition.get().isUnsigned = true;
@@ -275,7 +275,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::nullable(const bool value)
     {
         m_columnDefinition.get().nullable = value;
@@ -284,7 +284,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::projection(const quint32 value)
     {
         m_columnDefinition.get().srid = value;
@@ -293,7 +293,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::renameTo(QString columnName)
     {
         m_columnDefinition.get().renameTo = std::move(columnName);
@@ -302,7 +302,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::startingValue(const int startingValue)
     {
         m_columnDefinition.get().startingValue = startingValue;
@@ -311,7 +311,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::srid(const quint32 value)
     {
         m_columnDefinition.get().srid = value;
@@ -320,7 +320,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::storedAs(QString expression)
     {
         m_columnDefinition.get().storedAs = std::move(expression);
@@ -329,7 +329,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::Unsigned()
     {
         m_columnDefinition.get().isUnsigned = true;
@@ -338,7 +338,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::useCurrent()
     {
         m_columnDefinition.get().useCurrent = true;
@@ -347,7 +347,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::useCurrentOnUpdate()
     {
         m_columnDefinition.get().useCurrentOnUpdate = true;
@@ -356,7 +356,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::virtualAs(QString expression)
     {
         m_columnDefinition.get().virtualAs = std::move(expression);
@@ -365,7 +365,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::index(QString indexName)
     {
         if (indexName.isEmpty())
@@ -377,7 +377,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::primary()
     {
         m_columnDefinition.get().primary = true;
@@ -386,7 +386,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::fulltext(QString indexName)
     {
         if (indexName.isEmpty())
@@ -398,7 +398,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::spatialIndex(QString indexName)
     {
         if (indexName.isEmpty())
@@ -410,7 +410,7 @@ namespace Orm::SchemaNs
     }
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::unique(QString indexName)
     {
         if (indexName.isEmpty())
@@ -424,7 +424,7 @@ namespace Orm::SchemaNs
     /* private */
 
     template<ColumnReferenceReturn R>
-    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::ColumnReferenceType &
     ColumnDefinitionReference<R>::columnReference() noexcept
     {
         return static_cast<ColumnDefinitionReference<R>::ColumnReferenceType &>(*this);
