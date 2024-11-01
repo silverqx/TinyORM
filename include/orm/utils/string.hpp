@@ -21,24 +21,23 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Utils
 {
 
-    /*! The behavior of splitting the last word on a line. */
-    enum struct SplitWordsBehavior : quint8
-    {
-        /*! Split the word anywhere to fill the free space on a line. */
-        cSplitWords,
-        /*! Never split words, the word is placed at the beginning of the next line. */
-        cNeverSplitWords,
-    };
-
     /*! String related library class. */
     class TINYORM_EXPORT String
     {
         Q_DISABLE_COPY_MOVE(String)
 
+    public:
+        /*! The behavior of splitting the last word on a line. */
+        enum struct SplitWordsBehavior : quint8
+        {
+            /*! Split the word anywhere to fill the free space on a line. */
+            cSplitWords,
+            /*! Never split words, the word is placed at the beginning of the next line. */
+            cNeverSplitWords,
+        };
         /*! Expose the SplitWordsBehavior enum. */
         using enum SplitWordsBehavior;
 
-    public:
         /*! Deleted default constructor, this is a pure library class. */
         String() = delete;
         /*! Deleted destructor. */
@@ -132,11 +131,7 @@ namespace Orm::Utils
     }
 #endif
 
-} // namespace Utils
-
-using SplitWordsBehavior = Utils::SplitWordsBehavior;
-
-} // namespace Orm
+} // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE
 
