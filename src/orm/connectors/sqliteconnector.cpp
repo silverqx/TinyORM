@@ -102,6 +102,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config)
 
     // Default behavior is to check database existence
     bool checkDatabaseExists = true;
+
     if (const auto &configCheckDatabase = config[check_database_exists];
         configCheckDatabase.isValid() && !configCheckDatabase.isNull()
     )
