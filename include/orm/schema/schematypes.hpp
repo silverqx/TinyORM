@@ -96,7 +96,7 @@ namespace Orm::SchemaNs
 
     /*! Helper function to obtain function types as std::tuple. */
     template<IsMemFun M>
-    auto argumentTypes(M &&) -> typename FunctionSignature<std::decay_t<M>>::type;
+    auto argumentTypes(M &&) -> FunctionSignature<std::decay_t<M>>::type;
 
     /*! Helper function to obtain function parameter type at I position
         from std::tuple. */
