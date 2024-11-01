@@ -130,9 +130,10 @@ namespace Orm::Tiny::Relations
         QString m_foreignKey;
         /*! The local key of the parent model. */
         QString m_localKey;
-        /*! The count of self joins. */
-        T_THREAD_LOCAL
-        constinit inline static int SelfJoinCount = 0; // Don't use constexpr here
+        // Currently unused
+        // /*! The count of self joins. */
+        // T_THREAD_LOCAL
+        // constinit inline static int SelfJoinCount = 0; // Don't use constexpr here
 
     private:
         /* Relation related operations */
