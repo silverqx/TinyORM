@@ -27,7 +27,8 @@ QString Grammar::compileSelect(QueryBuilder &query) const
 
     /* To compile the query, we'll spin through each component of the query and
        see if that component exists. If it does we'll just call the compiler
-       function for the component which is responsible for making the SQL. */
+       function for the component which is responsible for making the SQL.
+       Also, don't trim here, there are no whitespaces at the beginning or end. */
     auto sql = concatenate(compileComponents(query));
 
     // Restore original columns value
@@ -616,22 +617,6 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
     /* Alias has to be after the delete keyword and aliased table definition after the
        from keyword. */
     return u"delete %1 from %2 %3 %4"_s.arg(alias, table, joins, wheres);
-}
-
-QString Grammar::concatenate(const QStringList &segments)
-{
-    QString result;
-    result.reserve(ContainerUtils::countStringSizes(segments, 1) + 8);
-
-    for (const auto &segment : segments) {
-        if (segment.isEmpty())
-            continue;
-
-        result += segment;
-        result += SPACE;
-    }
-
-    return result.trimmed();
 }
 
 QString Grammar::removeLeadingBoolean(QString &&statement)

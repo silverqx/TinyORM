@@ -212,7 +212,7 @@ namespace Orm::Query::Grammars
                                const QString &wheres) const;
 
         /*! Concatenate an array of segments, removing empties. */
-        static QString concatenate(const QStringList &segments);
+        inline static QString concatenate(const QStringList &segments);
         /*! Remove the leading boolean from a statement. */
         static QString removeLeadingBoolean(QString &&statement);
 
@@ -236,6 +236,12 @@ namespace Orm::Query::Grammars
             const QString &/*unused*/) const
     {
         return compileInsert(query, values);
+    }
+
+    QString Grammar::concatenate(const QStringList &segments)
+    {
+        using ContainerUtils::cSkipEmptyParts;
+        return ContainerUtils::join<cSkipEmptyParts>(segments, Constants::SPACE);
     }
 
 } // namespace Orm::Query::Grammars
