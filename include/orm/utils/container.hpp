@@ -41,6 +41,8 @@ namespace Orm::Utils
         static SizeType delimiterSize(const D &delimiter);
     };
 
+    /* public */
+
     template<JoinContainer T, DelimiterConcept D>
     QString Container::join(const T &container, const D &delimiter)
     {
