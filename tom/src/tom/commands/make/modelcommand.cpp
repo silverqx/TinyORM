@@ -281,7 +281,7 @@ int ModelCommand::run()
 namespace
 {
     /*! Studly all string lists in the given container (std::vector<QStringList>). */
-    const auto studlyContainer = [](auto &&container)
+    constexpr auto studlyContainer = [](auto &&container)
     {
         return ranges::views::move(container)
                 | ranges::views::transform([](auto &&classNamesList)

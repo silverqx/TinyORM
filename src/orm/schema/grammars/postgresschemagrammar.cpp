@@ -326,7 +326,7 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                 const PostgresSchemaGrammar &, const Blueprint &,
                 const CommandDefinition &)>;
 
-    const auto bind = [](auto &&compileMethod)
+    constexpr auto bind = [](auto &&compileMethod)
     {
         return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
                (const PostgresSchemaGrammar &grammar, const Blueprint &blueprint_,

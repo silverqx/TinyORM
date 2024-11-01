@@ -371,7 +371,7 @@ namespace Orm::Tiny::Relations
 
         mergedAttributes = rawOriginals;
 
-        const auto keyProj = [](const auto &attribute)
+        constexpr auto keyProj = [](const auto &attribute)
         {
             return attribute.key;
         };

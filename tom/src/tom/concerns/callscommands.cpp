@@ -80,7 +80,7 @@ QStringList CallsCommands::getCommonArguments(const QStringList &arguments)
 {
     // This way I'm able to reuse global constants
     /*! Create a long command-line option from the option name (--xyz). */
-    const auto o = [](const auto &optionName)
+    constexpr auto o = [](const auto &optionName)
     {
         return LongOption.arg(optionName);
     };

@@ -2058,7 +2058,7 @@ void tst_Model_Relations::push_EagerLoad() const
        I will not create the new eager model class. */
     QCOMPARE(torrent->getRelations().size(), static_cast<std::size_t>(2));
 
-    const auto findFile2 = [](const auto *file)
+    constexpr auto findFile2 = [](const auto *file)
     {
         return (*file)[ID].template value<quint64>() == 2
                 && (*file)["torrent_id"].template value<quint64>() == 2;
@@ -2143,7 +2143,7 @@ void tst_Model_Relations::push_LazyLoad() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    const auto findFile2 = [](const auto *file)
+    constexpr auto findFile2 = [](const auto *file)
     {
         return (*file)[ID].template value<quint64>() == 2
                 && (*file)["torrent_id"].template value<quint64>() == 2;

@@ -75,7 +75,7 @@ Query::zipForInsert(const QList<QString> &columns,
 namespace
 {
     /*! Determine whether the underlying query driver has the QuerySize feature. */
-    const auto hasFeatureQuerySize = [](const TSqlQuery &query) -> bool
+    constexpr auto hasFeatureQuerySize = [](const TSqlQuery &query) -> bool
     {
 #ifdef TINYORM_USING_QTSQLDRIVERS
         return query.driver()->hasFeature(TSqlDriver::QuerySize);

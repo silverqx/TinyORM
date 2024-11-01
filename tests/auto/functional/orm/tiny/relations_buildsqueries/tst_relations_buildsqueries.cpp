@@ -425,7 +425,7 @@ void tst_Relations_BuildsQueries::eachById_WithAlias_Relation() const
 namespace
 {
     /*! Verify whether the custom Tagged pivot attribute was correctly hydrated. */
-    const auto verifyTaggedPivot = [](Tag &tag)
+    constexpr auto verifyTaggedPivot = [](Tag &tag)
     {
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */

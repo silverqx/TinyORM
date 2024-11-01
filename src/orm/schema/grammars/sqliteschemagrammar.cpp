@@ -228,7 +228,7 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                 const SQLiteSchemaGrammar &, const Blueprint &,
                 const CommandDefinition &)>;
 
-    const auto bind = [](auto &&compileMethod)
+    constexpr auto bind = [](auto &&compileMethod)
     {
         return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
                (const SQLiteSchemaGrammar &grammar, const Blueprint &blueprint_,

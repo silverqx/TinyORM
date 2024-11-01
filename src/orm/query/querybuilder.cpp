@@ -158,7 +158,7 @@ QString Builder::toSql()
 namespace
 {
     /*! Flat bindings map for an insert statement. */
-    const auto flatValuesForInsert = [](const auto &values)
+    constexpr auto flatValuesForInsert = [](const auto &values)
     {
         // All 'values' are const lvalues so no need to for the rvalue 'values'
 
@@ -254,8 +254,8 @@ Builder::update(const QList<UpdateItem> &values)
 namespace
 {
     /*! Merge attributes and values for the updateOrInsert() method. */
-    const auto mergeValuesForInsert = [](const QList<WhereItem> &attributes,
-                                         const QList<UpdateItem> &values)
+    constexpr auto mergeValuesForInsert = [](const QList<WhereItem> &attributes,
+                                             const QList<UpdateItem> &values)
     {
         QVariantMap result;
 
@@ -287,7 +287,7 @@ Builder::updateOrInsert(const QList<WhereItem> &attributes,
 namespace
 {
     /*! Flat bindings map for an upsert statement (proxy method for better naming). */
-    const auto flatValuesForUpsert = [](auto &&values)
+    constexpr auto flatValuesForUpsert = [](auto &&values)
     {
         return flatValuesForInsert(std::forward<decltype (values)>(values));
     };

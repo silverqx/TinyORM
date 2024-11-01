@@ -89,7 +89,7 @@ SQLiteGrammar::getCompileMap() const
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [](auto &&compileMethod)
+    constexpr auto bind = [](auto &&compileMethod)
     {
         return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
                (const Grammar &grammar, const QueryBuilder &query)
@@ -138,7 +138,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [](auto &&compileMethod)
+    constexpr auto bind = [](auto &&compileMethod)
     {
         return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
                (const Grammar &grammar, const WhereConditionItem &query)

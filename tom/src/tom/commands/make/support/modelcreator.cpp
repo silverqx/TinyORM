@@ -584,7 +584,7 @@ QString ModelCreator::createRelationCalls(
         const QString &as, const QStringList &withPivot, const bool withTimestamps)
 {
     /*! Align a method call on the newline. */
-    const auto relationCallsAlign = [](const auto &relationCalls)
+    constexpr auto relationCallsAlign = [](const auto &relationCalls)
     {
         return relationCalls.isEmpty() ? EMPTY
                                        : u"%1%2%3"_s.arg(NEWLINE_C,
@@ -815,7 +815,7 @@ bool ModelCreator::anyModelOptionGiven(const CmdOptions &cmdOptions)
 QString ModelCreator::prepareInitializerListValues(const QStringList &list)
 {
     /*! Wrap values in quotes and add the given prefix. */
-    const auto wrapValues = [](const QStringList &values, const QString &prefix)
+    constexpr auto wrapValues = [](const QStringList &values, const QString &prefix)
     {
         return values
                 // Skip empty values (allows to create initializers like xyz {}).

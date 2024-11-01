@@ -15,7 +15,7 @@ namespace Orm::Types
 namespace
 {
     /*! Determine whether the underlying SQL driver for the given SqlQuery is SQLite. */
-    const auto isSQLiteDbmsType = [](const SqlQuery &query) -> bool
+    constexpr auto isSQLiteDbmsType = [](const SqlQuery &query) -> bool
     {
 #ifdef TINYORM_USING_QTSQLDRIVERS
         return query.driver()->dbmsType() == TSqlDriver::DbmsType::SQLite;
