@@ -50,12 +50,14 @@ namespace Orm::Utils
         if (container.empty())
             return {};
 
+        /*! Alias for the T size_type (can be anything, most std::size_t or qint64). */
+        using TSizeType = T::size_type;
+
         QString joined;
         // +4 serves as a reserve (for the reserve() 😂)
-        const auto delimiterSize_ = delimiterSize<typename T::size_type>(
-                                        std::forward<D>(delimiter));
+        const auto delimiterSize_ = delimiterSize<TSizeType>(std::forward<D>(delimiter));
         // Can't be removed as T can be Qt or std container type (different size_type)
-        if constexpr (std::is_same_v<QString::size_type, typename T::size_type>)
+        if constexpr (std::is_same_v<QString::size_type, TSizeType>)
             joined.reserve(countStringSizes(container, delimiterSize_ + 4));
         else
             joined.reserve(IntegralCast<QString::size_type>(
