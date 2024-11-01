@@ -43,9 +43,9 @@ namespace Orm::Utils
 
         /*! Count all string sizes in the given container and optionally add value to
             every string. */
-        template<QStringContainer T, typename SizeType = typename T::size_type>
+        template<QStringContainer T, typename SizeType = T::size_type>
         static SizeType
-        countStringSizes(const T &container, typename T::size_type addToElement = 0);
+        countStringSizes(const T &container, T::size_type addToElement = 0);
 
     private:
         /*! Get the delimiter size (returns 1 for the QChar). */
@@ -114,8 +114,7 @@ namespace Orm::Utils
 
     template<QStringContainer T, typename SizeType>
     SizeType
-    Container::countStringSizes(const T &container,
-                                const typename T::size_type addToElement)
+    Container::countStringSizes(const T &container, const T::size_type addToElement)
     {
         // Nothing to do
         if (container.empty())

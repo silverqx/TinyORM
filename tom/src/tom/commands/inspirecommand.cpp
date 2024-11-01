@@ -66,7 +66,7 @@ int InspireCommand::run()
     // Seed the generator
     std::default_random_engine generator(rd());
     // Define the range
-    std::uniform_int_distribution<typename decltype (InspiresCached)::size_type> // NOLINT(misc-const-correctness)
+    std::uniform_int_distribution<decltype (InspiresCached)::size_type> // NOLINT(misc-const-correctness)
     distribute(0, InspiresSize - 1); // -1 is ok because it's 0-based
 
     comment(QString::fromUtf8(InspiresCached.at(distribute(generator))));
