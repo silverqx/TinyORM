@@ -206,6 +206,7 @@ namespace Constants
     // Others
     inline const QString NotImplemented    = u"Not implemented :/."_s;
     inline const QString dummy_NONEXISTENT = u"dummy-NON_EXISTENT"_s;
+    inline const QString TrimCharacters    = u" \n\r\t\v\f"_s;
 
 } // namespace Constants
 } // namespace Orm

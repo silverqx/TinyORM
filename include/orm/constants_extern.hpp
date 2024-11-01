@@ -199,6 +199,7 @@ namespace Constants
     // Others
     TINYORM_EXPORT extern const QString NotImplemented;
     TINYORM_EXPORT extern const QString dummy_NONEXISTENT;
+    TINYORM_EXPORT extern const QString TrimCharacters;
 
 } // namespace Constants
 } // namespace Orm

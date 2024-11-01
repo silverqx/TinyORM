@@ -18,15 +18,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
-{
-
-namespace Constants
-{
-    inline const auto TrimCharacters = u" \n\r\t\v\f"_s;
-} // namespace Constants
-
-namespace Utils
+namespace Orm::Utils
 {
 
     /*! The behavior of splitting the last word on a line. */

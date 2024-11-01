@@ -181,6 +181,7 @@ namespace Orm::Constants
     // Others
     const QString NotImplemented    = u"Not implemented :/."_s;
     const QString dummy_NONEXISTENT = u"dummy-NON_EXISTENT"_s;
+    const QString TrimCharacters    = u" \n\r\t\v\f"_s;
 
 } // namespace Orm::Constants
 

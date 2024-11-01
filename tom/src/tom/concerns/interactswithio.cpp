@@ -583,7 +583,7 @@ InteractsWithIO::splitStringForErrorWall(const QStringView stringTrimmed)
     const auto maxLineWidth = static_cast<int>(getMaxLineWidth(stringSplit));
     lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
-    using Orm::SplitWordsBehavior::cNeverSplitWords;
+    using StringUtils::cNeverSplitWords;
 
     // Split lines by the given width
     for (const auto line : stringSplit)
