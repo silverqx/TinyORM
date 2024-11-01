@@ -3521,7 +3521,7 @@ struct ExpectedItem
     /*! Model ID. */
     quint64 id;
     /*! Looping index. */
-    typename ModelsCollection<AlbumImage *>::size_type index;
+    ModelsCollection<AlbumImage *>::size_type index;
 
     /*! Equality comparison operator for the ExpectedItem. */
     bool operator==(const ExpectedItem &) const = default; // clazy:exclude=function-args-by-value
