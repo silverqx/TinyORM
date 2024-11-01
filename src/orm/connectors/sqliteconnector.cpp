@@ -101,7 +101,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config)
     const auto path = config[database_].value<QString>();
 
     // Default behavior is to check database existence
-    bool checkDatabaseExists = true;
+    auto checkDatabaseExists = true;
 
     if (const auto &configCheckDatabase = config[check_database_exists];
         configCheckDatabase.isValid() && !configCheckDatabase.isNull()
