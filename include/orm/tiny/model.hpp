@@ -2238,7 +2238,6 @@ namespace Models
 // TODO release, open cmake generated Visual Studio 2019 solution and fix all errors/warnings silverqx
 // TODO release, clang's UndefinedBehaviorSanitizer at https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html silverqx
 // TODO repeat, merge changes from latest Eloquent silverqx
-// TODO decide/unify when to use class/typename keywords for templates silverqx
 // FEATURE EloquentCollection, solve how to implement, also look at Eloquent's Custom Collections silverqx
 // FUTURE try to compile every header file by itself and catch up missing dependencies and forward declaration, every header file should be compilable by itself silverqx
 // FUTURE include every stl dependency in header files silverqx
