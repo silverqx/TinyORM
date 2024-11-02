@@ -3406,6 +3406,29 @@ std::remove_reference<T>::type&& move( T&& t )
      - it's assigned using normal assign operator like:
 auto&& /* range */ = range-initializer ﻿;
 
+ - typename before type from c++20 not needed in the following cases:
+   - see https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html
+   - see https://en.cppreference.com/w/cpp/language/dependent_name
+     - search: no typename is required
+   - the rule of thumb here is that typename isn't required in context where only type-id can appear
+     (only type name can validly appear)
+   - the following are cases where I have removed the typename during refactoring:
+     - all cases below can contain the type-id, nothing else like expression, ...
+     - type alias (using xyz = a<T>::b)
+     - function/methods return types or trailing return types of a class templates or
+       within the definition of a member of a class template
+     - class member declaration (data member types or methods)
+       - it looks like all class template parameters that are used inside templated class
+       - or even any templated types used in non-templated class
+     - default value for template parameter
+     - parameter declaration of a requires-expression
+       - Type requirements inside the requires { requirement-seq } of course need the typename
+
+   - and it's always needed before dependent type eg.:
+serialized[ID].template value<typename Type::KeyType>()
+std::is_integral_v<typename Model::KeyType>
+std::unique_ptr<typename QueriesRelationships<Model>::template Relation<Related>>
+
 
 c++ library confusions:
 -----------------------
