@@ -2231,7 +2231,7 @@ void tst_Model_Relations::where_WithCallback() const
 
     // Expected file IDs
     QList<QVariant> fileIds {6, 8};
-    for (auto &file : files) {
+    for (const auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
         QCOMPARE(typeid (file), typeid (TorrentPreviewableFile));
@@ -2256,7 +2256,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
 
     // Expected file IDs
     QList<QVariant> fileIds {6, 8};
-    for (auto &file : files) {
+    for (const auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
         QCOMPARE(typeid (file), typeid (TorrentPreviewableFile));
