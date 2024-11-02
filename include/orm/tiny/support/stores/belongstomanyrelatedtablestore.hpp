@@ -130,7 +130,8 @@ namespace Support::Stores
         using Relation = std::invoke_result_t<Method, Derived>::element_type;
 
         if constexpr (std::is_base_of_v<Relations::IsPivotRelation, Relation>)
-            m_result = typename Relation::RelatedType().getTable(); // typename required for dependent name lookup
+                                 // Create an instance of RelatedType
+            m_result = typename Relation::RelatedType().getTable(); // typename required for dependent name lookup for the Relation::RelatedType
     }
 
     /* CacheKeyHasher */
