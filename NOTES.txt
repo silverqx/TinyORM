@@ -3404,7 +3404,7 @@ std::remove_reference<T>::type&& move( T&& t )
    - it never contains the rvalue it can only contain const or non-const lvalue reference
    - the reason for this is how the value is assigned/created,
      - it's assigned using normal assign operator like:
-auto&& /* range */ = range-initializer ﻿;
+auto&& /* range */ = range-initializer;
 
  - typename before type from c++20 not needed in the following cases:
    - see https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html
