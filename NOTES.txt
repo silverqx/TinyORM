@@ -3340,7 +3340,7 @@ inline static constinit bool u_snakeAttributes = true;
      - the variable is an object has constexpr constructor, but doesn't have constexpr destructor,
        eg. std::shared_ptr<> is an example of such an object
      - for extern thread_local variables with static storage duration when the initialization is
-       constexpr to inform the compiler that the extern variable is already initialized, eg:
+       constexpr to inform the compiler that the extern variable is already initialized, eg.:
 thread_local constexpr int MaxValue = 10;
 extern thread_local constinit int MaxValue;
 
@@ -3365,7 +3365,7 @@ inline static constexpr const QString &DELETED_AT = Constants::DELETED_AT;
      constant destruction and constinit doesn't have to (e.g. std::shared_ptr<T>)
    - constinit helps to avoid the Static Initialization Order Fiasco
    - constinit can also be used in a non-initializing declaration to tell the compiler that
-     a thread_local variable is already initialized, eg:
+     a thread_local variable is already initialized, eg.:
 extern thread_local constinit int x;
 
  - perfect forwarding, template vs function parameter types

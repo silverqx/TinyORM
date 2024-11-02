@@ -221,7 +221,7 @@ PwshCommand::getWordArgOptionValue() const
        string returns the correct wordArg value you would expect, like --only=versions,|
        or --only=versions,ma|,env which enables to complete the given partial/ values. */
 
-    /* Nothing to do, cursor is already after an option, eg: --only=env | or --only=env, |
+    /* Nothing to do, cursor is already after an option, eg.: --only=env | or --only=env, |
        or somewhere after (pwsh trims the --commandline= option value). */
     if (m_isNewArgPositionAtEnd)
         return {m_wordArg};
