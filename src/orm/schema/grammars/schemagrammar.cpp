@@ -137,7 +137,7 @@ SchemaGrammar::compileTableComment(const Blueprint &/*unused*/,
 
 /* Others */
 
-QString SchemaGrammar::wrap(const ColumnDefinition &column, bool prefixAlias) const
+QString SchemaGrammar::wrap(const ColumnDefinition &column, const bool prefixAlias) const
 {
     return BaseGrammar::wrap(column.name, prefixAlias);
 }
