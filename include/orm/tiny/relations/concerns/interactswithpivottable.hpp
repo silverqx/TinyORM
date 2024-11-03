@@ -716,13 +716,13 @@ namespace Concerns
            it has to be called because the BasePivot::fromRawAttributes() is called
            for the custom pivots and it internally calls the setRawAttributes(), so
            it doesn't call all the casting logic that is in the setAttribute() method.
-           Now why is not needed in the TinyORM because we don't have any custom logic
+           Now why this is not needed in TinyORM because we don't have any custom logic
            now in the setAttribute() like the isEnumCastable(), isClassCastable(), or
            isJsonCastable(), so at the end of the day it doesn't matter whether
            the castAttributes() will be called, it will matter when any of these
            will be implemented. 🤯
            Ok, currently it's needed only for the fromDateTime() in the setAttribute(),
-           SO it matters and the castAttributes() must be called.
+           SO it matters and the castAttributes() must be called❗
            I leave all the comment above because it nicely describes the whole problem. */
         for (auto &&attribute : castAttributes(attributes)) {
             // NOTE api different silverqx

@@ -130,7 +130,7 @@ Attribute::removeDuplicateKeys(QList<AttributeItem> &&attributes) // NOLINT(cppc
        so the previous attributes will be skipped and only the last attribute
        will be moved. */
     for (auto &attribute : attributes | ranges::views::reverse) {
-        // If duplicate key then skip
+        // Nothing to do, duplicate key
         if (added.contains(attribute.key))
             continue;
 
