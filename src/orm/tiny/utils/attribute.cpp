@@ -135,7 +135,7 @@ Attribute::removeDuplicateKeys(QList<AttributeItem> &&attributes) // NOLINT(cppc
             continue;
 
         added.emplace(attribute.key);
-        dedupedAttributesReversed << std::ref(attribute);
+        dedupedAttributesReversed.emplaceBack(/*std::ref*/attribute);
     }
 
     // Materialize the vector of references in reverse order
