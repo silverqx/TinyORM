@@ -39,7 +39,7 @@ void MySqlDriverPrivate::mysqlInit()
 }
 
 MySqlDriverPrivate::SetConnectionOptionsResult
-MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options) const
+MySqlDriverPrivate::mysqlSetConnectionOptions(const QStringView options) const
 {
     /* Enable the MySQL's stored procedures support.
        Needed to enable CLIEN_MULTI_STATEMENTS (which also enables CLIENT_MULTI_RESULTS)
@@ -51,7 +51,8 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options) const
     QString unixSocket;
 
     // Split a raw connection options string using the ; character
-    for (auto &&optionRaw : QStringView(options).split(SEMICOLON, Qt::SkipEmptyParts)) {
+    for (const auto optionRaw : options.split(SEMICOLON, Qt::SkipEmptyParts)) {
+
         // Parse the given MySQL connection option to name and value
         auto &&[option, value] = parseMySqlOption(optionRaw);
 

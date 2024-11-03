@@ -3191,7 +3191,7 @@ QString tst_MySql_SchemaBuilder::getMySqlConnectionName(QStringList &connections
     if (connections.isEmpty())
         return {};
 
-    for (auto &&connection : connections)
+    for (auto &connection : connections)
         if (connection == Databases::MYSQL)
             return std::move(connection);
 
@@ -3203,7 +3203,7 @@ QString tst_MySql_SchemaBuilder::getMariaConnectionName(QStringList &connections
     if (connections.isEmpty())
         return {};
 
-    for (auto &&connection : connections)
+    for (auto &connection : connections)
         if (connection == Databases::MARIADB)
             return std::move(connection);
 

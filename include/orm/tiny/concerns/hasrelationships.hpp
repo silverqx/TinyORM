@@ -1649,8 +1649,7 @@ namespace Concerns
 
         for (auto &&[key, value] : relations)
             if (!hiddenKeys.contains(key))
-                serializableRelations.emplace(std::forward<decltype (key)>(key),
-                                              std::forward<decltype (value)>(value)); // try_emplace() not needed
+                serializableRelations.emplace(std::move(key), std::move(value)); // try_emplace() not needed
 
         return serializableRelations;
     }

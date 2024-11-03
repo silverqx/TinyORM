@@ -148,7 +148,7 @@ namespace Orm::Tiny::Concerns
     {
         auto &fillable_ = basemodel().getUserFillable();
 
-        for (auto &&value : fillable)
+        for (auto &value : fillable)
             if (!fillable_.contains(value))
                 fillable_ << std::move(value);
 
@@ -199,7 +199,7 @@ namespace Orm::Tiny::Concerns
     {
         auto &guarded_ = basemodel().getUserGuarded();
 
-        for (auto &&value : guarded)
+        for (auto &value : guarded)
             if (!guarded_.contains(value))
                 guarded_ << std::move(value);
 

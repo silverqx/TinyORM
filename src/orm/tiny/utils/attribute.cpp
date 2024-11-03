@@ -77,7 +77,7 @@ Attribute::convertVectorToUpdateItem(QList<AttributeItem> &&attributes) // NOLIN
     QList<UpdateItem> result;
     result.reserve(attributes.size());
 
-    for (auto &&attribute : attributes)
+    for (auto &attribute : attributes)
         result.append({std::move(attribute.key),
                        std::move(attribute.value)});
 
@@ -142,7 +142,8 @@ Attribute::removeDuplicateKeys(QList<AttributeItem> &&attributes) // NOLINT(cppc
     QList<AttributeItem> dedupedAttributes;
     dedupedAttributes.reserve(dedupedAttributesReversed.size());
 
-    for (auto &&attribute : dedupedAttributesReversed | ranges::views::reverse)
+    // std::reference_wrapper<> is trivially copy constructible
+    for (const auto attribute : dedupedAttributesReversed | ranges::views::reverse)
         dedupedAttributes << std::move(attribute.get());
 
     return dedupedAttributes;

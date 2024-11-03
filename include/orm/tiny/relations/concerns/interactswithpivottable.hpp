@@ -342,7 +342,7 @@ namespace Concerns
     BelongsToMany<Model, Related, PivotType> &
     InteractsWithPivotTable<Model, Related, PivotType>::withPivot(QStringList &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
-        for (auto &&column : columns)
+        for (auto &column : columns)
             if (!hasPivotColumn(column))
                 relation().m_pivotColumns << std::move(column);
 
@@ -723,8 +723,10 @@ namespace Concerns
            will be implemented. 🤯
            Ok, currently it's needed only for the fromDateTime() in the setAttribute(),
            SO it matters and the castAttributes() must be called❗
-           I leave all the comment above because it nicely describes the whole problem. */
-        for (auto &&attribute : castAttributes(attributes)) {
+           I leave all the comment above because it nicely describes the whole problem.
+           Also, the auto && is needed here because the castAttributes() can return
+           const & or by value based on the requires clause. */
+        for (auto &&attribute : castAttributes(attributes)) { // auto && is needed here
             // NOTE api different silverqx
             validateAttachAttribute(attribute, id);
 

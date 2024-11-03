@@ -278,7 +278,7 @@ namespace Orm::Tiny::Relations
         dictionary.reserve(results.size());
 
         /*! Build model dictionary keyed by the parent's primary key. */
-        for (auto &&result : results)
+        for (auto &result : results)
             dictionary.emplace(result.getAttribute(m_ownerKey)
                                .template value<typename Model::KeyType>(),
                                std::move(result));

@@ -399,9 +399,9 @@ void ModelCommand::showUnusedPivotModelOptionsWarnings()
     };
 
     // Find unused options
-    for (auto &&option : parser().optionNames())
+    for (auto &option : parser().optionNames())
         if (unsupportedOptions.contains(option))
-            m_unusedPivotModelOptions.insert(option);
+            m_unusedPivotModelOptions.insert(std::move(option));
 
     // Nothing to show
     if (m_unusedPivotModelOptions.empty())
@@ -520,7 +520,7 @@ RelationsOrder ModelCommand::relationsOrder()
     RelationsOrder preparedOrders;
     std::size_t relationOrderIndex = 0;
 
-    for (auto &&option : optionNames())
+    for (const auto &option : optionNames())
         if (option == one_to_one)
             preparedOrders.oneToOne.push_back(relationOrderIndex++);
         else if (option == one_to_many)

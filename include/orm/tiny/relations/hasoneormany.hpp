@@ -359,7 +359,7 @@ namespace Orm::Tiny::Relations
         ModelsCollection<Related> instances;
         instances.reserve(records.size());
 
-        for (auto &&record : records)
+        for (auto &record : records)
             instances << create(std::move(record));
 
         return instances;
@@ -409,7 +409,7 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, RelationType> dictionary;
         dictionary.reserve(results.size());
 
-        for (auto &&result : results)
+        for (auto &result : results)
             if constexpr (
                 const auto foreignKey = result.getAttribute(getForeignKeyName())
                                         .template value<typename Model::KeyType>();

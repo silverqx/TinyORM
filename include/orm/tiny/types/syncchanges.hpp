@@ -188,7 +188,7 @@ namespace Types
 
         Q_ASSERT(m_data.size() == 3);
 
-        for (auto &&[key, values] : changes) {
+        for (auto &[key, values] : changes) {
 
             auto &currentValues = at(key);
 

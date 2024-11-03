@@ -150,7 +150,7 @@ namespace Concerns
         {
             qint64 index = 0;
 
-            for (auto &&model : models)
+            for (auto &model : models)
                 if (const auto result = std::invoke(callback, std::move(model), index++);
                     !result
                 )
@@ -172,7 +172,7 @@ namespace Concerns
         chunk(count, [&result, &callback]
                      (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            for (auto &&model : models)
+            for (auto &model : models)
                 result << std::invoke(callback, std::move(model));
 
             return true;
@@ -194,7 +194,7 @@ namespace Concerns
         chunk(count, [&result, &callback]
                      (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            for (auto &&model : models)
+            for (auto &model : models)
                 result << std::invoke(callback, std::move(model));
 
             return true;
@@ -269,7 +269,7 @@ namespace Concerns
         {
             qint64 index = 0;
 
-            for (auto &&model : models)
+            for (auto &model : models)
                 if (const auto result = std::invoke(callback, std::move(model),
                                                     ((page - 1) * count) + index++);
                     !result

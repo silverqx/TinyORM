@@ -29,7 +29,7 @@ namespace Orm::Drivers::MySql
         void mysqlInit();
         /*! Set extra MySQL connection options. */
         SetConnectionOptionsResult
-        mysqlSetConnectionOptions(const QString &options) const;
+        mysqlSetConnectionOptions(QStringView options) const;
         /*! Set the default character set for the mysql_real_connect() function. */
         void mysqlSetCharacterSet(const QString &host, bool before) const;
         /*! Establish a connection to the MySQL server running on the host. */

@@ -92,11 +92,11 @@ namespace Tom::Commands::Make::Support
         if (auto &&[defaults, result] = checkBtmNothingToPrepare(); result)
             return std::move(defaults);
 
-        auto optionsNames = modelCommand().optionNames();
+        const auto optionsNames = modelCommand().optionNames();
 
         m_preparedValues.reserve(static_cast<P::size_type>(optionsNames.size()) - 1);
 
-        for (auto &&option : optionsNames) {
+        for (const auto &option : optionsNames) {
             // Try to start a new btm relation during the given option values search
             if (startNewBtmRelation(option))
                 continue;

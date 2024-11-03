@@ -319,7 +319,8 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
     QString line;
     line.reserve(width + 8);
 
-    for (auto &&token : string.split(SPACE, Qt::KeepEmptyParts)) {
+    // QStringView is trivially copy constructible
+    for (const auto token : string.split(SPACE, Qt::KeepEmptyParts)) {
         /* If word splitting is not preferred, there must be free space for the entire
            token with a space character before; if not, start a new line.
            It also helps to avoid maintaining another bool or int state variable

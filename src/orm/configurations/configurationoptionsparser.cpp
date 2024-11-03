@@ -58,7 +58,7 @@ void ConfigurationOptionsParser::copyOptionsFromTopLevel(
     /* Copy the given connection options from the top-level configuration level
        to the 'options' hash. If the options hash already contains the same option, then
        it will be overwritten. */
-    for (auto &&option : optionNames) {
+    for (auto &option : optionNames) {
         /* Support top-level option names in lowercase, it's used only by the MySQL,
            eg. SSL_CA vs ssl_ca. Newly created option will have the original requested
            name. The lowercase name is used only during the check and obtain a value. */
@@ -124,13 +124,13 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
 }
 
 QList<QStringView>
-ConfigurationOptionsParser::splitConfigOptions(const QString &optionsString)
+ConfigurationOptionsParser::splitConfigOptions(const QStringView optionsString)
 {
     QList<QStringView> list;
     list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C) + 2);
 
     // Split by the ; and also ,
-    for (auto &&value : QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts))
+    for (const auto value : optionsString.split(SEMICOLON, Qt::SkipEmptyParts))
         list << value.split(COMMA_C, Qt::SkipEmptyParts);
 
     return list;

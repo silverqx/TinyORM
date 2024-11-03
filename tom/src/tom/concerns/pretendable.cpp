@@ -71,7 +71,7 @@ void Pretendable::optionalPretendInternal(
     using Qt::StringLiterals::operator""_s;
 
     // Log gathered queries to the console
-    for (auto &&query : queriesLog) {
+    for (auto &query : queriesLog) {
         if (title && !title->isEmpty())
             io().info(u"%1: "_s.arg(*title), newline);
 

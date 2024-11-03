@@ -861,7 +861,7 @@ namespace Orm::Tiny::Concerns
         QList<AttributeItem> result;
         result.reserve(attributes.size());
 
-        for (auto &&attribute : attributes) {
+        for (auto &attribute : attributes) {
             auto value = getAttribute(attribute);
             result.append({std::move(attribute), std::move(value)});
         }
@@ -2240,7 +2240,7 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (auto &&key : getDates()) {
+        for (const auto &key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDate, QDateTime, or QTime, in this case, skip the serialization
@@ -2267,7 +2267,7 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (auto &&key : getDates()) {
+        for (const auto &key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDate, QDateTime, or QTime, in this case, skip the serialization
@@ -2293,7 +2293,7 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (auto &&[key, castItem] : getCasts()) {
+        for (const auto &[key, castItem] : getCasts()) {
             // Nothing to do, this attribute is not set
             if (!attributes.contains(key))
                 continue;
@@ -2317,7 +2317,7 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (auto &&[key, castItem] : getCasts()) {
+        for (const auto &[key, castItem] : getCasts()) {
             // Nothing to do, this attribute is not set
             if (!attributesHash.contains(key))
                 continue;
@@ -2722,17 +2722,9 @@ namespace Orm::Tiny::Concerns
         QList<AttributeItem> serializableAttributes;
         serializableAttributes.reserve(attributes.size());
 
-#if defined(_MSC_VER) && !defined(__clang__)
-#  pragma warning(push)
-#  pragma warning(disable : 26800)
-#endif
         for (auto &&[key, value] : attributes)
             if (!hiddenKeys.contains(key))
-                serializableAttributes.emplaceBack(std::forward<decltype (key)>(key),
-                                                   std::forward<decltype (value)>(value));
-#if defined(_MSC_VER) && !defined(__clang__)
-#  pragma warning(pop)
-#endif
+                serializableAttributes.emplaceBack(std::move(key), std::move(value));
 
         return serializableAttributes;
     }

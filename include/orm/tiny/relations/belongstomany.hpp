@@ -513,7 +513,7 @@ namespace Orm::Tiny::Relations
         dictionary.reserve(results.size());
 
         // Build model dictionary keyed by the parent's primary key
-        for (auto &&result : results) {
+        for (auto &result : results) {
 
             const auto foreignPivotKey =
                     result.template getRelation<PivotType, Orm::One>(m_accessor)
@@ -1015,7 +1015,7 @@ namespace Orm::Tiny::Relations
         {
             qint64 index = 0;
 
-            for (auto &&model : models)
+            for (auto &model : models)
                 if (const auto result = std::invoke(callback, std::move(model), index++);
                     !result
                 )
@@ -1037,7 +1037,7 @@ namespace Orm::Tiny::Relations
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            for (auto &&model : models)
+            for (auto &model : models)
                 result << std::invoke(callback, std::move(model));
 
             return true;
@@ -1059,7 +1059,7 @@ namespace Orm::Tiny::Relations
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
-            for (auto &&model : models)
+            for (auto &model : models)
                 result << std::invoke(callback, std::move(model));
 
             return true;
@@ -1102,7 +1102,7 @@ namespace Orm::Tiny::Relations
         {
             qint64 index = 0;
 
-            for (auto &&model : models)
+            for (auto &model : models)
                 if (const auto result = std::invoke(callback, std::move(model),
                                                     ((page - 1) * count) + index++);
                     !result
@@ -1424,7 +1424,7 @@ namespace Orm::Tiny::Relations
         std::ranges::move(aliasedPivotColumns, std::back_inserter(mergedColumns));
 
         // Merge aliasedPivotColumns and columns
-        for (auto &&column : columns) {
+        for (auto &column : columns) {
             // Avoid duplicates, expressions are not checked
             if (std::holds_alternative<QString>(column) &&
                 mergedColumns.contains(column)

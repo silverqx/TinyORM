@@ -903,7 +903,7 @@ void Databases::updateConfigurationForTemp(
 {
     // Add or modify the configuration
     if (!optionsToUpdate.empty())
-        for (auto &&[option, value] : optionsToUpdate)
+        for (auto &[option, value] : optionsToUpdate)
             configuration[option] = std::move(value);
 
     // Remove options from the configuration

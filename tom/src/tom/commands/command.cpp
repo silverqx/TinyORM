@@ -191,7 +191,7 @@ std::vector<bool> Command::isSetAll(const QString &name) const
 {
     std::vector<bool> result;
 
-    for (auto &&option : parser().optionNames())
+    for (const auto &option : parser().optionNames())
         if (option == name)
             result.push_back(true);
 
@@ -215,7 +215,7 @@ QStringList Command::values(const QString &name,
     static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
 
     // Support passing more values delimited by comma
-    for (auto &&value : values) {
+    for (auto &value : values) {
         if (!value.contains(RegEx)) {
             valuesSplit << std::move(value);
             continue;

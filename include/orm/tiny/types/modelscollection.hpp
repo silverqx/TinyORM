@@ -597,7 +597,7 @@ namespace Types
     ModelsCollection<Model>::ModelsCollection(QList<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
-        for (auto &&model : models)
+        for (auto &model : models)
             this->push_back(std::move(model));
     }
 
@@ -617,7 +617,7 @@ namespace Types
     ModelsCollection<Model>::operator=(QList<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
-        for (auto &&model : models)
+        for (auto &model : models)
             this->push_back(std::move(model));
 
         return *this;
@@ -1017,7 +1017,7 @@ namespace Types
         ModelsCollection<ModelRawType> result;
         result.reserve(size);
 
-        for (auto &&model : *this)
+        for (const auto &model : *this)
             result.push_back(std::invoke(callback, getModelCopy(model)));
 
         return result;
@@ -1053,7 +1053,7 @@ namespace Types
         QList<T> result;
         result.reserve(size);
 
-        for (auto &&model : *this)
+        for (const auto &model : *this)
             result.emplaceBack(std::invoke(callback, getModelCopy(model)));
 
         return result;
@@ -2374,7 +2374,7 @@ namespace Types
         Tiny::Types::ModelsCollection<Model> result;
         result.reserve(attributesList.size());
 
-        for (auto &&attributes : attributesList)
+        for (auto &attributes : attributesList)
             result << Model::instance(std::move(attributes));
 
         return result;
@@ -2389,7 +2389,7 @@ namespace Types
         Tiny::Types::ModelsCollection<Model> result;
         result.reserve(attributesList.size());
 
-        for (auto &&attributes : attributesList)
+        for (auto &attributes : attributesList)
             result << Model::instance(std::move(attributes), connection);
 
         return result;

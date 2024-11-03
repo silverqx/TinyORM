@@ -135,7 +135,7 @@ void tst_Relations_BuildsQueries::chunk_Relation() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&fileProperty : models)
+        for (auto &fileProperty : models)
             ids.emplace_back(fileProperty[ID]->template value<quint64>());
 
         return true;
@@ -292,7 +292,7 @@ void tst_Relations_BuildsQueries::chunkById_Relation() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&fileProperty : models)
+        for (const auto &fileProperty : models)
             ids.emplace_back(fileProperty.getKeyCasted());
 
         return true;
@@ -337,7 +337,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias_Relation() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models)
+        for (const auto &tag : models)
             ids.emplace_back(tag.getKeyCasted());
 
         return true;
@@ -474,7 +474,7 @@ void tst_Relations_BuildsQueries::chunk() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             ids.emplace_back(tag[ID]->template value<quint64>());
 
             verifyTaggedPivot(tag);
@@ -519,7 +519,7 @@ void tst_Relations_BuildsQueries::chunk_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             auto id = tag[ID]->template value<quint64>();
             ids.emplace_back(id);
 
@@ -572,7 +572,7 @@ void tst_Relations_BuildsQueries::chunk_EnforceOrderBy() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             ids.emplace_back(tag[ID]->template value<quint64>());
 
             verifyTaggedPivot(tag);
@@ -988,7 +988,7 @@ void tst_Relations_BuildsQueries::chunkById() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
@@ -1033,7 +1033,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
@@ -1109,7 +1109,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
@@ -1157,7 +1157,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (auto &tag : models) {
             auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 

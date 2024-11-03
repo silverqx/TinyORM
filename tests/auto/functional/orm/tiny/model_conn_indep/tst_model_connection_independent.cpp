@@ -1499,7 +1499,7 @@ void tst_Model_Connection_Independent::chunk() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&fileProperty : models)
+        for (auto &fileProperty : models)
             ids.emplace_back(fileProperty[ID]->template value<quint64>());
 
         return true;
@@ -1538,7 +1538,7 @@ void tst_Model_Connection_Independent::chunk_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&fileProperty : models) {
+        for (auto &fileProperty : models) {
             auto id = fileProperty[ID]->template value<quint64>();
             ids.emplace_back(id);
 
@@ -1586,7 +1586,7 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&fileProperty : models)
+        for (auto &fileProperty : models)
             ids.emplace_back(fileProperty[ID]->template value<quint64>());
 
         return true;
@@ -1935,7 +1935,7 @@ void tst_Model_Connection_Independent::chunkById() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models)
+        for (const auto &tag : models)
             ids.emplace_back(tag.getKeyCasted());
 
         return true;
@@ -1974,7 +1974,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (const auto &tag : models) {
             auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
@@ -2039,7 +2039,7 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models)
+        for (const auto &tag : models)
             ids.emplace_back(tag.getKeyCasted());
 
         return true;
@@ -2080,7 +2080,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &&tag : models) {
+        for (const auto &tag : models) {
             auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 

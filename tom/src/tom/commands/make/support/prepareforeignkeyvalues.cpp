@@ -33,7 +33,7 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
     if (optionNames.isEmpty())
         return {};
 
-    for (auto &&option : optionNames) {
+    for (auto &option : optionNames) {
         // Try to start a new relation during foreign key names search
         if (startNewRelation(option))
             continue;

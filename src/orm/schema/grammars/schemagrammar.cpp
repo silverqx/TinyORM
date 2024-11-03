@@ -163,10 +163,12 @@ QStringList SchemaGrammar::getColumns(const Blueprint &blueprint) const
     QStringList columns;
     columns.reserve(addedColumns.size());
 
-    for (auto &&column : addedColumns) {
+    for (auto &column : addedColumns) { // auto & needed because of the getType(&)
         /* Each of the column types have their own compiler functions which are tasked
            with turning the column definition into its SQL format for this platform
-           used by the connection. The column's modifiers are compiled and added. */
+           used by the connection. The column's modifiers are compiled and added.
+           Don't inline it into the addModifiers() because the getType() can change
+           the column (side effects and C++ parameters order evaluation dilemma). */
         auto sql = SPACE_IN.arg(wrap(column), getType(column));
 
         columns << addModifiers(std::move(sql), column);

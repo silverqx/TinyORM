@@ -81,7 +81,7 @@ Utils::convertToQCommandLineOptionList(QList<CommandLineOption> &&options) // NO
     QList<QCommandLineOption> result;
     result.reserve(options.size());
 
-    for (auto &&option : options)
+    for (auto &option : options)
         result << std::move(option);
 
     return result;

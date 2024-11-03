@@ -81,7 +81,7 @@ int UsingConnection::usingConnectionsInternal(
     if (names.isEmpty())
         names << m_connectionResolver->getDefaultConnection();
 
-    for (auto &&name : names) {
+    for (auto &name : names) {
         // Visually divide individual connections
         printConnection(name, shouldPrintConnection, first);
 

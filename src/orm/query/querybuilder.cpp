@@ -340,7 +340,7 @@ std::tuple<int, TSqlQuery> Builder::remove()
 
 void Builder::truncate()
 {
-    for (auto &&[sql, bindings] : m_grammar->compileTruncate(*this))
+    for (auto &[sql, bindings] : m_grammar->compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
         if (m_connection->driverName() == QPSQL)
@@ -466,7 +466,7 @@ Builder &Builder::addSelect(QList<Column> &&columns) // NOLINT(cppcoreguidelines
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
-    for (auto &&column : columns)
+    for (auto &column : columns)
         if (m_columns.contains(column)) T_UNLIKELY
             continue;
         else T_LIKELY
@@ -1499,7 +1499,7 @@ QList<QVariant> Builder::cleanBindings(QList<QVariant> &&bindings) // NOLINT(cpp
     QList<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
 
-    for (auto &&binding : bindings)
+    for (auto &binding : bindings)
         if (!binding.canConvert<Expression>())
             cleanedBindings << std::move(binding);
 

@@ -500,7 +500,7 @@ namespace Orm::Tiny
         if (!m_model.getDates().contains(unqualifiedColumn))
             return result;
 
-        for (auto &&[_, value] : result)
+        for (auto &[_, value] : result)
             value = m_model.newFromBuilder({{unqualifiedColumn, std::move(value)}})
                     .getAttribute(unqualifiedColumn);
 
@@ -1368,7 +1368,7 @@ namespace Orm::Tiny
         QStringList progress;
         progress.reserve(names.size());
 
-        for (auto &&segment : names) {
+        for (auto &segment : names) {
             progress << std::move(segment);
 
             auto last = progress.join(DOT);

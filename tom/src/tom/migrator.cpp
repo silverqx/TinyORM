@@ -329,10 +329,10 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
 
 void Migrator::pretendToRun(const Migration &migration, const MigrateMethod method) const
 {
-    for (auto &&query : getQueries(migration, method)) {
+    for (auto &query : getQueries(migration, method)) {
         info(u"%1: "_s.arg(cachedMigrationName(migration)), false);
 
-        note(QueryUtils::parseExecutedQueryForPretend(query.query,
+        note(QueryUtils::parseExecutedQueryForPretend(std::move(query.query),
                                                       query.boundValues));
     }
 }

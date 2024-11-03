@@ -41,7 +41,7 @@ WithItem::fromStringVector(QList<QString> &&relations) // NOLINT(cppcoreguidelin
     QList<WithItem> relationsConverted;
     relationsConverted.reserve(relations.size());
 
-    for (auto &&relation : relations)
+    for (auto &relation : relations)
         relationsConverted.append({std::move(relation)});
 
     return relationsConverted;
