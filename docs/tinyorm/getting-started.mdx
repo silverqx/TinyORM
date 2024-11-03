@@ -498,7 +498,7 @@ If you are filtering the results of the `chunk` method based on a column that yo
 Flight::whereEq("departed", true)
     ->chunkById(200, [](QList<Flight> &&flights, const int /*unused*/)
     {
-        for (auto &&flight : flights)
+        for (auto &flight : flights)
             flight.update({{"departed", false}});
 
         return true;

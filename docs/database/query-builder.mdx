@@ -133,7 +133,7 @@ for (const auto &title : titles)
 
 auto titles = DB::table("users")->pluck<QString>("title", "name");
 
-for (auto &&[name, title] : titles)
+for (const auto &[name, title] : titles)
     qDebug() << name << ":" << title.value<QString>();
 ```
 
