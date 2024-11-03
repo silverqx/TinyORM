@@ -3261,6 +3261,15 @@ QByteArray instantiation performance with 1'000'000 loop:
 c++ confusions:
 ---------------
 
+ - see also the TinyORM C++ Coding Style section
+   - these two section are interleaving
+
+ - function/method parameters
+   - see https://en.cppreference.com/w/cpp/language/eval_order
+   - there is no concept of left-to-right or right-to-left evaluation in C++
+   - eg. MSVC and MSYS2 g++ use right-to-left and MSYS2 clang++ left-to-right when I tried
+   - ❗there is no guarantee in which order the parameters will be evaluated
+
  - passing non-trivial by value vs const lvalue and rvalue references
    - Clang Tidy - modernize-pass-by-value check
    - I tested passing the std::string in 1'000'000 for-loop using all these techniques
@@ -3332,8 +3341,8 @@ void f(T = 5, T = 7);
  - constinit
    - ❗use constinit only when it's really necessary, prefer using the constexpr instead
 
-   - USE when constant initialization is needed:
-     - but the variable must be non-const, eg.
+   - cases when the constant initialization is needed:
+     - the variable must be non-const, eg.
        - this example also helps to avoid the Static Initialization Order Fiasco
 T_THREAD_LOCAL
 inline static constinit bool u_snakeAttributes = true;
@@ -3401,10 +3410,13 @@ f1(std::move(s3));  // x - non-const rvalue; ❗T - non-const without value cate
 std::remove_reference<T>::type&& move( T&& t )
 
  - range-based for loop and auto &&
+   - auto & vs const auto & vs auto &&
    - it never contains the rvalue it can only contain const or non-const lvalue reference
    - the reason for this is how the value is assigned/created,
-     - it's assigned using normal assign operator like:
+     - it's copy-initialized (explicit constructors are not considered):
 auto&& /* range */ = range-initializer;
+   - for trivial types is best to assign by value
+   - see also the TinyORM C++ Coding Style section
 
  - typename before type from c++20 not needed in the following cases:
    - see https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html
@@ -3705,6 +3717,9 @@ TinyORM C++ Coding Style:
 tags: code style, c++
 ---
 
+ - see also the c++ confusions section
+   - these two section are interleaving
+
  - at first follow/see: https://google.github.io/styleguide/cppguide.html
    - Google C++ code style is very carefully and good written, I like most of it, but there is also
      many things I don't like and I don't follow
@@ -3753,6 +3768,21 @@ the std::vector<> again. 😎
  - method names which are operating on the QList<>
  - comments like: Vector of attached models IDs.
  - the same is also true for TinyORM-github.io documentation
+
+ - constinit vs constexpr
+   - see the c++ confusions section
+
+ - range-based for loop and auto &&
+   - see https://en.cppreference.com/w/cpp/language/range-for
+   - auto & vs const auto & vs auto &&
+   - see also the c++ confusions section
+   - prefer using auto & and const auto &
+   - use the auto && only when really needed
+     - eg. function/method parameter is forwarding reference
+     - range-initializer is an overloaded function/method call and
+       it can return more value categories (const or non-const lvalue)
+   - don't use a reference for trivially copyable or for trivial types (only when needed)
+   - never call std::forward() on the value (makes no sense), only the std::move()
 
 
 GitHub actions self-hosted runners:
