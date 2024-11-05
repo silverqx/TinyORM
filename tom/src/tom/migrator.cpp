@@ -71,7 +71,7 @@ std::vector<std::shared_ptr<Migration>> Migrator::run(const MigrateOptions optio
        each migration's execution. We will also extract a few of the options. */
     auto batch = m_repository->getNextBatchNumber();
 
-    const auto &[pretend, step, unused1, unused2] = options;
+    const auto [pretend, step, unused1, unused2] = options;
 
     /* Once we have the vector of migrations, we will spin through them and run the
        migrations "up" so the changes are made to the databases. We'll then log
