@@ -33,7 +33,7 @@ ConfigurationParserFactory::cachedParser(const QVariantHash &config)
         return *Cache.at(driver);
 
     // Create a new configuration parser instance and save it to the cache
-    auto [it, ok] = Cache.emplace(driver, make(driver));
+    const auto [it, ok] = Cache.emplace(driver, make(driver));
     Q_ASSERT(ok);
 
     return *it->second;

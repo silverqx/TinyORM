@@ -224,11 +224,11 @@ namespace Types
             // Remove duplicates
             // BUG clang doesn't compile with std::ranges::unique, I don't understand why silverqx
 #if (defined(__GNUG__) && !defined(__clang__)) || (defined(_MSC_VER) && _MSC_VER >= 1929)
-            auto [first, last] = std::ranges::unique(merged, {}, castKey);
+            const auto [first, last] = std::ranges::unique(merged, {}, castKey);
             merged.erase(first, last);
 #else
-            auto it = ranges::unique(merged, {}, castKey);
-            merged.erase(it, ranges::end(merged));
+            const auto it = ranges::unique(merged, {}, castKey);
+            merged.erase(it, ranges::cend(merged));
 #endif
 
             currentValues.swap(merged);
