@@ -89,7 +89,7 @@ namespace Tom::Commands::Make::Support
     P PrepareBtmOptionValues<P, V>::prepareValuesFor(const QString &optionName)
     {
         // Nothing to prepare
-        if (auto &&[defaults, result] = checkBtmNothingToPrepare(); result)
+        if (auto [defaults, result] = checkBtmNothingToPrepare(); result)
             return std::move(defaults);
 
         const auto optionsNames = modelCommand().optionNames();

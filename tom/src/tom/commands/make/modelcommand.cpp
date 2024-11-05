@@ -296,7 +296,7 @@ namespace
 std::tuple<QString, CmdOptions>
 ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOptions)
 {
-    auto &&[
+    auto &[
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
             _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10, _11,

@@ -563,7 +563,7 @@ Databases::createConfigurationsHash(const QStringList &connections,
 #endif
         shouldCreateConnection(connection, QMYSQL)
     )
-        if (auto &&[config, envDefined] = mysqlConfiguration(); envDefined)
+        if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
     // This connection must be to the MariaDB database server (not MySQL)
@@ -576,7 +576,7 @@ Databases::createConfigurationsHash(const QStringList &connections,
 #endif
         shouldCreateConnection(connection, QMYSQL)
     )
-        if (auto &&[config, envDefined] = mariaConfiguration(); envDefined)
+        if (auto [config, envDefined] = mariaConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -588,7 +588,7 @@ Databases::createConfigurationsHash(const QStringList &connections,
 #endif
         shouldCreateConnection(connection, QSQLITE)
     )
-        if (auto &&[config, envDefined] = sqliteConfiguration(); envDefined)
+        if (auto [config, envDefined] = sqliteConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
@@ -600,7 +600,7 @@ Databases::createConfigurationsHash(const QStringList &connections,
 #endif
         shouldCreateConnection(connection, QPSQL)
     )
-        if (auto &&[config, envDefined] = postgresConfiguration(); envDefined)
+        if (auto [config, envDefined] = postgresConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
     return m_configurations;

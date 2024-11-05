@@ -235,6 +235,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
 std::vector<RollbackItem>
 Migrator::getMigrationsForRollback(const MigrateOptions options) const
 {
+    // It's OK to move from the migrationsDb
     auto migrationsDb = getMigrationsForRollbackByOptions(options);
 
     return m_migrations.get()
@@ -248,11 +249,11 @@ Migrator::getMigrationsForRollback(const MigrateOptions options) const
                                        -> RollbackItem
     {
         // Can not happen that it doesn't find, checked in previous lambda by 'contains'
-        auto &&[id, migrationName, _] =
+        auto &[id, migrationName, _] =
                 *std::ranges::find(migrationsDb, cachedMigrationName(*migration),
                                    [](const auto &m) { return m.migration; });
 
-        return {std::move(id), std::move(migrationName), migration};
+        return {id, std::move(migrationName), migration};
     })
             | ranges::to<std::vector<RollbackItem>>();
 }
@@ -273,13 +274,14 @@ std::vector<RollbackItem>
 Migrator::getMigrationsForRollback(std::vector<MigrationItem> &&ran) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     return ranges::views::move(ran)
-            | ranges::views::transform([this](auto &&migrationItem) -> RollbackItem
+            | ranges::views::transform([this](MigrationItem &&migrationItem)
+                                       -> RollbackItem
     {
-        auto &&[id, migrationName, _] = migrationItem;
+        auto &[id, migrationName, _] = migrationItem;
 
-        auto migration = m_migrationInstancesMap.at(migrationName);
+        const auto &migration = m_migrationInstancesMap.at(migrationName);
 
-        return {std::move(id), std::move(migrationName), std::move(migration)};
+        return {id, std::move(migrationName), migration};
     })
             | ranges::to<std::vector<RollbackItem>>();
 }

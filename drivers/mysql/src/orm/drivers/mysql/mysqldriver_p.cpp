@@ -54,7 +54,7 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QStringView options) const
     for (const auto optionRaw : options.split(SEMICOLON, Qt::SkipEmptyParts)) {
 
         // Parse the given MySQL connection option to name and value
-        auto &&[option, value] = parseMySqlOption(optionRaw);
+        const auto [option, value] = parseMySqlOption(optionRaw);
 
         // Set the given MySQL connection option (using mysql_options())
         if (mysqlSetConnectionOption(option, value))

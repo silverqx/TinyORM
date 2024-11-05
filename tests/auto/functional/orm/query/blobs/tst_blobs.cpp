@@ -141,8 +141,8 @@ void tst_Blobs::text() const
 
     // Restore
     {
-        auto &&[affected, query] = createQuery(connection)
-                                   ->from(*TypesTable).deleteRow(lastIdInt);
+        auto [affected, query] = createQuery(connection)
+                                 ->from(*TypesTable).deleteRow(lastIdInt);
         QVERIFY(query.isActive());
         QVERIFY(!query.isSelect());
         QVERIFY(!query.isValid());
@@ -210,8 +210,8 @@ void tst_Blobs::mediumText() const
 
     // Restore the types table
     {
-        auto &&[affected, query] = createQuery(connection)
-                                   ->from(*TypesTable).deleteRow(lastIdInt);
+        auto [affected, query] = createQuery(connection)
+                                 ->from(*TypesTable).deleteRow(lastIdInt);
         QVERIFY(query.isActive());
         QVERIFY(!query.isSelect());
         QVERIFY(!query.isValid());
@@ -282,8 +282,8 @@ void tst_Blobs::binary() const
 
     // Restore the types table
     {
-        auto &&[affected, query] = createQuery(connection)
-                                   ->from(*TypesTable).deleteRow(lastIdInt);
+        auto [affected, query] = createQuery(connection)
+                                 ->from(*TypesTable).deleteRow(lastIdInt);
         QVERIFY(query.isActive());
         QVERIFY(!query.isSelect());
         QVERIFY(!query.isValid());
@@ -354,8 +354,8 @@ void tst_Blobs::mediumBinary() const
 
     // Restore the types table
     {
-        auto &&[affected, query] = createQuery(connection)
-                                   ->from(*TypesTable).deleteRow(lastIdInt);
+        auto [affected, query] = createQuery(connection)
+                                 ->from(*TypesTable).deleteRow(lastIdInt);
         QVERIFY(query.isActive());
         QVERIFY(!query.isSelect());
         QVERIFY(!query.isValid());
