@@ -1376,8 +1376,11 @@ namespace Orm::Tiny::Concerns
         /* Here we will grab all of the appended, calculated attributes to this model
            as these attributes are not really in the attributes vector, but are run
            when we need to serialize or JSON the model for convenience to the coder. */
-        for (const auto &key : getSerializableAppends())
-            attributes.emplaceBack(key, mutateAccessorAttribute(key));
+        for (auto &key : getSerializableAppends()) {
+            auto value = mutateAccessorAttribute(key);
+
+            attributes.emplaceBack(std::move(key), std::move(value));
+        }
 
         return attributes;
     }
