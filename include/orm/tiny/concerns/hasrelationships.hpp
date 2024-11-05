@@ -1615,7 +1615,7 @@ namespace Concerns
 
         for (const auto &[key, value] : relations)
             if (visibleKeys.contains(key))
-                serializableRelations.emplace(key, value);
+                serializableRelations.emplace(key, value); // try_emplace() not needed
 
         return serializableRelations;
     }
