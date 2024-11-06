@@ -96,7 +96,7 @@ QString Type::normalizeCMakeTriStateBool(const QString &value)
        states that the named boolean constants are case-insensitive.
        We have to take this into account because notfound or xyz-notfound are
        considered TRUE. */
-    if (value.compare(NotFound, Qt::CaseSensitive) == 0 ||
+    if (value.compare(NotFound, Qt::CaseSensitive) == 0 || // Don't remove Qt::CaseSensitive
         value.endsWith(NotFoundSuffix, Qt::CaseSensitive)
     )
         return value;
@@ -128,7 +128,7 @@ bool Type::isCMakeTrue(const QString &value)
               We have to take this into account because notfound or xyz-notfound are
               considered TRUE. */
            value.compare("NOTFOUND"_L1,    Qt::CaseSensitive)   != 0 &&
-           !value.endsWith("-NOTFOUND"_L1, Qt::CaseSensitive);
+           !value.endsWith("-NOTFOUND"_L1, Qt::CaseSensitive); // Don't remove Qt::CaseSensitive
 }
 
 #ifdef __GNUG__
