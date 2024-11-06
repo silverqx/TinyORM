@@ -2243,17 +2243,17 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (const auto &key : getDates()) {
+        for (const auto &dateKey : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDate, QDateTime, or QTime, in this case, skip the serialization
                to avoid useless double serialization. */
-            if (!attributes.contains(key) || isDateCastable(key) ||
-                isCustomDateCastable(key)
+            if (!attributes.contains(dateKey) || isDateCastable(dateKey) ||
+                isCustomDateCastable(dateKey)
             )
                 continue;
 
-            auto &value = attributes[key];
+            auto &value = attributes[dateKey];
 
             value = value.isNull() ? NullVariant::QDateTime()
                                    : Model<Derived, AllRelations...>::
@@ -2270,17 +2270,17 @@ namespace Orm::Tiny::Concerns
         if (attributes.empty())
             return;
 
-        for (const auto &key : getDates()) {
+        for (const auto &dateKey : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDate, QDateTime, or QTime, in this case, skip the serialization
                to avoid useless double serialization. */
-            if (!attributesHash.contains(key) || isDateCastable(key) ||
-                isCustomDateCastable(key)
+            if (!attributesHash.contains(dateKey) || isDateCastable(dateKey) ||
+                isCustomDateCastable(dateKey)
             )
                 continue;
 
-            auto &value = attributes[attributesHash.at(key)].value;
+            auto &value = attributes[attributesHash.at(dateKey)].value;
 
             value = value.isNull() ? NullVariant::QDateTime()
                                    : Model<Derived, AllRelations...>::
