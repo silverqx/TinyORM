@@ -315,8 +315,8 @@ namespace Private
                 throw Orm::Exceptions::InvalidArgumentError(
                         "This has() overload doesn't support nested 'has' statements, "
                         "please use has() overload with 'std::function<void("
-                        "TinyBuilder<Related> &)> &callback', what means pass <Related> "
-                        "template parameter to the called method.");
+                        "TinyBuilder<Related> &)> &callback', which means pass "
+                        "the <Related> template parameter to the called method.");
             else
                 return hasNeseted<Related>(relation, comparison, count, condition,
                                            callback);
