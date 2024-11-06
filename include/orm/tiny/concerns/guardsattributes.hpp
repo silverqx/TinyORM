@@ -133,11 +133,11 @@ namespace Orm::Tiny::Concerns
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(
             const QStringList &fillable)
     {
-        auto &fillable_ = basemodel().getUserFillable();
+        auto &userFillable = basemodel().getUserFillable();
 
         for (const auto &value : fillable)
-            if (!fillable_.contains(value))
-                fillable_ << value;
+            if (!userFillable.contains(value))
+                userFillable << value;
 
         return model();
     }
@@ -146,11 +146,11 @@ namespace Orm::Tiny::Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeFillable(QStringList &&fillable) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
-        auto &fillable_ = basemodel().getUserFillable();
+        auto &userFillable = basemodel().getUserFillable();
 
         for (auto &value : fillable)
-            if (!fillable_.contains(value))
-                fillable_ << std::move(value);
+            if (!userFillable.contains(value))
+                userFillable << std::move(value);
 
         return model();
     }
@@ -184,11 +184,11 @@ namespace Orm::Tiny::Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(const QStringList &guarded)
     {
-        auto &guarded_ = basemodel().getUserGuarded();
+        auto &userGuarded = basemodel().getUserGuarded();
 
         for (const auto &value : guarded)
-            if (!guarded_.contains(value))
-                guarded_ << value;
+            if (!userGuarded.contains(value))
+                userGuarded << value;
 
         return model();
     }
@@ -197,11 +197,11 @@ namespace Orm::Tiny::Concerns
     Derived &
     GuardsAttributes<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
-        auto &guarded_ = basemodel().getUserGuarded();
+        auto &userGuarded = basemodel().getUserGuarded();
 
         for (auto &value : guarded)
-            if (!guarded_.contains(value))
-                guarded_ << std::move(value);
+            if (!userGuarded.contains(value))
+                userGuarded << std::move(value);
 
         return model();
     }
