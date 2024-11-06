@@ -280,10 +280,17 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Use faster lld linker on Clang (target the Clang except Clang-cl with MSVC)
-    # Don't set for MINGW to avoid duplicate setting (look a few lines above)
     # TODO use LINKER_TYPE target property when min. version will be CMake v3.29 silverqx
-    if(NOT MINGW AND NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_link_options(${target} INTERFACE -fuse-ld=lld)
+    if(NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
+            (CMAKE_VERSION VERSION_LESS "3.29" OR
+                (CMAKE_VERSION VERSION_GREATER_EQUAL "3.29" AND
+                    NOT DEFINED CMAKE_LINKER_TYPE))
+    )
+        find_program(tiny_lld lld)
+
+        if(tiny_lld)
+            target_link_options(${target} INTERFACE -fuse-ld=lld)
+        endif()
     endif()
 
     # Use 64-bit off_t on 32-bit Linux, ensure 64bit offsets are used for filesystem
