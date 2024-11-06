@@ -154,8 +154,8 @@ QString String::stripTags(QString string)
     QString::size_type posStart = 0;
     QString::size_type from = 0;
 
-    while ((posStart = string.indexOf(LT_C, from, Qt::CaseInsensitive)) != -1) {
-        const auto posEnd = string.indexOf(GT_C, posStart + 1, Qt::CaseInsensitive);
+    while ((posStart = string.indexOf(LT_C, from)) != -1) {
+        const auto posEnd = string.indexOf(GT_C, posStart + 1);
 
         // Nothing to do, the > char not found
         if (posEnd == -1)

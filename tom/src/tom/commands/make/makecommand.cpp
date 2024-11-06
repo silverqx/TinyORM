@@ -79,8 +79,7 @@ fspath MakeCommand::guessPathForMakeByPwd(
         return pwd;
 
     auto defaultPathList = defaultPathStr.split(fspath::preferred_separator,
-                                                Qt::SkipEmptyParts,
-                                                Qt::CaseInsensitive);
+                                                Qt::SkipEmptyParts);
 
     QStringList guessedPathList;
     // + 1 because also using takeLast() part; * 2 because of prepend()
@@ -217,9 +216,7 @@ bool MakeCommand::areParentPathsEqual(QStringList defaultPathList,
 {
     // Prepare
     auto defaultModelsPathList = QString::fromStdString(defaultModelsPath.string())
-                                 .split(fspath::preferred_separator,
-                                        Qt::SkipEmptyParts,
-                                        Qt::CaseInsensitive);
+                                 .split(fspath::preferred_separator, Qt::SkipEmptyParts);
     // Remove last folder names
     defaultPathList.removeLast();
     defaultModelsPathList.removeLast();
