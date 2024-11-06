@@ -172,15 +172,16 @@ void PostgresSchemaBuilder::dropDatabaseForParse(
     if (parts.size() != 3)
         return;
 
-    throwIfDatabaseDiffers(databaseConfig, parts, connection);
+    // Drop the database name from the 'parts' vector
+    const auto database = parts.takeFirst();
+
+    throwIfDatabaseDiffers(databaseConfig, database, connection);
 }
 
 void PostgresSchemaBuilder::throwIfDatabaseDiffers(
-        const QString &databaseConfig, QStringList &parts, const QString &connection)
+        const QString &databaseConfig, const QString &database,
+        const QString &connection)
 {
-    // Drop the database name from the 'parts' vector
-    auto database = parts.takeFirst();
-
     if (databaseConfig == database)
         return;
 
@@ -188,7 +189,7 @@ void PostgresSchemaBuilder::throwIfDatabaseDiffers(
                 u"The database '%1' name in the fully qualified table name differs "
                  "from the database name '%2' defined in the PostgreSQL "
                  "configuration '%3' in %4()."_s
-                .arg(std::move(database), databaseConfig, connection, __tiny_func__));
+                .arg(database, databaseConfig, connection, __tiny_func__));
 }
 
 QString PostgresSchemaBuilder::getSchemaForParse(QStringList &parts,

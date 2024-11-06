@@ -66,8 +66,9 @@ namespace Grammars
         static void dropDatabaseForParse(const QString &databaseConfig,
                                          QStringList &parts, const QString &connection);
         /*! Throw if the database name differs from a database in the configuration. */
-        static void throwIfDatabaseDiffers(const QString &databaseConfig,
-                                           QStringList &parts, const QString &connection);
+        static void throwIfDatabaseDiffers(
+                const QString &databaseConfig, const QString &database,
+                const QString &connection);
         /*! Get a schema for the parseSchemaAndTable(). */
         QString getSchemaForParse(QStringList &parts, const QString &connection) const;
         /*! Throw if the database 'search_path' is empty. */
