@@ -1360,7 +1360,7 @@ namespace Orm::Tiny
            again, since that would override any constraints that were already placed
            on the relationships. We will only set the ones that are not specified.
            Can't be QStringView because of the join() below. */
-        auto names = name.split(DOT, Qt::SkipEmptyParts, Qt::CaseSensitive);
+        auto names = name.split(DOT, Qt::SkipEmptyParts);
 
         // Nothing to do (no nested relations)
         if (names.isEmpty())
