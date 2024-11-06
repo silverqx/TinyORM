@@ -624,11 +624,6 @@ namespace Private
         // Ownership of a unique_ptr()
         const auto hasQuery = getHasQueryByExistenceCheck(comparison, count, *relation);
 
-        if (relations.isEmpty())
-            throw Orm::Exceptions::RuntimeError(
-                        u"wtf, this should never happen :/, 'relations.size() == %1'."_s
-                        .arg(relations.size()));
-
         hasQuery->hasInternal(relations.takeFirst(), GE, 1, AND, relations);
 
         addHasWhere(*hasQuery, *relation, comparison, count, condition);
