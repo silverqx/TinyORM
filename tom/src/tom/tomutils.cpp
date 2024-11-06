@@ -110,7 +110,7 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
     const auto prefixPartsSizes = [&prefixParts]
     {
         return prefixParts
-                | ranges::views::transform([](const auto datetimePart)
+                | ranges::views::transform([](const QStringView datetimePart)
         {
             return datetimePart.size();
         })
