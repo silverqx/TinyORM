@@ -1358,7 +1358,8 @@ namespace Orm::Tiny
     {
         /* If the relation has already been set on the result vector, we will not set it
            again, since that would override any constraints that were already placed
-           on the relationships. We will only set the ones that are not specified. */
+           on the relationships. We will only set the ones that are not specified.
+           Can't be QStringView because of the join() below. */
         auto names = name.split(DOT, Qt::SkipEmptyParts, Qt::CaseSensitive);
 
         // Nothing to do (no nested relations)
