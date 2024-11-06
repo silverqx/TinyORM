@@ -3398,7 +3398,8 @@ f2(s1);             // x and T - non-const lvalue
 f3(s2);             // x and T - const lvalue
 f1(std::move(s3));  // x - non-const rvalue; ❗T - non-const without value category (all false)
    - ❗❗also, this isn't true if template parameter isn't forwarding reference, in this case
-     it will be without const and without the value category, just type
+     the parameter will be passed by value and it will be without const and without the value
+     category, just type
    - and also reference collapsing is important, see:
      https://www.ibm.com/docs/en/xl-c-and-cpp-aix/16.1?topic=operators-reference-collapsing-c11
    - ❗❗❗which means if using the forwarding reference and want to work with the template
@@ -3407,7 +3408,11 @@ f1(std::move(s3));  // x - non-const rvalue; ❗T - non-const without value cate
      - this is the reason why in the std library code is on many places std::remove_cvref_t<D>
        or std::decay<>
      - also that's why the std::move() is declared like this:
-std::remove_reference<T>::type&& move( T&& t )
+template<typename T>
+std::remove_reference_t<T>&& move( T&& t )
+     - I'm talking about the T type itself not about the parameter's type decltype (x)
+     - it can look natural, but it's confusing
+     - it simply behaves different when it's forwarding reference
 
  - range-based for loop and auto &&
    - auto & vs const auto & vs auto &&
@@ -3417,6 +3422,56 @@ std::remove_reference<T>::type&& move( T&& t )
 auto&& /* range */ = range-initializer;
    - for trivial types is best to assign by value
    - see also the TinyORM C++ Coding Style section
+
+ - auto && =
+   - see https://en.cppreference.com/w/cpp/language/reference
+     - search: auto&&
+   - it's really a forwarding reference
+   - it can also be const auto && =
+     - in this case it will be const rvalue reference
+       - reference and const collapsing will be applied in this case
+
+ - structured binding and auto &&[
+   - see https://en.cppreference.com/w/cpp/language/structured_binding
+   - the documentation is so badly written and confusion I didn't fully understand it even
+     after 2 hour of reading it line by line
+   - I don't care about binding to array-s or tuple-s as I don't use them
+   - legend:
+     - referenced type: the type returned by decltype when applied to an unparenthesized
+                        structured binding
+
+   - a structured binding declaration first introduces a uniquely-named variable (here denoted by e)
+     to hold the value of the initializer (this is a HIDDEN variable)
+   - e is defined as if by using its name instead of [ identifier-list ] in the declaration
+   - we use E to denote the type of e
+     - in other words, E is the equivalent of std::remove_reference_t<decltype((e))>
+     - if E is a non-union class type but std::tuple_size<E> is not a complete type, then
+       the names are bound to the accessible data members of E
+   - each structured binding has a referenced type
+     - this type is the type returned by decltype when applied to an unparenthesized structured binding
+
+   - the portion of the declaration preceding [ applies to this hidden variable e,
+     not to the introduced identifiers
+   - decltype(x), where x denotes a structured binding, names the referenced type of that structured
+     binding
+   - structured bindings cannot be captured by lambda expressions
+
+   - Binding to data members
+     - the referenced type of the i-th identifier is the type of e.m_i if it is not a reference type,
+       or the declared type of m_i otherwise
+
+   - OK, it's very confusing, the best I came with is to thing about that [ identifier-list ]
+     as one variable, replace the whole [ identifier-list ] with a simple variable
+     eg. auto &[x, y] == auto &e, it's like some struct in the middle
+     - then the rules are very intuitive
+     - use const/ auto [ for trivial types
+     - use const auto &[ for non-trivial types if they can be const
+     - auto &&[ use eg. for forwarding references when parameter is templated
+     - auto [ for return types when return type isn't reference
+     - it's practically the same as for normal variable
+     - only exceptions are when the struct has data member with reference, but that is described
+       above
+     - you can also use const auto &[ or auto &&[ on rvalue, lifetime will be extended
 
  - typename before type from c++20 not needed in the following cases:
    - see https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0634r3.html
