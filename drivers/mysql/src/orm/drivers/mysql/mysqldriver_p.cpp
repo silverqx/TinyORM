@@ -424,9 +424,9 @@ void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option) const
 
 bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
 {
-    // _L1 is correct here
+    // An empty value is considered as true so it's a kind of flag
     return value.isEmpty() ||
-           value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||
+           value.compare("true"_L1, Qt::CaseInsensitive) == 0 || // _L1 is correct here
            value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
            value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
            value == u'1';
