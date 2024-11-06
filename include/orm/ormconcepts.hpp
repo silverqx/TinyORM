@@ -69,6 +69,14 @@ namespace Query
     template<typename T>
     concept QStringConcept = std::convertible_to<T, QString>;
 
+    /*! Concept for the QStringView. */
+    template<typename T>
+    concept QStringViewConcept = std::convertible_to<T, QStringView>;
+
+    /*! Concept for the QString and QStringView. */
+    template<typename T>
+    concept QStringLikeConcept = QStringConcept<T> || QStringViewConcept<T>;
+
     /*! Concept for the QVariant. */
     template<typename T>
     concept QVariantConcept = std::convertible_to<T, QVariant>;

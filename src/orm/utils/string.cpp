@@ -84,32 +84,69 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     return nonDigit == string.cend();
 }
 
+namespace
+{
+    /* Doesn't make sense to make these two functions constexpr as there is only one
+       code branch that is constexpr and that's when the characters are empty and
+       the T is QStringView. */
+
+    /*! Strip the given characters from the beginning of a string (common logic). */
+    template<QStringLikeConcept T>
+    std::remove_cvref_t<T>
+    ltrimInternal(T &&string, const QString &characters)
+    {
+        Q_ASSERT(!characters.isEmpty());
+
+        typename std::remove_cvref_t<T>::size_type position = 0;
+
+        for (const auto ch : string)
+            if (characters.contains(ch))
+                ++position;
+            else
+                break;
+
+        return string.sliced(position);
+    }
+
+    /*! Strip the given characters from the end of a string (common logic). */
+    template<QStringLikeConcept T>
+    std::remove_cvref_t<T>
+    rtrimInternal(T &&string, const QString &characters)
+    {
+        Q_ASSERT(!characters.isEmpty());
+
+        /* The ++ and -- isn't bug, I'm doing this comment months after I wrote the code
+           but I still remember that it's correct. */
+        typename std::remove_cvref_t<T>::size_type position = string.size();
+
+        for (const auto ch : string | ranges::views::reverse)
+            if (characters.contains(ch))
+                --position;
+            else
+                break;
+
+        return string.first(position);
+    }
+} // namespace
+
 QString String::ltrim(const QString &string, const QString &characters)
 {
-    QString::size_type position = 0;
-
-    for (const auto ch : string)
-        if (characters.contains(ch))
-            ++position;
-        else
-            break;
-
-    return string.sliced(position);
+    return ltrimInternal(string, characters);
 }
 
 QString String::rtrim(const QString &string, const QString &characters)
 {
-    /* The ++ and -- isn't bug, I'm doing this comment months after I wrote the code but
-       I still remember that it's correct. */
-    QString::size_type position = string.size();
+    return rtrimInternal(string, characters);
+}
 
-    for (const auto itChar : string | ranges::views::reverse)
-        if (characters.contains(itChar))
-            --position;
-        else
-            break;
+QStringView String::ltrim(const QStringView string, const QString &characters)
+{
+    return ltrimInternal(string, characters);
+}
 
-    return string.first(position);
+QStringView String::rtrim(const QStringView string, const QString &characters)
+{
+    return rtrimInternal(string, characters);
 }
 
 QString String::stripTags(QString string)

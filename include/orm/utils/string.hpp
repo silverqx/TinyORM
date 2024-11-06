@@ -61,6 +61,20 @@ namespace Orm::Utils
         rtrim(const QString &string,
               const QString &characters = Constants::TrimCharacters);
 
+        /*! Strip whitespaces (or other characters) from the beginning and end
+            of a string. */
+        inline static QStringView
+        trim(const QStringView string,
+             const QString &characters = Constants::TrimCharacters);
+        /*! Strip whitespaces (or other characters) from the beginning of a string. */
+        static QStringView
+        ltrim(const QStringView string,
+              const QString &characters = Constants::TrimCharacters);
+        /*! Strip whitespaces (or other characters) from the end of a string. */
+        static QStringView
+        rtrim(const QStringView string,
+              const QString &characters = Constants::TrimCharacters);
+
         /*! Remove tags from the given string. */
         [[maybe_unused]]
         static QString stripTags(QString string);
@@ -113,6 +127,11 @@ namespace Orm::Utils
     /* public */
 
     QString String::trim(const QString &string, const QString &characters)
+    {
+        return rtrim(ltrim(string, characters), characters);
+    }
+
+    QStringView String::trim(const QStringView string, const QString &characters)
     {
         return rtrim(ltrim(string, characters), characters);
     }
