@@ -821,7 +821,7 @@ namespace Orm::Tiny
         std::size_t count = 0;
 
         // Ownership of a unique_ptr()
-        for (auto &model : instance.whereIn(instance.getKeyName(), ids)->get())
+        for (auto &model : instance.whereIn(instance.getKeyName(), ids)->get()) // Not a temporary lifetime problem
             if (model.remove())
                 ++count;
 
