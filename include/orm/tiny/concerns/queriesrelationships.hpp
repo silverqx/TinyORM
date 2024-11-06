@@ -251,8 +251,8 @@ namespace Private
         getHasQueryByExistenceCheck(const QString &comparison, qint64 count,
                                     Relation<Related> &relation) const;
         /*! Check if we can run an "exists" query to optimize performance. */
-        inline bool
-        canUseExistsForExistenceCheck(const QString &comparison, qint64 count) const;
+        inline static bool
+        canUseExistsForExistenceCheck(const QString &comparison, qint64 count) noexcept;
 
     private:
         /*! Static cast this to a child's instance TinyBuilder type. */
@@ -564,7 +564,7 @@ namespace Private
 
     template<typename Model>
     bool QueriesRelationships<Model>::canUseExistsForExistenceCheck(
-            const QString &comparison, const qint64 count) const
+            const QString &comparison, const qint64 count) noexcept
     {
         return (comparison == GE || comparison == LT) && count == 1;
     }
