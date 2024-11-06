@@ -3784,7 +3784,7 @@ tags: code style, c++
  - variable names
    - const and non-const local static variables or static data members which DON'T have x_ prefix
      - start with an uppercase
-     - if contains the %1 or any characters intended for replacement (eg. for the QString::args())
+     - if contains the %1 or any characters intended for replacement (eg. for the QString::arg())
        end it with the Tmpl suffix
      - reason for uppercase is that it indicates:
        - for const the variable is constant and not a normal local variable
