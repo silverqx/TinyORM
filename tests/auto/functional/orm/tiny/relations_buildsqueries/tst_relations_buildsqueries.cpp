@@ -135,8 +135,8 @@ void tst_Relations_BuildsQueries::chunk_Relation() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &fileProperty : models)
-            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+        for (const auto &fileProperty : models)
+            ids.emplace_back(fileProperty.getKeyCasted());
 
         return true;
     });
@@ -475,7 +475,7 @@ void tst_Relations_BuildsQueries::chunk() const
         compareResultSize(models.size(), page);
 
         for (auto &tag : models) {
-            ids.emplace_back(tag[ID]->template value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
         }
@@ -520,7 +520,7 @@ void tst_Relations_BuildsQueries::chunk_ReturnFalse() const
         compareResultSize(models.size(), page);
 
         for (auto &tag : models) {
-            auto id = tag[ID]->template value<quint64>();
+            auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
             verifyTaggedPivot(tag);
@@ -573,7 +573,7 @@ void tst_Relations_BuildsQueries::chunk_EnforceOrderBy() const
         compareResultSize(models.size(), page);
 
         for (auto &tag : models) {
-            ids.emplace_back(tag[ID]->template value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
         }

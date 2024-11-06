@@ -1499,8 +1499,8 @@ void tst_Model_Connection_Independent::chunk() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &fileProperty : models)
-            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+        for (const auto &fileProperty : models)
+            ids.emplace_back(fileProperty.getKeyCasted());
 
         return true;
     });
@@ -1538,8 +1538,8 @@ void tst_Model_Connection_Independent::chunk_ReturnFalse() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &fileProperty : models) {
-            auto id = fileProperty[ID]->template value<quint64>();
+        for (const auto &fileProperty : models) {
+            auto id = fileProperty.getKeyCasted();
             ids.emplace_back(id);
 
             // Interrupt chunk-ing
@@ -1586,8 +1586,8 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
     {
         compareResultSize(models.size(), page);
 
-        for (auto &fileProperty : models)
-            ids.emplace_back(fileProperty[ID]->template value<quint64>());
+        for (const auto &fileProperty : models)
+            ids.emplace_back(fileProperty.getKeyCasted());
 
         return true;
     });
