@@ -511,10 +511,8 @@ QString Grammar::whereBetween(const WhereConditionItem &where) const
 
 QString Grammar::whereBetweenColumns(const WhereConditionItem &where) const
 {
-    auto between = where.nope ? u"not between"_s : u"between"_s;
-
     return u"%1 %2 %3 and %4"_s.arg(wrap(where.column),
-                                    std::move(between),
+                                    where.nope ? u"not between"_s : u"between"_s,
                                     wrap(where.betweenColumns.min),
                                     wrap(where.betweenColumns.max));
 }
