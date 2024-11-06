@@ -593,7 +593,7 @@ void tst_Model_Connection_Independent::replicate_WithRelations() const
 
     QVERIFY(torrentFiles2.size() == torrentFiles2Replicated.size());
 
-    for (std::remove_cvref_t<decltype (torrentFiles2)>::size_type i = 0;
+    for (std::remove_const_t<decltype (torrentFiles2)>::size_type i = 0;
          torrentFiles2.size() < i; ++i
     ) {
         auto *torrentFile = torrentFiles2.value(i);
