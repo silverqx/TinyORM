@@ -319,9 +319,9 @@ namespace Grammars
             QStringList nameList;
             nameList.reserve(name.count(DOT));
 
-            for (const auto &segment : name.split(DOT, Qt::KeepEmptyParts))
+            for (const auto segment : QStringView(name).split(DOT, Qt::KeepEmptyParts))
                 // Don't use the TRIM_QUOTES here to avoid include of schema constants
-                nameList << StringUtils::trim(segment, uR"('")"_s);
+                nameList << StringUtils::trim(segment, uR"('")"_s).toString();
 
             return TMPL_DQUOTES.arg(nameList.join(uR"(".")"_s));
         })

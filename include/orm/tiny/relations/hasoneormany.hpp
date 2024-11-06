@@ -429,9 +429,13 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     QString HasOneOrMany<Model, Related>::getForeignKeyName() const
     {
-        auto segments = getQualifiedForeignKeyName().split(DOT);
+        const auto &foreignKey = getQualifiedForeignKeyName();
 
-        return std::move(segments.last());
+        if (!foreignKey.contains(DOT))
+            return foreignKey;
+
+        // +1 to skip the DOT, returns an empty string if there is nothing after the DOT
+        return foreignKey.sliced(foreignKey.lastIndexOf(DOT) + 1);
     }
 
     template<class Model, class Related>

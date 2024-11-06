@@ -96,10 +96,10 @@ bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)
     /*! Cached the datetime prefix parts sizes. */
     static const auto PrefixSizes = std::invoke([]
     {
-        const auto prefixSplit = DateTimePrefix.split(UNDERSCORE);
+        const auto prefixSplit = QStringView(DateTimePrefix).split(UNDERSCORE);
 
         return prefixSplit
-                | ranges::views::transform([](const auto &datetimePart)
+                | ranges::views::transform([](const QStringView datetimePart)
         {
             return datetimePart.size();
         })

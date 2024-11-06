@@ -490,7 +490,7 @@ namespace Private
            comparison and count are passed to the last nested relation by help of
            the HasNestedStore to avoid them passing around by method arguments. */
 
-        auto relations = relation.split(DOT);
+        auto relations = relation.split(DOT); // split() is needed here
 
         const auto doesntHave = comparison == LT && count == 1;
 

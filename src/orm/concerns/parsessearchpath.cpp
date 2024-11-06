@@ -42,9 +42,9 @@ QStringList ParsesSearchPath::parseSearchPath(const QString &searchPath)
     QStringList list;
     list.reserve(searchPath.count(COMMA_C));
 
-    for (const auto &path : searchPath.split(COMMA_C, Qt::SkipEmptyParts))
+    for (const auto path : QStringView(searchPath).split(COMMA_C, Qt::SkipEmptyParts))
         // Trim also spaces
-        list << StringUtils::trim(path, uR"( '")"_s);
+        list << StringUtils::trim(path, uR"( '")"_s).toString();
 
     return list;
 }
