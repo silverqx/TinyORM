@@ -13,7 +13,7 @@
    method calls are used as factory methods but I denied it after I tested it.
 
    Also, the primary reason this class exists was to support the older Qt v5.15,
-   what means this class isn't needed anymore, but I have decided to leave it because of
+   which means this class isn't needed anymore, but I have decided to leave it because of
    the above-described performance boost. 😎 */
 
 TINYORM_BEGIN_COMMON_NAMESPACE

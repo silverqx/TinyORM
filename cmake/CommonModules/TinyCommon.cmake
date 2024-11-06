@@ -33,7 +33,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Must be disabled with vcpkg because the qtbase port doesn't define it and it causes
     # incompatible API, eg. QByteArray::isNull() or QString::toLongLong() is defined
     # inline through this QT_CORE_INLINE_SINCE() deprecated macros and we end up
-    # with multiple defined symbols, what means QtCore is compiled with old API without
+    # with multiple defined symbols, which means QtCore is compiled with old API without
     # inline because it doesn't define this QT_DISABLE_DEPRECATED_UP_TO and TinyORM has
     # inlined symbols. It of course works with shared DLL builds but fails with static/-md
     # triplets (builds). It's a good idea to use the same setting for this like qtbase

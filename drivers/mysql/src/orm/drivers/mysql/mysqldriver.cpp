@@ -228,7 +228,7 @@ bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
 std::unique_ptr<SqlResult> MySqlDriver::createResult() const
 {
     /* We must use the const_cast<> as the weak_from_this() return type is controlled
-       by the current method const-nes, what means it's only our implementation detail
+       by the current method const-nes, which means it's only our implementation detail
        that we have to use the const_cast<> as we can't control this. Also, it's better
        to have the same const-nes for the createResult() as defined in the QtSql.
        See NOTES.txt[std::enable_shared_from_this<SqlDriver>] for more info. */

@@ -22,7 +22,7 @@ namespace Orm::Drivers::MySql
         Q_DECLARE_PRIVATE(MySqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         /* To access MySqlDriver::d_func() through the MySqlResultPrivate::drv_d_func(),
-           what means that the MySqlResultPrivate will have access
+           which means that the MySqlResultPrivate will have access
            to the MySqlDriverPrivate. */
         friend MySqlResultPrivate;
 

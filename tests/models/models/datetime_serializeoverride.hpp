@@ -66,7 +66,7 @@ private:
     static QString serializeTime(const QTime time)
     {
         /* .z reports the seconds to full available (millisecond) precision without
-           trailing zeroes, so if ms is .123 it reports also .123, what means there is
+           trailing zeroes, so if ms is .123 it reports also .123, which means there is
            no rounding support for now and we can't force the output to .1 only. */
         return time.toString(u"HH-mm-ss.z"_s);
     }

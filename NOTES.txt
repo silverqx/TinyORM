@@ -451,7 +451,7 @@ C preprocessor macros, defines, private, public, interface:
        consumes TinyORM library. If the TinyORM library was build with the mysql_ping config. then
        it should also be  defined in the consumer application. But, if the mysql_ping is not defined
        Nothing Bad Happens because the TINYORM_MYSQL_PING is only used in the databaseconnection.hpp
-       to #ifdef the friend MySqlConnection declaration what means that it doesn't affect
+       to #ifdef the friend MySqlConnection declaration which means that it doesn't affect
        a consumer application in any sense.
      - linking against MySQL C library is not needed in the TinyOrm.pri and tom.pri
 
@@ -2705,7 +2705,7 @@ IT'S NOT possible.
 
 Summary: All of this is not possible because we must return std::shared_ptr<SqlDriver>()
 in the SqlDriverFactoryPrivate::createSqlDriverLoadable() as the SqlDriverFactoryPrivate
-doesn't have access to the TinyMySql LOADABLE DLL library what means TinyDrivers doesn't
+doesn't have access to the TinyMySql LOADABLE DLL library which means TinyDrivers doesn't
 and can't link against the TinyMySql LOADABLE DLL library, so it knows nothing about
 the MySqlDriver type! It only can load it at runtime using LoadLibrary()/dlopen() and will
 have access to the SqlDriver interface through a pointer. 😮😮😮😰
@@ -3277,7 +3277,7 @@ c++ confusions:
      - 390ms const lvalue reference
      - 600ms rvalue reference
      - 610ms by value
-   - what means using two methods one for lvalue and another for rvalue is still a good
+   - which means using two methods one for lvalue and another for rvalue is still a good
      idea instead of passing by value everywhere
 
  - structured binding

@@ -184,7 +184,7 @@ void PrepareForeignKeyValues::insertForeignKeyValueBtm()
     // Second value
     /* Swap pivot keys, so it follows belongsToMany() parameters order.
        It relates to this: if only one value was passed then set the related pivot key
-       first, what means that during second value insertion values have to be swapped. */
+       first, which means that during second value insertion values have to be swapped. */
     // Last record (we are currently processing)
     auto &last = m_preparedValues.belongsToMany.back();
 
