@@ -3379,6 +3379,8 @@ extern thread_local constinit int x;
 
  - perfect forwarding, template vs function parameter types
    - for const and non-const lvalue references the types will be the same for both
+   - passing by value doesn't exist or doesn't make sense for forwarding references, it will always
+     have a reference
    - ❗BUT if passed the rvalue then template parameter will NOT have the rvalue reference,
      only a function parameter will have it; template parameter will be without any reference and
      will be non-const!
