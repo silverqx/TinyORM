@@ -64,16 +64,13 @@ namespace Orm::Utils
         /*! Strip whitespaces (or other characters) from the beginning and end
             of a string. */
         inline static QStringView
-        trim(const QStringView string,
-             const QString &characters = Constants::TrimCharacters);
+        trim(QStringView string, const QString &characters = Constants::TrimCharacters);
         /*! Strip whitespaces (or other characters) from the beginning of a string. */
         static QStringView
-        ltrim(const QStringView string,
-              const QString &characters = Constants::TrimCharacters);
+        ltrim(QStringView string, const QString &characters = Constants::TrimCharacters);
         /*! Strip whitespaces (or other characters) from the end of a string. */
         static QStringView
-        rtrim(const QStringView string,
-              const QString &characters = Constants::TrimCharacters);
+        rtrim(QStringView string, const QString &characters = Constants::TrimCharacters);
 
         /*! Remove tags from the given string. */
         [[maybe_unused]]
@@ -95,7 +92,7 @@ namespace Orm::Utils
 
         /*! Split a string by the given width (with or w/o splitting words preference). */
         static QStringList
-        splitStringByWidth(const QStringView string, int width,
+        splitStringByWidth(QStringView string, int width,
                            SplitWordsBehavior splitBehavior = cNeverSplitWords);
         /*! Split a string at the first given character. */
         static QList<QStringView>
