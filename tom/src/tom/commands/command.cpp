@@ -191,7 +191,7 @@ std::vector<bool> Command::isSetAll(const QString &name) const
 {
     std::vector<bool> result;
 
-    for (const auto &option : parser().optionNames())
+    for (const auto &option : parser().optionNames()) // clazy:exclude=range-loop-detach
         if (option == name)
             result.push_back(true);
 

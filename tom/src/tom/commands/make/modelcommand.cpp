@@ -520,7 +520,7 @@ RelationsOrder ModelCommand::relationsOrder()
     RelationsOrder preparedOrders;
     std::size_t relationOrderIndex = 0;
 
-    for (const auto &option : optionNames())
+    for (const auto &option : optionNames()) // clazy:exclude=range-loop-detach
         if (option == one_to_one)
             preparedOrders.oneToOne.push_back(relationOrderIndex++);
         else if (option == one_to_many)

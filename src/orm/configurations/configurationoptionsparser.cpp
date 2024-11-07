@@ -130,7 +130,7 @@ ConfigurationOptionsParser::splitConfigOptions(const QStringView optionsString)
     list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C) + 2);
 
     // Split by the ; and also ,
-    for (const auto value : optionsString.split(SEMICOLON, Qt::SkipEmptyParts))
+    for (const auto value : optionsString.split(SEMICOLON, Qt::SkipEmptyParts)) // clazy:exclude=range-loop-detach
         list << value.split(COMMA_C, Qt::SkipEmptyParts);
 
     return list;
