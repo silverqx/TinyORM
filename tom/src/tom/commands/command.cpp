@@ -378,10 +378,10 @@ void Command::validateRequiredArguments() const
 {
     const auto &arguments = positionalArguments();
 
-    using RequiredStdSizeType = std::remove_cvref_t<decltype (arguments)>::size_type;
+    using StdSizeType = std::remove_cvref_t<decltype (arguments)>::size_type;
 
     // Count required arguments
-    RequiredStdSizeType requiredArgsSize = 0;
+    StdSizeType requiredArgsSize = 0;
     for (const auto &argument : arguments)
         // Required arguments can not be after optional arguments
         if (argument.optional)
@@ -395,11 +395,11 @@ void Command::validateRequiredArguments() const
     const auto passedArgsSize = this->arguments().size() - 1;
 
     // All required positional arguments were passed
-    if (static_cast<RequiredStdSizeType>(passedArgsSize) >= requiredArgsSize)
+    if (static_cast<StdSizeType>(passedArgsSize) >= requiredArgsSize)
         return;
 
     errorWall(uR"(Not enough arguments (missing: "%1").)"_s
-              .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
+              .arg(arguments.at(static_cast<StdSizeType>(passedArgsSize)).name));
 
     Application::exitApplication(EXIT_FAILURE);
 }
@@ -414,13 +414,12 @@ QString Command::argumentInternal(const QStringList &positionalArguments,
 
     const auto &positionalArgumentsRef = this->positionalArguments();
 
-    using ArgumentsStdSizeType = std::remove_cvref_t<decltype (positionalArgumentsRef)>
-                                    ::size_type;
+    using StdSizeType = std::remove_cvref_t<decltype (positionalArgumentsRef)>::size_type;
 
     // Default value support
     const auto defaultValue = positionalArgumentsRef.at(
                                   // -1 to exclude the command name
-                                  static_cast<ArgumentsStdSizeType>(index) - 1)
+                                  static_cast<StdSizeType>(index) - 1)
                               .defaultValue;
 
     return positionalArguments.value(index, defaultValue);
