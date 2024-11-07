@@ -2639,6 +2639,13 @@ else {
     qDebug() << "no";
 }
 
+Orm::Drivers::SqlQuery q(db);
+q.exec("select id, name from users");
+
+while (users.next())
+    qDebug() << "id :"   << q.value("id").value<quint64>() << ";"
+             << "name :" << q.value("name").value<QString>();
+
 
 TinyDrivers SqlDriver smart pointers:
 -------------------------------------
