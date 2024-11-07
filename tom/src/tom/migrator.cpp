@@ -274,7 +274,7 @@ std::vector<RollbackItem>
 Migrator::getMigrationsForRollback(std::vector<MigrationItem> &&ran) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     return ranges::views::move(ran)
-            | ranges::views::transform([this](MigrationItem &&migrationItem)
+            | ranges::views::transform([this](MigrationItem &&migrationItem) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                        -> RollbackItem
     {
         auto &[id, migrationName, _] = migrationItem;
