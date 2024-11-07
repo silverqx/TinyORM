@@ -113,11 +113,16 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
         const auto optionRawCount = optionRaw.count(EQ_C);
         Q_ASSERT(optionRawCount >= 0 && optionRawCount <= 1);
 
+        // Return early as we know the result (to avoid calling the split())
+        if (optionRawCount == 0) {
+            preparedOptions.emplace(optionRaw.trimmed().toString(), EMPTY);
+            continue;
+        }
+
         const auto option = optionRaw.split(EQ_C);
 
-        preparedOptions.emplace(
-                    option.constFirst().trimmed().toString(),
-                    optionRawCount == 0 ? EMPTY : option[1].trimmed().toString());
+        preparedOptions.emplace(option.constFirst().trimmed().toString(),
+                                option[1].trimmed().toString());
     }
 
     return preparedOptions;
