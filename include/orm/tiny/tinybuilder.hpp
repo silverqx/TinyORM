@@ -12,6 +12,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/databaseconnection.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/string.hpp"
 
 #include "orm/tiny/concerns/buildsqueries.hpp"
 #include "orm/tiny/concerns/buildssoftdeletes.hpp"
@@ -46,6 +47,8 @@ namespace Orm::Tiny
         using Helpers = Orm::Utils::Helpers;
         /*! Alias for the query utils. */
         using QueryUtils = Orm::Utils::Query;
+        /*! Alias for the string utils. */
+        using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -1303,7 +1306,7 @@ namespace Orm::Tiny
     template<typename Model>
     WithItem Builder<Model>::createSelectWithConstraint(const QString &name)
     {
-        auto nameSplit = name.split(COLON);
+        auto nameSplit = StringUtils::splitAtFirst(name, COLON);
         auto relation  = nameSplit.constFirst().trimmed();
         auto &columns  = nameSplit[1];
 

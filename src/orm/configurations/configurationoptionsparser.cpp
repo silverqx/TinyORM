@@ -3,6 +3,7 @@
 #include "orm/configurations/configurationparser.hpp"
 #include "orm/constants.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/utils/string.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,6 +13,8 @@ using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::SEMICOLON;
 using Orm::Constants::options_;
+
+using StringUtils = Orm::Utils::String;
 
 namespace Orm::Configurations
 {
@@ -109,17 +112,19 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
        as well. */
     for (const auto optionRaw : optionsRaw) {
         /* Can contain 0 or 1 = character; 0 for flags and 1 for options with a value.
-           An option flag with no value is considered to be ON/TRUE (enabled). */
-        const auto optionRawCount = optionRaw.count(EQ_C);
-        Q_ASSERT(optionRawCount >= 0 && optionRawCount <= 1);
+           An option flag with no value is considered to be ON/TRUE (enabled).
+           I later refactored this so it could contain more = characters, the string view
+           is split at the first =, thus the option value can also contain = character. */
+        const auto optionRawEqCount = optionRaw.count(EQ_C);
+        Q_ASSERT(optionRawEqCount >= 0);
 
         // Return early as we know the result (to avoid calling the split())
-        if (optionRawCount == 0) {
+        if (optionRawEqCount == 0) {
             preparedOptions.emplace(optionRaw.trimmed().toString(), EMPTY);
             continue;
         }
 
-        const auto option = optionRaw.split(EQ_C);
+        const auto option = StringUtils::splitAtFirst(optionRaw, EQ_C);
 
         preparedOptions.emplace(option.constFirst().trimmed().toString(),
                                 option[1].trimmed().toString());

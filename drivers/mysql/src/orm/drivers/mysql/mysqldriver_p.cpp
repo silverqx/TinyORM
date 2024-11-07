@@ -211,16 +211,17 @@ bool MySqlDriverPrivate::supportsTransactions() const
 MySqlDriverPrivate::MySqlOptionParsed
 MySqlDriverPrivate::parseMySqlOption(const QStringView optionRaw)
 {
+    /* Can contain 0 or 1 = character; 0 for flags and 1 for options with a value
+       I later refactored this so it could contain more = characters, the string view is
+       split at the first =, thus the option value can also contain = character. */
     const auto optionRawEqCount = optionRaw.count(EQ_C);
-
-    // Can contain 0 or 1 = character; 0 for flags and 1 for options with a value
-    Q_ASSERT(optionRawEqCount >= 0 && optionRawEqCount <= 1);
+    Q_ASSERT(optionRawEqCount >= 0);
 
     // Return early as we know the result (to avoid calling the split())
     if (optionRawEqCount == 0)
         return {optionRaw.trimmed(), EMPTY};
 
-    const auto optionSplit = optionRaw.split(EQ_C);
+    const auto optionSplit = MySqlUtils::splitAtFirst(optionRaw, EQ_C);
 
     return {optionSplit.constFirst().trimmed(), optionSplit[1].trimmed()};
 }

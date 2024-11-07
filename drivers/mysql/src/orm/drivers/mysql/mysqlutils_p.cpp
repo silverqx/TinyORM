@@ -1,5 +1,9 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 
+#ifdef QT_LEAN_HEADERS
+#  include <QList>
+#endif
+
 #include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
 
 #include "orm/drivers/exceptions/sqlerror.hpp"
@@ -276,6 +280,64 @@ SqlField MySqlUtilsPrivate::convertToSqlField(const MYSQL_FIELD *const fieldInfo
     field.setSqlTypeName(mysqlFieldTypeToQString(fieldInfo->type, fieldInfo->flags));
 
     return field;
+}
+
+/* String utils */
+
+/* This belongs to the common drivers utils, but I will not create a new TU
+   for StringUtils, if I will have more drivers and this will be needed on more places
+   then I will have to refactor this.
+   Also, this is a duplicate code, the same code is in the Orm StringUtils, but I can't
+   use it, I will not extract it to the common library because of one or few functions,
+   until there are more of them. */
+
+QList<QStringView>
+MySqlUtilsPrivate::splitAtFirst(const QStringView string, const QChar separator,
+                                const Qt::SplitBehavior splitBehavior)
+{
+    const auto isSkipEmptyParts = splitBehavior == Qt::SkipEmptyParts;
+
+    // Nothing to do
+    if (string.isEmpty()) {
+        if (isSkipEmptyParts)
+            return {};
+
+        return {string}; // Don't use the EMPTY here
+    }
+
+    const auto separatorIdx = string.indexOf(separator);
+
+    // Nothing to do, separator was not found
+    if (separatorIdx == -1)
+        return {string};
+
+    const auto stringSize = string.size();
+    Q_ASSERT(separatorIdx >= 0 && separatorIdx < stringSize);
+
+    const auto *const itBegin          = string.constBegin();
+    const auto *const itEnd            = string.constEnd();
+    const auto *const itSeparator      = itBegin + separatorIdx; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    const auto *const itAfterSeparator = itSeparator + 1; // +1 to skip the separator; NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+
+    if (isSkipEmptyParts) {
+        const auto isSeparatorAtBeginning = itSeparator == itBegin;
+        const auto isSeparatorAtEnd       = itAfterSeparator == itEnd;
+
+        if (isSeparatorAtBeginning && isSeparatorAtEnd)
+            return {};
+
+        if (isSeparatorAtBeginning)
+            return {{itAfterSeparator, itEnd}};
+        if (isSeparatorAtEnd)
+            return {{itBegin, itSeparator}};
+    }
+    // Don't use the else here
+
+    /* This is correct in all cases, overflow can't happen if there is nothing after
+       the separator, eg. key=, in this case the itAfterSeparator will point to the
+       constEnd(), so the result will be like {string.constEnd(), string.constEnd()}
+       what is an empty string view (not/null based on the origin string). */
+    return {{itBegin, itSeparator}, {itAfterSeparator, itEnd}};
 }
 
 } // namespace Orm::Drivers::MySql

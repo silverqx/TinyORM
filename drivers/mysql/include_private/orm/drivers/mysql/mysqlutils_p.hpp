@@ -2,7 +2,7 @@
 #ifndef ORM_DRIVERS_MYSQL_MYSQLUTILS_P_HPP
 #define ORM_DRIVERS_MYSQL_MYSQLUTILS_P_HPP
 
-#include <QtGlobal>
+#include <QtCore/qnamespace.h>
 
 #include <optional>
 
@@ -14,6 +14,7 @@
 
 #include "orm/drivers/utils/notnull.hpp"
 
+class QChar;
 class QStringView;
 
 #if __has_include(<field_types.h>)
@@ -81,6 +82,12 @@ namespace MySql
         /* Result sets */
         /*! Convert the given MySQL field to the SqlField. */
         static SqlField convertToSqlField(const MYSQL_FIELD *fieldInfo);
+
+        /* String utils */
+        /*! Split a string at the first given character. */
+        static QList<QStringView>
+        splitAtFirst(QStringView string, QChar separator,
+                     Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts
     };
 
 } // namespace MySql
