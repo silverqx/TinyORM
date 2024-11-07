@@ -2220,7 +2220,7 @@ void tst_Model_Relations::where_WithCallback() const
 
     ConnectionOverride::connection = connection;
 
-    auto files = Torrent::find(5)->torrentFiles()
+    const auto files = Torrent::find(5)->torrentFiles()
                  ->where([](auto &query)
     {
         query.whereEq(ID, 6).orWhereEq("file_index", 2);
@@ -2244,7 +2244,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
 
     ConnectionOverride::connection = connection;
 
-    auto files = Torrent::find(5)->torrentFiles()
+    const auto files = Torrent::find(5)->torrentFiles()
                  ->where(Progress, ">", 990)
                  .orWhere([](auto &query)
     {
