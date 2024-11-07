@@ -205,7 +205,7 @@ namespace
         if (std::addressof(wcout) == std::addressof(std::wcout))
             return GetStdHandle(STD_OUTPUT_HANDLE);
 
-        else if (std::addressof(wcout) == std::addressof(std::wcerr))
+        if (std::addressof(wcout) == std::addressof(std::wcerr))
             return GetStdHandle(STD_ERROR_HANDLE);
 
         throw Exceptions::InvalidArgumentError(
