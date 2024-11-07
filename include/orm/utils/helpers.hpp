@@ -25,16 +25,9 @@ namespace Orm
 namespace Utils
 {
     /*! Tests if the std::hash can hash T with noexcept. */
-    template<class T, class = void>
-    struct IsNothrowHashable : std::false_type
-    {};
-
-    /*! Tests if the std::hash can hash T with noexcept. */
-    template<class T>
-    struct IsNothrowHashable<T, std::void_t<decltype (std::hash<T>()(
-                                                          std::declval<const T &>()))>>
-        : std::bool_constant<noexcept(std::hash<T>()(std::declval<const T &>()))>
-    {};
+    template<typename T, typename U = std::remove_const_t<T>> // std::remove_const_t<> still makes sense in some cases
+    constexpr auto IsNothrowHashable = noexcept(std::hash<U>()(
+                                                    std::declval<const U &>()));
 
     /*! Helpers library class. */
     class TINYORM_EXPORT Helpers
@@ -62,7 +55,7 @@ namespace Utils
             variables. */
         template<typename T>
         inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
-        noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
+        noexcept(IsNothrowHashable<T>);
 
         /*! Log exception caught in the main exception handler in a current thread. */
         [[maybe_unused]]
@@ -132,7 +125,7 @@ namespace Utils
 
     template<typename T>
     std::size_t &Helpers::hashCombine(std::size_t &seed, const T &value)
-    noexcept(IsNothrowHashable<std::remove_const_t<T>>::value)
+    noexcept(IsNothrowHashable<T>)
     {
         return seed ^= std::hash<T>()(value) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
