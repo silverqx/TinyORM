@@ -153,6 +153,8 @@ using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
 
+using Tom::Concerns::InteractsWithIO;
+
 using TomUtils = Tom::Utils;
 
 namespace Tom {
@@ -247,7 +249,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */
-    const Concerns::InteractsWithIO io(noAnsi);
+    const InteractsWithIO io(noAnsi);
 
     static const auto WrapperTmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
 
@@ -261,7 +263,8 @@ void Application::logException(const std::exception &e, const bool noAnsi)
     }
 
     /* Print error wall (red box with a white text) */
-    qCritical().nospace().noquote() << WrapperTmpl.arg(io.errorWallInternal(message));
+    qCritical().nospace().noquote() << WrapperTmpl
+                                       .arg(InteractsWithIO::errorWallInternal(message));
 }
 
 QStringList Application::arguments() const // NOLINT(readability-convert-member-functions-to-static)
@@ -376,7 +379,7 @@ void Application::parseCommandLine()
     /* Command-line arguments are parsed now, so the InteractsWithIO() class can be
        instantiated. There's nothing wrong with being so late as an output to the console
        is not needed until now. */
-    m_io = std::make_unique<Concerns::InteractsWithIO>(m_parser);
+    m_io = std::make_unique<InteractsWithIO>(m_parser);
 
     if (m_parser.isSet(nointeraction))
         m_interactive = false;
@@ -923,7 +926,7 @@ Application::connectionResolver() const noexcept
     return std::dynamic_pointer_cast<ConnectionResolverInterface>(m_db);
 }
 
-const Concerns::InteractsWithIO &Application::io() const noexcept
+const InteractsWithIO &Application::io() const noexcept
 {
     /* This is our internal thing so the Q_ASSERT() is enough. I tried to make it public
        because the InteractsWithIO() class contains useful methods, but it's not fully
