@@ -149,9 +149,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     /* Do not print an error wall when ANSI is disabled, terminal doesn't report
        the correct columns/width value (can indicate some basic console/terminal), or
        there isn't enough free space. */
-    if (!isAnsiOutput() ||
-        (terminalWidth == -1 || terminalWidth < MinRequiredColumns)
-    )
+    if (!isAnsiOutput() || terminalWidth < MinRequiredColumns)
         return line(string, true, verbosity, {}, std::cerr);
 
     static const auto WrapperTmpl = u"%1%2%1"_s.arg(NEWLINE_C, TMPL_ONE);
