@@ -51,7 +51,7 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QStringView options) const
     QString unixSocket;
 
     // Split a raw connection options string using the ; character
-    for (const auto optionRaw : options.split(SEMICOLON, Qt::SkipEmptyParts)) {
+    for (const auto optionRaw : options.split(SEMICOLON, Qt::SkipEmptyParts)) { // clazy:exclude=range-loop-detach
 
         // Parse the given MySQL connection option to name and value
         const auto [option, value] = parseMySqlOption(optionRaw);
