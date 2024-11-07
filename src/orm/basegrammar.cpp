@@ -191,10 +191,11 @@ QStringList BaseGrammar::getSegmentsFromAlias(const QString &aliasedExpression)
     const auto segmentsView = QStringView(aliasedExpression)
                               .split(u" as "_s, Qt::KeepEmptyParts, Qt::CaseInsensitive);
 
-    Q_ASSERT(!segmentsView.isEmpty() && segmentsView.size() <= 2);
+    const auto segmentsViewSize = segmentsView.size();
+    Q_ASSERT(segmentsViewSize >= 1 && segmentsViewSize <= 2);
 
     QStringList segments;
-    segments.reserve(segmentsView.size());
+    segments.reserve(segmentsViewSize);
 
     // Remove leading/ending whitespaces
     for (const auto segement : segmentsView)
