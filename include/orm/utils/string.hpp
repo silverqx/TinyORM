@@ -75,6 +75,11 @@ namespace Orm::Utils
         /*! Remove tags from the given string. */
         static QString stripTags(QString string);
 
+        /*! Split a string at the first given character. */
+        static QList<QString>
+        splitAtFirst(const QString &string, QChar separator,
+                     Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts
+
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
         static QString snake(QString string, QChar delimiter = Constants::UNDERSCORE);
@@ -93,7 +98,7 @@ namespace Orm::Utils
         static QStringList
         splitStringByWidth(QStringView string, int width,
                            SplitWordsBehavior splitBehavior = cNeverSplitWords);
-        /*! Split a string at the first given character. */
+        /*! Split a string view at the first given character. */
         static QList<QStringView>
         splitAtFirst(QStringView string, QChar separator,
                      Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts

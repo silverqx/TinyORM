@@ -176,6 +176,56 @@ QString String::stripTags(QString string)
     return string;
 }
 
+QList<QString> String::splitAtFirst(const QString &string, const QChar separator,
+                                    const Qt::SplitBehavior splitBehavior)
+{
+    const auto isSkipEmptyParts = splitBehavior == Qt::SkipEmptyParts;
+
+    // Nothing to do
+    if (string.isEmpty()) {
+        if (isSkipEmptyParts)
+            return {};
+
+        return {EMPTY};
+    }
+
+    const auto separatorIdx = string.indexOf(separator);
+
+    // Nothing to do, separator was not found
+    if (separatorIdx == -1)
+        return {string};
+
+    const auto stringSize = string.size();
+    Q_ASSERT(separatorIdx >= 0 && separatorIdx < stringSize);
+
+    const auto *const itBegin          = string.constBegin();
+    const auto *const itAfterSeparator = itBegin + separatorIdx + 1; // +1 to skip the separator; NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    const auto lengthToEndAfterSep     = stringSize - separatorIdx - 1;
+
+    if (isSkipEmptyParts) {
+        const auto *const itSeparator     = itBegin + separatorIdx; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        const auto isSeparatorAtBeginning = itSeparator == itBegin;
+        const auto isSeparatorAtEnd       = itAfterSeparator == string.constEnd();
+
+        if (isSeparatorAtBeginning && isSeparatorAtEnd)
+            return {};
+
+        if (isSeparatorAtBeginning)
+            return {QString(itAfterSeparator, lengthToEndAfterSep)};
+        if (isSeparatorAtEnd)
+            return {QString(itBegin, separatorIdx)};
+    }
+    // Don't use the else here
+
+    /* This is correct in all cases, overflow can't happen if there is nothing after
+       the separator, eg. key=, in this case the itAfterSeparator will point
+       to the constEnd() and the lengthToEndAfterSep == 0, so the result will be like
+       {string.constEnd(), 0} what is an empty string (whatever with the size 0 is
+       an empty string (not/null based on the origin string). */
+    return {QString(itBegin, separatorIdx),
+            QString(itAfterSeparator, lengthToEndAfterSep)};
+}
+
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
 /*! Snake cache type. */
 using SnakeCache = std::unordered_map<QString, QString>;
@@ -415,34 +465,49 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
 QList<QStringView> String::splitAtFirst(const QStringView string, const QChar separator,
                                         const Qt::SplitBehavior splitBehavior)
 {
-    // Nothing to do
-    if (string.isEmpty())
-        return {};
+    const auto isSkipEmptyParts = splitBehavior == Qt::SkipEmptyParts;
 
-    const auto index = string.indexOf(separator);
+    // Nothing to do
+    if (string.isEmpty()) {
+        if (isSkipEmptyParts)
+            return {};
+
+        return {string}; // Don't use the EMPTY here
+    }
+
+    const auto separatorIdx = string.indexOf(separator);
 
     // Nothing to do, separator was not found
-    if (index == -1)
+    if (separatorIdx == -1)
         return {string};
 
-    const auto *const begin = string.constBegin();
-    const auto *const end = string.constEnd();
-    const auto *const itSeparator = string.constBegin() + index;
-    const auto *const itAfterSeparator = string.constBegin() + index + 1; // +1 to skip the separator
+    const auto stringSize = string.size();
+    Q_ASSERT(separatorIdx >= 0 && separatorIdx < stringSize);
 
-    // Currently, a value before the separator must contain at least one character
-    Q_ASSERT(begin < itSeparator);
-    // Standard development check, therefore is separated from the above
-    Q_ASSERT(itAfterSeparator <= end);
+    const auto *const itBegin          = string.constBegin();
+    const auto *const itEnd            = string.constEnd();
+    const auto *const itSeparator      = itBegin + separatorIdx; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    const auto *const itAfterSeparator = itSeparator + 1; // +1 to skip the separator; NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
-    if (splitBehavior == Qt::SkipEmptyParts && itAfterSeparator == end)
-        return {{begin, itSeparator}};
+    if (isSkipEmptyParts) {
+        const auto isSeparatorAtBeginning = itSeparator == itBegin;
+        const auto isSeparatorAtEnd       = itAfterSeparator == itEnd;
+
+        if (isSeparatorAtBeginning && isSeparatorAtEnd)
+            return {};
+
+        if (isSeparatorAtBeginning)
+            return {{itAfterSeparator, itEnd}};
+        if (isSeparatorAtEnd)
+            return {{itBegin, itSeparator}};
+    }
+    // Don't use the else here
 
     /* This is correct in all cases, overflow can't happen if there is nothing after
-       the separator, eg. key=, in this case the beginIndex will point to the constEnd(),
-       so the result will be like {string.constEnd(), string.constEnd()} what is an empty
-       string view. */
-    return {{begin, itSeparator}, {itAfterSeparator, end}};
+       the separator, eg. key=, in this case the itAfterSeparator will point to the
+       constEnd(), so the result will be like {string.constEnd(), string.constEnd()}
+       what is an empty string view (not/null based on the origin string). */
+    return {{itBegin, itSeparator}, {itAfterSeparator, itEnd}};
 }
 
 QString::size_type String::countBefore(QString string, const QChar character,
