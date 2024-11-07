@@ -73,7 +73,6 @@ namespace Orm::Utils
         rtrim(QStringView string, const QString &characters = Constants::TrimCharacters);
 
         /*! Remove tags from the given string. */
-        [[maybe_unused]]
         static QString stripTags(QString string);
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
