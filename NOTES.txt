@@ -3264,6 +3264,19 @@ QByteArray instantiation performance with 1'000'000 loop:
  -  17ms - "abc"_ba
  -  17ms - QByteArrayLiteral("abc")
 
+QT_LEAN_HEADERS:
+ - see: https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
+ - forward declare QList, QMap, QHash, QVarLengthArray, QSet, and QObject in <QVariant>
+   and <QDebug> headers instead of #include-ing them (reduce transitive includes)
+ - eg. this is comment from the qmake
+   - set DEFINES *= QT_LEAN_HEADERS=2 based on CONFIG*=lean_headers (higher priority) and
+     TINYORM_QT_LEAN_HEADERS environment variable
+ - which means these headers are only forward declared in <QVariant>
+ - if some TU only #include-s the <QVariant> then I must #include all the above headers
+   manually
+ - also, I must wrap them in #ifdef QT_LEAN_HEADERS so they will not be #include-ed twice
+   if the QT_LEAN_HEADERS isn't defined
+
 
 c++ confusions:
 ---------------
