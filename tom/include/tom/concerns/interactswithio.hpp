@@ -203,7 +203,7 @@ namespace Concerns
         computeReserveForErrorWall(const QList<QStringView> &stringSplit,
                                    int maxLineWidth);
         /*! Render the error wall using the given lines. */
-        static QString renderErrorWall(QStringList &&lines);
+        static QString renderErrorWall(const QStringList &lines);
 
         /*! Is the input interactive? (don't ask any interactive question if false) */
         bool m_interactive = true;

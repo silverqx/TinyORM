@@ -610,7 +610,7 @@ InteractsWithIO::computeReserveForErrorWall(const QList<QStringView> &stringSpli
     return size;
 }
 
-QString InteractsWithIO::renderErrorWall(QStringList &&lines)
+QString InteractsWithIO::renderErrorWall(const QStringList &lines)
 {
     // ANSI template
     static const auto AnsiTmpl = u"\033[37;41m%1\033[0m"_s;
