@@ -93,7 +93,7 @@ std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::make() const
 /* Our conventions for database names are MySql, Postgres, and SQLite, the same names
    like TinyORM connections or driver classes are named. 🫤 I will not break this, so
    shared/static libraries will also have these names.
-   To be more confusing all preprocessor macros for PostgeSQL are named
+   To be more confusing all preprocessor macros for PostgreSQL are named
    TINYDRIVERS_PSQL_ I will not change it to TINYDRIVERS_POSTGRES_ I like it this way.*/
 
 #ifdef TINYDRIVERS_MYSQL_DRIVER
