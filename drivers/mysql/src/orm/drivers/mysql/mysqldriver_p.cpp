@@ -4,6 +4,8 @@
 #  include <QStringList>
 #endif
 
+#include <unordered_set>
+
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/exceptions/sqlerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
@@ -63,7 +65,7 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QStringView options) const
         /* If the connection option has no value or ends with the TRUE-like boolean
            keywords (true, on, 1), then treat it as a flag, these options are passed
            to the mysql_real_connect() method using the client_flag parameter. */
-        if (isTrueBoolOption(value))
+        if (isTrueBoolOption(value, option))
             setOptionFlag(optionFlags, option);
 
         else if (option == "UNIX_SOCKET"_L1) // _L1 is correct here
@@ -209,7 +211,7 @@ bool MySqlDriverPrivate::supportsTransactions() const
 MySqlDriverPrivate::MySqlOptionParsed
 MySqlDriverPrivate::parseMySqlOption(const QStringView optionRaw)
 {
-    const auto optionRawCount = optionRaw.count(EQ_C);
+    const auto optionRawEqCount = optionRaw.count(EQ_C);
 
     // Can contain 0 or 1 = character; 0 for flags and 1 for options with a value
     Q_ASSERT(optionRawEqCount >= 0 && optionRawEqCount <= 1);
@@ -237,7 +239,7 @@ bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
 
     // Set the given option using predefined setOptionXyz() static method
     if (const auto &[mysqlOption, setMySqlOption] = optionsHash.at(option);
-        std::invoke(setMySqlOption, *this, mysqlOption, value)
+        std::invoke(setMySqlOption, *this, mysqlOption, value, option)
     )
         return true;
 
@@ -333,14 +335,16 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
                  "in %3()."_s.arg(option, connectionName, __tiny_func__));
 }
 
-bool MySqlDriverPrivate::setOptionString(const mysql_option option,
-                                         const QStringView value) const
+bool MySqlDriverPrivate::setOptionString(
+        const mysql_option option, const QStringView value,
+        const QStringView /*unused*/) const
 {
     return mysql_options(mysql, option, value.toUtf8().constData()) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionUInt(const mysql_option option,
-                                       const QStringView value) const
+bool MySqlDriverPrivate::setOptionUInt(
+        const mysql_option option, const QStringView value,
+        const QStringView /*unused*/) const
 {
     auto ok = false;
     const auto intValue = value.toUInt(&ok);
@@ -348,27 +352,30 @@ bool MySqlDriverPrivate::setOptionUInt(const mysql_option option,
     return ok && mysql_options(mysql, option, &intValue) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionBool(const mysql_option option,
-                                       const QStringView value) const noexcept
+bool MySqlDriverPrivate::setOptionBool(
+        const mysql_option option, const QStringView value,
+        const QStringView optionName) const
 {
     // Log warnings to the console for some boolean connection options
     logBoolOptionWarnings(option);
 
     // Revisited, an empty value is considered as true so it's a kind of flag
-    const auto boolValue = isTrueBoolOption(value);
+    const auto boolValue = isTrueBoolOption(value, optionName);
 
     return mysql_options(mysql, option, &boolValue) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionProtocol(const mysql_option option,
-                                           const QStringView value) const
+bool MySqlDriverPrivate::setOptionProtocol(
+        const mysql_option option, const QStringView value,
+        const QStringView optionName) const
 {
-    const auto protocol = getOptionProtocol(value);
+    const auto protocol = getOptionProtocol(value, optionName);
 
     return mysql_options(mysql, option, &protocol) == 0;
 }
 
-mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView value) const
+mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView value,
+                                                          const QStringView option) const
 {
     if (value == "TCP"_L1 || value == "MYSQL_PROTOCOL_TCP"_L1)
         return MYSQL_PROTOCOL_TCP;
@@ -382,21 +389,24 @@ mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView valu
         return MYSQL_PROTOCOL_DEFAULT;
 
     throw Exceptions::InvalidArgumentError(
-                u"Unknown MySQL connection transport protocol '%1' for '%2' database "
-                 "connection in %3()."_s.arg(value, connectionName, __tiny_func__));
+                u"Unknown MySQL connection transport protocol '%1' for '%2' option "
+                 "for '%3' database connection in %4()."_s
+                .arg(value, option, connectionName, __tiny_func__));
 }
 
 // The MYSQL_OPT_SSL_MODE was added in MySQL 5.7.11
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
-bool MySqlDriverPrivate::setOptionSslMode(const mysql_option option,
-                                          const QStringView value) const
+bool MySqlDriverPrivate::setOptionSslMode(
+        const mysql_option option, const QStringView value,
+        const QStringView optionName) const
 {
-    const auto sslMode = getOptionSslMode(value);
+    const auto sslMode = getOptionSslMode(value, optionName);
 
     return mysql_options(mysql, option, &sslMode) == 0;
 }
 
-mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value) const
+mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value,
+                                                    const QStringView option) const
 {
     if (value == "DISABLED"_L1 || value == "SSL_MODE_DISABLED"_L1)
         return SSL_MODE_DISABLED;
@@ -410,8 +420,9 @@ mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value) con
         return SSL_MODE_VERIFY_IDENTITY;
 
     throw Exceptions::InvalidArgumentError(
-                u"Unknown MySQL SSL mode '%1' for '%2' database connection in %3()."_s
-                .arg(value, connectionName, __tiny_func__));
+                u"Unknown MySQL SSL mode '%1' for '%2' option "
+                 "for '%3' database connection in %4()."_s
+                .arg(value, option, connectionName, __tiny_func__));
 }
 #endif
 
@@ -425,14 +436,45 @@ void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option) const
                    .arg(connectionName, __tiny_func__);
 }
 
-bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
+bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value,
+                                          const QStringView option) const
 {
-    // An empty value is considered as true so it's a kind of flag
-    return value.isEmpty() ||
-           value.compare("true"_L1, Qt::CaseInsensitive) == 0 || // _L1 is correct here
+    /* An empty value is considered as true so it's a kind of flag, also return early
+       for perfomance reasons as we known the result right away and there is nothing
+       to check. */
+    if (value.isEmpty())
+        return true;
+
+    throwIfWrongBoolOptionValue(value, option);
+
+    return value.compare("true"_L1, Qt::CaseInsensitive) == 0 || // _L1 is correct here
            value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
            value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
+           value.compare("y"_L1,    Qt::CaseInsensitive) == 0 ||
            value == u'1';
+}
+
+void MySqlDriverPrivate::throwIfWrongBoolOptionValue(const QStringView value,
+                                                     const QStringView option) const
+{
+    static constexpr std::initializer_list<QStringView> AllowedValuesInitializer {
+        u"true",  u"on",  u"yes", u"y", u"1",
+        u"false", u"off", u"no",  u"n", u"0", u"ignore",
+    };
+    static const std::unordered_set AllowedValues(AllowedValuesInitializer);
+
+    // Nothing to do, the value is correct
+    if (AllowedValues.contains(value.toString().toLower()))
+        return;
+
+    static const auto AllAllowedValues = QStringList(AllowedValuesInitializer.begin(),
+                                                     AllowedValuesInitializer.end())
+                                         .join(COMMA);
+
+    throw Exceptions::InvalidArgumentError(
+                u"Invalid value '%1' for '%2' boolean option "
+                 "for '%3' database connection, allowed values are: %4; in %5()."_s
+                .arg(value, option, connectionName, AllAllowedValues, __tiny_func__));
 }
 
 void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,
@@ -441,7 +483,9 @@ void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,
     // Leave this check enabled for MariaDB as well and inform in the exception message
     /* Calling the isTrueBoolOption(value) to allow setting it to OFF/false, setting it
        to OFF supported but setting it to ON isn't. */
-    if (option == "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_L1 && isTrueBoolOption(value))
+    if (option == "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_L1 &&
+        isTrueBoolOption(value, option)
+    )
         throw Exceptions::InvalidArgumentError(
                 u"The TinyMySql library doesn't support optional metadata for MySQL "
                  "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA), also, MariaDB "
