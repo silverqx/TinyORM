@@ -212,12 +212,15 @@ MySqlDriverPrivate::parseMySqlOption(const QStringView optionRaw)
     const auto optionRawCount = optionRaw.count(EQ_C);
 
     // Can contain 0 or 1 = character; 0 for flags and 1 for options with a value
-    Q_ASSERT(optionRawCount >= 0 && optionRawCount <= 1);
+    Q_ASSERT(optionRawEqCount >= 0 && optionRawEqCount <= 1);
 
-    const auto option = optionRaw.split(EQ_C);
+    // Return early as we know the result (to avoid calling the split())
+    if (optionRawEqCount == 0)
+        return {optionRaw.trimmed(), EMPTY};
 
-    return {option.constFirst().trimmed(), optionRawCount == 0 ? EMPTY :
-                                                                 option[1].trimmed()};
+    const auto optionSplit = optionRaw.split(EQ_C);
+
+    return {optionSplit.constFirst().trimmed(), optionSplit[1].trimmed()};
 }
 
 bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
