@@ -37,9 +37,9 @@ namespace Orm::Utils
 
         /*! Convert a string container into a (comma) delimited string. */
         template<JoinBehavior J = cKeepEmptyParts, JoinContainer T,
-                 DelimiterConcept D = const QString &> // Must be const QString & as delimiter is forwarding reference, see NOTES.txt[c++ confusions-perfect forwarding]
+                 DelimiterConcept D = QString>
         static QString
-        join(const T &container, D &&delimiter = Constants::COMMA);
+        join(const T &container, const D &delimiter = Constants::COMMA);
 
         /*! Count all string sizes in the given container and optionally add value to
             every string. */
@@ -50,13 +50,13 @@ namespace Orm::Utils
     private:
         /*! Get the delimiter size (returns 1 for the QChar). */
         template<typename SizeType = QString::size_type, DelimiterConcept D>
-        static SizeType delimiterSize(D &&delimiter);
+        static SizeType delimiterSize(const D &delimiter);
     };
 
     /* public */
 
     template<Container::JoinBehavior J, JoinContainer T, DelimiterConcept D>
-    QString Container::join(const T &container, D &&delimiter)
+    QString Container::join(const T &container, const D &delimiter) // Don't use forwardning reference here
     {
         // Nothing to join
         if (container.empty())
@@ -67,7 +67,7 @@ namespace Orm::Utils
 
         QString joined;
         // +4 serves as a reserve (for the reserve() 😂)
-        const auto delimiterSize_ = delimiterSize<TSizeType>(std::forward<D>(delimiter));
+        const auto delimiterSize_ = delimiterSize<TSizeType>(delimiter);
         // Can't be removed as T can be Qt or std container type (different size_type)
         if constexpr (std::is_same_v<QString::size_type, TSizeType>)
             joined.reserve(countStringSizes(container, delimiterSize_ + 4));
@@ -102,7 +102,7 @@ namespace Orm::Utils
 
             // These append-s() are better for performance
             // No need to use the if statement if a delimiter is empty or null
-            joined.append(std::forward<D>(delimiter))
+            joined.append(delimiter)
                   .append(*it);
             ++it;
         }
@@ -134,19 +134,20 @@ namespace Orm::Utils
 
     /* private */
 
-    // Forwarding reference is needed to avoid passing the QChar as const &
     template<typename SizeType, DelimiterConcept D>
-    SizeType Container::delimiterSize(D &&delimiter) // NOLINT(cppcoreguidelines-missing-std-forward)
+    SizeType Container::delimiterSize(const D &delimiter)
     {
         /* Don't use the std::is_constructible_v<> here as it also considers explicit
-           constructors and the DelimiterConcept uses std::convertible_to<> too.
-           For the std::remove_cvref_t<> see NOTES.txt[c++ confusions-perfect forwarding]
-           and search 3 exclamation marks. */
-        if constexpr (std::is_convertible_v<std::remove_cvref_t<D>, QChar>)
+           constructors and the DelimiterConcept uses std::convertible_to<> too. */
+        if constexpr (std::is_convertible_v<D, QChar>)
             return 1; // static_cast<> is not needed here regardless of SizeType
-        else
-            // QString(delimiter) not needed here because of DelimiterConcept
+        // To avoid QString(delimiter) and doing copy if D is QString
+        else if (std::is_same_v<D, QString>)
             return static_cast<SizeType>(delimiter.size());
+        /* QString(delimiter) is here for safety as we are using std::convertible_to
+           concept, so the type can be something else than QString. */
+        else
+            return static_cast<SizeType>(QString(delimiter).size());
     }
 
 } // namespace Orm::Utils
