@@ -429,7 +429,7 @@ void tst_CastAttributes::mergeCasts_rvalue() const
     /* Original casts was empty before the mergeCasts() method call, so all casts
        will be extracted. The 'id' cast in the getCasts() is emplaced on the fly
        on the user casts copy, so the 'id' cast will be extracted too. */
-    QVERIFY(toMerge.empty()); // NOLINT(bugprone-use-after-move)
+    QVERIFY(toMerge.empty()); // NOLINT(bugprone-use-after-move), need to test it even after the move
 }
 
 void tst_CastAttributes::withCasts_OnTinyBuilder() const

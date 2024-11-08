@@ -361,7 +361,7 @@ namespace
         // Push to lines
         lines << std::move(line);
         // Start a new line
-        line.clear(); // NOLINT(bugprone-use-after-move)
+        line.clear(); // NOLINT(bugprone-use-after-move), need to clear it anyway even after the move
     }
 
     /*! Split the token to multiple lines by the given width. */
