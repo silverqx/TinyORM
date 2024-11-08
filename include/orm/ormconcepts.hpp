@@ -5,15 +5,18 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QString>
-#include <QVariant>
+#include <QtContainerFwd>
 
 #include <deque>
 #include <memory>
 #include <set>
 #include <variant>
+#include <vector>
 
 #include "orm/macros/commonnamespace.hpp"
+
+class QChar;
+class QStringView;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
