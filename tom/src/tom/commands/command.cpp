@@ -43,7 +43,7 @@ QList<CommandLineOption> Command::optionsSignature() const
 
 int Command::run()
 {
-    initializePositionalArguments();
+    initializePositionalArgumentsHash();
 
     auto &parser = this->parser();
 
@@ -350,7 +350,7 @@ bool Command::inUnitTests() noexcept
 
 /* private */
 
-void Command::initializePositionalArguments()
+void Command::initializePositionalArgumentsHash()
 {
     const auto &arguments = positionalArguments();
 

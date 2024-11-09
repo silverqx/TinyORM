@@ -183,8 +183,8 @@ namespace Commands
         std::unordered_map<QString, SizeType> m_positionalArguments;
 
     private:
-        /*! Initialize positional arguments map. */
-        void initializePositionalArguments();
+        /*! Initialize positional arguments lookup hash. */
+        void initializePositionalArgumentsHash();
         /*! Initialize and get the options signature lookup hash. */
         static std::unordered_map<QString, SizeType>
         getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignature);
