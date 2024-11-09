@@ -117,7 +117,7 @@ const CommandLineOption &Command::getOptionFromSignature(const QString &name) co
 
 namespace
 {
-    /*! Find n-th option with the given name in option names list. */
+    /*! Find the nth option with the given name in the option names list. */
     auto findNthOption(const QString &optionName, const QString::size_type nthOptionIdx,
                        const QStringList &optionNames)
     {

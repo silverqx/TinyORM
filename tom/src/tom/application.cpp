@@ -245,7 +245,7 @@ int Application::run()
 void Application::logException(const std::exception &e, const bool noAnsi)
 {
     // TODO future decide how qCritical()/qFatal() really works, also regarding to the Qt Creator's settings 'Ignore first chance access violations' and similar silverqx
-    // TODO future also how to correctly setup this in prod/dev envs. silverqx
+    // TODO future also how to correctly setup this in prod/dev environments silverqx
 
     /* Want to have this method static, downside is that the InteractsWithIO has to be
        instantiated again. */

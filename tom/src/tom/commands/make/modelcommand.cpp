@@ -338,7 +338,7 @@ void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
     else
         showUnusedBtmOptionsWarnings(cmdOptions);
 
-    // Show unused disable-incremening option if passed also incrementing option
+    // Show unused disable-incrementing option if passed also incrementing option
     showUnusedIncrementingWarning();
     /* Show unused disable-snake-attributes option if passed also the snake-attributes
        option. */

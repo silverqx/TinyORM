@@ -81,7 +81,7 @@ namespace Support
         void findUnusedBtmOptions(const CmdOptions &cmdOptions);
         /*! Show unused options warning if generating a pivot model. */
         void showUnusedPivotModelOptionsWarnings();
-        /*! Show unused disable-incremening option if passed also the incrementing
+        /*! Show unused disable-incrementing option if passed also the incrementing
             option. */
         void showUnusedIncrementingWarning();
         /*! Show unused disable-snake-attributes option if passed also
@@ -106,7 +106,7 @@ namespace Support
         /*! Try to guess the models path based on the pwd or use the default path. */
         fspath guessModelsPath() const;
 
-        /*! Get all cmd. option relation names. */
+        /*! Get all option names for relationships (eg. one-to-one). */
         static const std::unordered_set<QString> &relationNames();
 
         /*! Create a migration file for the model. */
