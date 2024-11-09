@@ -100,9 +100,18 @@ namespace Commands
         bool hasOptions() const;
 
     protected:
+        /*! Maximum number of option names for one option out of all. */
+        constexpr static SizeType MaxOptionNamesCount = 2;
+
         /* Getters */
         /*! Obtain passed arguments to parse (can come from three sources). */
         QStringList passedArguments() const;
+
+        /* Signature helpers */
+        /*! Get the given option from the options signature. */
+        const CommandLineOption &getOptionFromSignature(const QString &name) const;
+        /*! Determine if the given option has value name (check if option has value). */
+        inline bool optionHasValueName(const QString &name) const;
 
         /* Parser helpers */
         /*! Returns a list of option names found by the parser (add , support). */
@@ -176,6 +185,9 @@ namespace Commands
     private:
         /*! Initialize positional arguments map. */
         void initializePositionalArguments();
+        /*! Initialize and get the options signature lookup hash. */
+        static std::unordered_map<QString, SizeType>
+        getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignature);
         /*! Show help if --help argument was passed. */
         void checkHelpArgument() const;
         /*! Show the error wall and exit the application if the parser fails. */
@@ -210,6 +222,15 @@ namespace Commands
     Application &Command::application() const noexcept
     {
         return m_application;
+    }
+
+    /* protected */
+
+    /* Signature helpers */
+
+    bool Command::optionHasValueName(const QString &name) const
+    {
+        return !getOptionFromSignature(name).valueName().isEmpty();
     }
 
 } // namespace Commands

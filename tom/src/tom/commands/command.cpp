@@ -100,6 +100,19 @@ QStringList Command::passedArguments() const
     return application().arguments();
 }
 
+/* Signature helpers */
+
+const CommandLineOption &Command::getOptionFromSignature(const QString &name) const
+{
+    /* Also cache the options signature as it is not necessary to keep them up to date as
+       they are already parsed and options are not added/updated after parsing. Also,
+       this method is called in a loop. */
+    static const auto OptionsSignature = optionsSignature();
+    static const auto OptionNamesHash  = getOptionsSignatureHash(OptionsSignature);
+
+    return OptionsSignature.at(OptionNamesHash.at(name));
+}
+
 /* Parser helpers */
 
 namespace
@@ -154,6 +167,11 @@ QStringList Command::optionNames() const
     optionNamesUnique.removeDuplicates();
 
     for (const auto &optionName : std::as_const(optionNamesUnique)) {
+        /* Check if the option has a value name, if the option has a value name then
+           it has/expects a value. This will avoid the warning added from Qt v6.7. */
+        if (!optionHasValueName(optionName))
+            continue;
+
         // Obtain raw parser().values() so we can count the , char.
         const auto values = parser().values(optionName);
 
@@ -355,6 +373,27 @@ void Command::initializePositionalArguments()
     // The same as above, I leave above as I want to have one example with zip_with()
 //    for (SizeType index = 0; const auto &argument : positionalArguments())
 //        m_positionalArguments.emplace(argument.name, ++index);
+}
+
+std::unordered_map<QString, Command::SizeType>
+Command::getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignature)
+{
+    std::unordered_map<QString, SizeType> result;
+    /* I have no option with more than 2 option names, +8 as reserve.
+       Don't use the ranges::accumulate() as the option.names() return by value. */
+    result.reserve((optionsSignature.size() * MaxOptionNamesCount) + 8);
+
+    SizeType index = 0;
+
+    for (const auto &optionSignature : optionsSignature) {
+        // Hash all option names, not just long ones
+        for (auto &optionName : optionSignature.names())
+            result.try_emplace(std::move(optionName), index);
+
+        index++;
+    }
+
+    return result;
 }
 
 void Command::checkHelpArgument() const
