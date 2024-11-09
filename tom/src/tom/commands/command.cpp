@@ -359,6 +359,8 @@ bool Command::inUnitTests() noexcept
 
 /* private */
 
+/* Lookup hashes */
+
 void Command::initializePositionalArgumentsHash()
 {
     const auto &arguments = positionalArguments();
@@ -404,6 +406,8 @@ Command::getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignatur
 
     return result;
 }
+
+/* run() support */
 
 void Command::checkHelpArgument() const
 {
@@ -451,6 +455,8 @@ void Command::validateRequiredArguments() const
 
     Application::exitApplication(EXIT_FAILURE);
 }
+
+/* Parser helpers */
 
 QString Command::argumentInternal(const QStringList &positionalArguments,
                                   const SizeType index) const

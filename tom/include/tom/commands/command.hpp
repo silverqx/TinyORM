@@ -183,11 +183,14 @@ namespace Commands
         std::unordered_map<QString, SizeType> m_positionalArguments;
 
     private:
+        /* Lookup hashes */
         /*! Initialize positional arguments lookup hash. */
         void initializePositionalArgumentsHash();
         /*! Initialize and get the options signature lookup hash. */
         static std::unordered_map<QString, SizeType>
         getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignature);
+
+        /* run() support */
         /*! Show help if --help argument was passed. */
         void checkHelpArgument() const;
         /*! Show the error wall and exit the application if the parser fails. */
@@ -195,6 +198,7 @@ namespace Commands
         /*! Validate if all required positional arguments were passed on command-line. */
         void validateRequiredArguments() const;
 
+        /* Parser helpers */
         /*! Get a positional argument at the given index position. */
         QString
         argumentInternal(const QStringList &positionalArguments, SizeType index) const;
