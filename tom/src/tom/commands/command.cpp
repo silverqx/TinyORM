@@ -88,18 +88,6 @@ bool Command::hasOptions() const
 
 /* protected */
 
-/* Getters */
-
-QStringList Command::passedArguments() const
-{
-    if (!m_arguments.isEmpty())
-        return m_arguments;
-
-    /* Never obtain arguments from the QCoreApplication instance in unit tests because
-       they are passed using the runWithArguments() method. */
-    return application().arguments();
-}
-
 /* Signature helpers */
 
 const CommandLineOption &Command::getOptionFromSignature(const QString &name) const
@@ -331,6 +319,16 @@ QJsonDocument::JsonFormat Command::jsonFormat() const
 }
 
 /* Getters */
+
+QStringList Command::passedArguments() const
+{
+    if (!m_arguments.isEmpty())
+        return m_arguments;
+
+    /* Never obtain arguments from the QCoreApplication instance in unit tests because
+       they are passed using the runWithArguments() method. */
+    return application().arguments();
+}
 
 Orm::DatabaseConnection &Command::connection(const QString &name) const
 {

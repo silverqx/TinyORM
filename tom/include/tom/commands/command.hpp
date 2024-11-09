@@ -103,10 +103,6 @@ namespace Commands
         /*! Maximum number of option names for one option out of all. */
         constexpr static SizeType MaxOptionNamesCount = 2;
 
-        /* Getters */
-        /*! Obtain passed arguments to parse (can come from three sources). */
-        QStringList passedArguments() const;
-
         /* Signature helpers */
         /*! Get the given option from the options signature. */
         const CommandLineOption &getOptionFromSignature(const QString &name) const;
@@ -157,6 +153,9 @@ namespace Commands
         QJsonDocument::JsonFormat jsonFormat() const;
 
         /* Getters */
+        /*! Obtain passed arguments to parse (can come from three sources). */
+        QStringList passedArguments() const;
+
         /*! Get a database connection. */
         Orm::DatabaseConnection &connection(const QString &name) const;
         /*! Get a command-line parser. */
