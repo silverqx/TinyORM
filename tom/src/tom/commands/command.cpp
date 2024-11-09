@@ -479,6 +479,10 @@ QString Command::argumentInternal(const QStringList &positionalArguments,
 
 Command::SizeType Command::countCommas(const QStringList &values)
 {
+    // Nothing to do
+    if (values.isEmpty())
+        return 0;
+
     SizeType result = 0;
 
     for (const auto &value : values)
