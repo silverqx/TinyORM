@@ -137,18 +137,12 @@ QStringList Command::optionNames() const
        values() method have added support for more values per one option --xyz=aa,bb,cc
        using the , character 🤯. */
 
-    // Allow to escape , char using \,
-    static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
-
     // No caching needed, already cached inside the QCommandLineParser
     auto optionNames = parser().optionNames();
 
     const auto optionNamesSize = optionNames.size();
     // Number of a new option names can be estimated by counting the , characters
-    optionNames.reserve(std::max<decltype (optionNames)::size_type>(
-                            optionNamesSize * 2,
-                            optionNamesSize + application().arguments().join(SPACE)
-                                              .count(RegEx)) + 8); // +8 as reserve
+    optionNames.reserve(optionNamesSize + countCommas(passedArguments()) + 8); // +8 as reserve
 
     /* Allows to loop through all values for every (unique) option name defined
        on the command-line. */
@@ -170,7 +164,7 @@ QStringList Command::optionNames() const
 
         for (const auto &value : values) {
             // Supports escaped , character using \,
-            const auto commasCount = value.count(RegEx);
+            const auto commasCount = countCommas(value);
 
             // Nothing to do
             if (commasCount == 0) {
@@ -230,7 +224,8 @@ QStringList Command::values(const QString &name,
 
     // Support passing more values delimited by comma
     for (auto &value : values) {
-        if (!value.contains(RegEx)) {
+        // Nothing to do, no unescaped comma in the value
+        if (!containsComma(value)) {
             valuesSplit << std::move(value);
             continue;
         }
@@ -477,6 +472,64 @@ QString Command::argumentInternal(const QStringList &positionalArguments,
     return positionalArguments.value(index, defaultValue);
 }
 
+// The following 2 methods exist for performance reasons, to avoid RegEx
+
+bool Command::containsComma(const QStringView value)
+{
+    // Nothing to do
+    if (value.isEmpty())
+        return false;
+
+    const auto valueSize = value.size();
+    SizeType position = 0; // 0-based
+
+    do {
+        position = value.indexOf(COMMA_C, position);
+
+        // Comma not found, reached the end of the value string
+        if (position == -1)
+            return false;
+
+        // Comma found
+        if (position == 0 || value.at(position - 1) != u'\\')
+            return true;
+
+    } while (++position < valueSize);
+
+    // Edge case, can happen if a comma is the last character
+    return false;
+}
+
+Command::SizeType Command::countCommas(const QStringView value)
+{
+    /* Paradoxically, this is much faster than the count() 800ms versus 3000ms
+       per 1,000,000 loop, it also counts commas correctly as a bonus. */
+
+    // Nothing to do
+    if (value.isEmpty())
+        return 0;
+
+    const auto valueSize = value.size();
+    SizeType commasCount = 0;
+    SizeType position = 0; // 0-based
+
+    do {
+        position = value.indexOf(COMMA_C, position);
+
+        // Comma not found, reached the end of the value string
+        if (position == -1)
+            return commasCount;
+
+        // Comma found
+        if (position == 0 || value.at(position - 1) != u'\\')
+            ++commasCount;
+
+    } while (++position < valueSize);
+
+    // Edge case, can happen if a comma is the last character
+    return commasCount;
+}
+
 Command::SizeType Command::countCommas(const QStringList &values)
 {
     // Nothing to do
@@ -486,7 +539,7 @@ Command::SizeType Command::countCommas(const QStringList &values)
     SizeType result = 0;
 
     for (const auto &value : values)
-        result += value.count(COMMA_C);
+        result += countCommas(value);
 
     return result;
 }

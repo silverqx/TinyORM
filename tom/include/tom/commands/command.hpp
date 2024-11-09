@@ -202,6 +202,10 @@ namespace Commands
         QString argumentInternal(const QStringList &positionalArguments,
                                  SizeType index) const;
 
+        /*! Determine if the given string contains an unescaped , character. */
+        static bool containsComma(QStringView value);
+        /*! Count the number of commas in the option string (for reserve). */
+        static SizeType countCommas(QStringView value);
         /*! Count the number of commas in the option values list (for reserve). */
         static SizeType countCommas(const QStringList &values);
     };
