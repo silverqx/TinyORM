@@ -200,8 +200,8 @@ namespace Commands
 
         /* Parser helpers */
         /*! Get a positional argument at the given index position. */
-        QString
-        argumentInternal(const QStringList &positionalArguments, SizeType index) const;
+        QString argumentInternal(const QStringList &positionalArguments,
+                                 SizeType index) const;
 
         /*! Count the number of commas in the option values list (for reserve). */
         static SizeType countCommas(const QStringList &values);
