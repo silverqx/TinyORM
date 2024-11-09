@@ -272,11 +272,16 @@ QStringList Application::arguments() const // NOLINT(readability-convert-member-
 #ifdef TINYTOM_TESTS_CODE
     /* Never obtain arguments from the QCoreApplication instance in unit tests because
        they are passed using the runWithArguments() method. */
-    return g_inUnitTests ? prepareArguments()
-                         : QCoreApplication::arguments();
-#else
-    return QCoreApplication::arguments();
+    if (g_inUnitTests)
+        return prepareArguments();
 #endif
+
+    // Cache is needed as the QCoreApplication::arguments() are not cached inside
+    static std::optional<QStringList> ArgumentsCache = std::nullopt;
+
+    // Return the cached value if the arguments have already been parsed
+    return ArgumentsCache ? *ArgumentsCache
+                          :  ArgumentsCache.emplace(QCoreApplication::arguments());
 }
 
 Application &Application::migrationsPath(fspath path)
