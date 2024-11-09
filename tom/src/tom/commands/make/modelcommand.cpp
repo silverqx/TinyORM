@@ -281,13 +281,12 @@ int ModelCommand::run()
 namespace
 {
     /*! Studly all string lists in the given container (std::vector<QStringList>). */
-    constexpr auto studlyContainer = [](auto &&container)
+    constexpr auto studlyContainer = [](std::vector<QStringList> &&container)
     {
         return ranges::views::move(container)
-                | ranges::views::transform([](auto &&classNamesList)
+                | ranges::views::transform([](QStringList &&classNamesList)
         {
-            return StringUtils::studly(
-                        std::forward<decltype (classNamesList)>(classNamesList));
+            return StringUtils::studly(std::move(classNamesList));
         })
                 | ranges::to<std::vector<QStringList>>();
     };
