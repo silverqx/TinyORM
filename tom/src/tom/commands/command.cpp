@@ -160,7 +160,7 @@ QStringList Command::optionNames() const
     optionNames.reserve(std::max<decltype (optionNames)::size_type>(
                             optionNamesSize * 2,
                             optionNamesSize + application().arguments().join(SPACE)
-                                              .count(RegEx)) + 1); // +1 for sure
+                                              .count(RegEx)) + 8); // +8 as reserve
 
     /* Allows to loop through all values for every (unique) option name defined
        on the command-line. */
@@ -230,7 +230,7 @@ QStringList Command::values(const QString &name,
     auto values = parser().values(name);
 
     QStringList valuesSplit;
-    valuesSplit.reserve(values.size() + countCommas(values));
+    valuesSplit.reserve(values.size() + countCommas(values) + 8); // +8 as reserve
 
     /* Allow to escape , character using \,
        This is a simple implementation that is sufficient for all currently implemented
