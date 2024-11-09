@@ -152,6 +152,7 @@ QStringList Command::optionNames() const
     // Allow to escape , char using \,
     static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
 
+    // No caching needed, already cached inside the QCommandLineParser
     auto optionNames = parser().optionNames();
 
     const auto optionNamesSize = optionNames.size();
@@ -180,6 +181,7 @@ QStringList Command::optionNames() const
         QString::size_type nthOptionIdx = 0;
 
         for (const auto &value : values) {
+            // Supports escaped , character using \,
             const auto commasCount = value.count(RegEx);
 
             // Nothing to do
@@ -224,12 +226,18 @@ QString Command::value(const QString &name) const
 QStringList Command::values(const QString &name,
                             const Qt::SplitBehavior splitBehavior) const
 {
+    // No caching needed, already cached inside the QCommandLineParser
     auto values = parser().values(name);
 
     QStringList valuesSplit;
     valuesSplit.reserve(values.size() + countCommas(values));
 
-    // Allow to escape , char using \,
+    /* Allow to escape , character using \,
+       This is a simple implementation that is sufficient for all currently implemented
+       options. Once we have a multi-valued option with file/folder paths, this will
+       need to be refactored. In this case, it may happen that the folder path may end
+       with \ and , is right after it. The correct solution is to do the same as is
+       described in NOTES.txt[Parsing C command-line arguments]. */
     static const QRegularExpression RegEx(uR"((?<!\\),)"_s);
 
     // Support passing more values delimited by comma
@@ -288,6 +296,7 @@ bool Command::hasArgument(const QString &name) const
 
 QStringList Command::arguments() const
 {
+    // No caching needed, already cached inside the QCommandLineParser
     return parser().positionalArguments();
 }
 
