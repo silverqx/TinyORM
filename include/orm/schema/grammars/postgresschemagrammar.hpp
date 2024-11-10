@@ -320,7 +320,7 @@ namespace Grammars
             nameList.reserve(name.count(DOT));
 
             // Unquote
-            for (const auto segment : QStringView(name).split(DOT, Qt::KeepEmptyParts))
+            for (const auto segment : QStringView(name).split(DOT, Qt::KeepEmptyParts)) // clazy:exclude=range-loop-detach
                 // Don't use the TRIM_QUOTES here to avoid #include of schema constants
                 nameList << StringUtils::trim(segment, uR"('")"_s).toString();
 

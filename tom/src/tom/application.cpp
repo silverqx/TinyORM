@@ -494,9 +494,7 @@ void Application::printFullVersions() const
     io().note(u"tom "_s, false);
     io().info(TINYTOM_VERSION_STR);
 
-    for (const auto versionsSubsection = createVersionsSubsection();
-         const auto &[subsectionName, abouts] : versionsSubsection
-    ) {
+    for (const auto &[subsectionName, abouts] : createVersionsSubsection()) { // clazy:exclude=range-loop-detach
         // Subsection name is optional
         if (subsectionName) {
             io().newLine();

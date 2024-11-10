@@ -268,9 +268,7 @@ SqlDriverFactoryPrivate::loadSqlDriverCommon(const QString &driverBasenameRaw) c
 
     /* Try to load library from paths from TINY_PLUGIN_PATH environment variable and
        from paths from qmake/CMake build system (inside the build tree). */
-    for (const auto driverPaths = sqlDriverPaths();
-         const auto &driverPath : driverPaths
-    )
+    for (const auto &driverPath : sqlDriverPaths()) // clazy:exclude=range-loop-detach
         // Try to load all our basenames
         for (const auto &driverBasename : driverBasenames)
             // Load a Tiny SQL driver shared library and resolve driver factory function

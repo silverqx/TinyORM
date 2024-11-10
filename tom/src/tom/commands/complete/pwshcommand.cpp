@@ -182,10 +182,8 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
         return kOnOptionArgument;
 
     SizeType index = kUndefinedPosition;
-                                                                      // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
-    for (const auto commandlineArgSplit = commandlineArg.split(SPACE, Qt::SkipEmptyParts); // To avoid Clazy range-loop-detach; Already trimmed by pwsh
-         const auto argument : commandlineArgSplit
-    ) {
+                                                           // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
+    for (const auto argument : commandlineArg.split(SPACE, Qt::SkipEmptyParts)) {
         if (isOptionArgument(argument))
             continue;
 
