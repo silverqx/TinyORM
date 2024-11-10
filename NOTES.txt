@@ -3440,8 +3440,9 @@ std::remove_reference_t<T>&& move( T&& t )
    - auto & vs const auto & vs auto &&
    - it never contains the rvalue it can only contain const or non-const lvalue reference
    - the reason for this is how the value is assigned/created,
-     - it's copy-initialized (explicit constructors are not considered):
+     - it uses deduction to forwarding reference
 auto&& /* range */ = range-initializer;
+   - ❗it simply dereferences an iterator and assigns it to the item-declaration
    - for trivial types is best to assign by value
    - see also the TinyORM C++ Coding Style section
 
@@ -3856,10 +3857,13 @@ the std::vector<> again. 😎
    - prefer using auto & and const auto &
    - use the auto && only when really needed
      - eg. function/method parameter is forwarding reference
-     - range-initializer is an overloaded function/method call and
-       it can return more value categories (const or non-const lvalue)
+     - range-initializer assigns to the auto && = so it can have more value categories
+       (const or non-const lvalue)
    - don't use a reference for trivially copyable or for trivial types (only when needed)
    - never call std::forward() on the value (makes no sense), only the std::move()
+   - always use & for non-trivial types even if the range initializer returns rvalue or
+     by value (it uses extended lifetime in this case)
+   - ❗it simply dereferences an iterator and assigns it to the item-declaration
 
 
 GitHub actions self-hosted runners:
