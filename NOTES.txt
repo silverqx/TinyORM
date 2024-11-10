@@ -3454,6 +3454,23 @@ auto&& /* range */ = range-initializer;
      - in this case it will be const rvalue reference
        - reference and const collapsing will be applied in this case
 
+ - decltype (auto)
+   - I think I understood it finally, it's the same as the auto used in variables
+   - so if I define variable like const auto & = then the auto only deduces the type
+   - decltype (auto) also deduces all references
+   - very rare usage
+   - primarily used in the return type to deduce also references
+template<class F, class... Args>
+decltype (auto) PerfectForward(F fun, Args&&... args)
+{
+    return fun(std::forward<Args>(args)...);
+}
+    - this example also tells a lot:
+          auto   a = 1 + 2; // type of a is int
+          auto  c0 = a;     // type of c0 is int, holding a copy of a
+decltype (auto) c1 = a;     // type of c1 is int, holding a copy of a
+decltype (auto) c2 = (a);   // type of c2 is int&, an alias of a
+
  - structured binding and auto &&[
    - see https://en.cppreference.com/w/cpp/language/structured_binding
    - the documentation is so badly written and confusion I didn't fully understand it even
