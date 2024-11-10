@@ -1264,7 +1264,7 @@ namespace Orm::Tiny
         QList<WithItem> results;
         results.reserve(relationsSize);
 
-        for (auto relation : relations) {
+        for (auto relation : relations) { // auto is correct, need to make a copy here
             const auto isSelectConstraint = relation.name.contains(COLON);
 
             if (isSelectConstraint && relation.constraints)
