@@ -72,16 +72,21 @@ namespace Orm::SchemaNs
 
     /* Common for the invokeCompileMethod() related methods */
 
+    /* Revisited and it's correct, can't use decltype (auto) as the return value
+       for argumentType/s(), and I have removed the M && and std::decay_t<M> to be more
+       strict/explicit because the argumentType/s() can only be called with a pointer
+       to the member function. */
+
     /*! Concept for a member function. */
     template<typename M>
-    concept IsMemFun = std::is_member_function_pointer_v<std::decay_t<M>>;
+    concept IsMemFun = std::is_member_function_pointer_v<M>;
 
     /*! Function signature, primary template. */
     template<typename Sig>
     struct FunctionSignature;
 
     /*! Function signature, a const member function explicit specialization. */
-    template<typename R, typename C, typename...Args>
+    template<typename R, typename C, typename ...Args>
     struct FunctionSignature<R(C::*)(Args...) const>
     {
         using type = std::tuple<Args...>;
@@ -89,12 +94,12 @@ namespace Orm::SchemaNs
 
     /*! Helper function to get function parameter types as std::tuple. */
     template<IsMemFun M>
-    auto argumentTypes(M &&) -> FunctionSignature<std::decay_t<M>>::type;
+    auto argumentTypes(M) -> FunctionSignature<M>::type;
 
     /*! Helper function to get function parameter type at I position
         from the std::tuple. */
     template<std::size_t I, IsMemFun M>
-    auto argumentType(M &&method) -> decltype (std::get<I>(argumentTypes(method)));
+    auto argumentType(M method) -> decltype (std::get<I>(argumentTypes(method)));
 
 } // namespace Orm::SchemaNs
 
