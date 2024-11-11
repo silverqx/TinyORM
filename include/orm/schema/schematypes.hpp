@@ -70,13 +70,6 @@ namespace Orm::SchemaNs
         Computed, // SqlServer only
     };
 
-    /*! Auto increment value for a column. */
-    struct AutoIncrementColumnValue
-    {
-        QString                columnName;
-        std::optional<quint64> value;
-    };
-
     /* Common for the invokeCompileMethod() related methods */
 
     /*! Concept for a member function. */
