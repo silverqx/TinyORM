@@ -1,5 +1,7 @@
 #include "orm/concerns/parsessearchpath.hpp"
 
+#include <QVariant>
+
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
