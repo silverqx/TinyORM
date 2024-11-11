@@ -6,7 +6,7 @@
 # Minimum version must always correspond to the version that is in the latest Ubuntu LTS
 # TODO use CMAKE_COMPILE_WARNING_AS_ERROR when Ubuntu 24.04.1 will be out, in increases minimum version to CMake v3.24 silverqx
 # TODO the if(LINUX) can be used from CMake v3.25 instead of CMAKE_SYSTEM_NAME STREQUAL "Linux" silverqx
-cmake_minimum_required(VERSION 3.22...3.30 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.22...3.31 FATAL_ERROR)
 
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
