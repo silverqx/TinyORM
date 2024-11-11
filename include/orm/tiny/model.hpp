@@ -424,7 +424,7 @@ namespace Orm::Tiny
 //        QList<WithItem> u_withCount;
 
         /*! Indicates whether to skip attributes comparison in the Derived model. */
-        constexpr static auto u_skipCompareDerived = false; // Don't use constinit here, it's hard compile time check based on if the operator==() is defined
+        constexpr static auto u_skipCompareDerived = false; // Hard compile time check based on whether the operator==() is defined, can be overridden in descendants
 
     private:
         /* Operations on a Model instance */
