@@ -69,9 +69,10 @@ CallsCommands::createCommandLineArguments(
     newArguments << getCommonArguments(currentArguments);
 
     // Append passed arguments
-    std::ranges::move(ranges::actions::remove_if(std::move(arguments),
-                                                 [](auto &&v) { return v.isEmpty(); }),
-                      std::back_inserter(newArguments));
+    std::ranges::move(
+                ranges::actions::remove_if(std::move(arguments),
+                                           [](const QString &v) { return v.isEmpty(); }),
+                std::back_inserter(newArguments));
 
     return newArguments;
 }

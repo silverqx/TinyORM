@@ -1278,7 +1278,7 @@ QString ModelCreator::createForwardsSection() const
 QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     auto relationsQList = ranges::views::move(relationsList)
-            | ranges::views::transform([](auto &&relationItem) -> QString
+            | ranges::views::transform([](RelationWithOrder &&relationItem) -> QString
     {
         return std::move(relationItem.content);
     })

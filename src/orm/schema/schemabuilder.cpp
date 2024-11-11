@@ -195,7 +195,7 @@ bool SchemaBuilder::hasTable(const QString &table) const
 bool SchemaBuilder::hasColumn(const QString &table, const QString &column) const
 {
     return ranges::contains(getColumnListing(table), column.toLower(),
-                            [](auto &&columnFromListing)
+                            [](const QString &columnFromListing)
     {
         return columnFromListing.toLower();
     });
@@ -206,12 +206,12 @@ bool SchemaBuilder::hasColumns(const QString &table,
 {
     auto columnsFromListing = getColumnListing(table);
 
-    columnsFromListing |= ranges::actions::transform([](const auto &column)
+    columnsFromListing |= ranges::actions::transform([](const QString &column)
     {
         return column.toLower();
     });
 
-    return std::ranges::all_of(columns, [&columnsFromListing](const auto &column)
+    return std::ranges::all_of(columns, [&columnsFromListing](const QString &column)
     {
         return columnsFromListing.contains(column.toLower());
     });
