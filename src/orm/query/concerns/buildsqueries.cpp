@@ -57,7 +57,7 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, qint64)> &callback
         qint64 index = 0;
 
         while (results.next())
-            if (const auto result = std::invoke(callback, results, index++);
+            if (const auto result = std::invoke(callback, results, index++); // Post-increment required
                 !result
             )
                 return false;
@@ -162,7 +162,7 @@ bool BuildsQueries::eachById(
 
         while (results.next())
             if (const auto result = std::invoke(callback, results,
-                                                ((page - 1) * count) + index++);
+                                                ((page - 1) * count) + index++); // Post-increment required
                 !result
             )
                 return false;

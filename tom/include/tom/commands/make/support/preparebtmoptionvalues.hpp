@@ -227,7 +227,7 @@ namespace Tom::Commands::Make::Support
     template<BtmPreparedValuesConcept P, BtmValuesConcept V>
     void PrepareBtmOptionValues<P, V>::insertBtmValue()
     {
-        m_preparedValues << m_values.at(m_valueIndex++);
+        m_preparedValues << m_values.at(m_valueIndex++); // Post-increment required
 
         m_wasValueSet = true;
     }
@@ -235,7 +235,7 @@ namespace Tom::Commands::Make::Support
     template<BtmPreparedValuesConcept P, BtmValuesConcept V>
     void PrepareBtmOptionValues<P, V>::insertBtmBoolValue()
     {
-        m_preparedValues.push_back(m_values.at(m_valueIndex++));
+        m_preparedValues.push_back(m_values.at(m_valueIndex++)); // Post-increment required
 
         m_wasValueSet = true;
     }
@@ -254,7 +254,7 @@ namespace Tom::Commands::Make::Support
         /* Multiple values can be assigned using one --xyz= option, but they must be
            divided by the colon character. */
         // Or they can be assigned using more --xyz= options
-        m_preparedValues[m_btmIndex] << m_values.at(m_valueIndex++);
+        m_preparedValues[m_btmIndex] << m_values.at(m_valueIndex++); // Post-increment required
 
         m_wasValueSetPartial = true;
     }

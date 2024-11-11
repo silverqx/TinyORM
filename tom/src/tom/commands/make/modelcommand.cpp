@@ -521,13 +521,13 @@ RelationsOrder ModelCommand::relationsOrder()
 
     for (const auto &option : optionNames()) // clazy:exclude=range-loop-detach
         if (option == one_to_one)
-            preparedOrders.oneToOne.push_back(relationOrderIndex++);
+            preparedOrders.oneToOne.push_back(relationOrderIndex++); // Post-increment required
         else if (option == one_to_many)
-            preparedOrders.oneToMany.push_back(relationOrderIndex++);
+            preparedOrders.oneToMany.push_back(relationOrderIndex++); // Post-increment required
         else if (option == belongs_to)
-            preparedOrders.belongsTo.push_back(relationOrderIndex++);
+            preparedOrders.belongsTo.push_back(relationOrderIndex++); // Post-increment required
         else if (option == belongs_to_many)
-            preparedOrders.belongsToMany.push_back(relationOrderIndex++);
+            preparedOrders.belongsToMany.push_back(relationOrderIndex++); // Post-increment required
 
     return preparedOrders;
 }

@@ -151,7 +151,7 @@ namespace Concerns
             qint64 index = 0;
 
             for (auto &model : models)
-                if (const auto result = std::invoke(callback, std::move(model), index++);
+                if (const auto result = std::invoke(callback, std::move(model), index++); // Post-increment required
                     !result
                 )
                     return false;
@@ -271,7 +271,7 @@ namespace Concerns
 
             for (auto &model : models)
                 if (const auto result = std::invoke(callback, std::move(model),
-                                                    ((page - 1) * count) + index++);
+                                                    ((page - 1) * count) + index++); // Post-increment required
                     !result
                 )
                     return false;

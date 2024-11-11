@@ -135,15 +135,15 @@ void PrepareForeignKeyValues::insertEmptyForeignKeyValue()
 void PrepareForeignKeyValues::insertForeignKeyValue()
 {
     if (m_currentRelation == one_to_one) {
-        m_preparedValues.oneToOne << m_values.at(m_valueIndex++);
+        m_preparedValues.oneToOne << m_values.at(m_valueIndex++); // Post-increment required
         m_wasForeignKeySet = true;
     }
     else if (m_currentRelation == one_to_many) {
-        m_preparedValues.oneToMany << m_values.at(m_valueIndex++);
+        m_preparedValues.oneToMany << m_values.at(m_valueIndex++); // Post-increment required
         m_wasForeignKeySet = true;
     }
     else if (m_currentRelation == belongs_to) {
-        m_preparedValues.belongsTo << m_values.at(m_valueIndex++);
+        m_preparedValues.belongsTo << m_values.at(m_valueIndex++); // Post-increment required
         m_wasForeignKeySet = true;
     }
     else if (m_currentRelation == belongs_to_many)
@@ -166,7 +166,7 @@ void PrepareForeignKeyValues::insertForeignKeyValueBtm()
        Or they can be assigned by two --foreign-key= options.
        If only one value was passed then set the related pivot key first. */
 
-    const auto &value = m_values.at(m_valueIndex++);
+    const auto &value = m_values.at(m_valueIndex++); // Post-increment required
 
     // First value
     if (!m_wasForeignKeySetPartial) {

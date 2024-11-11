@@ -355,7 +355,7 @@ namespace Concerns
 
         /* Can be also written as the following, but I don't like it so. 😎
            dynamic_cast<Migrations &>(*m_migrations.at(index)).connection,
-           dynamic_cast<Migrations &>(*m_migrations.at(index++)).withinTransaction */
+           dynamic_cast<Migrations &>(*m_migrations.at(index++)).withinTransaction // Post-increment required */
 
         return *this;
     }
