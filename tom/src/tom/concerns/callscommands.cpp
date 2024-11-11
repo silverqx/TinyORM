@@ -57,7 +57,7 @@ CallsCommands::createCommandLineArguments(
     QStringList newArguments;
     newArguments.reserve(currentArguments.size() + arguments.size());
 
-    // Absolute path of the exe name
+    // Absolute path of the tom.exe (this is guaranteed by main() argv[0])
     newArguments << std::move(currentArguments.first());
     // Command name
     newArguments << command;
@@ -67,7 +67,7 @@ CallsCommands::createCommandLineArguments(
     // Get common allowed command-line arguments from the current command-line arguments
     newArguments << getCommonArguments(currentArguments);
 
-    // Append passed arguments
+    // Append passed arguments (revisited, the most effective way)
     std::ranges::move(
                 ranges::actions::remove_if(std::move(arguments),
                                            [](const QString &v) { return v.isEmpty(); }),
