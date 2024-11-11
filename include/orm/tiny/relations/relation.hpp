@@ -390,7 +390,7 @@ namespace Relations
             keys.append(key.isEmpty() ? toPointer(model)->getKey()
                                       : toPointer(model)->getAttribute(key));
 
-        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key_)
+        return keys |= ranges::actions::sort(ranges::less {}, [](const QVariant &key_)
         {
             return key_.template value<typename Model::KeyType>();
         })

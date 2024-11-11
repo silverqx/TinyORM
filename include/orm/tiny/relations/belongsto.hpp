@@ -427,7 +427,7 @@ namespace Orm::Tiny::Relations
                 keys << std::move(value);
         }
 
-        return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key)
+        return keys |= ranges::actions::sort(ranges::less {}, [](const QVariant &key)
         {
             return key.template value<typename Model::KeyType>();
         })

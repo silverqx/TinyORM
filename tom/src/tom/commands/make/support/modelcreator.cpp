@@ -205,7 +205,7 @@ ModelCreator::createPublicSection(const QString &className, const CmdOptions &cm
                                  withTimestampsList));
 
     // Remove empty parts
-    publicSectionList |= ranges::actions::remove_if([](const auto &value)
+    publicSectionList |= ranges::actions::remove_if([](const RelationWithOrder &value)
     {
         return value.content.isEmpty();
     });

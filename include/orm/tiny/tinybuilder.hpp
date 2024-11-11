@@ -472,10 +472,9 @@ namespace Orm::Tiny
             return result;
 
         return result |= ranges::actions::transform([this, &unqualifiedColumn]
-                                                    (auto &&value)
+                                                    (QVariant &value)
         {
-            return m_model.newFromBuilder({{unqualifiedColumn,
-                                            std::forward<decltype (value)>(value)}})
+            return m_model.newFromBuilder({{unqualifiedColumn, std::move(value)}})
                     .getAttribute(unqualifiedColumn);
         });
     }

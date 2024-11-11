@@ -568,7 +568,7 @@ bool Blueprint::creating() const
 
 Blueprint &Blueprint::removeColumn(const QString &name)
 {
-    m_columns |= ranges::actions::remove_if([&name](const auto &column)
+    m_columns |= ranges::actions::remove_if([&name](const ColumnDefinition &column)
     {
         return column.name == name;
     });
