@@ -58,7 +58,7 @@ CallsCommands::createCommandLineArguments(
     newArguments.reserve(currentArguments.size() + arguments.size());
 
     // Absolute path of the tom.exe (this is guaranteed by main() argv[0])
-    newArguments << std::move(currentArguments.first());
+    newArguments << currentArguments.takeFirst();
     // Command name
     newArguments << command;
 
