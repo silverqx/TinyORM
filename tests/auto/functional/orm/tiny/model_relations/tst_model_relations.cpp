@@ -2066,7 +2066,7 @@ void tst_Model_Relations::push_EagerLoad() const
 
     const auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     const auto itFile = std::ranges::find_if(files, findFile2);
-    if (itFile == files.cend())
+    if (itFile == files.constEnd())
         QFAIL("File was not found in the files vector.");
     auto *file = *itFile;
     auto *fileProperty =
@@ -2105,7 +2105,7 @@ void tst_Model_Relations::push_EagerLoad() const
     const auto filesVerify = torrentVerify->getRelation<TorrentPreviewableFileEager>(
                                  "torrentFiles");
     const auto itFileVerify = std::ranges::find_if(filesVerify, findFile2);
-    if (itFileVerify == filesVerify.cend())
+    if (itFileVerify == filesVerify.constEnd())
         QFAIL("File to verify was not found in the filesVerify vector.");
     auto *fileVerify = *itFileVerify;
     auto *filePropertyVerify =
@@ -2151,7 +2151,7 @@ void tst_Model_Relations::push_LazyLoad() const
 
     const auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     const auto itFile = std::ranges::find_if(files, findFile2);
-    if (itFile == files.cend())
+    if (itFile == files.constEnd())
         QFAIL("File was not found in the files vector.");
     auto *file = *itFile;
     auto *fileProperty =
@@ -2189,7 +2189,7 @@ void tst_Model_Relations::push_LazyLoad() const
     const auto filesVerify = torrentVerify->getRelationValue<TorrentPreviewableFile>(
                                  "torrentFiles");
     const auto itFileVerify = std::ranges::find_if(filesVerify, findFile2);
-    if (itFileVerify == filesVerify.cend())
+    if (itFileVerify == filesVerify.constEnd())
         QFAIL("File to verify was not found in the filesVerify vector.");
     auto *fileVerify = *itFileVerify;
     auto *filePropertyVerify =

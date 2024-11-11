@@ -140,7 +140,7 @@ bool MySqlUtilsPrivate::isNumber(const QStringView string)
         return std::isdigit(ch.toLatin1()) == 0;
     });
 
-    return nonDigit == string.cend();
+    return nonDigit == string.constEnd();
 }
 
 /* Prepared queries */

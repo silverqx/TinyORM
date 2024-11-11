@@ -380,7 +380,7 @@ namespace Orm::Tiny::Relations
             const auto it = std::ranges::find(mergedAttributes, attribute.key, keyProj);
 
             // Doesn't contain, so append
-            if (it == mergedAttributes.cend())
+            if (it == mergedAttributes.constEnd())
                 mergedAttributes << attribute;
             // Already contains, update value
             else

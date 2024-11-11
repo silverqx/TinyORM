@@ -47,7 +47,7 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     if (string.isEmpty())
         return false;
 
-    const auto *itBegin = string.cbegin();
+    const auto *itBegin = string.constBegin();
     if (string.front() == PLUS || string.front() == MINUS) {
         if (allowPlusMinus)
             ++itBegin; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -59,7 +59,7 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     auto dotAlreadyFound = false;
 
     const auto *const nonDigit = std::find_if(
-                                     itBegin, string.cend(),
+                                     itBegin, string.constEnd(),
                                      [allowFloating, &dotAlreadyFound](const auto &ch)
     {
         // Integer type
@@ -81,7 +81,7 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
         return result;
     });
 
-    return nonDigit == string.cend();
+    return nonDigit == string.constEnd();
 }
 
 namespace

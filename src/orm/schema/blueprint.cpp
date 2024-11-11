@@ -98,7 +98,8 @@ const BasicCommand &Blueprint::dropIfExists()
 const DropColumnsCommand &Blueprint::dropColumns(const QList<QString> &columns)
 {
     return addCommand<DropColumnsCommand>(
-                {{}, DropColumn, QList<Column>(columns.cbegin(), columns.cend())});
+                {{}, DropColumn, QList<Column>(columns.constBegin(),
+                                               columns.constEnd())});
 }
 
 const DropColumnsCommand &Blueprint::dropColumn(const QString &column)
@@ -169,7 +170,7 @@ Blueprint::foreign(const QList<QString> &columns, const QString &indexName)
                 {{}, Foreign,
                  indexName.isEmpty() ? createIndexName(Foreign, columns)
                                      : indexName,
-                 QList<Column>(columns.cbegin(), columns.cend())});
+                 QList<Column>(columns.constBegin(), columns.constEnd())});
 
 }
 
@@ -715,7 +716,7 @@ Blueprint::indexCommand(const QString &type, const QList<QString> &columns,
                 {{}, type,
                  indexName.isEmpty() ? createIndexName(type, columns)
                                      : indexName,
-                 QList<Column>(columns.cbegin(), columns.cend()),
+                 QList<Column>(columns.constBegin(), columns.constEnd()),
                  algorithm, language});
 }
 
