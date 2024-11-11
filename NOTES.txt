@@ -3416,8 +3416,8 @@ void f1(T &&x)
 QString s1("x");
 const QString s2("x");
 QString s3("x");
-f2(s1);             // x and T - non-const lvalue
-f3(s2);             // x and T - const lvalue
+f1(s1);             // x and T - non-const lvalue
+f1(s2);             // x and T - const lvalue
 f1(std::move(s3));  // x - non-const rvalue; ❗T - non-const without value category (all false)
    - ❗❗also, this isn't true if template parameter isn't forwarding reference, in this case
      the parameter will be passed by value and it will be without const and without the value
@@ -3452,7 +3452,21 @@ auto&& /* range */ = range-initializer;
    - it's really a forwarding reference
    - it can also be const auto && =
      - in this case it will be const rvalue reference
-       - reference and const collapsing will be applied in this case
+   - behaves the same as forwarding reference template parameter
+QString s1("x");
+const QString s2("x");
+QString s3("x");
+
+auto &&r1 = s1;
+auto &&r2 = s2;
+auto &&r3 = std::move(s3);
+
+x1(std::forward<decltype (r1)>(r1)); // calls x1(QString &)
+x1(std::forward<decltype (r2)>(r2)); // calls x1(const QString &)
+x1(std::forward<decltype (r3)>(r3)); // calls x1(QString &&)
+checkConstRef<decltype (r1)>();      // non-const lvalue
+checkConstRef<decltype (r2)>();      // const lvalue
+checkConstRef<decltype (r3)>();      // non-const rvalue
 
  - decltype (auto)
    - I think I understood it finally, it's the same as the auto used in variables
