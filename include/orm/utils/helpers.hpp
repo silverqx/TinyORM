@@ -29,6 +29,14 @@ namespace Utils
     constexpr auto IsNothrowHashable = noexcept(std::hash<U>()(
                                                     std::declval<const U &>()));
 
+    /*! Concept for the Helpers::tap(), typename. */
+    template<typename T>
+    concept TapConcept = !std::is_reference_v<T> && !std::is_const_v<T>;
+    /*! Concept for the Helpers::tap(), trailing requires. */
+    template<typename T>
+    concept TapTrailingConcept = std::is_rvalue_reference_v<T> &&
+                                 !std::is_const_v<std::remove_reference_t<T>>;
+
     /*! Helpers library class. */
     class TINYORM_EXPORT Helpers
     {
@@ -41,15 +49,15 @@ namespace Utils
         ~Helpers() = delete;
 
         /*! Call the given callback with the given value then return the value. */
-        template<typename T>
-        static T &&
-        tap(T &&value, std::function<void(T &)> &&callback = nullptr)
-        requires (!std::is_reference_v<T>);
+        template<TapConcept T>
+        constexpr static T &&
+        tap(T &&value, const std::function<void(T &)> &callback = nullptr)
+        requires TapTrailingConcept<decltype (value)>;
         /*! Call the given callback with the given value then return the value. */
-        template<typename T>
-        static T &&
-        tap(T &&value, std::function<void()> &&callback = nullptr)
-        requires (!std::is_reference_v<T>);
+        template<TapConcept T>
+        constexpr static T &&
+        tap(T &&value, const std::function<void()> &callback = nullptr)
+        requires TapTrailingConcept<decltype (value)>;
 
         /*! Call repeatedly to incrementally create a hash value from several
             variables. */
@@ -97,10 +105,10 @@ namespace Utils
 
     /* public */
 
-    template<typename T>
-    T &&
-    Helpers::tap(T &&value, std::function<void(T &)> &&callback) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
-    requires (!std::is_reference_v<T>)
+    template<TapConcept T>
+    constexpr T &&
+    Helpers::tap(T &&value, const std::function<void(T &)> &callback)
+    requires TapTrailingConcept<decltype (value)>
     {
         if (callback)
             std::invoke(callback, value);
@@ -110,10 +118,10 @@ namespace Utils
         return std::forward<T>(value);
     }
 
-    template<typename T>
-    T &&
-    Helpers::tap(T &&value, std::function<void()> &&callback) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
-    requires (!std::is_reference_v<T>)
+    template<TapConcept T>
+    constexpr T &&
+    Helpers::tap(T &&value, const std::function<void()> &callback)
+    requires TapTrailingConcept<decltype (value)>
     {
         if (callback)
             std::invoke(callback);
