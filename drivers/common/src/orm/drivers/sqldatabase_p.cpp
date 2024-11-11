@@ -87,7 +87,7 @@ SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &con
        from the SqlDriver. */
     db.setConnectionName(connection);
 
-    auto [itDatabase, ok] = connections.try_emplace(connection, std::move(db));
+    const auto [itDatabase, ok] = connections.try_emplace(connection, std::move(db));
     // Insertion must always happen here
     Q_ASSERT(ok);
 
