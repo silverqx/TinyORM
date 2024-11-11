@@ -91,8 +91,8 @@ namespace Orm::Utils
         /*! Convert a value to studly caps case (StudlyCase). */
         static QString studly(QString string);
         /*! Convert values in the container to studly caps case (StudlyCase). */
-        template<ColumnContainer T>
-        static T studly(T &&strings);
+        template<ColumnContainer T, typename U = std::remove_cvref_t<T>>
+        static U studly(T &&strings);
 
         /*! Split a string by the given width (with or w/o splitting words preference). */
         static QStringList
@@ -138,10 +138,10 @@ namespace Orm::Utils
     }
 
 #ifndef TINYORM_DISABLE_TOM
-    template<ColumnContainer T>
-    T String::studly(T &&strings) // NOLINT(cppcoreguidelines-missing-std-forward)
+    template<ColumnContainer T, typename U>
+    U String::studly(T &&strings) // NOLINT(cppcoreguidelines-missing-std-forward)
     {
-        T result;
+        U result;
         result.reserve(strings.size());
 
         for (auto &&string : strings)
