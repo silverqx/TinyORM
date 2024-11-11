@@ -76,23 +76,23 @@ namespace Orm::SchemaNs
     template<typename M>
     concept IsMemFun = std::is_member_function_pointer_v<std::decay_t<M>>;
 
-    /*! Function signature. */
+    /*! Function signature, primary template. */
     template<typename Sig>
     struct FunctionSignature;
 
-    /*! Function signature, a member function specialization. */
+    /*! Function signature, a const member function explicit specialization. */
     template<typename R, typename C, typename...Args>
     struct FunctionSignature<R(C::*)(Args...) const>
     {
         using type = std::tuple<Args...>;
     };
 
-    /*! Helper function to obtain function types as std::tuple. */
+    /*! Helper function to get function parameter types as std::tuple. */
     template<IsMemFun M>
     auto argumentTypes(M &&) -> FunctionSignature<std::decay_t<M>>::type;
 
-    /*! Helper function to obtain function parameter type at I position
-        from std::tuple. */
+    /*! Helper function to get function parameter type at I position
+        from the std::tuple. */
     template<std::size_t I, IsMemFun M>
     auto argumentType(M &&method) -> decltype (std::get<I>(argumentTypes(method)));
 
