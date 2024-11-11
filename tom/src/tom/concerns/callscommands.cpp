@@ -62,8 +62,7 @@ CallsCommands::createCommandLineArguments(
     // Command name
     newArguments << command;
 
-    // Remove a command exe name and tom's command name
-    currentArguments.remove(0, 2);
+    // I don't need to remove Tom's command name here, also, it can be at any position
 
     // Get common allowed command-line arguments from the current command-line arguments
     newArguments << getCommonArguments(currentArguments);
