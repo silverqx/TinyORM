@@ -771,11 +771,9 @@ namespace Grammars
     template<CommandDefinitionConcept T>
     T &Blueprint::addCommand(T &&definition)
     {
-        auto command = createCommand(std::forward<T>(definition));
-
-        m_commands.emplace_back(std::move(command));
-
-        return reinterpret_cast<T &>(*m_commands.back()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+        return reinterpret_cast<T &>( // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+                    *m_commands.emplace_back(
+                        createCommand(std::forward<T>(definition))));
     }
 
     template<CommandDefinitionConcept T>
