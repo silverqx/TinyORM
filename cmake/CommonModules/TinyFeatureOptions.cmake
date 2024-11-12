@@ -249,8 +249,6 @@ macro(tiny_set_default_value_from_environment name default)
 
     # If an environment variable is defined then use its value
     if(DEFINED ${name})
-        set(defaultValue "")
-
         tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
 
     # Otherwise, use a value from the 'default' argument
