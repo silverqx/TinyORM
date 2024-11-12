@@ -1,6 +1,13 @@
 # Helper function for coupling option() and add_feature_info()
 function(feature_option name description default)
 
+    # Arguments checks
+    if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
+        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
+in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    # Body
     string(CONCAT desc "${description} (default: ${default})")
 
     option(${name} "${desc}" "${default}") # Revisited, the quoted default value is correct in all cases, even if empty
@@ -15,6 +22,13 @@ endfunction()
 # can't be empty!
 function(feature_option_environment name description environment_variable_name default)
 
+    # Arguments checks
+    if("${default}" STREQUAL "")
+        message(FATAL_ERROR "The 'default' parameters cannot be empty \
+in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    # Body
     set(defaultValue "")
 
     tiny_get_default_value_from_environment(
@@ -29,6 +43,13 @@ include(CMakeDependentOption)
 # Helper function for coupling cmake_dependent_option() and add_feature_info()
 macro(feature_option_dependent name description default depends force)
 
+    # Arguments checks
+    if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
+        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
+in feature_option_dependent().")
+    endif()
+
+    # Body
     string(CONCAT desc
         "${description} (default: ${default}; depends on condition: ${depends})")
 
@@ -91,6 +112,13 @@ endmacro()
 # Helper function for coupling tiny_dependent_string_option() and add_feature_info()
 macro(feature_string_option_dependent name strings description default depends force)
 
+    # Arguments checks
+    if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
+        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
+in feature_string_option_dependent().")
+    endif()
+
+    # Body
     set(allowedValues "")
 
     string(JOIN ", " allowedValues ${strings})
