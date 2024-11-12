@@ -77,13 +77,13 @@ ConnectionFactory::createSingleConnection(QVariantHash &&config)
                                  : std::nullopt;
 
     // The order of parameter evaluation cannot be guaranteed (std::move(config))
-    auto driver     = config[driver_].value<QString>();
+    const auto driver = config[driver_].value<QString>();
     auto database   = config[database_].value<QString>();
     auto prefix     = config[prefix_].value<QString>();
     auto qtTimezone = config[qt_timezone].value<QtTimeZoneConfig>();
 
     return createConnection(
-                std::move(driver),   createQSqlDatabaseResolver(config),
+                driver, createQSqlDatabaseResolver(config),
                 std::move(database), std::move(prefix), std::move(qtTimezone),
                 std::move(config),   returnQDateTime);
 }
