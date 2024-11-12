@@ -158,7 +158,7 @@ works on some older versions of Visual Studio). Setting to \
 ON lets the toolchain decide how many threads to use. Set to \
 OFF to disable /MP completely.")
 
-# Initialize Tiny and default CMake variables
+# Initialize Tiny and the default CMake variables
 tiny_init_cmake_variables()
 tiny_init_tiny_variables()
 

@@ -1,7 +1,7 @@
 include(TinyDrivers)
 include(TinyHelpers)
 
-# Initialize default CMake variables on which CMake options depend
+# Initialize the default CMake variables on which CMake options depend
 macro(tiny_init_cmake_variables_pre)
 
     # Set the CMAKE_EXPORT_PACKAGE_REGISTRY from the TINYORM_EXPORT_PACKAGE_REGISTRY
@@ -16,7 +16,7 @@ to the user package registry.")
 
 endmacro()
 
-# Initialize default CMake variables
+# Initialize the default CMake variables
 macro(tiny_init_cmake_variables)
 
     # Especially important for multi-config generators (a good practice for single-config

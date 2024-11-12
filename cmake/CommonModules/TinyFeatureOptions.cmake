@@ -18,7 +18,7 @@ endfunction()
 
 # Helper function for coupling option() and add_feature_info() and use the default value
 # from the given environment variable if defined, otherwise, use a value from the given
-# default CMake variable. The 'default' CMake variable must be of the boolean type and
+# 'default' argument. The 'default' argument must be of the boolean type and
 # can't be empty!
 function(feature_option_environment name description environment_variable_name default)
 
@@ -31,6 +31,7 @@ in ${CMAKE_CURRENT_FUNCTION}().")
     # Body
     set(defaultValue "")
 
+    # This function sets the defaultValue value
     tiny_get_default_value_from_environment(
         defaultValue ${environment_variable_name} ${default}
     )
@@ -189,7 +190,7 @@ keyword or its value is empty: DESCRIPTION, NAME")
 
     # Body
     # If an environment variable is defined then use its value otherwise
-    # use a value from the 'TINY_DEFAULT' CMake variable
+    # use a value from the 'TINY_DEFAULT' argument.
     set(defaultValue OFF)
     # This macro sets the defaultValue value
     tiny_get_default_value_from_environment_wrapper(
@@ -219,9 +220,9 @@ keyword or its value is empty: DESCRIPTION, NAME")
 endfunction()
 
 # Get a default value from the given environment variable if defined otherwise return
-# a value from the given 'default' CMake variable. Used by our option() helper functions
+# a value from the given 'default' argument. Used by our option() helper functions
 # to set their default values ​​from an environment variable.
-# The 'default' CMake variable must be of the boolean type and can't be empty!
+# The 'default' argument must be of the boolean type and can't be empty!
 function(tiny_get_default_value_from_environment out_variable name default)
 
     # If an environment variable is defined then use its value
@@ -232,7 +233,7 @@ function(tiny_get_default_value_from_environment out_variable name default)
             set(defaultValue OFF)
         endif()
 
-    # Otherwise, use a value from the 'default' CMake variable
+    # Otherwise, use a value from the 'default' argument
     else()
         set(defaultValue ${default})
     endif()
@@ -241,9 +242,9 @@ function(tiny_get_default_value_from_environment out_variable name default)
 
 endfunction()
 
-# Helper macro() for the target_optional_compile_definitions() for nice and terser code.
-# It must be a macro() because of if(DEFINED).
-# The 'default' CMake variable must be of the boolean type and can't be empty!
+# Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
+# It must be a macro() because of the if(DEFINED).
+# The 'default' argument must be of the boolean type and can't be empty!
 macro(tiny_get_default_value_from_environment_wrapper name default)
 
     # If an environment variable is defined then use its value
@@ -252,7 +253,7 @@ macro(tiny_get_default_value_from_environment_wrapper name default)
 
         tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
 
-    # Otherwise, use a value from the 'TINY_DEFAULT' CMake variable
+    # Otherwise, use a value from the 'default' argument
     else()
         set(defaultValue ${TINY_DEFAULT})
     endif()
