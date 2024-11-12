@@ -151,7 +151,12 @@ ${TINY_UNPARSED_ARGUMENTS}")
             "DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES
     )
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing values for \
-arguments: ${TINY_KEYWORDS_MISSING_VALUES}")
+one of the arguments: DEFAULT, DEFAULT_FROM_ENVIRONMENT")
+    endif()
+
+    if("${TINY_DESCRIPTION}" STREQUAL "" OR "${TINY_NAME}" STREQUAL "")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
+keyword or its value is empty: DESCRIPTION, NAME")
     endif()
 
     # Body

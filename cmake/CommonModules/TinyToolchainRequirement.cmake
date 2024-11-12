@@ -80,6 +80,14 @@ function(tiny_toolchain_requirement)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    if("${TINY_MSVC}" STREQUAL "" OR "${TINY_CLANG_CL}" STREQUAL "" OR
+            "${TINY_GCC}" STREQUAL "" OR "${TINY_CLANG}" STREQUAL "" OR
+            "${TINY_QT}" STREQUAL ""
+    )
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
+keyword or its value is empty: MSVC, CLANG_CL, GCC, CLANG, QT")
+    endif()
+
     # Body
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_MSVC)

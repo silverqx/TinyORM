@@ -157,6 +157,11 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    if("${TINY_VERSION_HEADER}" STREQUAL "" OR "${TINY_HEADER_FOR}" STREQUAL "")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
+keyword or its value is empty: HEADER_FOR, VERSION_HEADER")
+    endif()
+
     # Body
     # Debug setup
     list(APPEND CMAKE_MESSAGE_CONTEXT VersionHeader)

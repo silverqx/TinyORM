@@ -12,6 +12,25 @@ function(tiny_resource_and_manifest target)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # It must be inside the build tree and it's handled below per-project.
+    # RESOURCES_DIR can theoretically be anywhere, so it doesn't have this limitation.
+    if(IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
+        message(FATAL_ERROR "The 'OUTPUT_DIR' single-value keyword cannot be an absolute \
+path (relative to PROJECT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    if(("RESOURCE_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
+            "MANIFEST_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES) OR
+        # This doesn't work with the CMP0174 set to OLD, there is no simple way to handle
+        # this case with OLD other than parsing arguments manually and it's not worth
+        # the effort (I shouldn't even write these checks as it's an internal thing 😵‍💫).
+        ((DEFINED RESOURCE_BASENAME AND "${RESOURCE_BASENAME}" STREQUAL "") OR
+            (DEFINED MANIFEST_BASENAME AND "${MANIFEST_BASENAME}" STREQUAL ""))
+    )
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing a value or \
+the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
+    endif()
+
     # Body
     # Include Windows RC and manifest file for a shared library or executable
     get_target_property(target_type ${target} TYPE)
