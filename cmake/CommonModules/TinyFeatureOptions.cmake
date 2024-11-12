@@ -3,7 +3,7 @@ function(feature_option name description default)
 
     string(CONCAT desc "${description} (default: ${default})")
 
-    option(${name} "${desc}" "${default}")
+    option(${name} "${desc}" "${default}") # Revisited, the quoted default value is correct in all cases, even if empty
 
     add_feature_info(${name} ${name} "${desc}")
 
