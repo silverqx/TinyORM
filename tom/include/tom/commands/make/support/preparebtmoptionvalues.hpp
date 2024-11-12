@@ -82,7 +82,7 @@ namespace Tom::Commands::Make::Support
     PrepareBtmOptionValues<P, V>::PrepareBtmOptionValues(ModelCommand &modelCommand,
                                                          V &&values)
         : m_modelCommand(modelCommand)
-        , m_values(std::forward<V>(values))
+        , m_values(std::move(values))
     {}
 
     template<BtmPreparedValuesConcept P, BtmValuesConcept V>
