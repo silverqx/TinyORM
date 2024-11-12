@@ -193,7 +193,7 @@ keyword or its value is empty: DESCRIPTION, NAME")
     # use a value from the 'TINY_DEFAULT' argument.
     set(defaultValue OFF)
     # This macro sets the defaultValue value
-    tiny_get_default_value_from_environment_wrapper(
+    tiny_set_default_value_from_environment(
         TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT}
     )
 
@@ -245,7 +245,7 @@ endfunction()
 # Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
 # It must be a macro() because of the if(DEFINED).
 # The 'default' argument must be of the boolean type and can't be empty!
-macro(tiny_get_default_value_from_environment_wrapper name default)
+macro(tiny_set_default_value_from_environment name default)
 
     # If an environment variable is defined then use its value
     if(DEFINED ${name})
