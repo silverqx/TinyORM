@@ -40,7 +40,7 @@ function(tiny_satisfies_minimum_required_qt_version out_variable)
         message(VERBOSE "Qt version could not be determined because the \
 '${QT_QMAKE_EXECUTABLE}' command can't be executed or it returned a non-zero exit code, \
 continuing a normal execution and leaving decision logic up to the find_package() \
-function, in ${CMAKE_CURRENT_FUNCTION}()")
+function, in ${CMAKE_CURRENT_FUNCTION}().")
 
         set(${out_variable} TRUE PARENT_SCOPE)
         return()
