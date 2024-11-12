@@ -89,7 +89,7 @@ endif()
 include(TinyResourceAndManifest)
 tiny_resource_and_manifest(${TomExample_target}
     OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
-    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources"
+    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources/"
 )
 
 # Resolve and link dependencies

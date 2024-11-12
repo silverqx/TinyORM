@@ -123,7 +123,7 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
     tiny_resource_and_manifest(${name}
         OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
-        TEST RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tests/resources"
+        TEST RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tests/resources/"
     )
 
 endfunction()

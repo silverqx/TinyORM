@@ -76,7 +76,7 @@ endif()
 include(TinyResourceAndManifest)
 tiny_resource_and_manifest(${TomTestData_target}
     OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
-    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources"
+    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources/"
     RESOURCE_BASENAME ${Tom_target}
     MANIFEST_BASENAME ${Tom_target}
 )
