@@ -26,21 +26,27 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Initialize variables
-    if(NOT TINY_OUTPUT_DIR)
-        set(TINY_OUTPUT_DIR "tmp/")
+
+    # file(REAL_PATH) can't be used here because it started throwing a warning since v3.31
+    # if a folder doesn't exist. Another problem is that it resolves symlinks to actual
+    # locations, and that's undesirable with QtCreator's build tree junctions feature.
+
+    # TINY_OUTPUT_DIR (absolute path)
+    if(NOT DEFINED TINY_OUTPUT_DIR OR "${TINY_OUTPUT_DIR}" STREQUAL "")
+        set(TINY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/tmp")
+    elseif(NOT IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
+        string(PREPEND TINY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/")
     endif()
 
-    if(NOT DEFINED TINY_RESOURCES_DIR)
-        set(TINY_RESOURCES_DIR "resources")
+    # TINY_RESOURCES_DIR (absolute path)
+    if(NOT DEFINED TINY_RESOURCES_DIR OR "${TINY_RESOURCES_DIR}" STREQUAL "")
+        set(TINY_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/resources")
+    elseif(NOT IS_ABSOLUTE "${TINY_RESOURCES_DIR}")
+        string(PREPEND TINY_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/")
     endif()
 
-    # Absolute paths will not be touched
-    file(REAL_PATH "${TINY_OUTPUT_DIR}" TINY_OUTPUT_DIR
-        BASE_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
-    file(REAL_PATH "${TINY_RESOURCES_DIR}" TINY_RESOURCES_DIR
-        BASE_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    )
+    file(TO_CMAKE_PATH ${TINY_OUTPUT_DIR} TINY_OUTPUT_DIR)
+    file(TO_CMAKE_PATH ${TINY_RESOURCES_DIR} TINY_RESOURCES_DIR)
 
     # Modify the Tom_target variable for substitution (original exe and icon filename)
     # This is special logic because Tom_target is used in 3 CMake projects
