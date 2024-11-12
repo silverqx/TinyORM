@@ -81,11 +81,11 @@ ConnectionFactory::createSingleConnection(QVariantHash &&config)
     auto database   = config[database_].value<QString>();
     auto prefix     = config[prefix_].value<QString>();
     auto qtTimezone = config[qt_timezone].value<QtTimeZoneConfig>();
+    auto resolver   = createQSqlDatabaseResolver(config);
 
     return createConnection(
-                driver, createQSqlDatabaseResolver(config),
-                std::move(database), std::move(prefix), std::move(qtTimezone),
-                std::move(config),   returnQDateTime);
+                driver, std::move(resolver),   std::move(database), std::move(prefix),
+                        std::move(qtTimezone), std::move(config),   returnQDateTime);
 }
 
 std::function<ConnectionName()>
