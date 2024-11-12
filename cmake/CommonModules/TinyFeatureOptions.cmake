@@ -33,7 +33,7 @@ in ${CMAKE_CURRENT_FUNCTION}().")
 
     # This function sets the defaultValue value
     tiny_get_default_value_from_environment(
-        defaultValue ${environment_variable_name} ${default}
+        defaultValue ${environment_variable_name} ${default} # Revisited, unquoted is OK, default must be of the boolean type
     )
 
     feature_option(${name} "${description}" ${defaultValue})
@@ -194,7 +194,7 @@ keyword or its value is empty: DESCRIPTION, NAME")
     set(defaultValue OFF)
     # This macro sets the defaultValue value
     tiny_set_default_value_from_environment(
-        TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT}
+        TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT} # Revisited, unquoted is OK, default must be of the boolean type
     )
 
     string(CONCAT description "${TINY_DESCRIPTION} (default: ${defaultValue})")
@@ -235,7 +235,7 @@ function(tiny_get_default_value_from_environment out_variable name default)
 
     # Otherwise, use a value from the 'default' argument
     else()
-        set(defaultValue ${default})
+        set(defaultValue ${default}) # Revisited, unquoted is OK, default must be of the boolean type
     endif()
 
     set(${out_variable} ${defaultValue} PARENT_SCOPE)
@@ -255,7 +255,7 @@ macro(tiny_set_default_value_from_environment name default)
 
     # Otherwise, use a value from the 'default' argument
     else()
-        set(defaultValue ${TINY_DEFAULT})
+        set(defaultValue ${TINY_DEFAULT}) # Revisited, unquoted is OK, default must be of the boolean type
     endif()
 
 endmacro()
