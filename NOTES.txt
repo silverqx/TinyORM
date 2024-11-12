@@ -1464,6 +1464,9 @@ if(var2)    # will be var2
     - there is no automatic evaluation for environment or cache Variable References
     - must be referenced as $ENV{<name>} or $CACHE{<name>}
     - left side of IN_LIST, right side is always a variable name: var1 IN_LIST var2
+    - there is no automatic evaluation for if(IS_XYZ) checks like IS_ABSOLUTE, ...
+      - must be used like:
+if(IS_DIRECTORY "${var}")
 
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
