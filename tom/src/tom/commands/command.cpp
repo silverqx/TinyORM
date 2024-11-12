@@ -481,7 +481,7 @@ bool Command::containsComma(const QStringView value)
     const auto valueSize = value.size();
     SizeType position = 0; // 0-based
 
-    do {
+    do { // NOLINT(cppcoreguidelines-avoid-do-while)
         position = value.indexOf(COMMA_C, position);
 
         // Comma not found, reached the end of the value string
@@ -511,7 +511,7 @@ Command::SizeType Command::countCommas(const QStringView value)
     SizeType commasCount = 0;
     SizeType position = 0; // 0-based
 
-    do {
+    do { // NOLINT(cppcoreguidelines-avoid-do-while)
         position = value.indexOf(COMMA_C, position);
 
         // Comma not found, reached the end of the value string

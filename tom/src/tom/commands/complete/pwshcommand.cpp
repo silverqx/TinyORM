@@ -183,7 +183,7 @@ PwshCommand::getCurrentArgumentPosition(const QStringView commandlineArg,
 
     SizeType index = kUndefinedPosition;
                                                            // CUR1 tom FINISH Xyz tom | --ansi ; tom help | --ansi
-    for (const auto argument : commandlineArg.split(SPACE, Qt::SkipEmptyParts)) {
+    for (const auto argument : commandlineArg.split(SPACE, Qt::SkipEmptyParts)) { // clazy:exclude=range-loop-detach
         if (isOptionArgument(argument))
             continue;
 

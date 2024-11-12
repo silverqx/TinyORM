@@ -281,7 +281,7 @@ int ModelCommand::run()
 namespace
 {
     /*! Studly all string lists in the given container (std::vector<QStringList>). */
-    constexpr auto studlyContainer = [](std::vector<QStringList> &&container)
+    constexpr auto studlyContainer = [](std::vector<QStringList> &&container) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         return ranges::views::move(container)
                 | ranges::views::transform([](QStringList &&classNamesList)
