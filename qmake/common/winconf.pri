@@ -172,7 +172,8 @@ win32-msvc|win32-clang-msvc {
 }
 
 # -mthreads is unused on Clang and also g++ and -fexceptions is enabled by default,
-# these are old obsolete/deprecated flags for of mingw32, also CMake doesn't use these.
+# these are old obsolete/deprecated flags for MinGW32/64, also CMake doesn't use these.
+# MinGW-w64 doesn't need them.
 gcc|clang {
     QMAKE_CXXFLAGS_EXCEPTIONS_ON -= -fexceptions -mthreads
     QMAKE_LFLAGS_EXCEPTIONS_ON -= -mthreads
