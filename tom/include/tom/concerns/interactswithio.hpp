@@ -198,10 +198,6 @@ namespace Concerns
         QString errorWallInternal(const QString &string) const;
         /*! Split/prepare the given string for the error wall. */
         QStringList splitStringForErrorWall(QStringView stringTrimmed) const;
-        /*! Compute a reserve value for the QStringList lines. */
-        static QList<QStringView>::size_type
-        computeReserveForErrorWall(const QList<QStringView> &stringSplit,
-                                   int maxLineWidth);
         /*! Render the error wall using the given lines. */
         static QString renderErrorWall(const QStringList &lines);
 
