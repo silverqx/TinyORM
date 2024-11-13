@@ -19,7 +19,7 @@ namespace Tom::Commands::Stubs
     /*! Register-ArgumentCompleter command content. */
     inline const auto RegisterArgumentCompleter =
 uR"(
-# TinyORM tom tab-completion
+# Tom tab-completion - TinyORM
 # ---
 
 Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
