@@ -264,7 +264,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
     /* Print error wall (red box with a white text) */
     qCritical().nospace().noquote() << WrapperTmpl
-                                       .arg(InteractsWithIO::errorWallInternal(message));
+                                       .arg(io.errorWallInternal(message));
 }
 
 QStringList Application::arguments() const // NOLINT(readability-convert-member-functions-to-static)

@@ -559,7 +559,7 @@ namespace
 
 } // namespace
 
-QString InteractsWithIO::errorWallInternal(const QString &string)
+QString InteractsWithIO::errorWallInternal(const QString &string) const
 {
     const auto stringTrimmed = QStringView(string).trimmed();
 
@@ -571,14 +571,16 @@ QString InteractsWithIO::errorWallInternal(const QString &string)
 }
 
 QStringList
-InteractsWithIO::splitStringForErrorWall(const QStringView stringTrimmed)
+InteractsWithIO::splitStringForErrorWall(const QStringView stringTrimmed) const
 {
     const auto stringSplit = stringTrimmed.split(NEWLINE_C, Qt::SkipEmptyParts);
 
     QStringList lines;
 
-    // Get max. line width after the split without the newline for all rendered lines
-    const auto maxLineWidth = static_cast<int>(getMaxLineWidth(stringSplit));
+    // Get maximum line/box width after the split for all rendered lines
+    const auto maxLineWidth = std::min(m_terminal->width() - 4,
+                                       static_cast<int>(getMaxLineWidth(stringSplit)));
+
     lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
     using StringUtils::cNeverSplitWords;
