@@ -580,13 +580,15 @@ namespace
         QList<QStringView>::size_type size = 0;
 
         for (const auto line : stringSplit)
-            /* +4 serves as a reserve because the splitting algorithm can decide
-               to start a new line if there isn't enough free space, +4 is enough.
-               The splitStringByWidth() also uses +4, these two reserve() relate. */
+            /* +2 serves as a reserve because the splitting algorithm can decide
+               to start a new line if there isn't enough free space, +2 is enough
+               because these additions ​​are cumulative. The splitStringByWidth() uses +6
+               for cNeverSplitWords case, these two reserve() relate. */
             size += static_cast<QStringList::size_type>(
-                        std::ceil(static_cast<double>(line.size()) / maxLineWidth)) + 4;
+                        std::ceil(static_cast<double>(line.size()) / maxLineWidth)) + 2;
 
-        return size;
+        // +4 for edge cases (short error walls with a lot of words)
+        return size + 4;
     }
 } // namespace
 

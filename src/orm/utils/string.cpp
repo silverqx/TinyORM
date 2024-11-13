@@ -397,9 +397,13 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
         return {string.toString()};
 
     QStringList lines;
-    // The computeReserveForErrorWall() also uses +4, these two reserve() relate
+    /* See also the computeReserveForErrorWall() because these two reserve() relate.
+       +2 because cSplitWords algorithm fills the lines fully.
+       +6 because cNeverSplitWords algorithm can decide to start a new line if there
+       isn't enough free space. */
     lines.reserve(static_cast<QStringList::size_type>(
-                      std::ceil(static_cast<double>(string.size()) / width)) + 4);
+                      std::ceil(static_cast<double>(string.size()) / width)) +
+                  (splitBehavior == cSplitWords ? 2 : 6));
 
     QString line;
     line.reserve(width + 8);
