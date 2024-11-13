@@ -2622,7 +2622,7 @@ std::ofstream("E:/tmp/aa.txt", std::ios::out | std::ios::app) << "another line\n
 Connect to the MySQL server using the raw QSqlDatabase:
 -------------------------------------------------------
 
-auto db = QSqlDatabase::addDatabase("QMYSQL");
+auto db = TSqlDatabase::addDatabase("QMYSQL", "conn1");
 db.setHostName(qEnvironmentVariable("DB_MYSQL_HOST"));
 db.setDatabaseName(qEnvironmentVariable("DB_MYSQL_DATABASE"));
 db.setUserName(qEnvironmentVariable("DB_MYSQL_USERNAME"));
@@ -2642,12 +2642,12 @@ else {
     qDebug() << "no";
 }
 
-Orm::Drivers::SqlQuery q(db);
+TSqlQuery q(db);
 q.exec("select id, name from users");
 
 while (users.next())
-    qDebug() << "id :"   << q.value("id").value<quint64>() << ";"
-             << "name :" << q.value("name").value<QString>();
+    qDebug() << "id :"   << q.value(ID).value<quint64>() << ';'
+             << "name :" << q.value(NAME).value<QString>();
 
 
 TinyDrivers SqlDriver smart pointers:
