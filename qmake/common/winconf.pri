@@ -82,11 +82,9 @@ win32-msvc|win32-clang-msvc {
         MSVC_TOOLSET_VER    = 143
     }
 
-    greaterThan(QMAKE_MSC_VER, 1939) {
+    greaterThan(QMAKE_MSC_VER, 1939): \
         # Visual Studio 2022 (17.10) / Visual C++ 19.40 and up
         MSVC_VER            = 17.10
-        MSVC_TOOLSET_VER    = 144
-    }
 }
 
 # Compiler and Linker options
