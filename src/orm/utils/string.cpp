@@ -429,7 +429,7 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
               ((token.size() > width && line.size() + MinFreeSpace <= width) ||
                (token.size() <= width && line.size() + 1 + token.size() <= width))))
         )
-            line.append(u'|');
+            line.append(SPACE);
 
         /* An edge case for Qt::KeepEmptyParts if there are multiple spaces in the row,
            then the token will be empty for each space character. */
