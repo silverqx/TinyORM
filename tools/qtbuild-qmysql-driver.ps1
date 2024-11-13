@@ -41,9 +41,9 @@ Param(
 
     [Parameter(
         HelpMessage = 'Specifies the Qt spec and is used in the CMAKE_INSTALL_PREFIX, ' +
-            'is msvc2019_64 by default.')]
+            'is msvc2022_64 by default.')]
     [ValidateNotNullOrEmpty()]
-    [string] $QtSpec = 'msvc2019_64',
+    [string] $QtSpec = 'msvc2022_64',
 
     [Parameter(HelpMessage = 'Specifies whether to install the QMYSQL drivers.')]
     [switch] $NoInstall,
