@@ -71,9 +71,7 @@ $Script:QtRootAlt = $Script:QtRoot.Replace('\', '/')
 $Script:QtMajorVersion = $null
 $Script:QtEnvVersion = $null
 $Script:VisualStudioVersion = '17.0'
-$Script:MySqlServerPath = $PSBoundParameters.ContainsKey('MySQLServerPath') `
-                          ? (Get-FullPath -Path $MySQLServerPath).Replace('\', '/')
-                          : "C:/Program Files/MySQL/MySQL Server $MySQLVersion"
+$Script:MySqlServerPath = $null
 $Script:BuildPath = $PSBoundParameters.ContainsKey('BuildPath') `
                     ? $BuildPath
                     : $env:TINY_QT_QMYSQL_BUILD_PATH ?? $(Get-Location).Path
@@ -83,6 +81,26 @@ $Script:BOL = '  '
 
 # Functions section
 # ---
+
+# Initialize the MySQL server root path (unified/generic format)
+# The TINY_MYSQL_DEBUG_ROOT environment variable exists because of the following bug:
+# https://bugs.mysql.com/bug.php?id=115678
+# The MSI installation doesn't work with the provided PDB files, so the TINY_MYSQL_DEBUG_ROOT
+# can point to the MySQL ZIP installation with extracted PDB files.
+function Initialize-MySqlServerPath
+{
+    if ($PSBoundParameters.ContainsKey('MySQLServerPath')) {
+        $Script:MySqlServerPath = (Get-FullPath -Path $MySQLServerPath).Replace('\', '/')
+        return
+    }
+
+    if (Test-Path env:TINY_MYSQL_DEBUG_ROOT) {
+        $Script:MySqlServerPath = (Get-FullPath -Path $env:TINY_MYSQL_DEBUG_ROOT).Replace('\', '/')
+        return
+    }
+
+    $Script:MySqlServerPath = "C:/Program Files/MySQL/MySQL Server $MySQLVersion"
+}
 
 # Initialize Qt's major and environment version script variables
 function Initialize-QtVersions
@@ -261,6 +279,7 @@ if (-not (Test-Path env:RUNNER_ENVIRONMENT)) {
 
 Write-Header "Preparations"
 
+Initialize-MySqlServerPath
 Initialize-QtVersions
 Test-QtVersion
 Test-QtVersionInstalled
