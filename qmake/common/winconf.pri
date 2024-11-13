@@ -40,12 +40,12 @@ versionAtLeast(TINY_COMPILER_FULL_VERSION, 19.38.32914.95): \
 # ---
 win32-msvc {
     greaterThan(QMAKE_MSC_VER, 1909) {
-        QMAKE_CXXFLAGS     *= -permissive-
-        QMAKE_CXXFLAGS     -= -Zc:referenceBinding
+        QMAKE_CXXFLAGS *= -permissive-
+        QMAKE_CXXFLAGS -= -Zc:referenceBinding
     }
 
     greaterThan(QMAKE_MSC_VER, 1919): \
-        QMAKE_CXXFLAGS     *= -Zc:externConstexpr
+        QMAKE_CXXFLAGS *= -Zc:externConstexpr
 }
 
 # ❗MSVC_TOOLSET_VER isn't that 14.xy number on the filesystem, it's a number
@@ -58,14 +58,14 @@ win32-msvc {
 win32-msvc|win32-clang-msvc {
     greaterThan(QMAKE_MSC_VER, 1927) {
         # Visual Studio 2019 (16.8 or 16.9) / Visual C++ 19.28 and up
-        MSVC_VER            = 16.8
-        QMAKE_CFLAGS_C11    = /std:c11
-        QMAKE_CFLAGS_C17    = /std:c17
+        MSVC_VER         = 16.8
+        QMAKE_CFLAGS_C11 = /std:c11
+        QMAKE_CFLAGS_C17 = /std:c17
     }
 
     greaterThan(QMAKE_MSC_VER, 1928) {
         # Visual Studio 2019 (16.10 or 16.11) / Visual C++ 19.29 and up
-        MSVC_VER            = 16.10
+        MSVC_VER = 16.10
 
         # -std:c++20 compiler option for Visual Studio 2019 16.11.0 and up
         greaterThan(QMAKE_MSC_FULL_VER, 192930132): \
@@ -74,23 +74,23 @@ win32-msvc|win32-clang-msvc {
 
     greaterThan(QMAKE_MSC_VER, 1929): \
         # Visual Studio 2022 (17.0) / Visual C++ 19.30 and up
-        MSVC_VER            = 17.0
+        MSVC_VER = 17.0
 
     greaterThan(QMAKE_MSC_VER, 1938): \
         # Visual Studio 2022 (17.9) / Visual C++ 19.39 and up
-        MSVC_VER            = 17.9
+        MSVC_VER = 17.9
 
     greaterThan(QMAKE_MSC_VER, 1939): \
         # Visual Studio 2022 (17.10) / Visual C++ 19.40 and up
-        MSVC_VER            = 17.10
+        MSVC_VER = 17.10
 
     greaterThan(QMAKE_MSC_VER, 1940): \
         # Visual Studio 2022 (17.11) / Visual C++ 19.41 and up
-        MSVC_VER            = 17.11
+        MSVC_VER = 17.11
 
     greaterThan(QMAKE_MSC_VER, 1941): \
         # Visual Studio 2022 (17.12) / Visual C++ 19.42 and up
-        MSVC_VER            = 17.12
+        MSVC_VER = 17.12
 }
 
 # Compiler and Linker options
