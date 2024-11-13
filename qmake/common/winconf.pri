@@ -48,6 +48,13 @@ win32-msvc {
         QMAKE_CXXFLAGS     *= -Zc:externConstexpr
 }
 
+# ❗MSVC_TOOLSET_VER isn't that 14.xy number on the filesystem, it's a number
+# from the Visual Studio Installer of build tools as v143, this number only changes
+# between major releases.
+# See:
+# https://reactos.org/wiki/Visual_Studio_Versions
+# https://en.wikipedia.org/wiki/Microsoft_Visual_C%2B%2B
+# https://devblogs.microsoft.com/cppblog/msvc-toolset-minor-version-number-14-40-in-vs-2022-v17-10/
 win32-msvc|win32-clang-msvc {
     greaterThan(QMAKE_MSC_VER, 1927) {
         # Visual Studio 2019 (16.8 or 16.9) / Visual C++ 19.28 and up
