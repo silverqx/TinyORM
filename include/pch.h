@@ -40,3 +40,6 @@
 #  include <sys/prctl.h>
 #endif
 #endif
+
+// Our headers that have an impact higher than 10% (Wall Time Responsibility)
+#include <orm/databaseconnection.hpp> // ~3s
