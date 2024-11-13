@@ -40,7 +40,7 @@ namespace Commands
         QString name;
         /*! Argument description. */
         QString description;
-        /*! Appended to the Usage line, if empty the name is used. */
+        /*! Appended to the Usage line if an empty name is used. */
         QString syntax       {}; // NOLINT(readability-redundant-member-init)
         /*! Is argument optional? */
         bool optional      = false;
