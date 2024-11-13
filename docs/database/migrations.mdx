@@ -128,22 +128,26 @@ Or you can enable it manually. Following actions are the same as the `tom integr
 For the `pwsh` paste the following code to the pwsh profile (works on Linux or Windows).
 
 ```powershell title='~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
-Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
-    Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
-    [Console]::InputEncoding =
-    [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-    $Local:word = $wordToComplete.Replace('"', '\"')
-    $Local:ast = $commandAst.ToString().Replace('"', '\"')
-    tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
-        | ForEach-Object {
-            if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
-            $completionText, $listText, $toolTip = $_ -split ';', 3
-            $listText ??= $completionText
-            $toolTip ??= $completionText
-            [System.Management.Automation.CompletionResult]::new(
-                $completionText, $listText, 'ParameterValue', $toolTip)
-        }
-}
+Register-ArgumentCompleter -Native `
+    -CommandName @('tom', 'tom_testdata'
+                   (Get-Alias | Where-Object { $_.Definition -in 'tom', 'tom_testdata' }
+                              | Select-Object -ExpandProperty Name)).Where{$_} `
+    -ScriptBlock {
+        Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
+        [Console]::InputEncoding =
+        [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+        $Local:word = $wordToComplete.Replace('"', '\"')
+        $Local:ast = $commandAst.ToString().Replace('"', '\"')
+        tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
+            | ForEach-Object {
+                if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
+                $completionText, $listText, $toolTip = $_ -split ';', 3
+                $listText ??= $completionText
+                $toolTip ??= $completionText
+                [System.Management.Automation.CompletionResult]::new(
+                    $completionText, $listText, 'ParameterValue', $toolTip)
+            }
+    }
 ```
 
 For `bash` you can copy or create symlink of the `/tools/completions/tom.bash` file to the `/usr/share/bash-completion/completions` folder.

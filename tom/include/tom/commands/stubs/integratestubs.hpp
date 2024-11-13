@@ -22,22 +22,26 @@ uR"(
 # Tom tab-completion - TinyORM
 # ---
 
-Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
-    Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
-    [Console]::InputEncoding =
-    [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
-    $Local:word = $wordToComplete.Replace('"', '\"')
-    $Local:ast = $commandAst.ToString().Replace('"', '\"')
-    tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
-        | ForEach-Object {
-            if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
-            $completionText, $listText, $toolTip = $_ -split ';', 3
-            $listText ??= $completionText
-            $toolTip ??= $completionText
-            [System.Management.Automation.CompletionResult]::new(
-                $completionText, $listText, 'ParameterValue', $toolTip)
-        }
-}
+Register-ArgumentCompleter -Native `
+    -CommandName @('tom', 'tom_testdata'
+                   (Get-Alias | Where-Object { $_.Definition -in 'tom', 'tom_testdata' }
+                              | Select-Object -ExpandProperty Name)).Where{$_} `
+    -ScriptBlock {
+        Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
+        [Console]::InputEncoding =
+        [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+        $Local:word = $wordToComplete.Replace('"', '\"')
+        $Local:ast = $commandAst.ToString().Replace('"', '\"')
+        tom complete:pwsh --word="$Local:word" --commandline="$Local:ast" --position=$cursorPosition
+            | ForEach-Object {
+                if ($_.Trim().Length -eq 0) { return $null } # Block paths completion
+                $completionText, $listText, $toolTip = $_ -split ';', 3
+                $listText ??= $completionText
+                $toolTip ??= $completionText
+                [System.Management.Automation.CompletionResult]::new(
+                    $completionText, $listText, 'ParameterValue', $toolTip)
+            }
+    }
 )"_s;
 
 #if defined(__linux__) || defined(__MINGW32__)
