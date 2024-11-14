@@ -435,8 +435,8 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
         )
             line.append(SPACE);
 
-        /* An edge case for Qt::KeepEmptyParts if there are multiple spaces in the row,
-           then the token will be empty for each space character. */
+        /* Edge case for Qt::KeepEmptyParts, if there are multiple spaces in the row.
+           In this case, each space character will produce an empty token. */
         if (token.isEmpty()) T_UNLIKELY {
             /* In this case, we have to manually handle the start of the newline because
                the splitLongToken() cannot be invoked. */

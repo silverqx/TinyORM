@@ -30,9 +30,9 @@ namespace Orm::Utils
         /*! The behavior of splitting the last word on a line. */
         enum struct SplitWordsBehavior : quint8
         {
-            /*! Split the word anywhere to fill the free space on a line. */
+            /*! Split the word anywhere to fill the empty space on the line. */
             cSplitWords,
-            /*! Never split words, the word is placed at the beginning of the next line. */
+            /*! Never split words, a word is placed at the beginning of the next line. */
             cNeverSplitWords,
         };
         /*! Expose the SplitWordsBehavior enum. */
