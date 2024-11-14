@@ -7,7 +7,6 @@
 #include <range/v3/view/reverse.hpp>
 
 #include "orm/constants.hpp"
-#include "orm/macros/likely.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -357,16 +356,82 @@ namespace
     constexpr QString::size_type MinFreeSpace = 2;
 
     /*! Push the current line to the lines and start processing a new line. */
-    void startNewLine(QString &line, QStringList &lines) {
+    inline void startNewLine(QStringList &lines, QString &line) {
         // Push to lines
         lines << std::move(line);
         // Start a new line
         line.clear(); // NOLINT(bugprone-use-after-move), need to clear it anyway even after the move
     }
 
+    /*! Handle an empty token (edge case). */
+    inline void handleEmptyToken(QStringList &lines, QString &line, const int width)
+    {
+        /* In this case, we have to manually handle the start of a new line because
+           the splitLongToken() cannot be invoked. */
+        if (line.size() + 1 > width)
+            startNewLine(lines, line);
+
+        line.append(SPACE);
+    }
+
+    /*! Start a new line or append a space character. */
+    void startNewLineOrAppendSpace(
+            QStringList &lines, QString &line, const QStringView token, const int width,
+            const String::SplitWordsBehavior splitBehavior)
+    {
+        /*! Expose the SplitWordsBehavior enum. */
+        using enum String::SplitWordsBehavior;
+
+        // Compute all values only once
+        const auto tokenSize       = token.size();
+        const auto lineSize        = line.size();
+        const auto freeSpace       = width - lineSize;
+        const auto isTokenOverflow = lineSize + 1 + tokenSize > width; // +1 for prepended space
+        const auto freeSpaceFactor = width > 34 ? 0.15F : 0.3F;
+        const auto isFreeSpace30   = freeSpace >= // Is there more than 30% of free space?
+                                     std::llround(static_cast<float>(width) *
+                                                  freeSpaceFactor);
+        const auto isTokenShorter  = tokenSize <= width; // Shorter or equal as the current width
+
+        /* If word splitting is not preferred, there must be free space for the entire
+           token with a space character before; if not, start a new line.
+           It also helps to avoid maintaining another bool or int state variable
+           for the following case: Append the token if there is enough free space
+           on the line, because this case also needs to know if a space character
+           was appended. */
+            // The current line is already full (considering also the space character)
+        if ((lineSize == width || lineSize + 1 == width) ||
+            (splitBehavior == cNeverSplitWords && isTokenShorter && isTokenOverflow) ||
+            (splitBehavior == cSplitWords30    && isTokenShorter && isTokenOverflow &&
+                                                 !isFreeSpace30)
+        )
+            return startNewLine(lines, line); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
+
+        const auto isTokenLonger = !isTokenShorter; // Longer than the current width
+        const auto isTokenFit    = !isTokenOverflow;
+
+        /* Don't append a space character to the beginning of an empty line, and if
+           there is no free space for at least one more letter when word splitting is
+           preferred or if is not preferred, there must be free space for the entire
+           token, but only if the token fits or is smaller than a line; if not, use
+           the same logic as when word splitting is preferred. 😂😵‍💫🤯
+           (there is no reason to append a space character in these cases). */
+        if (const auto lineSizeMinFreeSpace = lineSize + MinFreeSpace;
+            (splitBehavior == cSplitWords && lineSizeMinFreeSpace <= width) ||
+            (splitBehavior == cNeverSplitWords &&
+             ((isTokenLonger  && lineSizeMinFreeSpace <= width) ||
+              (isTokenShorter && isTokenFit))) ||
+            (splitBehavior == cSplitWords30 &&
+             (((isTokenLonger  && lineSizeMinFreeSpace <= width) ||
+               (isTokenShorter && isTokenFit)) ||
+              isFreeSpace30))
+        )
+            line.append(SPACE);
+    }
+
     /*! Split the token to multiple lines by the given width. */
-    void splitLongToken(QStringView token, const int width, QString &line,
-                        QStringList &lines)
+    void splitLongToken(QStringList &lines, QString &line, QStringView token,
+                        const int width)
     {
         while (!token.isEmpty()) {
             /* Token is shorter than the available free space (occurs when the last part
@@ -384,14 +449,16 @@ namespace
             // Cut the currently/above appended token part
             token = token.sliced(freeSpace);
 
-            startNewLine(line, lines);
+            startNewLine(lines, line);
         }
     }
 } // namespace
 
-QStringList String::splitStringByWidth(const QStringView string, const int width,
+QStringList String::splitStringByWidth(const QStringView string, const int maxWidth,
                                        const SplitWordsBehavior splitBehavior)
 {
+    const auto width = std::max(1, maxWidth);
+
     // Nothing to split
     if (string.size() <= width)
         return {string.toString()};
@@ -410,53 +477,31 @@ QStringList String::splitStringByWidth(const QStringView string, const int width
 
     // QStringView is trivially copy constructible
     for (const auto token : string.split(SPACE, Qt::KeepEmptyParts)) { // clazy:exclude=range-loop-detach
-        /* If word splitting is not preferred, there must be free space for the entire
-           token with a space character before; if not, start a new line.
-           It also helps to avoid maintaining another bool or int state variable
-           for the following case: Append the token if there is enough free space
-           on the line, because this case also needs to know if a space character
-           was appended. */
-        if (!line.isEmpty() && splitBehavior == cNeverSplitWords &&
-            token.size() <= width && line.size() + 1 + token.size() > width
-        )
-            startNewLine(line, lines);
-
-        /* Don't append a space character to the beginning of an empty line, and if
-           there is no free space for at least one more letter when word splitting is
-           preferred or if is not preferred, there must be free space for the entire
-           token, but only if the token fits or is smaller than a line; if not, use
-           the same logic as when word splitting is preferred. 😂😵‍💫🤯
-           (there is no reason to append a space character in these cases). */
-        if (!line.isEmpty() &&
-            ((splitBehavior == cSplitWords && line.size() + MinFreeSpace <= width) ||
-             (splitBehavior == cNeverSplitWords &&
-              ((token.size() > width && line.size() + MinFreeSpace <= width) ||
-               (token.size() <= width && line.size() + 1 + token.size() <= width))))
-        )
-            line.append(SPACE);
-
         /* Edge case for Qt::KeepEmptyParts, if there are multiple spaces in the row.
            In this case, each space character will produce an empty token. */
-        if (token.isEmpty()) T_UNLIKELY {
-            /* In this case, we have to manually handle the start of the newline because
-               the splitLongToken() cannot be invoked. */
-            if (line.size() + 1 > width)
-                startNewLine(line, lines);
-
-            line.append(SPACE);
+        if (token.isEmpty()) {
+            handleEmptyToken(lines, line, width);
+            continue;
         }
 
+        // Start a new line or append a space character
+        if (!line.isEmpty())
+            startNewLineOrAppendSpace(lines, line, token, width, splitBehavior);
+
         // Append the token if there is enough free space on the line
-        else if (line.size() + token.size() <= width) T_LIKELY
+        if (line.size() + token.size() <= width) // line.size() - fresh value needed
             line.append(token);
 
         // If the token is longer than the available free space (exceeds the line width)
         else
-            splitLongToken(token, width, line, lines);
+            splitLongToken(lines, line, token, width);
 
-        // The current line is already full (considering also the space character)
-        if (line.size() == width || line.size() + 1 == width)
-            startNewLine(line, lines);
+        /* Extreme edge case when the box width is 1, the line is always empty in this
+           case, so it cannot be handled above. */
+        if (width == 1) {
+            startNewLine(lines, line);
+            line.append(SPACE);
+        }
     }
 
     // Append the last line processed

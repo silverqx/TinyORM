@@ -96,8 +96,8 @@ namespace Orm::Utils
 
         /*! Split a string by the given width (with or w/o splitting words preference). */
         static QStringList
-        splitStringByWidth(QStringView string, int width,
-                           SplitWordsBehavior splitBehavior = cNeverSplitWords);
+        splitStringByWidth(QStringView string, int maxWidth,
+                           SplitWordsBehavior splitBehavior = cSplitWords30);
         /*! Split a string view at the first given character. */
         static QList<QStringView>
         splitAtFirst(QStringView string, QChar separator,

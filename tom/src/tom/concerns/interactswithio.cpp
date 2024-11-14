@@ -611,12 +611,12 @@ InteractsWithIO::splitStringForErrorWall(const QStringView stringTrimmed) const
 
     lines.reserve(computeReserveForErrorWall(stringSplit, maxLineWidth));
 
-    using StringUtils::cNeverSplitWords;
+    using StringUtils::SplitWordsBehavior::cSplitWords30;
 
     // Split lines by the given width
     for (const auto line : stringSplit)
         std::ranges::move(
-                    StringUtils::splitStringByWidth(line, maxLineWidth, cNeverSplitWords),
+                    StringUtils::splitStringByWidth(line, maxLineWidth, cSplitWords30),
                     std::back_inserter(lines));
 
     return lines;
