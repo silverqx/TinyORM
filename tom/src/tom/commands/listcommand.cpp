@@ -55,7 +55,7 @@ uR"(  The <info>list</info> command lists all commands:
 
   You can also display the commands for a specific namespace:
 
-    <info>tom list test</info>
+    <info>tom list global</info>
 
   It's also possible to get raw list of commands (useful for embedding command runner):
 
