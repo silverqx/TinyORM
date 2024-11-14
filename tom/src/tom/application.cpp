@@ -256,8 +256,14 @@ void Application::logException(const std::exception &e, const bool noAnsi)
     const auto message = u"Caught '%1' Exception:\n%2"_s
                          .arg(TypeUtils::classPureBasename(e, true), e.what());
 
-    // --no-ansi output
-    if (noAnsi || !io.isAnsiOutput(std::cerr)) {
+    // There is no reason to render the Error Wall if the number of columns <20
+    constexpr static Terminal::SizeType MinRequiredColumns = 20;
+    const auto terminalWidth = io.terminal().width();
+
+    /* Do not print an error wall when ANSI is disabled (--no-ansi output), terminal
+       doesn't report the correct columns/width value (can indicate some basic
+       console/terminal), or there isn't enough free space. */
+    if (noAnsi || !io.isAnsiOutput(std::cerr) || terminalWidth < MinRequiredColumns) {
         qCritical().nospace().noquote() << WrapperTmpl.arg(message);
         return;
     }

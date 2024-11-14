@@ -163,6 +163,9 @@ namespace Concerns
         /*! Set ANSI value. */
         inline InteractsWithIO &setAnsi(bool value) noexcept;
 
+        /*! Obtain a reference to the Terminal. */
+        const Terminal &terminal() const noexcept;
+
     protected:
         /*! Get a current verbosity level. */
         inline Verbosity verbosity() const noexcept;

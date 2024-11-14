@@ -453,6 +453,12 @@ void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
     }
 }
 
+const Terminal &InteractsWithIO::terminal() const noexcept
+{
+    Q_ASSERT(m_terminal);
+    return *m_terminal;
+}
+
 /* private */
 
 QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
