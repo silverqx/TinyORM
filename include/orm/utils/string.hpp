@@ -27,17 +27,6 @@ namespace Orm::Utils
         Q_DISABLE_COPY_MOVE(String)
 
     public:
-        /*! The behavior of splitting the last word on a line. */
-        enum struct SplitWordsBehavior : quint8
-        {
-            /*! Split the word anywhere to fill the empty space on the line. */
-            cSplitWords,
-            /*! Never split words, a word is placed at the beginning of the next line. */
-            cNeverSplitWords,
-        };
-        /*! Expose the SplitWordsBehavior enum. */
-        using enum SplitWordsBehavior;
-
         /*! Deleted default constructor, this is a pure library class. */
         String() = delete;
         /*! Deleted destructor. */
@@ -93,6 +82,19 @@ namespace Orm::Utils
         /*! Convert values in the container to studly caps case (StudlyCase). */
         template<ColumnContainer T, typename U = std::remove_cvref_t<T>>
         static U studly(T &&strings);
+
+        /*! The behavior of splitting the last word on a line. */
+        enum struct SplitWordsBehavior : quint8
+        {
+            /*! Split a word only if there is more than 30% free space on the line. */
+            cSplitWords30,
+            /*! Split the word anywhere to fill the empty space on the line. */
+            cSplitWords,
+            /*! Never split words, a word is placed at the beginning of the next line. */
+            cNeverSplitWords,
+        };
+        /*! Expose the SplitWordsBehavior enum. */
+        using enum SplitWordsBehavior;
 
         /*! Split a string by the given width (with or w/o splitting words preference). */
         static QStringList
