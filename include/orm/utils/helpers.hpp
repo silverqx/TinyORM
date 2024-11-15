@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <functional>
 
 #include "orm/constants.hpp"
+#include "orm/macros/no_sanitize.hpp"
 
 #ifndef TINYORM_EXTERN_CONSTANTS
 #  include "orm/macros/export.hpp"
@@ -132,6 +133,7 @@ namespace Utils
     }
 
     template<typename T>
+    TINYORM_NO_SANITIZE("unsigned-integer-overflow")
     std::size_t &Helpers::hashCombine(std::size_t &seed, const T &value)
     noexcept(IsNothrowHashable<T>)
     {
