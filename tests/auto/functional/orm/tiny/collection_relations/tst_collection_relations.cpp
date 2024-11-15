@@ -2906,8 +2906,9 @@ void tst_Collection_Relations::load_lvalue() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album *> &result = albumsInit.load(Common::AlbumImages);
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (albumsInit)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
@@ -2968,8 +2969,9 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album *> &result = albumsInit.load("albumImages:id,album_id,ext");
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (albumsInit)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
@@ -3045,8 +3047,9 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
                               {
                                   query.select({ID, Common::AlbumId, SIZE_});
                               }}});
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (albumsInit)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
@@ -4139,8 +4142,9 @@ void tst_Collection_Relations::each_lvalue() const
     });
 
     // Verify
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (images)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
@@ -4190,8 +4194,9 @@ void tst_Collection_Relations::each_lvalue_index() const
     });
 
     // Verify
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (images)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
@@ -4230,8 +4235,9 @@ void tst_Collection_Relations::each_lvalue_bool() const
     });
 
     // Verify
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (images)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
@@ -4274,8 +4280,9 @@ void tst_Collection_Relations::each_lvalue_bool_index() const
     });
 
     // Verify
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (images)>));
     // It must be the same ModelsCollection (the same memory address)
     QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
@@ -4445,8 +4452,9 @@ void tst_Collection_Relations::tap_lvalue() const
     });
 
     // Verify
-    // Both must be lvalue references because of that the decltype ((images)) is used
-    QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
+    // It must have the same type
+    QVERIFY((std::is_same_v<std::remove_reference_t<decltype (result)>,
+                            decltype (images)>));
     QVERIFY(callbackInvoked);
     // It must be the same ModelsCollection (the same memory address)
     const auto *const imagesAddress = std::addressof(images);
