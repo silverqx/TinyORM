@@ -60,26 +60,28 @@ __tom_seeders() {
   # Nothing to do, not in the right folder
   [[ -d database/seeders && -r database/seeders && -f main.cpp ]] || return
 
-  local -a seeder_files=($(/bin/ls database/seeders/*seeder.hpp))
+  local -a seeder_files=($(command ls database/seeders/*seeder.hpp))
 
   # Nothing found
-  [[ $#seeder_files -eq 0 ]] && return
+  (( $#seeder_files == 0 )) && return
 
   local namespace seeder
   local -a content namespace_grep seeder_grep seeders
 
   for seeder_file in $seeder_files; do
-    content=$(/bin/cat $seeder_file)
+    content=$(command cat $seeder_file)
 
-    IFS=$'\n' namespace_grep=($(echo $content | grep -E '^ *namespace *\w+' -))
-    IFS=$'\n' seeder_grep=($(echo $content | grep -E -z -o " *(struct|class) *\w+\
-( *final)?\s*:(\s*(public|private|protected))?\s*Seeder" -))
+    IFS=$'\n' namespace_grep=($(echo $content | command grep --extended-regexp \
+      --regexp='^ *namespace *\w+' -))
+    IFS=$'\n' seeder_grep=($(echo $content | \
+      command grep --extended-regexp --null-data --only-matching \
+        --regexp=" *(struct|class) *\w+( *final)?\s*:(\s*(public|private|protected))?\s*Seeder" -))
 
     # Nothing found
-    [[ $#seeder_grep -eq 0 ]] && continue
+    (( $#seeder_grep == 0 )) && continue
 
     # Get a namespace and seeder class name
-    if [[ $#namespace_grep -ne 0 ]] &&
+    if (( $#namespace_grep > 0 )) &&
        [[ $namespace_grep[1] =~ '\b(namespace) *(\w+)\b' ]]
     then
       namespace=$match[2]
@@ -90,10 +92,10 @@ __tom_seeders() {
     fi
 
     # Nothing found
-    [[ -z $seeder ]] && continue
+    [[ ! $seeder ]] && continue
 
     # tom prepends the Seeders namespace automatically if not present
-    if [[ -n $namespace && $namespace != 'Seeders' ]]; then
+    if [[ $namespace != 'Seeders' ]]; then
       seeder="$namespace\:\:$seeder"
     fi
 
@@ -101,7 +103,7 @@ __tom_seeders() {
 done
 
   # Nothing to complete
-  [[ $#seeders -eq 0 ]] && return
+  (( $#seeders == 0 )) && return
 
   _values seeder $seeders
 }
