@@ -195,7 +195,7 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
     if (hasNamespaceName)
                 // Custom message for the namespaced argument
         comment(namespaceName == NsNamespaced
-                ? u"Commands with the namespace prefix:"_s
+                ? u"Commands with a namespace prefix:"_s
                 : u"Available commands for the '%1' namespace:"_s.arg(namespaceName));
 
     // All commands
