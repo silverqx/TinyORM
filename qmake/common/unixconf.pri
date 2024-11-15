@@ -53,6 +53,8 @@ linux:contains(QT_ARCH, x86_64): \
 
 # Allow to enable UBSan with Clang
 clang:ubsan {
+    DEFINES *= TINYORM_USING_UBSAN
+
     QMAKE_CXXFLAGS += -O1
 
     QMAKE_CXXFLAGS *= \

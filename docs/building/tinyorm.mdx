@@ -369,6 +369,7 @@ But a special situation is when you are building your application / library and 
 | `TINYTOM_MODELS_DIR`              | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small><br/><small>Defined by [`TOM_MODELS_DIR`](#TOM_MODELS_DIR) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_MODELS_DIR="\"database/models\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L72-L73) file.</small></small> |
 | `TINYTOM_SEEDERS_DIR`             | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small><br/><small>Defined by [`TOM_SEEDERS_DIR`](#TOM_SEEDERS_DIR) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_SEEDERS_DIR="\"database/seeders\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L75-L76) file.</small></small> |
 | `TINYORM_USING_PCH`               | Defined if building with precompiled headers.<br/><small>Controlled by [`qmake`](#qmake-precompile_header) / [`CMake`](#CMAKE_DISABLE_PRECOMPILE_HEADERS).</small> |
+| `TINYORM_USING_UBSAN`             | Defined if building with [UBSan](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html).<br/><small>Defined when [`ubsan`](#ubsan) <small>(qmake)</small> / CMake not supported.</small> |
 
 </APITable>
 </div>
@@ -808,7 +809,7 @@ Advanced `TinyORM` options.
 
 | Option Name | Default | Description |
 | ----------- | ------- | ----------- |
-| `ubsan`     | `OFF`   | Allows to enable [UBSan](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) sanitizer (Clang only). |
+| `ubsan`     | `OFF`   | Allows to enable [UBSan](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) sanitizer <small>(Clang only)</small><br/><small>Defines: [TINYORM_USING_UBSAN](#TINYORM_USING_UBSAN)</small> |
 
 </APITable>
 </div>
