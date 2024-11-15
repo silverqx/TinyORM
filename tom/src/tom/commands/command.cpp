@@ -383,7 +383,8 @@ Command::getOptionsSignatureHash(const QList<CommandLineOption> &optionsSignatur
     std::unordered_map<QString, SizeType> result;
     /* I have no option with more than 2 option names, +8 as reserve.
        Don't use the ranges::accumulate() as the option.names() return by value. */
-    result.reserve((optionsSignature.size() * MaxOptionNamesCount) + 8);
+    result.reserve(static_cast<decltype (result)::size_type>(
+                       optionsSignature.size() * MaxOptionNamesCount) + 8);
 
     SizeType index = 0;
 
