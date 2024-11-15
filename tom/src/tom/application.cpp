@@ -826,7 +826,7 @@ Application::namespaceNames()
     // Order is important here - zipped with the commandsIndexes()
     static const std::vector<std::reference_wrapper<const QString>> cached {
         // global namespace
-        NsGlobal, EMPTY,
+        NsGlobal,
         // all other namespaces
         NsDb, NsMake, NsMigrate,
         // Hidden namespaces
@@ -856,7 +856,6 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
        Order is important here - zipped with the namespaceNames(). */
     static const std::vector<std::tuple<int, int>> cached {
         { 0,  7}, // global
-        { 0,  7}, // "" - also global
 
         { 7,  9}, // db
         { 9, 12}, // make
