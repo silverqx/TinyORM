@@ -15,6 +15,7 @@ using Orm::Constants::COLON;
 using Orm::Constants::NEWLINE_C;
 using Orm::Constants::SPACE;
 
+using Tom::Constants::EMPTY;
 using Tom::Constants::NsGlobal;
 using Tom::Constants::NsNamespaced;
 using Tom::Constants::namespace_;
@@ -33,7 +34,7 @@ ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {namespace_, u"The namespace name"_s, {}, cOptionalArg},
+        {namespace_, u"The namespace name"_s, {}, cOptionalArg, EMPTY},
     };
 
     return cached;
@@ -121,13 +122,9 @@ int ListCommand::raw(const QString &namespaceArg)
 
 QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 {
-    // Namespace positional argument was not defined, show all commands list
-    if (namespaceArg.isNull())
-        return {};
-
-    // Show commands for the global namespace if empty string
+    // Namespace positional argument was not defined, show all/default commands list
     if (namespaceArg.isEmpty())
-        return NsGlobal;
+        return {};
 
     // Try to find a full command name to avoid the guess logic
     if (auto namespaceArg_ = namespaceArg.toLower();
@@ -189,9 +186,8 @@ void ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
 void ListCommand::printCommandsSection(const QString &namespaceName,
                                        const PrintsOptions::SizeType optionsMaxSize) const
 {
-    const auto hasNamespaceName = !namespaceName.isNull();
-
     const auto &commands = getCommandsByNamespace(namespaceName);
+    const auto hasNamespaceName = !namespaceName.isEmpty();
 
     newLine();
 
@@ -200,8 +196,8 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
                 // Custom message for the namespaced argument
         comment(namespaceName == NsNamespaced
                 ? u"Commands with the namespace prefix:"_s
-                : u"Available commands for the '%1' namespace:"_s
-                  .arg(namespaceName.isEmpty() ? NsGlobal : namespaceName));
+                : u"Available commands for the '%1' namespace:"_s.arg(namespaceName));
+
     // All commands
     else
         comment(u"Available commands:"_s);
@@ -279,9 +275,8 @@ QString ListCommand::commandNamespace(const QString &commandName)
 const std::vector<std::shared_ptr<Command>> &
 ListCommand::getCommandsByNamespace(const QString &name) const
 {
-    /* Obtain all commands and isNull() needed because still able to return the global
-       namespace for an empty string. */
-    if (name.isNull())
+    // Obtain all commands (default output if no namespace given)
+    if (name.isEmpty())
         return application().createCommandsVector();
 
     /* This avoids one copy that would be done if commands would be returned by a value,

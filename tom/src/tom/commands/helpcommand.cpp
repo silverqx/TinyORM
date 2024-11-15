@@ -227,10 +227,8 @@ HelpCommand::countArgumentsSizes(const std::vector<PositionalArgument> &argument
 
 void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) const
 {
-    if (const auto &defaultValue = argument.defaultValue;
-        !defaultValue.isEmpty()
-    )
-        comment(TomUtils::defaultValueText(defaultValue), false);
+    if (argument.requiredStatus == cOptionalArg)
+        comment(TomUtils::defaultValueText(argument.defaultValue), false);
 
     newLine();
 }

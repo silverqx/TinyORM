@@ -55,12 +55,18 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
 
 QString Utils::defaultValueText(const QString &value)
 {
-    // Quote the string type
-    const auto defaultValue = StringUtils::isNumber(value, true, true)
-                              ? value
-                              : TMPL_DQUOTES.arg(value);
+    static const auto DefaultValueTmpl = u" [default: %1]"_s;
 
-    return u" [default: %1]"_s.arg(defaultValue);
+    // Don't quote numbers
+    if (StringUtils::isNumber(value, true, true))
+        return DefaultValueTmpl.arg(value);
+
+    // Edge case for null QString default value (not used now)
+    if (value.isNull())
+        return DefaultValueTmpl.arg(u"{}");
+
+    // Quote the string value/type
+    return DefaultValueTmpl.arg(TMPL_DQUOTES.arg(value));
 }
 
 QList<QCommandLineOption>

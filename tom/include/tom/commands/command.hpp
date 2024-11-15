@@ -54,7 +54,7 @@ namespace Commands
         /*! Is argument requiredStatus? */
         RequiredArgStatus requiredStatus = RequiredArgStatus::cRequiredArg;
         /*! Argument's default value (optional argument only). */
-        QString defaultValue {}; // NOLINT(readability-redundant-member-init)
+        QString defaultValue = Constants::EMPTY;
     };
 
     /*! Abstract base class for the console command. */
