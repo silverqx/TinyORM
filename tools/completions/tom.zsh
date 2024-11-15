@@ -1,6 +1,6 @@
 #compdef tom tom_testdata
 
-# Completion for the TinyORM tom application
+# Tab-completion for the tom command (TinyORM)
 
 __tom_commands() {
     local -a commands=(
@@ -43,39 +43,30 @@ __tom_about_sections() {
 # Try to infer database connection names if a user is in the right folder and have tagged
 # connection names with '// shell:connection' comment
 __tom_connections() {
-    local -a connections
-    local -a lines
+    local -r main_file='main.cpp'
 
-    [[ -d database/migrations && -f main.cpp ]] || return
+    # Nothing to do, the main.cpp file isn't readable or doesn't exist
+    [[ -r "./$main_file" ]] || return 1
 
-    IFS=$'\n' lines=($(/bin/cat main.cpp | grep '// shell:connection'))
+    # --quiet suppresses printing of the entire file and |p prints only the replaced part \1
+    local -r regex='s|.*"([[:alnum:]_.-]+)".*// shell:connection$|\1|p'
 
-    # Nothing found
-    [[ $#lines -eq 0 ]] && return
-
-    local regex='"([[:alnum:]_.-]+)".*// shell:connection$'
-
-    for line in $lines; do
-        if [[ $line =~ $regex ]]; then
-            connections+=$match[1]
-        fi
-    done
-
-    _values -s , connection $connections
+    _values -s , connection \
+        $(command sed --quiet --regexp-extended --expression="$regex" "$main_file")
 }
 
 # Try to infer seeder class names if a user is in the right folder
 __tom_seeders() {
-    local namespace seeder namespace_grep seeder_grep content
-    local -a seeders
-    local -a seeder_files
+    # Nothing to do, not in the right folder
+    [[ -d database/seeders && -r database/seeders && -f main.cpp ]] || return
 
-    [[ -d database/seeders && -f main.cpp ]] || return
-
-    seeder_files=($(/bin/ls database/seeders/*seeder.hpp))
+    local -a seeder_files=($(/bin/ls database/seeders/*seeder.hpp))
 
     # Nothing found
     [[ $#seeder_files -eq 0 ]] && return
+
+    local namespace seeder
+    local -a content namespace_grep seeder_grep seeders
 
     for seeder_file in $seeder_files; do
         content=$(/bin/cat $seeder_file)
