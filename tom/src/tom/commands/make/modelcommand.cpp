@@ -102,7 +102,7 @@ ModelCommand::ModelCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, u"The name of the model class (required StudlyCase)"_s},
+        {NAME, u"The name of the model class (required StudlyCase)"_s, {}, cRequiredArg},
     };
 
     return cached;

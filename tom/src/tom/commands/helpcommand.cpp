@@ -26,7 +26,7 @@ HelpCommand::HelpCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &HelpCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {command_name, u"The command name"_s, {}, true, Constants::help},
+        {command_name, u"The command name"_s, {}, cOptionalArg, Constants::help},
     };
 
     return cached;
@@ -88,7 +88,9 @@ bool HelpCommand::validateRequiredArguments(
         const auto &left = arguments.at(i - 1);
         const auto &right = arguments.at(i);
 
-        if (left.optional && !right.optional) {
+        if (left.requiredStatus  == cOptionalArg &&
+            right.requiredStatus == cRequiredArg
+        ) {
             errorWall(u"Cannot add a required argument '%1' after an optional one '%2'."_s
                       .arg(right.name, left.name));
 
@@ -97,9 +99,9 @@ bool HelpCommand::validateRequiredArguments(
     }
 
     // Fail when required argument has a default value
-    return std::ranges::none_of(arguments, [this](const auto &argument)
+    return std::ranges::none_of(arguments, [this](const PositionalArgument &argument)
     {
-        const auto requiredWithDefault = !argument.optional &&
+        const auto requiredWithDefault = argument.requiredStatus == cRequiredArg &&
                                          !argument.defaultValue.isEmpty();
 
         if (requiredWithDefault)
@@ -157,7 +159,7 @@ void HelpCommand::printUsageSection(
             const auto syntax = argument.syntax.isEmpty() ? argument.name
                                                           : argument.syntax;
 
-            if (argument.optional) {
+            if (argument.requiredStatus == cOptionalArg) {
                 usage += u" [<%1>"_s.arg(syntax);
                 ++optionalCounter;
             }
@@ -218,7 +220,7 @@ HelpCommand::countArgumentsSizes(const std::vector<PositionalArgument> &argument
         size += (argument.syntax.isEmpty() ? argument.name.size()
                                            : argument.syntax.size()) +
                 // 5 - ' [<>]'; 3 - ' <>' (argName is between the <> characters)
-                (argument.optional ? 5 : 3);
+                (argument.requiredStatus == cOptionalArg ? 5 : 3);
 
     return size;
 }

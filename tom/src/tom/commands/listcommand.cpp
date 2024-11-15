@@ -33,7 +33,7 @@ ListCommand::ListCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {namespace_, u"The namespace name"_s, {}, true},
+        {namespace_, u"The namespace name"_s, {}, cOptionalArg},
     };
 
     return cached;

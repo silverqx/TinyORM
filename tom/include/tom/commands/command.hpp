@@ -33,6 +33,15 @@ namespace Concerns
 namespace Commands
 {
 
+    /*! Determine whether a positional argument is required or optional. */
+    enum struct RequiredArgStatus : quint8
+    {
+        /*! Optional positional argument. */
+        cOptionalArg,
+        /*! Required  positional argument, will fail if doesn't have a value. */
+        cRequiredArg,
+    };
+
     /*! Positional argument item for a console command. */
     struct PositionalArgument
     {
@@ -41,9 +50,9 @@ namespace Commands
         /*! Argument description. */
         QString description;
         /*! Appended to the Usage line if an empty name is used. */
-        QString syntax       {}; // NOLINT(readability-redundant-member-init)
-        /*! Is argument optional? */
-        bool optional      = false;
+        QString syntax {}; // NOLINT(readability-redundant-member-init)
+        /*! Is argument requiredStatus? */
+        RequiredArgStatus requiredStatus = RequiredArgStatus::cRequiredArg;
         /*! Argument's default value (optional argument only). */
         QString defaultValue {}; // NOLINT(readability-redundant-member-init)
     };
@@ -100,6 +109,9 @@ namespace Commands
         bool hasOptions() const;
 
     protected:
+        /*! Expose the RequiredArgStatus enum. */
+        using enum RequiredArgStatus;
+
         /*! Maximum number of option names for one option out of all. */
         constexpr static SizeType MaxOptionNamesCount = 2;
 

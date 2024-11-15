@@ -427,7 +427,7 @@ void Command::validateRequiredArguments() const
     StdSizeType requiredArgsSize = 0;
     for (const auto &argument : arguments)
         // Required arguments can not be after optional arguments
-        if (argument.optional)
+        if (argument.requiredStatus == cOptionalArg)
             break;
         else
             ++requiredArgsSize;

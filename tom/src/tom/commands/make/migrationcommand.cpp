@@ -49,7 +49,7 @@ MigrationCommand::MigrationCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, u"The name of the migration (best snake_case)"_s},
+        {NAME, u"The name of the migration (best snake_case)"_s, {}, cRequiredArg},
     };
 
     return cached;

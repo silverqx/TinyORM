@@ -44,7 +44,7 @@ SeedCommand::SeedCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {class_, u"The class name of the root seeder"_s, {}, true},
+        {class_, u"The class name of the root seeder"_s, {}, cOptionalArg},
     };
 
     return cached;
