@@ -1708,9 +1708,20 @@ DROP TABLE IF EXISTS "migrations_unit_testing" CASCADE;
 UBSan:
 ------
 
-Has to be invoked on Linux clang and errors are detected at runtime.
+Has to be invoked on Linux Clang and errors are detected at runtime!
 
-This enable the undefined group:
+ - use at least optimization level -O1 in order for all errors to be detected
+ - only qmake build system supports UBSan using the CONFIG+=ubsan
+ - I can build the whole project with UBSan and invoke all auto tests
+   - all problems will be written to the file using the log_path UBSAN_OPTIONS environment variable
+ - there is no -fsanitize=all option, because some sanitizers do not work together??
+   - I'm enabling them all using groups, maybe I shouldn't??
+ - see:
+https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+https://blogs.oracle.com/linux/post/improving-application-security-with-undefinedbehaviorsanitizer-ubsan-and-gcc
+
+
+This enables the undefined group:
 
 QMAKE_CXXFLAGS += -O1 -fsanitize=undefined
 QMAKE_LFLAGS += -fsanitize=undefined
@@ -1720,9 +1731,10 @@ This with the above one! enables all the possible sanitizers:
 QMAKE_CXXFLAGS += -O1 -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
 QMAKE_LFLAGS += -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitize=unsigned-integer-overflow -fsanitize=implicit-conversion -fsanitize=local-bounds
 
-Set in the QtCreator env. before execution, it suspends some errors detected in the Qt library:
+Set in the QtCreator env. before execution, it suspends some errors detected in the Qt library,
+I'm setting it in the Project environment, not in Preferences - Environment - System
 
-UBSAN_OPTIONS=suppressions=/home/silverqx/Code/c/TinyORM/TinyORM/tools/configs/UBSan.supp:print_stacktrace=0
+UBSAN_OPTIONS=log_path=/home/silverqx/tmp/ubsan/tinyorm:suppressions=/home/silverqx/Code/c/TinyORM/TinyORM/tools/configs/UBSan.supp:print_stacktrace=0
 
 
 Valgrind, callgrind, and KCachegrind:
