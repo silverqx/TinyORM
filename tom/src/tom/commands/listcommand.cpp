@@ -128,8 +128,8 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
     // Try to find a full command name to avoid the guess logic
     if (auto namespaceArg_ = namespaceArg.toLower();
-        ranges::contains(Application::namespaceNames(), namespaceArg_) &&
-        !Application::isNamespaceHidden(namespaceArg_) // Exclude hidden namespaces
+        !Application::isNamespaceHidden(namespaceArg_) && // Exclude hidden namespaces
+        ranges::contains(Application::namespaceNames(), namespaceArg_)
     )
         return namespaceArg_;
 
@@ -158,8 +158,9 @@ std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg)
             // CUR1 ranges, check all pred and proj, now I understand where I have to use auto & or auto &&, note in bash_or_cmd c++ sheet silverqx
             | ranges::views::filter([&namespaceArg](const QString &namespaceName)
     {
-        return namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive) &&
-                !Application::isNamespaceHidden(namespaceName); // Exclude hidden namespaces
+        return !Application::isNamespaceHidden(namespaceName) && // Exclude hidden namespaces
+                namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive);
+
     })
             | ranges::to<std::vector<QString>>();
 }
