@@ -3500,6 +3500,26 @@ decltype (auto) PerfectForward(F fun, Args&&... args)
 decltype (auto) c1 = a;     // type of c1 is int, holding a copy of a
 decltype (auto) c2 = (a);   // type of c2 is int&, an alias of a
 
+ - decltype ((x))
+   - I think I finally also understood also this
+   - it looks like it's:
+auto &&r = x
+decltype (r)
+
+   - this example confirms it:
+QString s1("x");
+const QString s2("x");
+QString s3("x");
+// checkConstRef<decltype ((s1))>();
+// checkConstRef<decltype ((s2))>();
+// checkConstRef<decltype ((std::move(s3)))>();
+auto &&r1 = s1;
+auto &&r2 = s2;
+auto &&r3 = std::move(s3);
+checkConstRef<decltype (r1)>();
+checkConstRef<decltype (r3)>();
+checkConstRef<decltype (r2)>();
+
  - structured binding and auto &&[
    - see https://en.cppreference.com/w/cpp/language/structured_binding
    - the documentation is so badly written and confusion I didn't fully understand it even
