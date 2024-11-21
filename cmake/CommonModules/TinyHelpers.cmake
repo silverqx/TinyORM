@@ -325,7 +325,7 @@ function(tiny_should_disable_precompile_headers out_variable)
     )
 
     # ccache can't be executed, don't disable PCH in this case and even don't cache
-    # the TINY_CCACHE_VERSION because the build is gona to fail and we don't want to
+    # the TINY_CCACHE_VERSION because the build is gonna to fail and we don't want to
     # cache the wrong value
     if(exitCode STREQUAL "no such file or directory")
         set(${out_variable} FALSE PARENT_SCOPE)
