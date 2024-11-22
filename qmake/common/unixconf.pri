@@ -53,6 +53,8 @@ linux:contains(QT_ARCH, x86_64): \
 
 # Allow to enable UBSan with Clang
 clang:ubsan {
+    mingw: error( "Clang UBSan is not supported on MSYS2." )
+
     DEFINES *= TINYORM_USING_UBSAN
 
     QMAKE_CXXFLAGS += -O1
