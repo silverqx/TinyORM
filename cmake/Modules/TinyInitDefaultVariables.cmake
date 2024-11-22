@@ -257,63 +257,9 @@ to generate find_dependency() calls for the TinyORM package configuration file."
     # Specifies which TinyDrivers build type is currently being built (for nicer if()-s)
     tiny_init_driver_types()
 
-    # Setup the correct PATH environment variable used by the ctest command
-    # To debug these paths on the PATH environment variable run ctest --debug
-    if(BUILD_TESTS)
-        # For adjusting variables when running tests we need to know what the correct
-        # variable is for separating entries in PATH-alike variables
-        if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-            set(TINY_PATH_SEPARATOR "\\;")
-        else()
-            set(TINY_PATH_SEPARATOR ":")
-        endif()
-
-        # Escaped environment path
-        string(REPLACE ";" "\;" TINY_TESTS_ENV "$ENV{PATH}")
-
-        # Prepend VCPKG environment (installed folder)
-        if(TINY_VCPKG)
-            string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}$<$<CONFIG:Debug>:/debug>/\
-${CMAKE_INSTALL_BINDIR}>${TINY_PATH_SEPARATOR}\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
-
-        # Prepend TinyOrm and TinyUtils library folders
-        else()
-            # Multi-config generators have different folders structure
-            if(TINY_IS_MULTI_CONFIG)
-                if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-                    string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/mysql/$<CONFIG>>${TINY_PATH_SEPARATOR}")
-                endif()
-
-                if(BUILD_DRIVERS)
-                    string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/common/$<CONFIG>>${TINY_PATH_SEPARATOR}")
-                endif()
-
-                string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/$<CONFIG>>${TINY_PATH_SEPARATOR}\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}/$<CONFIG>>${TINY_PATH_SEPARATOR}")
-
-            # Single-config generators
-            else()
-                if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-                    string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/mysql>${TINY_PATH_SEPARATOR}")
-                endif()
-
-                if(BUILD_DRIVERS)
-                    string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/common>${TINY_PATH_SEPARATOR}")
-                endif()
-
-                string(PREPEND TINY_TESTS_ENV "\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}>${TINY_PATH_SEPARATOR}\
-$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
-            endif()
-        endif()
-    endif()
+    # Setup the correct PATH environment variable for the ctest command
+    set(TINY_TESTS_ENV_PATH TINY_TESTS_ENV_PATH-NOTFOUND) # Always use if() before using the variable
+    tiny_init_ctest_path_win32()
 
     set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
         "Generated content in the build tree.")
@@ -375,3 +321,43 @@ macro(tiny_init_tom_database_dirs)
     endif()
 
 endmacro()
+
+# Setup the correct PATH environment variable for the ctest command
+# To debug these paths on the PATH environment variable run ctest --debug (outside
+# of QtCreator because it handles invoking of unit tests without the ctest command).
+function(tiny_init_ctest_path_win32)
+
+    # Nothing to do
+    if(NOT WIN32 OR NOT BUILD_TESTS)
+        return()
+    endif()
+
+    set(tinyEnvPath "")
+
+    # Prepend TinyOrm, TinyUtils, TinyDrivers, TinyMySql library folders
+    # Handles both Single/Multi-config generators (thanks to $<TARGET_FILE_DIR>)
+    # The order of these paths is correct (revisited)
+    # Testing for target eg. if(TARGET ${${TinyMySql_target}) would be redundant here
+    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+        list(PREPEND tinyEnvPath
+            "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyMySql_target}>>"
+        )
+    endif()
+
+    if(BUILD_DRIVERS)
+        list(PREPEND tinyEnvPath
+            "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyDrivers_target}>>"
+        )
+    endif()
+
+    list(PREPEND tinyEnvPath
+        "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyOrm_target}>>"
+        "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyUtils_target}>>"
+    )
+
+    # Escaping is needed for the ENVIRONMENT_MODIFICATION path_list_prepend
+    list(JOIN tinyEnvPath "\;" tinyEnvPath)
+
+    set(TINY_TESTS_ENV_PATH "${tinyEnvPath}" PARENT_SCOPE) # Quotes for tinyEnvPath are needed because of escaping
+
+endfunction()

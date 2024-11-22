@@ -40,14 +40,13 @@ sqlite_schemabuilder;mysql_tinybuilder"
         )
     endif()
 
-    # Setup correct PATH env. variable, used by ctest command, needed to find TinyUtils
-    # and TinyOrm libraries in the build tree.
-    # Don't use the ENVIRONMENT_MODIFICATION here because it's not designed for passing
-    # multiple paths at once, it's possible though using escaping eg. \\\; but it's not
-    # ideal in our case and extracting every path to own variable would be a nightmare.
-    set_property(TEST ${name} APPEND PROPERTY
-        ENVIRONMENT "PATH=${TINY_TESTS_ENV}"
-    )
+    # Setup the correct PATH environment variable for the ctest command
+    # Needed to find TinyOrm, TinyUtils, TinyDrivers, TinyMySql libraries in build tree
+    if(TINY_TESTS_ENV_PATH)
+        set_property(TEST ${name} APPEND PROPERTY
+            ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${TINY_TESTS_ENV_PATH}" # Quotes are needed because of \;
+        )
+    endif()
 
     if(MINGW)
         target_compile_options(${name}
