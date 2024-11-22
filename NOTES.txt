@@ -1374,6 +1374,9 @@ CMake Guidelines:
 tags: code style, cmake
 ---
 
+ - if not described below then follow:
+https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
+
 All are snake-case unless otherwise specified.
 
  - variable names:
@@ -1408,7 +1411,14 @@ All are snake-case unless otherwise specified.
          - install(TARGETS ${TinyOrm_target} ${CommonConfig_target}
          - list(APPEND filesToDeploy $<TARGET_FILE:${TinyDrivers_target}>)
 
-https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
+ - prefer set(variable value PARENT_SCOPE) over return(PROPAGATE) (since v3.25)
+   - use return(PROPAGATE) only if really needed
+   - this is how CMake works
+
+ - set(variable value PARENT_SCOPE) and quoting list variables
+   - it's only needed when escaping the ; character comes into the game
+   - ❗so quote only if really needed and add comment in this case
+   - see also CMake confusions below
 
 
 CMake confusions:
@@ -1512,6 +1522,18 @@ if(IS_DIRECTORY "${var}")
 MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
   - so if(MSVC) matches both or all MSVC-like compilers
   - ❗but if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") matches the cl.exe MSVC compiler only
+
+- set(PARENT_SCOPE) and quotes for the value
+  - the is no need to quote the value even for lists (tested)
+list(APPEND l1 "v1")
+set(l1 ${l1} PARENT_SCOPE)
+  - it's only needed when escaping the ; character comes into the game like:
+function(f1)
+    list(APPEND l1 "v1" "v2")
+    list(JOIN l1 "\;" l1)
+    set(l1 "${l1}" PARENT_SCOPE)
+endfunction()
+  - ❗so quote only if really needed and add comment in this case
 
 
 TinyORM CMake build:
