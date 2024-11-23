@@ -1524,7 +1524,7 @@ MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQU
   - ❗but if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") matches the cl.exe MSVC compiler only
 
 - set(PARENT_SCOPE) and quotes for the value
-  - the is no need to quote the value even for lists (tested)
+  - there is no need to quote the value even for lists (tested)
 list(APPEND l1 "v1")
 set(l1 ${l1} PARENT_SCOPE)
   - it's only needed when escaping the ; character comes into the game like:
@@ -1534,6 +1534,11 @@ function(f1)
     set(l1 "${l1}" PARENT_SCOPE)
 endfunction()
   - ❗so quote only if really needed and add comment in this case
+  - problem here is that docs recommend to quote these list arguments but I have all these values
+    uncommented in my code, for strings and also for lists
+    - I checked them all and these my variables can never contain ; character so it looks OK
+    - there is a chance I will have to refactor or review it again in the future
+https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#lists
 
 
 TinyORM CMake build:
