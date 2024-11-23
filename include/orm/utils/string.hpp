@@ -68,6 +68,10 @@ namespace Orm::Utils
         static QList<QString>
         splitAtFirst(const QString &string, QChar separator,
                      Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts
+        /*! Split a string view at the first given character. */
+        static QList<QStringView>
+        splitAtFirst(QStringView string, QChar separator,
+                     Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
@@ -100,10 +104,6 @@ namespace Orm::Utils
         static QStringList
         splitStringByWidth(QStringView string, int maxWidth,
                            SplitWordsBehavior splitBehavior = cSplitWords30);
-        /*! Split a string view at the first given character. */
-        static QList<QStringView>
-        splitAtFirst(QStringView string, QChar separator,
-                     Qt::SplitBehavior splitBehavior = Qt::KeepEmptyParts); // Never change the Qt::KeepEmptyParts
 
         /*! Count number of the given character before the given position. */
         static QString::size_type countBefore(QString string, QChar character,
