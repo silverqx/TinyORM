@@ -1,10 +1,15 @@
-# Policies <= CMP0128 default to NEW
-# 3.20 - because is used NEWLINE_STYLE in the file(GENERATE) command
-# 3.22 - because is used CMP0127: cmake_dependent_option() supports full Condition Syntax
-# Maximum version allowed for the minimum version is 3.22 because of Ubuntu 22.04 LTS so
-# currently can't use the target_sources(FILE_SET) 😔
+# Policies <= CMP0180 default to NEW
+# 3.20 - NEWLINE_STYLE in the file(GENERATE) command
+# 3.22 - CMP0127: cmake_dependent_option() supports full Condition Syntax
+# 3.23 - target_sources(FILE_SET)
+#      - CMAKE_/COMPILE_WARNING_AS_ERROR
+# 3.25 - return(PROPAGATE) (I'm not using it currently, ❗only noting this)
+#      - if(LINUX) instead of CMAKE_SYSTEM_NAME STREQUAL "Linux"
+# Maximum version allowed for the minimum versions:
+# - Ubuntu 24.04.1 LTS - 3.28
+# - Ubuntu 22.04.1 LTS - 3.22
 # Minimum version must always correspond to the version that is in the latest Ubuntu LTS
-# TODO use CMAKE_COMPILE_WARNING_AS_ERROR when Ubuntu 24.04.1 will be out, in increases minimum version to CMake v3.24 silverqx
+# TODO use CMAKE_COMPILE_WARNING_AS_ERROR when Ubuntu 24.04.1 will be out, it increases minimum version to CMake v3.24 silverqx
 # TODO the if(LINUX) can be used from CMake v3.25 instead of CMAKE_SYSTEM_NAME STREQUAL "Linux" silverqx
 cmake_minimum_required(VERSION 3.22...3.31 FATAL_ERROR)
 
