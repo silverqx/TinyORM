@@ -69,13 +69,20 @@ function(cs_print_target_properties target)
             continue()
         endif()
 
-        get_property(isTargetSet TARGET ${target} PROPERTY ${property} SET)
+        get_property(isTargetPropertySet TARGET ${target} PROPERTY ${property} SET)
 
-        if(isTargetSet)
-            get_target_property(value ${target} ${property})
-            message("${property} = ${value}")
+        if(isTargetPropertySet)
+            cs_print_target_property(${target} ${property})
         endif()
     endforeach()
+
+endfunction()
+
+# Print the given target property
+function(cs_print_target_property target property)
+
+    get_target_property(value ${target} ${property})
+    message("${property} = ${value}")
 
 endfunction()
 
@@ -101,13 +108,20 @@ function(cs_print_source_properties source)
             continue()
         endif()
 
-        get_property(isTargetSet SOURCE "${source}" PROPERTY ${property} SET)
+        get_property(isSourcePropertySet SOURCE "${source}" PROPERTY ${property} SET)
 
-        if(isTargetSet)
-            get_source_file_property(value "${source}" ${property})
-            message("${property} = ${value}")
+        if(isSourcePropertySet)
+            cs_print_source_property("${source}" ${property})
         endif()
     endforeach()
+
+endfunction()
+
+# Print the given source file property
+function(cs_print_source_property source property)
+
+    get_source_file_property(value "${source}" ${property})
+    message("${property} = ${value}")
 
 endfunction()
 
