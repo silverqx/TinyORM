@@ -1416,6 +1416,7 @@ All are snake-case unless otherwise specified.
    - this is how CMake works
 
  - set(variable value PARENT_SCOPE) and quoting list variables
+   - see: https://crascit.com/2022/01/25/quoting-in-cmake/#h-passing-lists-as-command-arguments
    - it's only needed when escaping the ; character comes into the game
    - ❗so quote only if really needed and add comment in this case
    - see also CMake confusions below
@@ -1524,6 +1525,7 @@ MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQU
   - ❗but if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") matches the cl.exe MSVC compiler only
 
 - set(PARENT_SCOPE) and quotes for the value
+  - see: https://crascit.com/2022/01/25/quoting-in-cmake/#h-passing-lists-as-command-arguments
   - there is no need to quote the value even for lists (tested)
 list(APPEND l1 "v1")
 set(l1 ${l1} PARENT_SCOPE)
