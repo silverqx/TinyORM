@@ -241,7 +241,9 @@ endmacro()
 # Initialize Tiny variables
 macro(tiny_init_tiny_variables)
 
-    # List of package dependencies for the package config (can't be a simple variable)
+    # List of package dependencies for the package config
+    # Can't be a simple variable because add_subdirectory() creates a new scope and
+    # it would be empty in this new scope.
     define_property(GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES
         BRIEF_DOCS "Recorded arguments from find_package() calls."
         FULL_DOCS "Recorded arguments from find_package() calls that will be used \
