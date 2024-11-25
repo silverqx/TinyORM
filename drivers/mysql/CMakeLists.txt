@@ -84,6 +84,7 @@ endif()
 
 # Order of #include-s is very important because of pch.h as its name is the same for all
 # projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
+# In this case it must be before ${${TinyOrm_ns}_SOURCE_DIR}/include.
 target_include_directories(${TinyMySql_target}
     PRIVATE
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
