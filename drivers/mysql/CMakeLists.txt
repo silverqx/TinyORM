@@ -35,7 +35,7 @@ add_library(${TinyMySql_ns}::${TinyMySql_target} ALIAS ${TinyMySql_target})
 # ---
 
 include(TinySources)
-tinymysqldriver_sources(
+tinymysql_sources(
     ${TinyMySql_target}_headers_private
     ${TinyMySql_target}_headers
     ${TinyMySql_target}_sources

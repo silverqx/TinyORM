@@ -106,7 +106,7 @@ endfunction()
 
 # TinyMySql library header and source files
 # Create header and source files lists and return them
-function(tinymysqldriver_sources out_headers_private out_headers out_sources)
+function(tinymysql_sources out_headers_private out_headers out_sources)
 
     # Private Header files section
     set(headers_private "")

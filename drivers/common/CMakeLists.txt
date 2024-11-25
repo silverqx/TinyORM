@@ -46,7 +46,7 @@ target_sources(${TinyDrivers_target} PRIVATE
 
 # Using source files directly to avoid unnecessary static library build and linking
 if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-    tinymysqldriver_sources(
+    tinymysql_sources(
         ${TinyMySql_target}_headers_private
         ${TinyMySql_target}_headers
         ${TinyMySql_target}_sources
