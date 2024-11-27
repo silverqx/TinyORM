@@ -245,6 +245,7 @@ endfunction()
 # Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
 # It must be a macro() because of the if(DEFINED).
 # The 'default' argument must be of the boolean type and can't be empty!
+# Looks weird because is specifically designed for target_optional_compile_definitions().
 macro(tiny_set_default_value_from_environment name default)
 
     # If an environment variable is defined then use its value
