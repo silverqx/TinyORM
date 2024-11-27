@@ -16,7 +16,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # RESOURCES_DIR can theoretically be anywhere, so it doesn't have this limitation.
     if(IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
         message(FATAL_ERROR "The 'OUTPUT_DIR' single-value keyword cannot be an absolute \
-path (relative to PROJECT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
+path (must be relative to PROJECT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     if(("RESOURCE_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
