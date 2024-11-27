@@ -12,7 +12,7 @@ function(tiny_resource_and_manifest target)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    # It must be inside the build tree and it's handled below per-project.
+    # It must be inside the build tree and it's handled per-project below.
     # RESOURCES_DIR can theoretically be anywhere, so it doesn't have this limitation.
     if(IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
         message(FATAL_ERROR "The 'OUTPUT_DIR' single-value keyword cannot be an absolute \
