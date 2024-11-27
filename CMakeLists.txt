@@ -11,7 +11,7 @@
 # Minimum version must always correspond to the version that is in the latest Ubuntu LTS
 # TODO use CMAKE_COMPILE_WARNING_AS_ERROR when Ubuntu 24.04.1 will be out, it increases minimum version to CMake v3.24 silverqx
 # TODO the if(LINUX) can be used from CMake v3.25 instead of CMAKE_SYSTEM_NAME STREQUAL "Linux" silverqx
-cmake_minimum_required(VERSION 3.22...3.31 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.23...3.31 FATAL_ERROR)
 
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
@@ -239,11 +239,11 @@ tiny_init_tom_database_dirs()
 # ---
 
 include(TinySources)
-tinyorm_sources(${TinyOrm_target}_headers ${TinyOrm_target}_sources)
 
-target_sources(${TinyOrm_target} PRIVATE
-    ${${TinyOrm_target}_headers}
-    ${${TinyOrm_target}_sources}
+# Create header file sets and add source files in one shot
+tiny_target_sources(${TinyOrm_target} PUBLIC_ONLY
+    FILE_SET_PREFIX orm
+    BASE_DIRS "include"
 )
 
 # Use Precompiled headers (PCH)
@@ -276,12 +276,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         PROPERTY OUTPUT_NAME "${TinyOrm_target}${PROJECT_VERSION_MAJOR}"
     )
 endif()
-
-# Order of #include-s is very important because of pch.h as its name is the same for all
-# projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
-target_include_directories(${TinyOrm_target}
-    PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-)
 
 # TinyORM defines
 # ---
@@ -336,20 +330,10 @@ endif()
 # ---
 
 if(TOM)
-    tinytom_sources(${TomExample_target}_headers ${TomExample_target}_sources)
-
-    target_sources(${TinyOrm_target} PRIVATE
-        ${${TomExample_target}_headers}
-        ${${TomExample_target}_sources}
-    )
-endif()
-
-# Tom related specific configuration
-# ---
-
-if(TOM)
-    target_include_directories(${TinyOrm_target}
-        PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
+    # Create header file sets and add source files in one shot
+    tiny_target_sources(${TinyOrm_target} PUBLIC_ONLY
+        FILE_SET_PREFIX tom
+        BASE_DIRS "tom/include"
     )
 endif()
 

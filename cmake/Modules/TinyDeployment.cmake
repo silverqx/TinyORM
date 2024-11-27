@@ -10,26 +10,33 @@ set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
 # Create Package Config and Package Config Version files and install the TinyORM Project
 function(tiny_install_tinyorm)
 
+    # Prepare FILE_SETs for install(TARGETS)
+    tiny_install_prepare_file_sets()
+
     # Install targets from the project and assign them to the export set
     # TinyOrm library
     install(
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
+        #[[FILE_SET]] ${ormFileSet}
         # The $<INSTALL_INTERFACE:xyz> in the target_include_directories() doesn't
         # need to be defined because of this line
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         LIBRARY ARCHIVE RUNTIME
         # TODO test NAMELINK_ on unix silverqx
     )
+
     # TinyDrivers library
     if(BUILD_DRIVERS)
         install(
             TARGETS ${TinyDrivers_target} ${CommonConfig_target}
             EXPORT TinyDriversTargets
+            #[[FILE_SET]] ${driversFileSet}
             INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             LIBRARY ARCHIVE RUNTIME
         )
     endif()
+
     # TinyMySql library (MODULE, loaded at runtime)
     # The MODULE libraries are installed to the bin/ folder on Linux and
     # they don't have namelink-s
@@ -40,6 +47,7 @@ function(tiny_install_tinyorm)
         install(
             TARGETS ${TinyMySql_target}
             EXPORT TinyDriversTargets
+            #[[FILE_SET]] ${mysqlFileSet}
             INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             # The LIBRARY destination must always be provided for MODULE libraries
             LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -97,42 +105,6 @@ function(tiny_install_tinyorm)
     # when installing for VCPKG Debug configuration
     if(TINY_VCPKG AND TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         return()
-    endif()
-
-    # Install header files
-    install(DIRECTORY "include/orm"
-        TYPE INCLUDE
-        FILES_MATCHING PATTERN "*.hpp"
-        PATTERN "include/orm/tiny" EXCLUDE
-    )
-    if(ORM)
-        install(DIRECTORY "include/orm/tiny"
-            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/orm"
-            FILES_MATCHING PATTERN "*.hpp"
-        )
-    endif()
-    if(TOM)
-        # The trailing / is important here (skip creating of the include/ folder
-        # inside the INCLUDE folder and copy all content directly)
-        install(DIRECTORY "tom/include/" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
-    endif()
-    # TinyDrivers
-    if(BUILD_DRIVERS)
-        install(DIRECTORY "drivers/common/include/orm"
-            TYPE INCLUDE
-            FILES_MATCHING PATTERN "*.hpp"
-        )
-
-        # Always install specific SQL Drivers' header files, it doesn't matter if
-        # they are built as shared, static, or loadable drivers
-
-        # TinyMySql
-        if(BUILD_MYSQL_DRIVER)
-            install(DIRECTORY "drivers/mysql/include/orm"
-                TYPE INCLUDE
-                FILES_MATCHING PATTERN "*.hpp"
-            )
-        endif()
     endif()
 
     # Install all other files
@@ -239,6 +211,37 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     )
 
 endfunction()
+
+# Prepare FILE_SETs for install(TARGETS)
+# Workarounds limitation of FILE_SET that doesn't accept list. This way eg. the ormFileSet
+# can contain multiple file sets like FILE_SET fs1 FILE_SET fs2 that can be directly
+# passed to the install(TARGETS) command.
+# See https://gitlab.kitware.com/cmake/cmake/-/issues/26469
+macro(tiny_install_prepare_file_sets)
+
+    # TinyOrm library (target is always defined)
+    get_property(ormFileSet TARGET ${TinyOrm_target}
+        PROPERTY INTERFACE_HEADER_SETS
+    )
+    list(TRANSFORM ormFileSet PREPEND "FILE_SET;" OUTPUT_VARIABLE ormFileSet)
+
+    # TinyDrivers library
+    if(BUILD_DRIVERS)
+        get_property(driversFileSet TARGET ${TinyDrivers_target}
+            PROPERTY INTERFACE_HEADER_SETS
+        )
+        list(TRANSFORM driversFileSet PREPEND "FILE_SET;" OUTPUT_VARIABLE driversFileSet)
+    endif()
+
+    # TinyMySql library
+    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+        get_property(mysqlFileSet TARGET ${TinyMySql_target}
+            PROPERTY INTERFACE_HEADER_SETS
+        )
+        list(TRANSFORM mysqlFileSet PREPEND "FILE_SET;" OUTPUT_VARIABLE mysqlFileSet)
+    endif()
+
+endmacro()
 
 # Install the TinyORM Project for the vcpkg port (custom vcpkg logic)
 function(tiny_install_tinyorm_vcpkg)

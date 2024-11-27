@@ -34,17 +34,13 @@ add_library(${TinyMySql_ns}::${TinyMySql_target} ALIAS ${TinyMySql_target})
 # TinyMySql library header and source files
 # ---
 
-include(TinySources)
-tinymysql_sources(
-    ${TinyMySql_target}_headers_private
-    ${TinyMySql_target}_headers
-    ${TinyMySql_target}_sources
-)
-
-target_sources(${TinyMySql_target} PRIVATE
-    ${${TinyMySql_target}_headers_private}
-    ${${TinyMySql_target}_headers}
-    ${${TinyMySql_target}_sources}
+# Create header file sets and add source files in one shot
+# After the FILE_SET refactor ${PROJECT_SOURCE_DIR}/include is PUBLIC (was PRIVATE before)
+# which is a good thing as it helpes get rid of one target_include_directories(PUBLIC)
+# call in TinyDrivers (Shared).
+tiny_target_sources(${TinyMySql_target}
+    FILE_SET_PREFIX mysql
+    BASE_DIRS "include"
 )
 
 # Use Precompiled headers (PCH)
@@ -85,11 +81,13 @@ endif()
 # Order of #include-s is very important because of pch.h as its name is the same for all
 # projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
 # In this case it must be before ${${TinyOrm_ns}_SOURCE_DIR}/include.
+# After FILE_SET refactor the target_sources() must be before target_link_libraries()
+# because ${${TinyOrm_ns}_SOURCE_DIR}/include is picked up
+# from INTERFACE_INCLUDE_DIRECTORIES (it was defined here before FILE_SET refactor).
 target_include_directories(${TinyMySql_target}
     PRIVATE
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
-        "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/include>"
+        # To access private implementation like MySqlDriverPrivate, ...
+        # TODO I think this is a bug and everything should be accessible through getters and get rid of this? silverqx
         "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/common/include_private>"
 )
 

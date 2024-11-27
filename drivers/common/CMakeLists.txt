@@ -31,31 +31,20 @@ add_library(${TinyDrivers_ns}::${TinyDrivers_target} ALIAS ${TinyDrivers_target}
 # TinyDrivers library header and source files
 # ---
 
-include(TinySources)
-tinydrivers_sources(
-    ${TinyDrivers_target}_headers_private
-    ${TinyDrivers_target}_headers
-    ${TinyDrivers_target}_sources
-)
-
-target_sources(${TinyDrivers_target} PRIVATE
-    ${${TinyDrivers_target}_headers_private}
-    ${${TinyDrivers_target}_headers}
-    ${${TinyDrivers_target}_sources}
+# Create header file sets and add source files in one shot
+tiny_target_sources(${TinyDrivers_target}
+    FILE_SET_PREFIX drivers
+    BASE_DIRS "include"
 )
 
 # Using source files directly to avoid unnecessary static library build and linking
 if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-    tinymysql_sources(
-        ${TinyMySql_target}_headers_private
-        ${TinyMySql_target}_headers
-        ${TinyMySql_target}_sources
-    )
-
-    target_sources(${TinyDrivers_target} PRIVATE
-        ${${TinyMySql_target}_headers_private}
-        ${${TinyMySql_target}_headers}
-        ${${TinyMySql_target}_sources}
+    # Create header file sets and add source files in one shot
+    # A relative path is fine here, CMake will resolve it to an absolute path anyway,
+    # so I don't have to, also, it may survive a potential refactor better.
+    tiny_target_sources(${TinyDrivers_target}
+        FILE_SET_PREFIX mysql
+        BASE_DIRS "../mysql/include" # Don't try get rid of .. using absolute path (revisited)
     )
 endif()
 
@@ -97,25 +86,22 @@ endif()
 # Order of #include-s is very important because of pch.h as its name is the same for all
 # projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
 # In this case it must be before ${${TinyOrm_ns}_SOURCE_DIR}/include.
+# After FILE_SET refactor the target_sources() above must be defined before this command.
+# Must be PUBLIC because a lot of TinyOrm header files are used in TinyDrivers .hpp files.
+# This dependency could be dropped by extracting this common code to the TinyCommon header
+# only library or duplicating these files to TinyDrivers (what I don't want to do).
+# Must be defined manually because of circular dependency, the TinyOrm library links
+# against TinyDrivers (so TinyDrivers cannot link back against TinyOrm).
 target_include_directories(${TinyDrivers_target}
-    PUBLIC  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
     PUBLIC  "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/include>"
 )
 
-if(BUILD_MYSQL_DRIVER)
-    # PUBLIC to be able to find the version.hpp and mysqllibraryinfo.hpp
+if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+    # PUBLIC to expose mysql/version.hpp in general (also needed by tom/application.cpp).
+    # Must be defined maually because loadable drivers are MODULE (no linking against it).
     target_include_directories(${TinyDrivers_target}
-        PUBLIC
-            "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+        PUBLIC "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
     )
-
-    if(TINY_BUILD_SHARED_DRIVERS OR TINY_BUILD_STATIC_DRIVERS)
-        target_include_directories(${TinyDrivers_target}
-            PRIVATE
-                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include_private>"
-        )
-    endif()
 endif()
 
 # TinyDrivers defines
