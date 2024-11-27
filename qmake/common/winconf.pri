@@ -159,13 +159,14 @@ win32-clang-msvc {
 win32-msvc|win32-clang-msvc {
     QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     # Abort compiling on warnings for Debug builds only, Release builds must go on
-    # as far as possible
+    # as far as possible.
     CONFIG(debug, debug|release): \
         QMAKE_CXXFLAGS_WARN_ON *= -WX
 
     # I don't use -MP flag because using the jom
     QMAKE_LFLAGS += /guard:cf
-    # Abort linking on warnings for Debug builds only, Release builds must go on as far as possible
+    # Abort linking on warnings for Debug builds only, Release builds must go on
+    # as far as possible.
     QMAKE_LFLAGS_DEBUG += /WX
     # Looks like Clang-cl does know nothing about these, for now enabling
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
