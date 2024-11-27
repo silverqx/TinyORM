@@ -1542,6 +1542,10 @@ endfunction()
     - there is a chance I will have to refactor or review it again in the future
 https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#lists
 
+ - cmake_path(IS_ABSOLUTE) vs if(IS_ABSOLUTE)
+   - if(IS_ABSOLUTE) returns TRUE also for c:xyz or /xyz (rooted only paths)
+   - cmake_path(IS_ABSOLUTE) must be fully-qualified
+
 
 TinyORM CMake build:
 --------------------
