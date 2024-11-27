@@ -196,10 +196,13 @@ keyword or its value is empty: NAME, NAMESPACE")
             $<$<NOT:$<CONFIG:Debug>>:/OPT:REF,ICF=5>
             # /OPT:REF,ICF does not support incremental linking
             $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
-            # Abort linking on warnings for Debug builds only, Release builds must go on
-            # as far as possible
-            $<$<CONFIG:Debug>:/WX>
         )
+
+        # Abort linking on warnings for Debug builds only (excluding vcpkg),
+        # Release and vcpkg builds must go on as far as possible
+        if(NOT TINY_VCPKG)
+            target_link_options(${target} INTERFACE $<$<CONFIG:Debug>:/WX>)
+        endif()
     endif()
 
     if(MINGW)
