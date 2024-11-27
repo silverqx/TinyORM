@@ -18,7 +18,7 @@ tiny_configure_test(model_return_relation DEPENDS_ON_UNITTESTS INCLUDE_MODELS RU
 # after 8 hours of investigation.
 # Only workaround I found is to #include the torrent_includeslist.hpp then it compiles,
 # so I'm disabling the thread_local for this test case.
-# See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
+# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
 # thread_local is already disabled on MSYS2 g++ so no need to target unix platform.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_definitions(model_return_relation

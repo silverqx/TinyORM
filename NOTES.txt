@@ -4537,7 +4537,7 @@ tags: qt, qtcreator, patch, upgrade, update
 Clang LLDB debugging doesn't work with qmake on Linux
 --
 
- - See: todo-poznámky.txt[qmake bugs]
+ - See todo-poznámky.txt[qmake bugs]
  - Error message:
 objcopy: xxxx: debuglink section already exists
 
@@ -4594,7 +4594,7 @@ qMedia\_backup\qtcreator\latest\{auto-setup.cmake,auto-setup.cmake.orig}
 Qt6TestTargets.cmake CMake bugfix to reuse PCH file for all auto tests
 --
 
- - See: QTBUG-126729
+ - See QTBUG-126729
  - simple remove everything after QT_TESTLIB_LIB in set_target_properties(Qt6::Test)
 
  - source file to patch
@@ -4608,9 +4608,9 @@ Qt6TestTargets.cmake CMake bugfix to reuse PCH file for all auto tests
 Parsing C command-line arguments:
 ---------------------------------
 
- - msvc
-See: https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
-     https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw
+ - msvc docs
+https://learn.microsoft.com/en-us/cpp/c-language/parsing-c-command-line-arguments?view=msvc-170
+https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw
 
  - first link sums it nicely, the second describes it in other words
    - legend:

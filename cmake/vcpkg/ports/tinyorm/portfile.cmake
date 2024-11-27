@@ -28,7 +28,7 @@ if(TINYORM_BUILD_MYSQL_DRIVER)
 endif()
 
 # To propagate de-vendored requirements because qtbase (QMYSQL) doesn't use unofficial-libmysql
-# See: https://github.com/microsoft/vcpkg/issues/38194#issuecomment-2059143576
+# See https://github.com/microsoft/vcpkg/issues/38194#issuecomment-2059143576
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static" AND NOT TINYORM_MYSQL_PING AND TINYORM_TOM_EXAMPLE AND
     ("sql-mysql" IN_LIST FEATURES OR TINYORM_BUILD_MYSQL_DRIVER)
 )

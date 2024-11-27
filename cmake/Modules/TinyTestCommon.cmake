@@ -142,7 +142,7 @@ function(tiny_configure_test_pch name provides_pch)
     endif()
 
     # Qt <v6.9.0 breaks REUSE_FROM (will be fixed in Qt v6.9.0)
-    # See: https://bugreports.qt.io/projects/QTBUG/issues/QTBUG-126729
+    # See https://bugreports.qt.io/projects/QTBUG/issues/QTBUG-126729
     # Also, I have patched the Qt6TestTargets.cmake so the REUSE_FROM work for me because
     # of this I need to skip this if() using the TINY_QT6_TEST_TARGET_PATCHED environment
     # variable, it also affects CI pipelines on GitHub self-hosted runners

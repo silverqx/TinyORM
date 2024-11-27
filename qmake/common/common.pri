@@ -42,7 +42,7 @@ CONFIG(release, debug|release): \
 
 # Forward declare QList, QMap, QHash, QVarLengthArray, QSet, and QObject in <QVariant>
 # and <QDebug> headers instead of #include-ing them (reduce transitive includes).
-# See: https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
+# See https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
 # Set DEFINES *= QT_LEAN_HEADERS=2 based on CONFIG*=lean_headers (higher priority) and
 # TINYORM_QT_LEAN_HEADERS environment variable (CMake ON, TRUE, ...)
 load(private/tiny_lean_headers_from_environment)

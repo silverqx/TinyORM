@@ -214,7 +214,7 @@ target_optional_compile_definitions(${TinyOrm_target}
         DISABLED TINYORM_DISABLE_TOM
 )
 
-# See: https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
+# See https://github.com/qt/qtbase/commit/fb0c7a9956824fbc3e3a3ab70cf7e2e5a622e85d
 target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
         ADVANCED FEATURE NAME LEAN_HEADERS
