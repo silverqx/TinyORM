@@ -1,3 +1,6 @@
+# This is the only file that contains our functions and macros without the tiny_ prefix,
+# reason for this is to have nicer syntax as these functions are heavily used.
+
 # Helper function for coupling option() and add_feature_info()
 function(feature_option name description default)
 
@@ -227,6 +230,7 @@ function(tiny_get_default_value_from_environment out_variable name default)
 
     # If an environment variable is defined then use its value
     if(DEFINED ENV{${name}})
+        # Normalize the default value to ON/OFF values only
         if("$ENV{${name}}")
             set(defaultValue ON)
         else()

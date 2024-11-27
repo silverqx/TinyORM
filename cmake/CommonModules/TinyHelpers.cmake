@@ -636,7 +636,7 @@ function(tiny_generate_target_includes out_variable)
 endfunction()
 
 # Set up package properties using the set_package_properties()
-macro(set_packages_properties)
+macro(set_packages_properties) # Exception no tiny_ prefix, that's OK
 
     set_package_properties(QT
         PROPERTIES
