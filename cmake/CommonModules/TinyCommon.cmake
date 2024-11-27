@@ -145,14 +145,15 @@ keyword or its value is empty: NAME, NAMESPACE")
             /Zc:strictStrings
         )
 
+        # Increase warning level and Enable Additional Security Checks (Debug builds only)
+        if(NOT TINY_VCPKG)
+            target_compile_options(${target} INTERFACE /W4 $<$<CONFIG:Debug>:/sdl>)
+        endif()
+
         # Abort compiling on warnings for Debug builds only (excluding vcpkg),
         # Release and vcpkg builds must go on as far as possible
-        if(NOT TINY_VCPKG)
-            target_compile_options(${target} INTERFACE
-                /W4
-                # Enable Additional Security Checks for Debug builds only
-                $<$<CONFIG:Debug>:/WX /sdl>
-            )
+        if(TinyCompileWarningAsError)
+            target_compile_options(${target} INTERFACE $<$<CONFIG:Debug>:/WX>)
         endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -200,7 +201,7 @@ keyword or its value is empty: NAME, NAMESPACE")
 
         # Abort linking on warnings for Debug builds only (excluding vcpkg),
         # Release and vcpkg builds must go on as far as possible
-        if(NOT TINY_VCPKG)
+        if(TinyCompileWarningAsError)
             target_link_options(${target} INTERFACE $<$<CONFIG:Debug>:/WX>)
         endif()
     endif()
@@ -241,7 +242,7 @@ keyword or its value is empty: NAME, NAMESPACE")
     )
         # Abort compiling on warnings for Debug builds only (excluding vcpkg),
         # Release and vcpkg builds must go on as far as possible
-        if(NOT TINY_VCPKG)
+        if(TinyCompileWarningAsError)
             target_compile_options(${target} INTERFACE
                 $<$<CONFIG:Debug>:-Werror -Wfatal-errors -pedantic-errors>
             )

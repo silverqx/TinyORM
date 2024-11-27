@@ -283,6 +283,15 @@ to generate find_dependency() calls for the TinyORM package configuration file."
 constants.")
     unset(tinyExternConstants)
 
+    # To evaluate only once (used in tiny_common())
+    if(NOT TINY_VCPKG AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24" AND
+                              NOT DEFINED CMAKE_COMPILE_WARNING_AS_ERROR)
+    )
+        set(TinyCompileWarningAsError TRUE)
+    else()
+        set(TinyCompileWarningAsError FALSE)
+    endif()
+
 endmacro()
 
 # Initialize the default database paths for the make:migration/model/seeder commands
