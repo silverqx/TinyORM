@@ -38,6 +38,27 @@ function(tiny_invert_bool out_variable value)
 
 endfunction()
 
+# Get a default value from the given environment variable and set the cache variable
+# Do nothing if the given CMake variable is already defined or the environment variable
+# is not defined. It's intended for CMake cache boolean variables.
+function(tiny_set_cache_bool_from_environment name description environment_variable_name)
+
+    # Nothing to do, CMake variable is already defined or env. variable is not defined
+    if(DEFINED ${name} OR NOT DEFINED ENV{${environment_variable_name}})
+        return()
+    endif()
+
+    # Normalize the default value to ON/OFF values only
+    if("$ENV{${environment_variable_name}}")
+        set(defaultValue ON)
+    else()
+        set(defaultValue OFF)
+    endif()
+
+    set(${name} ${defaultValue} CACHE BOOL "${description}")
+
+endfunction()
+
 # A helper macro that calls find_package() and appends the package (if found) to the
 # TINY_PACKAGE_DEPENDENCIES list that will be used later to generate find_dependency()
 # calls for the TinyORM package configuration file
