@@ -2,7 +2,7 @@
 # 3.20 - NEWLINE_STYLE in the file(GENERATE) command
 # 3.22 - CMP0127: cmake_dependent_option() supports full Condition Syntax
 # 3.23 - target_sources(FILE_SET)
-#      - CMAKE_/COMPILE_WARNING_AS_ERROR
+# 3.24 - CMAKE_/COMPILE_WARNING_AS_ERROR
 # 3.25 - return(PROPAGATE) (I'm not using it currently, ❗only noting this)
 #      - if(LINUX) instead of CMAKE_SYSTEM_NAME STREQUAL "Linux"
 # Maximum version allowed for the minimum versions:
