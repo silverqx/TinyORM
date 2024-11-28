@@ -137,7 +137,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 tiny_resource_and_manifest(${TinyMySql_target}
-    OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
+    OUTPUT_DIR "${TINY_BUILD_TMPDIR}/"
 )
 
 # Resolve and link dependencies
