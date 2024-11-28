@@ -72,7 +72,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 tiny_resource_and_manifest(${TomTestData_target}
-    OUTPUT_DIR "${TINY_BUILD_TMPDIR}/"
+    OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
     RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources/"
     RESOURCE_BASENAME ${Tom_target}
     MANIFEST_BASENAME ${Tom_target}

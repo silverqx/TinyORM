@@ -30,7 +30,7 @@ if(TOM_EXAMPLE)
 endif()
 
 target_include_directories(versions
-    PRIVATE "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_INCLUDEDIR}>"
+    PRIVATE "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_INCLUDE_DIR}>"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -40,11 +40,11 @@ endif()
 # Support a real TinyOrm/TinyUtils library filenames
 configure_file(
     "include/versionsdebug_cmake.hpp.in"
-    "${TINY_BUILD_TMPDIR}/versionsdebug_cmake.hpp.genexp"
+    "${TINY_BUILD_TMP_DIR}/versionsdebug_cmake.hpp.genexp"
     @ONLY NEWLINE_STYLE LF
 )
-file(GENERATE OUTPUT "${TINY_BUILD_INCLUDEDIR}/versionsdebug_cmake-$<CONFIG>.hpp"
-    INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_TMPDIR}/versionsdebug_cmake.hpp.genexp"
+file(GENERATE OUTPUT "${TINY_BUILD_INCLUDE_DIR}/versionsdebug_cmake-$<CONFIG>.hpp"
+    INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/versionsdebug_cmake.hpp.genexp"
     NEWLINE_STYLE UNIX
 )
 
@@ -66,5 +66,5 @@ target_compile_definitions(versions
 )
 
 target_sources(versions PRIVATE
-    "$<$<BOOL:$<CONFIG>>:${TINY_BUILD_INCLUDEDIR}/versionsdebug_cmake-$<CONFIG>.hpp>"
+    "$<$<BOOL:$<CONFIG>>:${TINY_BUILD_INCLUDE_DIR}/versionsdebug_cmake-$<CONFIG>.hpp>"
 )
