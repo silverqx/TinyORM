@@ -1,8 +1,8 @@
 # This module provides generate_and_install_pkg_config_file() function.
 # The function takes target name and expects a fully configured project, i.e. with set version and
 # description. The function extracts interface libraries, include dirs, definitions and options
-# from the target and generates pkg-config file with install() command
-# The function expands imported targets and generator expressions
+# from the target and generates pkg-config file with install() command.
+# The function expands imported targets and generator expressions.
 
 # save the current file dir for later use in the generate_and_install_pkg_config_file() function
 set(_GeneratePkGConfigDir "${CMAKE_CURRENT_LIST_DIR}/GeneratePkgConfig")

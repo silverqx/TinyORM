@@ -7,9 +7,12 @@ function(tiny_msvc_parallel desc)
     )
         set(MSVC_PARALLEL ON CACHE STRING "${desc}")
 
+        # This conditions are correct (revisited), the else() branch is invoked even if
+        # the MSVC_PARALLEL == ON, the if() branch is only invoked if MSVC_PARALLEL
+        # contains a number.
         if(MSVC_PARALLEL)
             if(MSVC_PARALLEL GREATER 0)
-                string(APPEND CMAKE_C_FLAGS " /MP${CMake_MSVC_PARALLEL}")
+                string(APPEND CMAKE_C_FLAGS " /MP${CMake_MSVC_PARALLEL}") # Cannot contain space between
                 string(APPEND CMAKE_CXX_FLAGS " /MP${CMake_MSVC_PARALLEL}")
             else()
                 string(APPEND CMAKE_C_FLAGS " /MP")

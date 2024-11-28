@@ -1,3 +1,8 @@
+# This file is intended for more complex feature options that need more logic.
+# Don't merge it into the TinyFeatureOptions.cmake. TinyFeatureOptions.cmake contains
+# common functions for feature options. It's also inside the CommonModules/ folder, while
+# TinyOptions.cmake is inside the Modules/ folder.
+
 include(TinyFeatureOptions)
 
 # Initialize INLINE_CONSTANTS CMake feature dependent option.
@@ -14,7 +19,7 @@ macro(tiny_initialize_inline_constants_option)
 
     # Summary how this works:
     # - INLINE_CONSTANT feature option is available for shared builds only so you can
-    #   select if you want to use inline or extern constants
+    #   choose whether you want to use inline or extern constants
     # - INLINE_CONSTANT isn't available:
     #   - for static builds, in this case is always forced to ON (inline)
     #   - for MinGW Clang <18 shared build, in this case is always forced to OFF (extern)

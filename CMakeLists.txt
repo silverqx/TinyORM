@@ -362,6 +362,7 @@ if(TOM)
     endif()
 
     # Set TINYORM_LTO macro based on the INTERPROCEDURAL_OPTIMIZATION target property
+    # Used by the tom about command to show if the LTO is enabled
     tiny_set_lto_compile_definition(${TinyOrm_target})
 endif()
 
