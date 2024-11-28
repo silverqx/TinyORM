@@ -5,14 +5,14 @@
 # The function expands imported targets and generator expressions.
 
 # save the current file dir for later use in the generate_and_install_pkg_config_file() function
-set(_GeneratePkGConfigDir "${CMAKE_CURRENT_LIST_DIR}/GeneratePkgConfig")
+set(_GeneratePkgConfigDir "${CMAKE_CURRENT_LIST_DIR}/GeneratePkgConfig")
 
 include(GNUInstallDirs)
 
-function(_get_target_property_merging_configs _var_name _target_name _propert_name)
-	get_property(prop_set TARGET ${_target_name} PROPERTY ${_propert_name} SET)
+function(_get_target_property_merging_configs _var_name _target_name _property_name)
+	get_property(prop_set TARGET ${_target_name} PROPERTY ${_property_name} SET)
 	if(prop_set)
-		get_property(vals TARGET ${_target_name} PROPERTY ${_propert_name})
+		get_property(vals TARGET ${_target_name} PROPERTY ${_property_name})
 	else()
 		if(CMAKE_BUILD_TYPE)
 			list(APPEND configs ${CMAKE_BUILD_TYPE})
@@ -27,9 +27,9 @@ function(_get_target_property_merging_configs _var_name _target_name _propert_na
 			else()
 				set(target_cfg "${UPPERCFG}")
 			endif()
-			get_property(prop_set TARGET ${_target_name} PROPERTY ${_propert_name}_${target_cfg} SET)
+			get_property(prop_set TARGET ${_target_name} PROPERTY ${_property_name}_${target_cfg} SET)
 			if(prop_set)
-				get_property(val_for_cfg TARGET ${_target_name} PROPERTY ${_propert_name}_${target_cfg})
+				get_property(val_for_cfg TARGET ${_target_name} PROPERTY ${_property_name}_${target_cfg})
 				list(APPEND vals "$<$<CONFIG:${cfg}>:${val_for_cfg}>")
 				break()
 			endif()
@@ -38,7 +38,7 @@ function(_get_target_property_merging_configs _var_name _target_name _propert_na
 			get_property(imported_cfgs TARGET ${_target_name} PROPERTY IMPORTED_CONFIGURATIONS)
 			# CMake docs say we can use any of the imported configs
 			list(GET imported_cfgs 0 imported_config)
-			get_property(vals TARGET ${_target_name} PROPERTY ${_propert_name}_${imported_config})
+			get_property(vals TARGET ${_target_name} PROPERTY ${_property_name}_${imported_config})
 			# remove config generator expression. Only in this case! Notice we use such expression
 			# ourselves in the loop above
 			string(REPLACE "$<$<CONFIG:${imported_config}>:" "$<1:" vals "${vals}")
@@ -144,7 +144,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 	endforeach()
 
 	set(_generate_target_dir "${CMAKE_CURRENT_BINARY_DIR}/${_target}-pkgconfig")
-	set(_pkg_config_file_template_filename "${_GeneratePkGConfigDir}/pkg-config.cmake.in")
+	set(_pkg_config_file_template_filename "${_GeneratePkgConfigDir}/pkg-config.cmake.in")
 
 	# Since CMake 3.18 FindThreads may include a generator expression requiring a target, which gets propagated to us through INTERFACE_OPTIONS.
 	# Before CMake 3.19 there's no way to solve this in a general way, so we work around the specific case. See #4956 and CMake bug #21074.
@@ -155,7 +155,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 	endif()
 
 	# put target and project properties into a file
-	configure_file("${_GeneratePkGConfigDir}/target-compile-settings.cmake.in"
+	configure_file("${_GeneratePkgConfigDir}/target-compile-settings.cmake.in"
 		"${_generate_target_dir}/compile-settings.cmake" @ONLY)
 
 	get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
@@ -164,7 +164,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 
 		file(GENERATE OUTPUT "${_variables_file_name}" INPUT "${_generate_target_dir}/compile-settings.cmake" ${_target_arg})
 
-		configure_file("${_GeneratePkGConfigDir}/generate-pkg-config.cmake.in"
+		configure_file("${_GeneratePkgConfigDir}/generate-pkg-config.cmake.in"
 			"${_generate_target_dir}/generate-pkg-config.cmake" @ONLY)
 
 		install(SCRIPT "${_generate_target_dir}/generate-pkg-config.cmake")
@@ -174,7 +174,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 
 			file(GENERATE OUTPUT "${_variables_file_name}" INPUT "${_generate_target_dir}/compile-settings.cmake" CONDITION "$<CONFIG:${cfg}>" ${_target_arg})
 
-			configure_file("${_GeneratePkGConfigDir}/generate-pkg-config.cmake.in"
+			configure_file("${_GeneratePkgConfigDir}/generate-pkg-config.cmake.in"
 				"${_generate_target_dir}/${cfg}/generate-pkg-config.cmake" @ONLY)
 
 			install(SCRIPT "${_generate_target_dir}/${cfg}/generate-pkg-config.cmake")

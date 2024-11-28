@@ -1,5 +1,5 @@
 # Obtain all installed configuration names for currently searched package
-function(tiny_get_target_configurations out_target_configuations)
+function(tiny_get_target_configurations out_target_configurations)
 
     # Parent folder contains all target configurations
     get_filename_component(targetsDir ${CMAKE_PARENT_LIST_FILE} DIRECTORY)
@@ -26,7 +26,7 @@ function(tiny_get_target_configurations out_target_configuations)
         "Found all installed target configurations for single-configuration \
 installations.")
 
-    set(${out_target_configuations} ${configurations} PARENT_SCOPE)
+    set(${out_target_configurations} ${configurations} PARENT_SCOPE)
 
 endfunction()
 
