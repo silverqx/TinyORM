@@ -2,11 +2,6 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 include(TinyHelpers)
 
-set(TINY_BUILD_BUILDTREEDIR "${TINY_BUILD_GENDIR}/buildtree" CACHE INTERNAL
-    "Generated content in the build tree for the build tree.")
-set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
-    "Generated content in the build tree for the install tree.")
-
 # Create Package Config and Package Config Version files and install the TinyORM Project
 function(tiny_install_tinyorm)
 

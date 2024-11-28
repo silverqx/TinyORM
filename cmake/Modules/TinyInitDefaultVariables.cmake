@@ -261,8 +261,10 @@ to generate find_dependency() calls for the TinyORM package configuration file."
     set(TINY_TESTS_ENV_PATH TINY_TESTS_ENV_PATH-NOTFOUND) # Always use if() before using the variable
     tiny_init_ctest_path_win32()
 
-    set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
-        "Generated content in the build tree.")
+    # Build Tree folders (no need to be INTERNAL)
+    set(TINY_BUILD_GENDIR ".${TinyOrm_ns}")
+    set(TINY_BUILD_BUILDTREEDIR "${TINY_BUILD_GENDIR}/buildtree")
+    set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree")
 
     # Provide the default value if not set
     if(NOT TINY_VCPKG)

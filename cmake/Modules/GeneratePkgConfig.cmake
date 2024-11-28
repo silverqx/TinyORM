@@ -4,9 +4,6 @@
 # from the target and generates pkg-config file with install() command.
 # The function expands imported targets and generator expressions.
 
-# save the current file dir for later use in the generate_and_install_pkg_config_file() function
-set(_GeneratePkgConfigDir "${CMAKE_CURRENT_LIST_DIR}/GeneratePkgConfig")
-
 include(GNUInstallDirs)
 
 function(_get_target_property_merging_configs _var_name _target_name _property_name)
@@ -143,6 +140,7 @@ function(generate_and_install_pkg_config_file _target _packageName)
 		list(REMOVE_ITEM _interface_include_dirs "${d}")
 	endforeach()
 
+    set(_GeneratePkgConfigDir "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/GeneratePkgConfig")
 	set(_generate_target_dir "${CMAKE_CURRENT_BINARY_DIR}/${_target}-pkgconfig")
 	set(_pkg_config_file_template_filename "${_GeneratePkgConfigDir}/pkg-config.cmake.in")
 
