@@ -1390,6 +1390,9 @@ All are snake-case unless otherwise specified.
  - function names has the tiny_ prefix
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
 
+ - don't use _FOLDER as suffix, use _DIR
+   - this is the CMake convention and I'm following it
+
  - commands:
    - foreach: use the foreach(depend ${depends}) syntax everywhere as default syntax and use
               the IN LISTS XYZ syntax only if needed
