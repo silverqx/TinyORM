@@ -1572,10 +1572,10 @@ How the Deployment works:
  - then are created Package Config and Package Config Version files for the Build and Install Tree
  - look at the TinyDeployment.cmake tiny_install_tinyorm() and tiny_export_build_tree() functions
    they are greatly commented so it's crystal clear how they works
- - generating the Package Config for the Install tree also takes into account the vcpkg package
+ - generating the Package Config for the Install Tree also takes into account the vcpkg package
    manager
- - TinyOrmConfig.cmake.in is for the Install tree
- - TinyOrmBuildTreeConfig.cmake.in is for the Build tree
+ - TinyOrmConfig.cmake.in is for the Install Tree
+ - TinyOrmBuildTreeConfig.cmake.in is for the Build Tree
 
 How the Package Config file works:
 
@@ -1593,7 +1593,7 @@ How the Package Config file works:
    - against which TinyORM package is linking eg.:
      Found package TinyOrm 0.38.1.0 Debug (requested 0.38.1) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_7_2_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
 
-   - whether Matching build type for Build tree was enabled/disabled eg.:
+   - whether Matching build type for Build Tree was enabled/disabled eg.:
      Matching build type for the TinyOrm 0.38.1.0 package build tree was enabled
    - Matching build type is controlled by the MATCH_EQUAL_EXPORTED_BUILDTREE CMake config. option
      during the TinyORM library configure
@@ -1607,14 +1607,14 @@ How the Package Config file works:
    - as the last thing is called the check_required_components() from CMakePackageConfigHelpers
      module. https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
 
-Differences between Package Config files for Install and Build tree:
+Differences between Package Config files for Install and Build Tree:
 
  - they are practically identical
- - this is how the Package Config for the Install tree differs from the Build tree:
+ - this is how the Package Config for the Install Tree differs from the Build Tree:
    - it has a little different logic for the Information message about build type used because
      it must the vcpkg package manager into account, it calls the tiny_get_build_types() and
      because of this it needs to include the TinyPackageConfigHelpers.cmake module
- - doesn't print the Info message about matching build type (it's Build tree specific)
+ - doesn't print the Info message about matching build type (it's Build Tree specific)
 
  - sets the set() and set_and_check() for the cmake --target install;
    they are the Install destination directories for the Install Tree
@@ -1642,16 +1642,16 @@ How the Package Config Version file works:
    Check here what the SameMajorVersion means:
    https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
 
-Differences between Package Config files for Install and Build tree:
+Differences between Package Config files for Install and Build Tree:
 
  - all differences are in the tiny_build_type_requirements_install_tree() and
    tiny_build_type_requirements_build_tree() in the TinyPackageConfigHelpers.cmake
 
- - for Install tree:
+ - for Install Tree:
    - no CMake targets installed so unsuitable
    - takes into account also the vcpkg (is multi-config so don't do the checks)
 
- - for Build tree:
+ - for Build Tree:
    - if matching equal build tree was enabled and builds types don't match then tag as unsuitable
 
 It's crazy 🙃😲🙋‍

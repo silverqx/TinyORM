@@ -216,7 +216,7 @@ function(tiny_build_type_requirements_build_tree
         # Match Debug builds types for MSVC (linking debug against release
         # (or vice-versa) cause crashes)
         # Or if matching equal build tree was enabled and builds types don't match then
-        # also tag as unsuitable (this is Build tree specific)
+        # also tag as unsuitable (this is Build Tree specific)
         elseif((cvf_match_buildtree AND
                 NOT cmakeBuildTypeLower STREQUAL cvfConfigBuildTypeLower) OR
                 (MSVC AND ((cmakeBuildTypeLower STREQUAL "debug" AND
