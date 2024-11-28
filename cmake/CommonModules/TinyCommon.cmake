@@ -1,3 +1,5 @@
+include(CheckCXXCompilerFlag)
+
 # Set common variables and create interface-only library target so all other targets
 # will be able to link to, either directly or transitively, to consume common compile
 # options/definitions
@@ -276,7 +278,6 @@ keyword or its value is empty: NAME, NAMESPACE")
         )
 
         # Clang 12 still doesn't support -Wstrict-null-sentinel
-        include(CheckCXXCompilerFlag)
         check_cxx_compiler_flag(-Wstrict-null-sentinel SNS_SUPPORT)
         if(SNS_SUPPORT)
             target_compile_options(${target} INTERFACE -Wstrict-null-sentinel)
