@@ -18,15 +18,14 @@ list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"
 )
 
+# Initialize Tiny variables (early initialization)
+include(TinyInitDefaultVariables)
+tiny_init_tiny_variables_pre()
+
 # Initialize Project Version
 # ---
 
 include(TinyHelpers)
-include(TinyInitDefaultVariables)
-
-# Initialize Tiny variables, early init.
-tiny_init_tiny_variables_pre()
-
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
     VERSION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/orm/version.hpp"
