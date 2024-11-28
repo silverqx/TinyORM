@@ -1,6 +1,7 @@
+include_guard(GLOBAL)
+
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
-include(TinyHelpers)
 
 # Create Package Config and Package Config Version files and install the TinyORM Project
 function(tiny_install_tinyorm)

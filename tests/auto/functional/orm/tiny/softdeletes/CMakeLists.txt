@@ -8,5 +8,4 @@ add_executable(softdeletes
 
 add_test(NAME softdeletes COMMAND softdeletes)
 
-include(TinyTestCommon)
 tiny_configure_test(softdeletes DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

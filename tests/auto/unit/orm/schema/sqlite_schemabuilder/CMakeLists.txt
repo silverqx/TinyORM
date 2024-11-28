@@ -8,7 +8,6 @@ add_executable(sqlite_schemabuilder
 
 add_test(NAME sqlite_schemabuilder COMMAND sqlite_schemabuilder)
 
-include(TinyTestCommon)
 if(ORM)
     tiny_configure_test(sqlite_schemabuilder INCLUDE_MODELS)
 else()

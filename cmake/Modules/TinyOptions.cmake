@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # This file is intended for more complex feature options that need more logic.
 # Don't merge it into the TinyFeatureOptions.cmake. TinyFeatureOptions.cmake contains
 # common functions for feature options. It's also inside the CommonModules/ folder, while

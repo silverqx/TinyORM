@@ -1,5 +1,6 @@
+include_guard(GLOBAL)
+
 include(TinyDrivers)
-include(TinyHelpers)
 
 # Initialize the default CMake variables on which CMake options depend
 macro(tiny_init_cmake_variables_pre)

@@ -8,5 +8,4 @@ add_executable(sqlquery_normal
 
 add_test(NAME sqlquery_normal COMMAND sqlquery_normal)
 
-include(TinyTestCommon)
 tiny_configure_test(sqlquery_normal RUN_SERIAL)

@@ -8,5 +8,4 @@ add_executable(blueprint
 
 add_test(NAME blueprint COMMAND blueprint)
 
-include(TinyTestCommon)
 tiny_configure_test(blueprint)

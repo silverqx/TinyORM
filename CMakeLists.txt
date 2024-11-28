@@ -86,8 +86,6 @@ tiny_toolchain_requirement(
 # TinyORM build options
 # ---
 
-include(FeatureSummary)
-include(TinyFeatureOptions)
 include(TinyOptions)
 
 # Initialize default CMake variables on which CMake options depend

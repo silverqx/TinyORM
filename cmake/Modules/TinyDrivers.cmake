@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Initialize TinyDrivers CMake internal cache variables, early initialization
 function(tiny_init_driver_types_pre)
 

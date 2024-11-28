@@ -8,5 +8,4 @@ add_executable(sqldatabase
 
 add_test(NAME sqldatabase COMMAND sqldatabase)
 
-include(TinyTestCommon)
 tiny_configure_test(sqldatabase)

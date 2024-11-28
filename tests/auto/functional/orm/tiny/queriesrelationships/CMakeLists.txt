@@ -8,5 +8,4 @@ add_executable(queriesrelationships
 
 add_test(NAME queriesrelationships COMMAND queriesrelationships)
 
-include(TinyTestCommon)
 tiny_configure_test(queriesrelationships DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

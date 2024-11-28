@@ -9,7 +9,6 @@ add_executable(versions
 
 add_test(NAME versions COMMAND versions)
 
-include(TinyTestCommon)
 tiny_configure_test(versions)
 
 # For checkFileVersion_*() tests

@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 include(CheckCXXCompilerFlag)
 
 # Set common variables and create interface-only library target so all other targets

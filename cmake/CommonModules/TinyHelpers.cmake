@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Convert to the boolean value
 function(tiny_to_bool out_variable value)
 

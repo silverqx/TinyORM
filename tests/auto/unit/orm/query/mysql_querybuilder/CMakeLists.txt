@@ -8,5 +8,4 @@ add_executable(mysql_querybuilder
 
 add_test(NAME mysql_querybuilder COMMAND mysql_querybuilder)
 
-include(TinyTestCommon)
 tiny_configure_test(mysql_querybuilder)

@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Determine whether the minimum Qt version was satisfied using and set the internal cache
 # variable TINY_QT_VERSION
 # Command used to obtain a Qt version: "${QT_QMAKE_EXECUTABLE}" -query QT_VERSION

@@ -14,5 +14,4 @@ add_executable(${migrate_target}
 
 add_test(NAME ${migrate_target} COMMAND ${migrate_target})
 
-include(TinyTestCommon)
 tiny_configure_test(${migrate_target} DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS)

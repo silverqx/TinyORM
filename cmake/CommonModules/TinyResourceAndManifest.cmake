@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Configure Windows resource and manifest files
 function(tiny_resource_and_manifest target)
 

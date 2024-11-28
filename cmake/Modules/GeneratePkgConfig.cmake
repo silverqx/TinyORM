@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # This module provides generate_and_install_pkg_config_file() function.
 # The function takes target name and expects a fully configured project, i.e. with set version and
 # description. The function extracts interface libraries, include dirs, definitions and options

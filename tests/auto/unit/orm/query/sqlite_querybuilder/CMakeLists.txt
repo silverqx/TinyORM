@@ -8,5 +8,4 @@ add_executable(sqlite_querybuilder
 
 add_test(NAME sqlite_querybuilder COMMAND sqlite_querybuilder)
 
-include(TinyTestCommon)
 tiny_configure_test(sqlite_querybuilder)

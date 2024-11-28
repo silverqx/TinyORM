@@ -1,3 +1,5 @@
+include_guard() # Don't use GLOBAL as it can be included anywhere multiple times
+
 # Print various internal CMake variables
 function(cs_system_info)
     include(CMakePrintSystemInformation)

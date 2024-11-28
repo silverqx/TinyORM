@@ -4,7 +4,6 @@
 # Initialize Project Version
 # ---
 
-include(TinyHelpers)
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
     VERSION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/orm/drivers/version.hpp"
@@ -167,7 +166,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/resources\"")
 endif()
 
-include(TinyResourceAndManifest)
 tiny_resource_and_manifest(${TinyDrivers_target}
     OUTPUT_DIR "${TINY_BUILD_GENDIR}/tmp/"
 )

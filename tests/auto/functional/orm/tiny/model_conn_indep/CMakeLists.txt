@@ -8,5 +8,4 @@ add_executable(model_conn_indep
 
 add_test(NAME model_conn_indep COMMAND model_conn_indep)
 
-include(TinyTestCommon)
 tiny_configure_test(model_conn_indep DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

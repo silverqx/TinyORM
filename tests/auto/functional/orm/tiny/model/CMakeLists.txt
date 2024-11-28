@@ -8,5 +8,4 @@ add_executable(model
 
 add_test(NAME model COMMAND model)
 
-include(TinyTestCommon)
 tiny_configure_test(model DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

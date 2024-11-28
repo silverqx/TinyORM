@@ -8,7 +8,6 @@ add_executable(postgresql_schemabuilder
 
 add_test(NAME postgresql_schemabuilder COMMAND postgresql_schemabuilder)
 
-include(TinyTestCommon)
 if(ORM)
     tiny_configure_test(postgresql_schemabuilder INCLUDE_MODELS)
 else()

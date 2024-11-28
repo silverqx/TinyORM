@@ -1,3 +1,7 @@
+include_guard(GLOBAL)
+
+include(FeatureSummary) # For add_feature_info()
+
 # This is the only file that contains our functions and macros without the tiny_ prefix,
 # reason for this is to have nicer syntax as these functions are heavily used.
 

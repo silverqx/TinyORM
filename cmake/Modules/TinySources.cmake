@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # The tiny_target_sources() wrapper function calls tinyxyz_sources() functions based
 # on the FILE_SET_PREFIX argument value so some of these functions below must have
 # common interface (the same function API signature). These functions are tagged

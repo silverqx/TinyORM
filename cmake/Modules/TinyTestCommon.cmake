@@ -1,5 +1,4 @@
-include(TinyResourceAndManifest)
-include(TinySources)
+include_guard(GLOBAL)
 
 # Configure a passed auto test
 function(tiny_configure_test name)

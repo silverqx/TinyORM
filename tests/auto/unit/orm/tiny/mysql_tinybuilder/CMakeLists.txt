@@ -8,5 +8,4 @@ add_executable(mysql_tinybuilder
 
 add_test(NAME mysql_tinybuilder COMMAND mysql_tinybuilder)
 
-include(TinyTestCommon)
 tiny_configure_test(mysql_tinybuilder INCLUDE_MODELS)

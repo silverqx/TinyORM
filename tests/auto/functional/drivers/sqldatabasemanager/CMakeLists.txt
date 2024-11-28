@@ -8,5 +8,4 @@ add_executable(sqldatabasemanager
 
 add_test(NAME sqldatabasemanager COMMAND sqldatabasemanager)
 
-include(TinyTestCommon)
 tiny_configure_test(sqldatabasemanager RUN_SERIAL)

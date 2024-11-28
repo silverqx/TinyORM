@@ -8,5 +8,4 @@ add_executable(postgresql_querybuilder
 
 add_test(NAME postgresql_querybuilder COMMAND postgresql_querybuilder)
 
-include(TinyTestCommon)
 tiny_configure_test(postgresql_querybuilder)

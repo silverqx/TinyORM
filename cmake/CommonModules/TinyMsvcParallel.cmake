@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 # Allow per-translation-unit parallel builds when using MSVC
 function(tiny_msvc_parallel description)
 

@@ -8,5 +8,4 @@ add_executable(databaseconnection
 
 add_test(NAME databaseconnection COMMAND databaseconnection)
 
-include(TinyTestCommon)
 tiny_configure_test(databaseconnection)
