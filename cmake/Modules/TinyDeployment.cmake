@@ -185,15 +185,18 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
         COMPATIBILITY SameMajorVersion
     )
 
+    # For shorter lines below
+    set(buildInstallTreeDir "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREE_DIR}")
+
     # Append build type requirements at the end of a generated package version file
     file(READ "cmake/TinyConfigVersionBuildTypeReq.cmake.in" buildTypeReqTemplate)
     file(APPEND
-        "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREE_DIR}/TinyOrmConfigVersion.cmake.in"
+        "${buildInstallTreeDir}/TinyOrmConfigVersion.cmake.in"
         "\n${buildTypeReqTemplate}"
     )
 
     configure_file(
-        "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREE_DIR}/TinyOrmConfigVersion.cmake.in"
+        "${buildInstallTreeDir}/TinyOrmConfigVersion.cmake.in"
         "${TINY_BUILD_INSTALLTREE_DIR}/TinyOrmConfigVersion.cmake"
         @ONLY NEWLINE_STYLE LF
     )
@@ -201,8 +204,8 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     # Install Package Config and Package Config Version files
     install(
         FILES
-            "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREE_DIR}/TinyOrmConfig.cmake"
-            "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREE_DIR}/TinyOrmConfigVersion.cmake"
+            "${buildInstallTreeDir}/TinyOrmConfig.cmake"
+            "${buildInstallTreeDir}/TinyOrmConfigVersion.cmake"
         DESTINATION "${tiny_config_package_dir}"
     )
 
