@@ -152,3 +152,8 @@ function(pb variable)
         message("|||-- ${variable} : OFF")
     endif()
 endfunction()
+
+# Print clearly visible notice message with the given text
+function(m text)
+    message("|||-- ${text}")
+endfunction()
