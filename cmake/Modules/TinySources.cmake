@@ -99,12 +99,11 @@ function(tinydrivers_sources out_headers_private out_headers out_sources) #[[ove
     list(SORT headers)
     list(SORT sources)
 
-    set(sourceDir "${${TinyDrivers_ns}_SOURCE_DIR}")
-    set(suffixDir "orm/drivers/")
+    set(suffixDir "orm/drivers")
 
-    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}")
-    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}")
-    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}")
+    list(TRANSFORM headers_private PREPEND "include_private/${suffixDir}/")
+    list(TRANSFORM headers         PREPEND "include/${suffixDir}/")
+    list(TRANSFORM sources         PREPEND "src/${suffixDir}/")
 
     set(${out_headers_private} ${headers_private} PARENT_SCOPE)
     set(${out_headers} ${headers} PARENT_SCOPE)
@@ -169,11 +168,11 @@ function(tinymysql_sources out_headers_private out_headers out_sources) #[[overr
     list(SORT sources)
 
     set(sourceDir "${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql")
-    set(suffixDir "orm/drivers/mysql/")
+    set(suffixDir "orm/drivers/mysql")
 
-    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}")
-    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}")
-    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}")
+    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}/")
+    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}/")
+    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}/")
 
     set(${out_headers_private} ${headers_private} PARENT_SCOPE)
     set(${out_headers} ${headers} PARENT_SCOPE)
@@ -467,8 +466,10 @@ function(tinyorm_sources unused out_headers out_sources) #[[override]]
     list(SORT headers)
     list(SORT sources)
 
-    list(TRANSFORM headers PREPEND "include/orm/")
-    list(TRANSFORM sources PREPEND "src/orm/")
+    set(suffixDir "orm")
+
+    list(TRANSFORM headers PREPEND "include/${suffixDir}/")
+    list(TRANSFORM sources PREPEND "src/${suffixDir}/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
@@ -625,8 +626,11 @@ function(tinytom_sources unused out_headers out_sources) #[[override]]
     list(SORT headers)
     list(SORT sources)
 
-    list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tom/include/tom/")
-    list(TRANSFORM sources PREPEND "${PROJECT_SOURCE_DIR}/tom/src/tom/")
+    set(prefixDir "tom")
+    set(suffixDir ${prefixDir})
+
+    list(TRANSFORM headers PREPEND "${prefixDir}/include/${suffixDir}/")
+    list(TRANSFORM sources PREPEND "${prefixDir}/src/${suffixDir}/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
@@ -807,9 +811,7 @@ function(tiny_tom_testdata_database_sources out_headers)
 
     list(SORT headers)
 
-    list(TRANSFORM headers
-        PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/testdata_tom/database/"
-    )
+    list(TRANSFORM headers PREPEND "database/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
 
