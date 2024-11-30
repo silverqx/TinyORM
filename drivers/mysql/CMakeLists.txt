@@ -35,7 +35,7 @@ add_library(${TinyMySql_ns}::${TinyMySql_target} ALIAS ${TinyMySql_target})
 
 # Create header file sets and add source files in one shot
 # After the FILE_SET refactor ${PROJECT_SOURCE_DIR}/include is PUBLIC (was PRIVATE before)
-# which is a good thing as it helpes get rid of one target_include_directories(PUBLIC)
+# which is a good thing as it helps get rid of one target_include_directories(PUBLIC)
 # call in TinyDrivers (Shared).
 tiny_target_sources(${TinyMySql_target}
     FILE_SET_PREFIX mysql

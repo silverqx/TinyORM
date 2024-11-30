@@ -97,7 +97,7 @@ target_include_directories(${TinyDrivers_target}
 
 if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
     # PUBLIC to expose mysql/version.hpp in general (also needed by tom/application.cpp).
-    # Must be defined maually because loadable drivers are MODULE (no linking against it).
+    # Must be defined manually because loadable drivers are MODULE (no linking against it).
     target_include_directories(${TinyDrivers_target}
         PUBLIC "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
     )
