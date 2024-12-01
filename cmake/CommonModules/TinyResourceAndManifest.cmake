@@ -19,7 +19,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Don't use cmake_path(IS_ABSOLUTE), the if(IS_ABSOLUTE) covers also c:xyz or /xyz.
     if(IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
         message(FATAL_ERROR "The 'OUTPUT_DIR' single-value keyword cannot be an absolute \
-path (must be relative to PROJECT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
+path (must be relative to CMAKE_CURRENT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     if(("RESOURCE_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
@@ -55,16 +55,16 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
 
     # TINY_OUTPUT_DIR (absolute path)
     if(NOT DEFINED TINY_OUTPUT_DIR OR "${TINY_OUTPUT_DIR}" STREQUAL "")
-        set(TINY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/tmp")
+        set(TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")
     else() # It's always relative, see check above
-        string(PREPEND TINY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/")
+        string(PREPEND TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
     endif()
 
     # TINY_RESOURCES_DIR (absolute path)
     if(NOT DEFINED TINY_RESOURCES_DIR OR "${TINY_RESOURCES_DIR}" STREQUAL "")
-        set(TINY_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/resources")
+        set(TINY_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
     elseif(NOT IS_ABSOLUTE "${TINY_RESOURCES_DIR}")
-        string(PREPEND TINY_RESOURCES_DIR "${PROJECT_SOURCE_DIR}/")
+        string(PREPEND TINY_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
     endif()
 
     file(TO_CMAKE_PATH ${TINY_OUTPUT_DIR} TINY_OUTPUT_DIR)

@@ -34,9 +34,9 @@ add_library(${TinyMySql_ns}::${TinyMySql_target} ALIAS ${TinyMySql_target})
 # ---
 
 # Create header file sets and add source files in one shot
-# After the FILE_SET refactor ${PROJECT_SOURCE_DIR}/include is PUBLIC (was PRIVATE before)
-# which is a good thing as it helps get rid of one target_include_directories(PUBLIC)
-# call in TinyDrivers (Shared).
+# After the FILE_SET refactor the ${CMAKE_CURRENT_SOURCE_DIR}/include is PUBLIC
+# (it was PRIVATE before) which is a good thing as it helps get rid of one
+# target_include_directories(PUBLIC) call in TinyDrivers (Shared).
 tiny_target_sources(${TinyMySql_target}
     FILE_SET_PREFIX mysql
     BASE_DIRS "include"
@@ -78,7 +78,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 # Order of #include-s is very important because of pch.h as its name is the same for all
-# projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
+# projects, the ${CMAKE_CURRENT_SOURCE_DIR}/include must be as the first #include!
 # In this case it must be before ${${TinyOrm_ns}_SOURCE_DIR}/include.
 # After FILE_SET refactor the target_sources() must be before target_link_libraries()
 # because ${${TinyOrm_ns}_SOURCE_DIR}/include is picked up
@@ -87,7 +87,7 @@ target_include_directories(${TinyMySql_target}
     PRIVATE
         # To access private implementation like MySqlDriverPrivate, ...
         # TODO I think this is a bug and everything should be accessible through getters and get rid of this? silverqx
-        "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/common/include_private>"
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/drivers/common/include_private>"
 )
 
 # TinyMySql defines
@@ -133,7 +133,7 @@ endif()
 
 # Find icons, orm/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/resources\"")
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 endif()
 
 tiny_resource_and_manifest(${TinyMySql_target}

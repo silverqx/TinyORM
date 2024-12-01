@@ -4,7 +4,7 @@ include_guard(GLOBAL)
 function(tiny_configure_test name)
 
     set(options
-        DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR
+        DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_CURRENT_SOURCE_DIR
         PROVIDES_PCH RUN_SERIAL
     )
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
@@ -68,15 +68,15 @@ sqlite_schemabuilder;mysql_tinybuilder"
     )
 
     # Currently unused
-    if(TINY_INCLUDE_PROJECT_SOURCE_DIR)
+    if(TINY_INCLUDE_CURRENT_SOURCE_DIR)
         target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+            PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
         )
     endif()
 
     if(TINY_INCLUDE_MIGRATIONS)
         target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
+            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/database>"
         )
 
         # Migrations header files
@@ -88,7 +88,7 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
     if(TINY_INCLUDE_MODELS)
         target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/models>"
+            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/models>"
         )
 
         # Models header and source files
@@ -115,7 +115,7 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
     # Find Windows manifest file for MinGW
     if(MINGW)
-        tiny_set_rc_flags("-I \"${${TinyOrm_ns}_SOURCE_DIR}/tests/resources\"")
+        tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/tests/resources\"")
 
         # I will not use output variables here, I like it this way 🤘
         set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} PARENT_SCOPE)
@@ -124,7 +124,7 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
     tiny_resource_and_manifest(${name}
         OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-        TEST RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tests/resources/"
+        TEST RESOURCES_DIR "${PROJECT_SOURCE_DIR}/tests/resources/"
     )
 
 endfunction()

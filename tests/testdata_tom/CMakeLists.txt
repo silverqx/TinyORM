@@ -50,7 +50,7 @@ set_target_properties(${TomTestData_target}
 )
 
 target_include_directories(${TomTestData_target}
-    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/database>"
+    PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/database>"
 )
 
 # Tom migrations for unit tests defines
@@ -68,12 +68,12 @@ target_compile_definitions(${TomTestData_target}
 
 # Find icons, tom/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${${TinyOrm_ns}_SOURCE_DIR}/tom/resources\"")
+    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/tom/resources\"")
 endif()
 
 tiny_resource_and_manifest(${TomTestData_target}
     OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources/"
+    RESOURCES_DIR "${PROJECT_SOURCE_DIR}/tom/resources/"
     RESOURCE_BASENAME ${Tom_target}
     MANIFEST_BASENAME ${Tom_target}
 )

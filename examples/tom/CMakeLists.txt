@@ -63,7 +63,7 @@ if(WIN32 OR NOT TINY_VCPKG)
 endif()
 
 target_include_directories(${TomExample_target}
-    PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
+    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/database>"
 )
 
 # Tom command-line application defines
@@ -81,12 +81,12 @@ target_compile_definitions(${TomExample_target}
 
 # Find icons, tom/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${${TinyOrm_ns}_SOURCE_DIR}/tom/resources\"")
+    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/tom/resources\"")
 endif()
 
 tiny_resource_and_manifest(${TomExample_target}
     OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-    RESOURCES_DIR "${${TinyOrm_ns}_SOURCE_DIR}/tom/resources/"
+    RESOURCES_DIR "${PROJECT_SOURCE_DIR}/tom/resources/"
 )
 
 # Resolve and link dependencies

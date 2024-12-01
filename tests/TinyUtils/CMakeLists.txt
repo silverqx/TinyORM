@@ -54,7 +54,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 target_include_directories(${TinyUtils_target}
-    PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
 )
 
 # TinyUtils defines
@@ -82,7 +82,7 @@ endif()
 
 # Find Windows manifest file
 if(MINGW)
-    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/resources\"")
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 
 # To remove values from CMAKE_RC_FLAGS from the previous call
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -119,7 +119,7 @@ endif()
 # ---
 
 # Create an empty SQLite database file when does not exist
-set(tiny_sqlite_db "${${TinyOrm_ns}_BINARY_DIR}/tests/tinyorm_test_1.sqlite3")
+set(tiny_sqlite_db "${PROJECT_BINARY_DIR}/tests/tinyorm_test_1.sqlite3")
 tiny_create_sqlite_db("${tiny_sqlite_db}")
 
 # Add the SQLite database file file to the clean target (CMake doesn't have distclean)

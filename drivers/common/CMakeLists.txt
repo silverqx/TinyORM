@@ -83,7 +83,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 # Order of #include-s is very important because of pch.h as its name is the same for all
-# projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
+# projects, the ${CMAKE_CURRENT_SOURCE_DIR}/include must be as the first #include!
 # In this case it must be before ${${TinyOrm_ns}_SOURCE_DIR}/include.
 # After FILE_SET refactor the target_sources() above must be defined before this command.
 # Must be PUBLIC because a lot of TinyOrm header files are used in TinyDrivers .hpp files.
@@ -99,7 +99,7 @@ if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
     # PUBLIC to expose mysql/version.hpp in general (also needed by tom/application.cpp).
     # Must be defined manually because loadable drivers are MODULE (no linking against it).
     target_include_directories(${TinyDrivers_target}
-        PUBLIC "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+        PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/drivers/mysql/include>"
     )
 endif()
 
@@ -149,7 +149,7 @@ if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
             TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
         PRIVATE
             # Don't user quotes around the path here
-            TINYDRIVERS_MYSQL_PATH=${CMAKE_BINARY_DIR}/drivers/mysql/
+            TINYDRIVERS_MYSQL_PATH=${PROJECT_BINARY_DIR}/drivers/mysql/
     )
 endif()
 
@@ -163,7 +163,7 @@ endif()
 
 # Find icons, orm/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/resources\"")
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 endif()
 
 tiny_resource_and_manifest(${TinyDrivers_target}
@@ -218,13 +218,14 @@ endif()
 # because it is non-standard behavior.
 
 if(TINY_BUILD_LOADABLE_DRIVERS)
-    set(tiny_buildtree_tag_filepaths "${${TinyDrivers_ns}_BINARY_DIR}/.build_tree")
+    set(tiny_buildtree_tag_filepaths "${CMAKE_CURRENT_BINARY_DIR}/.build_tree")
 
     # We also need create the .build_tree tag file in the root of the build tree when
     # build tree deployment feature is enabled because in this case TinyOrm library loads
     # TinyDrivers from this location and we need to meet isTinyDiversInBuildTree()
     # condition.
     if(BUILD_TREE_DEPLOY)
+        # CMAKE_BINARY_DIR because of FetchContent
         list(APPEND tiny_buildtree_tag_filepaths "${CMAKE_BINARY_DIR}/.build_tree")
     endif()
 

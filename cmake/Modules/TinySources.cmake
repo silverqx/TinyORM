@@ -167,7 +167,7 @@ function(tinymysql_sources out_headers_private out_headers out_sources) #[[overr
     list(SORT headers)
     list(SORT sources)
 
-    set(sourceDir "${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql") # Absolute path needed here
+    set(sourceDir "${PROJECT_SOURCE_DIR}/drivers/mysql") # Absolute path needed here
     set(suffixDir "orm/drivers/mysql")
 
     list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}/")
@@ -701,7 +701,7 @@ function(tiny_model_sources out_headers out_sources)
     list(SORT headers)
 
     list(TRANSFORM headers
-        PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/models/models/" # Absolute path needed here
+        PREPEND "${PROJECT_SOURCE_DIR}/tests/models/models/" # Absolute path needed here
     )
 
     set(${out_headers} ${headers} PARENT_SCOPE)
@@ -726,7 +726,7 @@ function(tiny_tests_migration_sources out_headers)
     list(SORT headers)
 
     list(TRANSFORM headers
-        PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/database/migrations/" # Absolute path needed here
+        PREPEND "${PROJECT_SOURCE_DIR}/tests/database/migrations/" # Absolute path needed here
     )
 
     set(${out_headers} ${headers} PARENT_SCOPE)
@@ -749,7 +749,7 @@ function(tiny_tests_seeder_sources out_headers)
     list(SORT headers)
 
     list(TRANSFORM headers
-        PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/database/seeders/" # Absolute path needed here
+        PREPEND "${PROJECT_SOURCE_DIR}/tests/database/seeders/" # Absolute path needed here
     )
 
     set(${out_headers} ${headers} PARENT_SCOPE)

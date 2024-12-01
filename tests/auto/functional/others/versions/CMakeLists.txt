@@ -25,12 +25,12 @@ if(TOM_EXAMPLE)
 
     # To find tom/include/version.hpp
     target_include_directories(versions
-        PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tom/include>"
+        PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
     )
 endif()
 
 target_include_directories(versions
-    PRIVATE "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_INCLUDE_DIR}>"
+    PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${TINY_BUILD_INCLUDE_DIR}>"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -44,7 +44,7 @@ configure_file(
     @ONLY NEWLINE_STYLE LF
 )
 file(GENERATE OUTPUT "${TINY_BUILD_INCLUDE_DIR}/versionsdebug_cmake-$<CONFIG>.hpp"
-    INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/versionsdebug_cmake.hpp.genexp"
+    INPUT "${CMAKE_CURRENT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/versionsdebug_cmake.hpp.genexp"
     NEWLINE_STYLE UNIX
 )
 
