@@ -337,7 +337,6 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
 endfunction()
 
 # Copy TinyDrivers and TinyMySql libraries to the root of the build tree
-# TODO cmake if TinyORM is built through FetchContent then we need to deploy also the TinyOrm library because TinyORM is built in the FETCHCONTENT_BASE_DIR folder and from there is deployed to the CMAKE_BINARY_DIR, these two folders are totally different so currently we end up only with TinyDrivers libraries deployed with the TinyOrm library; I will have somehow detect that we are in the FetchContent context/mode silverqx
 function(tiny_build_tree_deployment)
 
     # Nothing to do
@@ -348,21 +347,25 @@ function(tiny_build_tree_deployment)
     set(filesToDeploy "")
 
     # All generator expressions below will be expanded during the add_custom_target() call
+
+    # Detect FetchContent, TinyOrm library is already created in the Build Tree root, so
+    # this is only needed if building with FetchContent
+    if(NOT CMAKE_BINARY_DIR STREQUAL PROJECT_BINARY_DIR)
+        list(APPEND filesToDeploy $<TARGET_FILE:${TinyOrm_target}>)
+    endif()
+
     if(TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS)
-        list(APPEND filesToDeploy
-            $<TARGET_FILE:${TinyDrivers_target}>
-        )
+        list(APPEND filesToDeploy $<TARGET_FILE:${TinyDrivers_target}>)
     endif()
 
     if(TINY_BUILD_LOADABLE_DRIVERS)
-        list(APPEND filesToDeploy
-            $<TARGET_FILE:${TinyMySql_target}>
-        )
+        list(APPEND filesToDeploy $<TARGET_FILE:${TinyMySql_target}>)
     endif()
 
     # Only MSVC have PDB files
     if(MSVC)
         list(APPEND filesToDeploy
+            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyOrm_target}>>
             $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyDrivers_target}>>
         )
 
@@ -384,8 +387,7 @@ function(tiny_build_tree_deployment)
             ALL ${CMAKE_COMMAND} -E copy -t ${CMAKE_BINARY_DIR} ${filesToDeploy}
             COMMAND_EXPAND_LISTS
             VERBATIM
-            COMMENT
-                "Copying ${TinyDrivers_target} libraries to the root of the build tree..."
+            COMMENT "Copying TinyORM libraries to the root of the Build Tree..."
         )
     endif()
 
