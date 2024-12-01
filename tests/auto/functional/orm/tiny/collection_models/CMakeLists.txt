@@ -1,7 +1,3 @@
-project(collection_models
-    LANGUAGES CXX
-)
-
 add_executable(collection_models
     tst_collection_models.cpp
 )

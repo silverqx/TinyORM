@@ -1,7 +1,3 @@
-project(schemabuilder
-    LANGUAGES CXX
-)
-
 add_executable(schemabuilder
     tst_schemabuilder.cpp
 )

@@ -14,16 +14,6 @@ tiny_read_version(TINY_VERSION
     HEADER_FOR "${TinyMySql_ns}"
 )
 
-# Basic project
-# ---
-
-project(${TinyMySql_ns}
-    DESCRIPTION "MySQL driver for TinyORM library"
-    HOMEPAGE_URL "https://www.tinyorm.org"
-    LANGUAGES CXX
-    VERSION ${TINY_VERSION}
-)
-
 # TinyMySql library
 # ---
 

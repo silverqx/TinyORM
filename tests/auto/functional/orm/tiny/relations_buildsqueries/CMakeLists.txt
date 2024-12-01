@@ -1,7 +1,3 @@
-project(relations_buildsqueries
-    LANGUAGES CXX
-)
-
 add_executable(relations_buildsqueries
     tst_relations_buildsqueries.cpp
 )

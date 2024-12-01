@@ -1,7 +1,3 @@
-project(castattributes
-    LANGUAGES CXX
-)
-
 add_executable(castattributes
     tst_castattributes.cpp
 )

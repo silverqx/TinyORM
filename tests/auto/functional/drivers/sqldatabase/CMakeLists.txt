@@ -1,7 +1,3 @@
-project(sqldatabase
-    LANGUAGES CXX
-)
-
 add_executable(sqldatabase
     tst_sqldatabase.cpp
 )

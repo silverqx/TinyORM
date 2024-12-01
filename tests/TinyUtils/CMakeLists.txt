@@ -9,15 +9,6 @@ tiny_read_version(TINYUTILS_VERSION
     HEADER_FOR "${TinyUtils_ns}"
 )
 
-# Basic project and CMake build setup
-# ---
-
-project(${TinyUtils_ns}
-    DESCRIPTION "Utils library for TinyORM tests"
-    LANGUAGES CXX
-    VERSION ${TINYUTILS_VERSION}
-)
-
 # TinyUtils library header and source files
 # ---
 

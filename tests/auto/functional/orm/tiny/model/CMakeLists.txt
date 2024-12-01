@@ -1,7 +1,3 @@
-project(model
-    LANGUAGES CXX
-)
-
 add_executable(model
     tst_model.cpp
 )

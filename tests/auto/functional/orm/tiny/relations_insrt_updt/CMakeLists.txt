@@ -1,7 +1,3 @@
-project(relations_inserting_updating
-    LANGUAGES CXX
-)
-
 add_executable(relations_insrt_updt
     tst_relations_inserting_updating.cpp
 )

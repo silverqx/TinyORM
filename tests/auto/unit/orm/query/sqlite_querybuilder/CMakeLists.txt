@@ -1,7 +1,3 @@
-project(sqlite_querybuilder
-    LANGUAGES CXX
-)
-
 add_executable(sqlite_querybuilder
     tst_sqlite_querybuilder.cpp
 )

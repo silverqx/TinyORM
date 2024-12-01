@@ -1,7 +1,3 @@
-project(model_relations
-    LANGUAGES CXX
-)
-
 add_executable(model_relations
     tst_model_relations.cpp
 )

@@ -1,7 +1,3 @@
-project(model_serialization
-    LANGUAGES CXX
-)
-
 add_executable(model_serialization
     tst_model_serialization.cpp
 )

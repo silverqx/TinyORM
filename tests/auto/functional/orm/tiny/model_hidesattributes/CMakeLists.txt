@@ -1,7 +1,3 @@
-project(model_hidesattributes
-    LANGUAGES CXX
-)
-
 add_executable(model_hidesattributes
     tst_model_hidesattributes.cpp
 )

@@ -1,7 +1,3 @@
-project(postgresql_qdatetime
-    LANGUAGES CXX
-)
-
 add_executable(postgresql_qdatetime
     tst_postgresql_qdatetime.cpp
 )

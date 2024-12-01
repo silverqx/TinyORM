@@ -1,7 +1,3 @@
-project(postgresql_connection
-    LANGUAGES CXX
-)
-
 add_executable(postgresql_connection
     tst_postgresql_connection.cpp
 )

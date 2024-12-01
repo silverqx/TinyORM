@@ -11,16 +11,6 @@ tiny_read_version(TINY_VERSION
     HEADER_FOR "${TomTestData_ns}"
 )
 
-# Basic project
-# ---
-
-project(${TomTestData_ns}
-    DESCRIPTION "Tom console application for TinyORM C++ library"
-    HOMEPAGE_URL "https://www.tinyorm.org"
-    LANGUAGES CXX
-    VERSION ${TINY_VERSION}
-)
-
 # Tom migrations for unit tests
 # ---
 

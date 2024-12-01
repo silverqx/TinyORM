@@ -1,7 +1,3 @@
-project(versions
-    LANGUAGES CXX
-)
-
 add_executable(versions
     include/versionsdebug_cmake.hpp.in
     tst_versions.cpp

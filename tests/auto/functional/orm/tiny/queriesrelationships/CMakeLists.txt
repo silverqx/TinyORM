@@ -1,7 +1,3 @@
-project(queriesrelationships
-    LANGUAGES CXX
-)
-
 add_executable(queriesrelationships
     tst_queriesrelationships.cpp
 )

@@ -1,7 +1,3 @@
-project(postgresql_schemabuilder
-    LANGUAGES CXX
-)
-
 add_executable(postgresql_schemabuilder
     tst_postgresql_schemabuilder.cpp
 )

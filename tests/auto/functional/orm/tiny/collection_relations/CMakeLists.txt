@@ -1,7 +1,3 @@
-project(collection_relations
-    LANGUAGES CXX
-)
-
 add_executable(collection_relations
     tst_collection_relations.cpp
 )

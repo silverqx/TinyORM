@@ -1,7 +1,3 @@
-project(relations_connection_independent
-    LANGUAGES CXX
-)
-
 add_executable(relations_conn_indep
     tst_relations_connection_independent.cpp
 )

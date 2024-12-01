@@ -1,7 +1,3 @@
-project(tinybuilder
-    LANGUAGES CXX
-)
-
 add_executable(tinybuilder
     tst_tinybuilder.cpp
 )

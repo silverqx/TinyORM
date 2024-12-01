@@ -1,7 +1,3 @@
-project(softdeletes
-    LANGUAGES CXX
-)
-
 add_executable(softdeletes
     tst_softdeletes.cpp
 )

@@ -1,7 +1,3 @@
-project(sqlite_qdatetime
-    LANGUAGES CXX
-)
-
 add_executable(sqlite_qdatetime
     tst_sqlite_qdatetime.cpp
 )

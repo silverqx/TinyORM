@@ -1,7 +1,3 @@
-project(mysql_schemabuilder
-    LANGUAGES CXX
-)
-
 add_executable(mysql_schemabuilder
     tst_mysql_schemabuilder.cpp
 )

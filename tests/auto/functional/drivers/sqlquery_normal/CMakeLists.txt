@@ -1,7 +1,3 @@
-project(sqlquery_normal
-    LANGUAGES CXX
-)
-
 add_executable(sqlquery_normal
     tst_sqlquery_normal.cpp
 )

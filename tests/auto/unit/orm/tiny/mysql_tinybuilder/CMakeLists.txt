@@ -1,7 +1,3 @@
-project(mysql_tinybuilder
-    LANGUAGES CXX
-)
-
 add_executable(mysql_tinybuilder
     tst_mysql_tinybuilder.cpp
 )

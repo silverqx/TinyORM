@@ -1,7 +1,3 @@
-project(blueprint
-    LANGUAGES CXX
-)
-
 add_executable(blueprint
     tst_blueprint.cpp
 )

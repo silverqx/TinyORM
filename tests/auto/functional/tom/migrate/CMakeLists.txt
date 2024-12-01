@@ -1,7 +1,3 @@
-project(${migrate_ns}
-    LANGUAGES CXX
-)
-
 add_executable(migrate
     tst_migrate.cpp
 )

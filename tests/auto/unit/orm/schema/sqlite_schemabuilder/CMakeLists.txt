@@ -1,7 +1,3 @@
-project(sqlite_schemabuilder
-    LANGUAGES CXX
-)
-
 add_executable(sqlite_schemabuilder
     tst_sqlite_schemabuilder.cpp
 )

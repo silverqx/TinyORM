@@ -1,7 +1,3 @@
-project(querybuilder
-    LANGUAGES CXX
-)
-
 add_executable(querybuilder
     tst_querybuilder.cpp
 )

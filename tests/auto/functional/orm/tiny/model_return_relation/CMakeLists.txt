@@ -1,7 +1,3 @@
-project(model_return_relation
-    LANGUAGES CXX
-)
-
 add_executable(model_return_relation
     tst_model_return_relation.cpp
 )

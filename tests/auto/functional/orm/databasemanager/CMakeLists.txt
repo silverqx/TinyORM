@@ -1,7 +1,3 @@
-project(databasemanager
-    LANGUAGES CXX
-)
-
 add_executable(databasemanager
     tst_databasemanager.cpp
 )

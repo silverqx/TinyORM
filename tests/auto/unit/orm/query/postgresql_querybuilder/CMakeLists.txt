@@ -1,7 +1,3 @@
-project(postgresql_querybuilder
-    LANGUAGES CXX
-)
-
 add_executable(postgresql_querybuilder
     tst_postgresql_querybuilder.cpp
 )

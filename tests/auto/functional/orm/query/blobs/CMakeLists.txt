@@ -1,7 +1,3 @@
-project(blobs
-    LANGUAGES CXX
-)
-
 add_executable(blobs
     tst_blobs.cpp
 )

@@ -1,7 +1,3 @@
-project(sqlquery_prepared
-    LANGUAGES CXX
-)
-
 add_executable(sqlquery_prepared
     tst_sqlquery_prepared.cpp
 )

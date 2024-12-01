@@ -1,7 +1,3 @@
-project(databaseconnection
-    LANGUAGES CXX
-)
-
 add_executable(databaseconnection
     tst_databaseconnection.cpp
 )

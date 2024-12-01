@@ -1,7 +1,3 @@
-project(mysql_qdatetime
-    LANGUAGES CXX
-)
-
 add_executable(mysql_qdatetime
     tst_mysql_qdatetime.cpp
 )

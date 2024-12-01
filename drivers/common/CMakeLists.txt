@@ -11,16 +11,6 @@ tiny_read_version(TINY_VERSION
     HEADER_FOR "${TinyDrivers_ns}"
 )
 
-# Basic project
-# ---
-
-project(${TinyDrivers_ns}
-    DESCRIPTION "Database drivers for TinyORM library"
-    HOMEPAGE_URL "https://www.tinyorm.org"
-    LANGUAGES CXX
-    VERSION ${TINY_VERSION}
-)
-
 # TinyDrivers library
 # ---
 
