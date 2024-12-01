@@ -48,7 +48,7 @@ set_target_properties(${TomExample_target}
 if(WIN32 OR NOT TINY_VCPKG)
     set_target_properties(${TomExample_target}
         PROPERTIES
-            VERSION ${PROJECT_VERSION}
+            VERSION ${TINY_VERSION}
     )
 endif()
 

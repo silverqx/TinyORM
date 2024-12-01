@@ -36,7 +36,7 @@ set_target_properties(${TomTestData_target}
         C_VISIBILITY_PRESET "hidden"
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
-        VERSION ${PROJECT_VERSION}
+        VERSION ${TINY_VERSION}
 )
 
 target_include_directories(${TomTestData_target}

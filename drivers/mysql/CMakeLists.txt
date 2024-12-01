@@ -51,9 +51,9 @@ set_target_properties(${TinyMySql_target}
         C_VISIBILITY_PRESET "hidden"
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
-        VERSION ${PROJECT_VERSION}
+        VERSION ${TINY_VERSION}
         # Needed by the Compatible Interface Requirement for the project's major version
-        VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
+        VERSION_MAJOR ${TINY_VERSION_MAJOR}
         SOVERSION 0
         EXPORT_NAME ${TinyMySql_ns}
 )
@@ -63,7 +63,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     # TODO use a new CMAKE_DLL_NAME_WITH_SOVERSION in CMake v3.27 silverqx
     set_property(
         TARGET ${TinyMySql_target}
-        PROPERTY OUTPUT_NAME "${TinyMySql_target}${PROJECT_VERSION_MAJOR}"
+        PROPERTY OUTPUT_NAME "${TinyMySql_target}${TINY_VERSION_MAJOR}"
     )
 endif()
 

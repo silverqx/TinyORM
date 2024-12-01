@@ -32,7 +32,7 @@ set_target_properties(${TinyUtils_target}
         C_VISIBILITY_PRESET "hidden"
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
-        VERSION ${PROJECT_VERSION}
+        VERSION ${TINY_VERSION}
         SOVERSION 0
 )
 
@@ -40,7 +40,7 @@ set_target_properties(${TinyUtils_target}
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_property(
         TARGET ${TinyUtils_target}
-        PROPERTY OUTPUT_NAME "${TinyUtils_target}${PROJECT_VERSION_MAJOR}"
+        PROPERTY OUTPUT_NAME "${TinyUtils_target}${TINY_VERSION_MAJOR}"
     )
 endif()
 

@@ -247,7 +247,7 @@ function(tiny_install_tinyorm_vcpkg)
 
     # Configure and install the usage file
     set(tinyOrmPackageVersion
-        "${TINY_VERSION_MAJOR}.${TINY_VERSION_MINOR}.${TINY_VERSION_PATCH}"
+        "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
     )
     configure_file("cmake/vcpkg/usage.in"
         "${TINY_BUILD_INSTALLTREE_DIR}/usage"
