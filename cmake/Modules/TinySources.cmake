@@ -11,19 +11,19 @@ include_guard(GLOBAL)
 function(tinydrivers_sources out_headers_private out_headers out_sources) #[[override]]
 
     # Private Header files section
-    set(headers_private "")
+    set(headersPrivate "")
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND headers_private constants_extern_p.hpp)
+        list(APPEND headersPrivate constants_extern_p.hpp)
     else()
-        list(APPEND headers_private constants_inline_p.hpp)
+        list(APPEND headersPrivate constants_inline_p.hpp)
     endif()
 
     if(TINY_BUILD_LOADABLE_DRIVERS)
-        list(APPEND headers_private utils/fs_p.hpp)
+        list(APPEND headersPrivate utils/fs_p.hpp)
     endif()
 
-    list(APPEND headers_private
+    list(APPEND headersPrivate
         constants_p.hpp
         macros/declaresqldriverprivate_p.hpp
         sqldatabase_p.hpp
@@ -95,17 +95,17 @@ function(tinydrivers_sources out_headers_private out_headers out_sources) #[[ove
         utils/type_p.cpp
     )
 
-    list(SORT headers_private)
+    list(SORT headersPrivate)
     list(SORT headers)
     list(SORT sources)
 
     set(suffixDir "orm/drivers")
 
-    list(TRANSFORM headers_private PREPEND "include_private/${suffixDir}/")
-    list(TRANSFORM headers         PREPEND "include/${suffixDir}/")
-    list(TRANSFORM sources         PREPEND "src/${suffixDir}/")
+    list(TRANSFORM headersPrivate PREPEND "include_private/${suffixDir}/")
+    list(TRANSFORM headers        PREPEND "include/${suffixDir}/")
+    list(TRANSFORM sources        PREPEND "src/${suffixDir}/")
 
-    set(${out_headers_private} ${headers_private} PARENT_SCOPE)
+    set(${out_headers_private} ${headersPrivate} PARENT_SCOPE)
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
 
@@ -116,15 +116,15 @@ endfunction()
 function(tinymysql_sources out_headers_private out_headers out_sources) #[[override]]
 
     # Private Header files section
-    set(headers_private "")
+    set(headersPrivate "")
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND headers_private mysqlconstants_extern_p.hpp)
+        list(APPEND headersPrivate mysqlconstants_extern_p.hpp)
     else()
-        list(APPEND headers_private mysqlconstants_inline_p.hpp)
+        list(APPEND headersPrivate mysqlconstants_inline_p.hpp)
     endif()
 
-    list(APPEND headers_private
+    list(APPEND headersPrivate
         concerns/populatesfielddefaultvalues_p.hpp
         macros/includemysqlh_p.hpp
         mysqlconstants_p.hpp
@@ -163,18 +163,18 @@ function(tinymysql_sources out_headers_private out_headers out_sources) #[[overr
         mysqlutils_p.cpp
     )
 
-    list(SORT headers_private)
+    list(SORT headersPrivate)
     list(SORT headers)
     list(SORT sources)
 
     set(sourceDir "${PROJECT_SOURCE_DIR}/drivers/mysql") # Absolute path needed here
     set(suffixDir "orm/drivers/mysql")
 
-    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}/")
-    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}/")
-    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}/")
+    list(TRANSFORM headersPrivate PREPEND "${sourceDir}/include_private/${suffixDir}/")
+    list(TRANSFORM headers        PREPEND "${sourceDir}/include/${suffixDir}/")
+    list(TRANSFORM sources        PREPEND "${sourceDir}/src/${suffixDir}/")
 
-    set(${out_headers_private} ${headers_private} PARENT_SCOPE)
+    set(${out_headers_private} ${headersPrivate} PARENT_SCOPE)
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
 
@@ -761,16 +761,16 @@ endfunction()
 function(tiny_tom_example_database_sources out_headers)
 
     # Header files section
-    set(migration_headers "")
-    set(seeder_headers "")
+    set(migrationHeaders "")
+    set(seederHeaders "")
 
     # Migrations
-    tiny_tests_migration_sources(migration_headers)
+    tiny_tests_migration_sources(migrationHeaders)
     # Seeders
-    tiny_tests_seeder_sources(seeder_headers)
+    tiny_tests_seeder_sources(seederHeaders)
 
     set(headers "")
-    list(APPEND headers ${migration_headers} ${seeder_headers})
+    list(APPEND headers ${migrationHeaders} ${seederHeaders})
 
     list(SORT headers)
 
@@ -865,12 +865,12 @@ keyword or its value is empty: FILE_SET_PREFIX")
     # Body
     # Get library header/_private and source files by the given prefix
     set(sourcesPrefix ${TINY_FILE_SET_PREFIX}) # For better naming
-    set(headers_private "")
+    set(headersPrivate "")
     set(headers "")
     set(sources "")
 
     cmake_language(CALL tiny${sourcesPrefix}_sources
-        headers_private headers sources
+        headersPrivate headers sources
     )
 
     # Specify/Add source files
@@ -897,7 +897,7 @@ keyword or its value is empty: FILE_SET_PREFIX")
         FILE_SET ${TINY_FILE_SET_PREFIX}_headers_private
         TYPE HEADERS
         BASE_DIRS "${baseDirsPrivate}"
-        FILES ${headers_private}
+        FILES ${headersPrivate}
     )
 
 endfunction()
