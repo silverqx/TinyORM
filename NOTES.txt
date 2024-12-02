@@ -1380,9 +1380,13 @@ https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
 All are snake-case unless otherwise specified.
 
  - variable names:
-   - global variables: tiny_
-   - local variables: preferred camelCase or snake-case
-   - function parameters: lowercase and optional tiny_ prefix
+   - global variables
+     - TINY_XYZ - could be possible a cache variable
+     - TinyXyz  - can never be a cache variable (semi internal)
+     - tiny_    - in CMakeLists.txt outside of function (eg. see tiny_buildtree_tag_filepaths)
+   - local variables: preferred camelCase (deprecated: snake_case; use always camelCase)
+   - function parameters: lowercase snake_case (deprecated: optional tiny_ prefix)
+     - output parameters as first with out_ prefix
    - cmake_parse_arguments: TINY_
 
  - option variables: upper case without prefix
