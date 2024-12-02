@@ -869,9 +869,7 @@ keyword or its value is empty: FILE_SET_PREFIX")
     set(headers "")
     set(sources "")
 
-    cmake_language(CALL tiny${sourcesPrefix}_sources
-        headersPrivate headers sources
-    )
+    cmake_language(CALL tiny${sourcesPrefix}_sources headersPrivate headers sources)
 
     # Specify/Add source files
     target_sources(${target} PRIVATE ${sources})
