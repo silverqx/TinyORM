@@ -4,8 +4,7 @@ include_guard(GLOBAL)
 function(tiny_configure_test name)
 
     set(options
-        DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_CURRENT_SOURCE_DIR
-        PROVIDES_PCH RUN_SERIAL
+        DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS PROVIDES_PCH RUN_SERIAL
     )
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
@@ -66,13 +65,6 @@ sqlite_schemabuilder;mysql_tinybuilder"
             # Disable debug output in release mode
             $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
-
-    # Currently unused
-    if(TINY_INCLUDE_CURRENT_SOURCE_DIR)
-        target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-        )
-    endif()
 
     if(TINY_INCLUDE_MIGRATIONS)
         target_include_directories(${name}
