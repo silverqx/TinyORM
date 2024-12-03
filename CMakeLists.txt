@@ -225,7 +225,7 @@ Default initial value can be set using the TINYORM_QT_LEAN_HEADERS environment v
 
 # Depends on the TOM build option
 feature_option_dependent(TOM_EXAMPLE
-    "Build the Tom command-line application example" OFF
+    "Build the Tom command-line example application" OFF
     "TOM" TOM_EXAMPLE-NOTFOUND
 )
 
