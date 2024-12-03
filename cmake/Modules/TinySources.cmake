@@ -700,9 +700,7 @@ function(tiny_model_sources out_headers out_sources)
 
     list(SORT headers)
 
-    list(TRANSFORM headers
-        PREPEND "${PROJECT_SOURCE_DIR}/tests/models/models/" # Absolute path needed here
-    )
+    list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tests/models/models/") # Absolute path needed here
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
@@ -725,9 +723,7 @@ function(tiny_tests_migration_sources out_headers)
 
     list(SORT headers)
 
-    list(TRANSFORM headers
-        PREPEND "${PROJECT_SOURCE_DIR}/tests/database/migrations/" # Absolute path needed here
-    )
+    list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tests/database/migrations/") # Absolute path needed here
 
     set(${out_headers} ${headers} PARENT_SCOPE)
 
@@ -748,9 +744,7 @@ function(tiny_tests_seeder_sources out_headers)
 
     list(SORT headers)
 
-    list(TRANSFORM headers
-        PREPEND "${PROJECT_SOURCE_DIR}/tests/database/seeders/" # Absolute path needed here
-    )
+    list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tests/database/seeders/") # Absolute path needed here
 
     set(${out_headers} ${headers} PARENT_SCOPE)
 
