@@ -36,9 +36,9 @@ The following describes the guessing logic, but you can of course pass each argu
    - relatedKey      = Related::u_primaryKey
 
 
-tom tab-completion:
--------------------
-tags: tom, complete
+tom tab-completion or Qt FW upgrade:
+------------------------------------
+tags: tom, complete, upgrade, qt
 --
 
  - I'm using CMake RelWithDebInfo build for this
