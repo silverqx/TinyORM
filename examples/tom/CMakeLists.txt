@@ -1,4 +1,4 @@
-# Tom command-line application example
+# Tom command-line example application
 # ---
 
 # Initialize Project Version

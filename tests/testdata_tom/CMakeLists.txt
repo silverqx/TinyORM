@@ -1,4 +1,4 @@
-# Tom migrations for unit tests
+# Tom migrations for unit tests application
 # ---
 
 # Initialize Project Version
@@ -11,7 +11,7 @@ tiny_read_version(TINY_VERSION
     HEADER_FOR "${TomTestData_ns}"
 )
 
-# Tom migrations for unit tests
+# Tom migrations for unit tests application
 # ---
 
 add_executable(${TomTestData_target}
