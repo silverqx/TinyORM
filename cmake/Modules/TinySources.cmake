@@ -7,7 +7,7 @@ include_guard(GLOBAL)
 # virtual function(tinyxyz_sources out_headers_private out_headers out_sources)
 
 # TinyDrivers library header and source files
-# Create header and source files lists and return them
+# Create private/ header and source files lists and return them
 function(tinydrivers_sources out_headers_private out_headers out_sources) #[[override]]
 
     # Private Header files section
@@ -112,7 +112,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources) #[[ove
 endfunction()
 
 # TinyMySql library header and source files
-# Create header and source files lists and return them
+# Create private/ header and source files lists and return them
 function(tinymysql_sources out_headers_private out_headers out_sources) #[[override]]
 
     # Private Header files section
@@ -637,8 +637,8 @@ function(tinytom_sources unused out_headers out_sources) #[[override]]
 
 endfunction()
 
-# Models header and source files (primarily used in AutoTests)
-# Create header and source files lists and return them
+# Models header files (primarily used in AutoTests)
+# Create header files list and return it
 function(tiny_model_sources out_headers out_sources)
 
     # Header files section
@@ -708,7 +708,7 @@ function(tiny_model_sources out_headers out_sources)
 endfunction()
 
 # Database migrations header files (used in AutoTests and Tom example console application)
-# Create header and source files lists and return them
+# Create header files list and return it
 function(tiny_tests_migration_sources out_headers)
 
     # Header files section
@@ -730,7 +730,7 @@ function(tiny_tests_migration_sources out_headers)
 endfunction()
 
 # Database seeders header files (used in the Tom example console application)
-# Create header and source files lists and return them
+# Create header files list and return it
 function(tiny_tests_seeder_sources out_headers)
 
     # Header files section
@@ -751,7 +751,7 @@ function(tiny_tests_seeder_sources out_headers)
 endfunction()
 
 # Tom example console application - database migrations and seeders header files
-# Create header and source files lists and return them
+# Create header files list and return it
 function(tiny_tom_example_database_sources out_headers)
 
     # Header files section
@@ -773,7 +773,7 @@ function(tiny_tom_example_database_sources out_headers)
 endfunction()
 
 # Tom testdata application - database migrations and seeder header files
-# Create header and source files lists and return them
+# Create header files list and return it
 function(tiny_tom_testdata_database_sources out_headers)
 
     # Header files section
