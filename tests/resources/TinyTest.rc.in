@@ -40,5 +40,5 @@ VS_VERSION_INFO VERSIONINFO
 /* End of Version info */
 
 #ifdef __MINGW32__
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@tiny_manifest_basename@$<TARGET_FILE_SUFFIX:@TinyTest_target@>.manifest"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "@manifestBasename@$<TARGET_FILE_SUFFIX:@TinyTest_target@>.manifest"
 #endif

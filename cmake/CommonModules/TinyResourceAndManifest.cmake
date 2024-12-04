@@ -93,11 +93,11 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
 
     # Allow to pass a custom manifest basename
     if(DEFINED TINY_MANIFEST_BASENAME)
-        set(tiny_manifest_basename ${TINY_MANIFEST_BASENAME})
+        set(manifestBasename ${TINY_MANIFEST_BASENAME})
         # For MinGW (used only in the tom.rc.in)
         set(Tom_manifest ${TINY_MANIFEST_BASENAME})
     else()
-        set(tiny_manifest_basename ${rcBasename})
+        set(manifestBasename ${rcBasename})
         # For MinGW (used only in the tom.rc.in)
         set(Tom_manifest ${rcBasename})
     endif()
@@ -138,17 +138,17 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     # Manifest file (injected through the RC file on MinGW)
     if(NOT MINGW)
         # Obtain extension by target type - .exe or .dll
-        set(tiny_original_extension "")
+        set(originalExtension "")
 
         if(target_type STREQUAL "SHARED_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY")
-            set(tiny_original_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
+            set(originalExtension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
         elseif(target_type STREQUAL "EXECUTABLE")
-            set(tiny_original_extension "${CMAKE_EXECUTABLE_SUFFIX}")
+            set(originalExtension "${CMAKE_EXECUTABLE_SUFFIX}")
         endif()
 
-        target_sources(${target} PRIVATE
-            "${TINY_RESOURCES_DIR}/${tiny_manifest_basename}${tiny_original_extension}.manifest"
-        )
+        set(manifestFilename "${manifestBasename}${originalExtension}.manifest")
+
+        target_sources(${target} PRIVATE "${TINY_RESOURCES_DIR}/${manifestFilename}")
     endif()
 
 endfunction()
