@@ -381,9 +381,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 include(TinyResourceAndManifest)
-tiny_resource_and_manifest(${TinyOrm_target}
-    OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-)
+tiny_resource_and_manifest(${TinyOrm_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
 
 # Resolve and link dependencies
 # ---
@@ -422,13 +420,9 @@ if(NOT BUILD_DRIVERS)
 endif()
 
 if(STRICT_MODE)
-    target_link_libraries(${TinyOrm_target}
-        PUBLIC ${TinyOrm_ns}::${CommonConfig_target}
-    )
+    target_link_libraries(${TinyOrm_target} PUBLIC ${TinyOrm_ns}::${CommonConfig_target})
 else()
-    target_link_libraries(${TinyOrm_target}
-        PRIVATE ${TinyOrm_ns}::${CommonConfig_target}
-    )
+    target_link_libraries(${TinyOrm_target} PRIVATE ${TinyOrm_ns}::${CommonConfig_target})
 endif()
 
 if(MYSQL_PING)

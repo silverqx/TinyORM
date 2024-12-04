@@ -76,9 +76,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags()
 endif()
 
-tiny_resource_and_manifest(${TinyUtils_target}
-    OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-)
+tiny_resource_and_manifest(${TinyUtils_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
 
 # Resolve and link dependencies
 # ---
@@ -111,8 +109,7 @@ tiny_create_sqlite_db("${tiny_sqlite_db}")
 
 # Add the SQLite database file file to the clean target (CMake doesn't have distclean)
 set_property(TARGET ${TinyUtils_target}
-    APPEND
-        PROPERTY ADDITIONAL_CLEAN_FILES "${tiny_sqlite_db}"
+    APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${tiny_sqlite_db}"
 )
 
 # Default SQLite test database, can be overridden by DB_SQLITE_DATABASE env. variable

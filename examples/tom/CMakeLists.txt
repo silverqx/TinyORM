@@ -45,10 +45,7 @@ set_target_properties(${TomExample_target}
 # https://github.com/microsoft/vcpkg/issues/33551
 # TODO vcpkg_copy_tools() doesn't handle executable symlinks correctly (mainly Linux), it uses file(COPY) without the FOLLOW_SYMLINK_CHAIN so the packages bin/ folder ends up with the tom-0.6.0.0 file and the tom symlink is copied to the tools/tinyorm/; so currently disabled for Linux platform silverqx
 if(WIN32 OR NOT TINY_VCPKG)
-    set_target_properties(${TomExample_target}
-        PROPERTIES
-            VERSION ${TINY_VERSION}
-    )
+    set_target_properties(${TomExample_target} PROPERTIES VERSION ${TINY_VERSION})
 endif()
 
 # Tom command-line application defines

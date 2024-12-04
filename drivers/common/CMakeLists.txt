@@ -153,9 +153,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 endif()
 
-tiny_resource_and_manifest(${TinyDrivers_target}
-    OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-)
+tiny_resource_and_manifest(${TinyDrivers_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
 
 # Resolve and link dependencies
 # ---
@@ -170,9 +168,7 @@ if(QT_VERSION_MAJOR LESS 6)
     message(FATAL_ERROR "TinyDrivers library is not supported with Qt version <6.")
 endif()
 # No need to call the tiny_find_package() here as the core TinyOrm always depends on it
-find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG
-    REQUIRED COMPONENTS Core
-)
+find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG REQUIRED COMPONENTS Core)
 
 # Unconditional dependencies                       # Never use versionless Qt targets
 target_link_libraries(${TinyDrivers_target} PUBLIC Qt${QT_VERSION_MAJOR}::Core)

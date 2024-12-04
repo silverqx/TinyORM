@@ -269,9 +269,13 @@ function(tiny_print_linking_against target)
     endif()
 
     if(WIN32 AND BUILD_SHARED_LIBS)
-        get_target_property(libraryFilepath ${target} IMPORTED_IMPLIB_${TINY_BUILD_TYPE_UPPER})
+        get_target_property(libraryFilepath ${target}
+            IMPORTED_IMPLIB_${TINY_BUILD_TYPE_UPPER}
+        )
     else()
-        get_target_property(libraryFilepath ${target} IMPORTED_LOCATION_${TINY_BUILD_TYPE_UPPER})
+        get_target_property(libraryFilepath ${target}
+            IMPORTED_LOCATION_${TINY_BUILD_TYPE_UPPER}
+        )
     endif()
 
     message(VERBOSE "Linking against ${target} at ${libraryFilepath}")

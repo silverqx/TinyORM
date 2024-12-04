@@ -32,9 +32,7 @@ tiny_target_sources(${TinyMySql_target} FILE_SET PREFIX mysql BASE_DIRS "include
 # Use Precompiled headers (PCH)
 # ---
 
-target_precompile_headers(${TinyMySql_target}
-    PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">
-)
+target_precompile_headers(${TinyMySql_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
 
 if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
     target_compile_definitions(${TinyMySql_target} PRIVATE TINYMYSQL_USING_PCH)
@@ -97,11 +95,8 @@ target_compile_definitions(${TinyMySql_target}
         TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 )
 
-target_compile_definitions(${TinyMySql_target}
-    PRIVATE
-        # TODO cmake uses target_EXPORTS, use cmake convention instead silverqx
-        TINYDRIVERS_BUILDING_SHARED
-)
+# TODO cmake uses target_EXPORTS, use cmake convention instead silverqx
+target_compile_definitions(${TinyMySql_target} PRIVATE TINYDRIVERS_BUILDING_SHARED)
 
 # Specifies which global constant types will be used
 if(TINY_EXTERN_CONSTANTS)
@@ -123,9 +118,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 endif()
 
-tiny_resource_and_manifest(${TinyMySql_target}
-    OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
-)
+tiny_resource_and_manifest(${TinyMySql_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
 
 # Resolve and link dependencies
 # ---
@@ -140,9 +133,7 @@ if(QT_VERSION_MAJOR LESS 6)
     message(FATAL_ERROR "TinyMySql library is not supported with Qt version <6.")
 endif()
 # No need to call the tiny_find_package() here as the core TinyOrm always depends on it
-find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG
-    REQUIRED COMPONENTS Core
-)
+find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG REQUIRED COMPONENTS Core)
 tiny_find_package(MySQL REQUIRED)
 
 # Unconditional dependencies
