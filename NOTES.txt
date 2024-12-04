@@ -1553,6 +1553,11 @@ https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#lists
    - if(IS_ABSOLUTE) returns TRUE also for c:xyz or /xyz (rooted only paths)
    - cmake_path(IS_ABSOLUTE) must be fully-qualified
 
+ - CMAKE_CURRENT_LIST_DIR vs CMAKE_CURRENT_SOURCE_DIR
+   - it's about scopes, include() doesn't create a new scope while add_subdirectory() does,
+     which means it has a different paths in include()-ed files
+   - See https://stackoverflow.com/a/67568372/2266467
+
 
 TinyORM CMake build:
 --------------------
