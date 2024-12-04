@@ -1,6 +1,6 @@
-add_executable(migrate
-    tst_migrate.cpp
-)
+add_executable(migrate)
+
+target_sources(migrate PRIVATE tst_migrate.cpp)
 
 add_test(NAME migrate COMMAND migrate)
 

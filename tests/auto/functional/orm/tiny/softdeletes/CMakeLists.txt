@@ -1,6 +1,6 @@
-add_executable(softdeletes
-    tst_softdeletes.cpp
-)
+add_executable(softdeletes)
+
+target_sources(softdeletes PRIVATE tst_softdeletes.cpp)
 
 add_test(NAME softdeletes COMMAND softdeletes)
 

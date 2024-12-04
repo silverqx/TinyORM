@@ -1,6 +1,6 @@
-add_executable(model_appends
-    tst_model_appends.cpp
-)
+add_executable(model_appends)
+
+target_sources(model_appends PRIVATE tst_model_appends.cpp)
 
 add_test(NAME model_appends COMMAND model_appends)
 

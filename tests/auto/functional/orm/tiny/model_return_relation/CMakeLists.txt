@@ -1,6 +1,6 @@
-add_executable(model_return_relation
-    tst_model_return_relation.cpp
-)
+add_executable(model_return_relation)
+
+target_sources(model_return_relation PRIVATE tst_model_return_relation.cpp)
 
 add_test(NAME model_return_relation COMMAND model_return_relation)
 

@@ -1,6 +1,6 @@
-add_executable(queriesrelationships
-    tst_queriesrelationships.cpp
-)
+add_executable(queriesrelationships)
+
+target_sources(queriesrelationships PRIVATE tst_queriesrelationships.cpp)
 
 add_test(NAME queriesrelationships COMMAND queriesrelationships)
 

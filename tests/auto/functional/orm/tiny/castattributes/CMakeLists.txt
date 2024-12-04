@@ -1,6 +1,6 @@
-add_executable(castattributes
-    tst_castattributes.cpp
-)
+add_executable(castattributes)
+
+target_sources(castattributes PRIVATE tst_castattributes.cpp)
 
 add_test(NAME castattributes COMMAND castattributes)
 

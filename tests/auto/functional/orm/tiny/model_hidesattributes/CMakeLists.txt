@@ -1,6 +1,6 @@
-add_executable(model_hidesattributes
-    tst_model_hidesattributes.cpp
-)
+add_executable(model_hidesattributes)
+
+target_sources(model_hidesattributes PRIVATE tst_model_hidesattributes.cpp)
 
 add_test(NAME model_hidesattributes COMMAND model_hidesattributes)
 

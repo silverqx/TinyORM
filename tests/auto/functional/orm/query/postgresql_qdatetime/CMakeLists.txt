@@ -1,6 +1,6 @@
-add_executable(postgresql_qdatetime
-    tst_postgresql_qdatetime.cpp
-)
+add_executable(postgresql_qdatetime)
+
+target_sources(postgresql_qdatetime PRIVATE tst_postgresql_qdatetime.cpp)
 
 add_test(NAME postgresql_qdatetime COMMAND postgresql_qdatetime)
 

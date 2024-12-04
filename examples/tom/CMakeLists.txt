@@ -14,10 +14,13 @@ tiny_read_version(TINY_VERSION
 # Tom command-line application
 # ---
 
-add_executable(${TomExample_target}
-    main.cpp
-)
+add_executable(${TomExample_target})
 add_executable(${TomExample_ns}::${TomExample_target} ALIAS ${TomExample_target})
+
+# Tom command-line application source files
+# ---
+
+target_sources(${TomExample_target} PRIVATE main.cpp)
 
 # Tom example migrations and seeders header files
 # ---

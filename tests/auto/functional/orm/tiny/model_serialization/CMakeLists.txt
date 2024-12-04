@@ -1,6 +1,6 @@
-add_executable(model_serialization
-    tst_model_serialization.cpp
-)
+add_executable(model_serialization)
+
+target_sources(model_serialization PRIVATE tst_model_serialization.cpp)
 
 add_test(NAME model_serialization COMMAND model_serialization)
 

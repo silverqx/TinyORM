@@ -1,6 +1,6 @@
-add_executable(blobs
-    tst_blobs.cpp
-)
+add_executable(blobs)
+
+target_sources(blobs PRIVATE tst_blobs.cpp)
 
 add_test(NAME blobs COMMAND blobs)
 

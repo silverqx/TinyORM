@@ -1,6 +1,6 @@
-add_executable(model_conn_indep
-    tst_model_connection_independent.cpp
-)
+add_executable(model_conn_indep)
+
+target_sources(model_conn_indep PRIVATE tst_model_connection_independent.cpp)
 
 add_test(NAME model_conn_indep COMMAND model_conn_indep)
 

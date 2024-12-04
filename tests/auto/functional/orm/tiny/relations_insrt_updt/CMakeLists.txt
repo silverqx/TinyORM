@@ -1,6 +1,6 @@
-add_executable(relations_insrt_updt
-    tst_relations_inserting_updating.cpp
-)
+add_executable(relations_insrt_updt)
+
+target_sources(relations_insrt_updt PRIVATE tst_relations_inserting_updating.cpp)
 
 add_test(NAME relations_insrt_updt COMMAND relations_insrt_updt)
 

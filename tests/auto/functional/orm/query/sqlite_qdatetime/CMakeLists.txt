@@ -1,6 +1,6 @@
-add_executable(sqlite_qdatetime
-    tst_sqlite_qdatetime.cpp
-)
+add_executable(sqlite_qdatetime)
+
+target_sources(sqlite_qdatetime PRIVATE tst_sqlite_qdatetime.cpp)
 
 add_test(NAME sqlite_qdatetime COMMAND sqlite_qdatetime)
 

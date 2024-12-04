@@ -1,6 +1,8 @@
-add_executable(versions
-    include/versionsdebug_cmake.hpp.in
+add_executable(versions)
+
+target_sources(versions PRIVATE
     tst_versions.cpp
+    include/versionsdebug_cmake.hpp.in
 )
 
 add_test(NAME versions COMMAND versions)

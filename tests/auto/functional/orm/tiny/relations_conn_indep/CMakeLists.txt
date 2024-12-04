@@ -1,6 +1,6 @@
-add_executable(relations_conn_indep
-    tst_relations_connection_independent.cpp
-)
+add_executable(relations_conn_indep)
+
+target_sources(relations_conn_indep PRIVATE tst_relations_connection_independent.cpp)
 
 add_test(NAME relations_conn_indep COMMAND relations_conn_indep)
 

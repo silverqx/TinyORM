@@ -1,6 +1,6 @@
-add_executable(postgresql_querybuilder
-    tst_postgresql_querybuilder.cpp
-)
+add_executable(postgresql_querybuilder)
+
+target_sources(postgresql_querybuilder PRIVATE tst_postgresql_querybuilder.cpp)
 
 add_test(NAME postgresql_querybuilder COMMAND postgresql_querybuilder)
 

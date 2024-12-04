@@ -1,6 +1,6 @@
-add_executable(postgresql_connection
-    tst_postgresql_connection.cpp
-)
+add_executable(postgresql_connection)
+
+target_sources(postgresql_connection PRIVATE tst_postgresql_connection.cpp)
 
 add_test(NAME postgresql_connection COMMAND postgresql_connection)
 

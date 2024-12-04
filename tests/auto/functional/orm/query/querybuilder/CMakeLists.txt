@@ -1,6 +1,6 @@
-add_executable(querybuilder
-    tst_querybuilder.cpp
-)
+add_executable(querybuilder)
+
+target_sources(querybuilder PRIVATE tst_querybuilder.cpp)
 
 add_test(NAME querybuilder COMMAND querybuilder)
 

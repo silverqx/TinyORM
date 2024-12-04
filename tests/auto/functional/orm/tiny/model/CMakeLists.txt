@@ -1,6 +1,6 @@
-add_executable(model
-    tst_model.cpp
-)
+add_executable(model)
+
+target_sources(model PRIVATE tst_model.cpp)
 
 add_test(NAME model COMMAND model)
 

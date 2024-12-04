@@ -1,6 +1,6 @@
-add_executable(model_relations
-    tst_model_relations.cpp
-)
+add_executable(model_relations)
+
+target_sources(model_relations PRIVATE tst_model_relations.cpp)
 
 add_test(NAME model_relations COMMAND model_relations)
 

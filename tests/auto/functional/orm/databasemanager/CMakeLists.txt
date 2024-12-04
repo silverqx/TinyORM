@@ -1,6 +1,6 @@
-add_executable(databasemanager
-    tst_databasemanager.cpp
-)
+add_executable(databasemanager)
+
+target_sources(databasemanager PRIVATE tst_databasemanager.cpp)
 
 add_test(NAME databasemanager COMMAND databasemanager)
 

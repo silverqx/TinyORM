@@ -1,6 +1,6 @@
-add_executable(mysql_querybuilder
-    tst_mysql_querybuilder.cpp
-)
+add_executable(mysql_querybuilder)
+
+target_sources(mysql_querybuilder PRIVATE tst_mysql_querybuilder.cpp)
 
 add_test(NAME mysql_querybuilder COMMAND mysql_querybuilder)
 

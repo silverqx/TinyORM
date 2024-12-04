@@ -1,6 +1,6 @@
-add_executable(collection_models
-    tst_collection_models.cpp
-)
+add_executable(collection_models)
+
+target_sources(collection_models PRIVATE tst_collection_models.cpp)
 
 add_test(NAME collection_models COMMAND collection_models)
 

@@ -1,6 +1,6 @@
-add_executable(sqldatabasemanager
-    tst_sqldatabasemanager.cpp
-)
+add_executable(sqldatabasemanager)
+
+target_sources(sqldatabasemanager PRIVATE tst_sqldatabasemanager.cpp)
 
 add_test(NAME sqldatabasemanager COMMAND sqldatabasemanager)
 

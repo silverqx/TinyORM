@@ -1,6 +1,6 @@
-add_executable(schemabuilder
-    tst_schemabuilder.cpp
-)
+add_executable(schemabuilder)
+
+target_sources(schemabuilder PRIVATE tst_schemabuilder.cpp)
 
 add_test(NAME schemabuilder COMMAND schemabuilder)
 

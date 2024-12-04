@@ -1,6 +1,6 @@
-add_executable(sqlite_querybuilder
-    tst_sqlite_querybuilder.cpp
-)
+add_executable(sqlite_querybuilder)
+
+target_sources(sqlite_querybuilder PRIVATE tst_sqlite_querybuilder.cpp)
 
 add_test(NAME sqlite_querybuilder COMMAND sqlite_querybuilder)
 

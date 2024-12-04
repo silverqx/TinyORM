@@ -1,6 +1,6 @@
-add_executable(model_qdatetime
-    tst_model_qdatetime.cpp
-)
+add_executable(model_qdatetime)
+
+target_sources(model_qdatetime PRIVATE tst_model_qdatetime.cpp)
 
 add_test(NAME model_qdatetime COMMAND model_qdatetime)
 

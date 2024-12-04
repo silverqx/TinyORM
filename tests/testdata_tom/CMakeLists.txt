@@ -14,10 +14,13 @@ tiny_read_version(TINY_VERSION
 # Tom migrations for unit tests application
 # ---
 
-add_executable(${TomTestData_target}
-    main.cpp
-)
+add_executable(${TomTestData_target})
 add_executable(${TomTestData_ns}::${TomTestData_target} ALIAS ${TomTestData_target})
+
+# Tom migrations for unit tests source files
+# ---
+
+target_sources(${TomTestData_target} PRIVATE main.cpp)
 
 # Tom testdata migrations and seeder header files
 # ---

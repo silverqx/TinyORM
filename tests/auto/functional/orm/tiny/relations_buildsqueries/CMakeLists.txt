@@ -1,6 +1,6 @@
-add_executable(relations_buildsqueries
-    tst_relations_buildsqueries.cpp
-)
+add_executable(relations_buildsqueries)
+
+target_sources(relations_buildsqueries PRIVATE tst_relations_buildsqueries.cpp)
 
 add_test(NAME relations_buildsqueries COMMAND relations_buildsqueries)
 

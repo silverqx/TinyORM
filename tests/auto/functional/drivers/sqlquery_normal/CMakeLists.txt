@@ -1,6 +1,6 @@
-add_executable(sqlquery_normal
-    tst_sqlquery_normal.cpp
-)
+add_executable(sqlquery_normal)
+
+target_sources(sqlquery_normal PRIVATE tst_sqlquery_normal.cpp)
 
 add_test(NAME sqlquery_normal COMMAND sqlquery_normal)
 

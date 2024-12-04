@@ -1,6 +1,6 @@
-add_executable(mysql_schemabuilder
-    tst_mysql_schemabuilder.cpp
-)
+add_executable(mysql_schemabuilder)
+
+target_sources(mysql_schemabuilder PRIVATE tst_mysql_schemabuilder.cpp)
 
 add_test(NAME mysql_schemabuilder COMMAND mysql_schemabuilder)
 

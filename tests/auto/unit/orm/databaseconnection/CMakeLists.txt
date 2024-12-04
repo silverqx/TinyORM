@@ -1,6 +1,6 @@
-add_executable(databaseconnection
-    tst_databaseconnection.cpp
-)
+add_executable(databaseconnection)
+
+target_sources(databaseconnection PRIVATE tst_databaseconnection.cpp)
 
 add_test(NAME databaseconnection COMMAND databaseconnection)
 

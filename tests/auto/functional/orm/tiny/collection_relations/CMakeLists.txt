@@ -1,6 +1,6 @@
-add_executable(collection_relations
-    tst_collection_relations.cpp
-)
+add_executable(collection_relations)
+
+target_sources(collection_relations PRIVATE tst_collection_relations.cpp)
 
 add_test(NAME collection_relations COMMAND collection_relations)
 

@@ -1,6 +1,6 @@
-add_executable(psql_schemabuilder_f
-    tst_postgresql_schemabuilder_f.cpp
-)
+add_executable(psql_schemabuilder_f)
+
+target_sources(psql_schemabuilder_f PRIVATE tst_postgresql_schemabuilder_f.cpp)
 
 add_test(NAME psql_schemabuilder_f COMMAND psql_schemabuilder_f)
 

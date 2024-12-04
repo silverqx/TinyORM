@@ -1,6 +1,6 @@
-add_executable(sqlite_schemabuilder
-    tst_sqlite_schemabuilder.cpp
-)
+add_executable(sqlite_schemabuilder)
+
+target_sources(sqlite_schemabuilder PRIVATE tst_sqlite_schemabuilder.cpp)
 
 add_test(NAME sqlite_schemabuilder COMMAND sqlite_schemabuilder)
 
