@@ -18,11 +18,6 @@ endif()
 
 if(TOM_EXAMPLE)
     target_compile_definitions(versions PRIVATE TINYTOM_EXAMPLE)
-
-    # To find tom/include/version.hpp
-    target_include_directories(versions
-        PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
-    )
 endif()
 
 target_include_directories(versions
