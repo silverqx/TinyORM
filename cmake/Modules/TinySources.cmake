@@ -923,6 +923,14 @@ keyword or its value is empty: PREFIX")
         target_sources(${target} PRIVATE ${sources})
     endif()
 
+    list(LENGTH headers headersCount)
+    list(LENGTH headersPrivate headersPrivateCount)
+
+    # Nothing to do, early exit
+    if(headersCount EQUAL 0 AND headersPrivateCount EQUAL 0)
+        return()
+    endif()
+
     # Invoke the correct implementation
     if(TINY_FILE_SET)
         tiny_target_sources_fileset()
@@ -942,8 +950,6 @@ macro(tiny_target_sources_fileset)
         BASE_DIRS "${TINY_BASE_DIRS}" # Quotes needed to support empty or undefined values
         FILES ${headers}
     )
-
-    list(LENGTH headersPrivate headersPrivateCount)
 
     # Nothing to do, no private headers
     if(headersPrivateCount EQUAL 0)
