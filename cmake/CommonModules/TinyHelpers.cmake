@@ -611,20 +611,27 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # Body
     foreach(property ${TINY_PROPERTIES})
+        # TinyXyz_VERSION_MAJOR or TinyXyz_SOVERSION
+        # Don't remove the TinyXyz_ or replace it with eg. TINY_ because these names
+        # are exposed to COMPATIBLE_INTERFACE_STRING so it's clearly visible for which
+        # targets these names are (although it's strange that a property for the target
+        # contains the target name itself).
+        set(targetProperty ${target}_${property})
+
         # Skip the TinyOrm_VERSION_MAJOR as it's already defined in the main/parent
         # CMakeLists.txt file
         if(NOT (target STREQUAL TinyOrm_target AND property STREQUAL "VERSION_MAJOR"))
-            get_target_property(${target}_${property} ${target} ${property})
+            get_target_property(${targetProperty} ${target} ${property})
         endif()
 
         set_property(
             TARGET ${target}
-            PROPERTY INTERFACE_${target}_${property} ${${target}_${property}}
+            PROPERTY INTERFACE_${targetProperty} ${${targetProperty}}
         )
 
         set_property(
             TARGET ${target}
-            APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${target}_${property}
+            APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${targetProperty}
         )
     endforeach()
 
