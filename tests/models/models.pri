@@ -1,6 +1,6 @@
 INCLUDEPATH *= $$PWD
 
-# Model Include lists (used to avoid duplicate #include-s) 😮
+# Models' Include lists (used to avoid duplicate #include-s) 😮
 headersList = \
     $$PWD/models/album_includeslist.hpp \
     $$PWD/models/torrent_includeslist.hpp \

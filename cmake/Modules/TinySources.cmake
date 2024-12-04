@@ -644,7 +644,7 @@ function(tiny_model_sources out_headers out_sources)
     # Header files section
     set(headers "")
 
-    # Model Include lists (used to avoid duplicate #include-s) 😮
+    # Models' Include lists (used to avoid duplicate #include-s) 😮
     list(APPEND headers
         album_includeslist.hpp
         torrent_includeslist.hpp
