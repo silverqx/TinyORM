@@ -695,15 +695,11 @@ function(tiny_model_sources out_headers out_sources)
         user_norelations.hpp
     )
 
-    # Source files section (empty)
-    set(sources "")
-
     list(SORT headers)
 
     list(TRANSFORM headers PREPEND "${PROJECT_SOURCE_DIR}/tests/models/models/") # Absolute path needed here
 
     set(${out_headers} ${headers} PARENT_SCOPE)
-    set(${out_sources} ${sources} PARENT_SCOPE)
 
 endfunction()
 
