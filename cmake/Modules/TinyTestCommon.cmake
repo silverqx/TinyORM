@@ -66,28 +66,19 @@ sqlite_schemabuilder;mysql_tinybuilder"
             $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
 
+    # Migrations header files
     if(TINY_INCLUDE_MIGRATIONS)
-        target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/database>"
-        )
-
-        # Migrations header files
-        tiny_tests_migration_sources(${name}_headers)
-        target_sources(${name} PRIVATE
-            ${${name}_headers}
+        tiny_target_sources(${name} PRIVATE
+            PREFIX _tests_migration
+            BASE_DIR "${PROJECT_SOURCE_DIR}/tests/database"
         )
     endif()
 
+    # Models header files
     if(TINY_INCLUDE_MODELS)
-        target_include_directories(${name}
-            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/models>"
-        )
-
-        # Models header and source files
-        tiny_model_sources(${name}_headers ${name}_sources)
-        target_sources(${name} PRIVATE
-            ${${name}_headers}
-            ${${name}_sources}
+        tiny_target_sources(${name} PRIVATE
+            PREFIX _models
+            BASE_DIR "${PROJECT_SOURCE_DIR}/tests/models"
         )
     endif()
 

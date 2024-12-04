@@ -22,10 +22,9 @@ add_executable(${TomExample_ns}::${TomExample_target} ALIAS ${TomExample_target}
 # Tom example migrations and seeders header files
 # ---
 
-tiny_tom_example_database_sources(${TomExample_target}_headers)
-
-target_sources(${TomExample_target} PRIVATE
-    ${${TomExample_target}_headers}
+tiny_target_sources(${TomExample_target} PRIVATE
+    PREFIX _tom_example_database
+    BASE_DIR "${PROJECT_SOURCE_DIR}/tests/database"
 )
 
 # Tom command-line application specific configuration
@@ -51,10 +50,6 @@ if(WIN32 OR NOT TINY_VCPKG)
             VERSION ${TINY_VERSION}
     )
 endif()
-
-target_include_directories(${TomExample_target}
-    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tests/database>"
-)
 
 # Tom command-line application defines
 # ---

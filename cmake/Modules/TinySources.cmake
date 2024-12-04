@@ -1,7 +1,7 @@
 include_guard(GLOBAL)
 
 # The tiny_target_sources() wrapper function calls tinyxyz_sources() functions based
-# on the FILE_SET_PREFIX argument value so some of these functions below must have
+# on the PREFIX argument value so some of these functions below must have
 # common interface (the same function API signature). These functions are tagged
 # with #[[override]] comment, the interface signature is:
 # virtual function(tinyxyz_sources out_headers_private out_headers out_sources)
@@ -639,7 +639,7 @@ endfunction()
 
 # Models header files (primarily used in AutoTests)
 # Create header files list and return it
-function(tiny_model_sources out_headers out_sources)
+function(tiny_models_sources unused out_headers unused) #[[override]]
 
     # Header files section
     set(headers "")
@@ -705,7 +705,7 @@ endfunction()
 
 # Database migrations header files (used in AutoTests and Tom example console application)
 # Create header files list and return it
-function(tiny_tests_migration_sources out_headers)
+function(tiny_tests_migration_sources unused out_headers unused) #[[override]]
 
     # Header files section
     set(headers "")
@@ -748,14 +748,14 @@ endfunction()
 
 # Tom example console application - database migrations and seeders header files
 # Create header files list and return it
-function(tiny_tom_example_database_sources out_headers)
+function(tiny_tom_example_database_sources unused out_headers unused) #[[override]]
 
     # Header files section
     set(migrationHeaders "")
     set(seederHeaders "")
 
     # Migrations
-    tiny_tests_migration_sources(migrationHeaders)
+    tiny_tests_migration_sources("" migrationHeaders "")
     # Seeders
     tiny_tests_seeder_sources(seederHeaders)
 
@@ -770,7 +770,7 @@ endfunction()
 
 # Tom testdata application - database migrations and seeder header files
 # Create header files list and return it
-function(tiny_tom_testdata_database_sources out_headers)
+function(tiny_tom_testdata_database_sources unused out_headers unused) #[[override]]
 
     # Header files section
     set(headers "")
@@ -811,30 +811,81 @@ function(tiny_tom_testdata_database_sources out_headers)
 
 endfunction()
 
-# Create header file sets and add source files in one shot
+# TinyUtils library header and source files
+# Create header and source files lists and return them
+function(tinyutils_sources unused out_headers out_sources) #[[override]]
+
+    # Header files section
+    set(headers "")
+
+    list(APPEND headers
+        common/collection.hpp
+        databases.hpp
+        export.hpp
+        fs.hpp
+        version.hpp
+    )
+
+    # Source files section
+    set(sources "")
+
+    list(APPEND sources
+        databases.cpp
+        fs.cpp
+    )
+
+    list(SORT headers)
+    list(SORT sources)
+
+    set(prefixDir "src")
+
+    list(TRANSFORM headers PREPEND "${prefixDir}/")
+    list(TRANSFORM sources PREPEND "${prefixDir}/")
+
+    set(${out_headers} ${headers} PARENT_SCOPE)
+    set(${out_sources} ${sources} PARENT_SCOPE)
+
+endfunction()
+
+# Wrapper function for the target_sources() (for both overloads)
 #
-# Wrapper function to obtain public and private headers and source files, and
-# create public/private file set/s, or add files to an existing file set/s, and
-# add source files for the given target.
+# Create header file sets (or add to the existing sets) or add header files and add
+# source files to the given target and call target_include_directories($<BUILD_INTERFACE>)
+# in one shot.
 #
-# Synopsis:
-# tiny_target_sources(<target> [PUBLIC_ONLY]
-#   FILE_SET_PREFIX <setName> [BASE_DIRS <dirs>...]
+# Obtain public and private headers and source files, and create public/private
+# file set/s, or add files to an existing file set/s, and add source files
+# for the given target.
+#
+# tiny_target_sources(<target>
+#   [FILE_SET] PREFIX <name> [BASE_DIRS <dirs>...]
 # )
 #
-# PUBLIC_ONLY call target_sources(FILE_SET) for public headers only and sources files.
-# If not given, call target_sources(FILE_SET) also for private headers.
-# FILE_SET_PREFIX prefix for FILE_SET argument value and for calling tinyxyz_sources()
+# FILE_SET call the target_sources(FILE_SET) overload.
+# PREFIX prefix for FILE_SET argument value and for calling tinyxyz_sources()
 # function to obtain header and source files. Cannot be undefined or empty.
 # BASE_DIRS these directories are directly passed to the target_sources(BASE_DIRS)
 # for public and private header files. The _private suffix is appended for every
 # directory path for private header files. It cannot end with slahes❗ Empty or undefined
 # BASE_DIRS is handled the same way as for the target_sources().
+#
+# Obtain header and source files (ignoring private headers) and add source files
+# for the given target.
+#
+# Synopsis:
+# tiny_target_sources(<target>
+#   [PRIVATE] PREFIX <name> BASE_DIR <dir>
+# )
+#
+# PRIVATE add obtained headers from the tinyxyz_sources() function as private headers.
+# PREFIX prefix for calling tinyxyz_sources() function to obtain header and source files.
+# Cannot be undefined or empty.
+# BASE_DIR this directory is added to target_include_directories($<BUILD_INTERFACE>).
 function(tiny_target_sources target)
 
     # Arguments
-    set(options PUBLIC_ONLY)
-    set(oneValueArgs FILE_SET_PREFIX)
+    set(options FILE_SET PRIVATE)
+    set(oneValueArgs PREFIX BASE_DIR)
     set(multiValueArgs BASE_DIRS)
     cmake_parse_arguments(PARSE_ARGV 1 TINY
         "${options}" "${oneValueArgs}" "${multiValueArgs}"
@@ -846,35 +897,57 @@ function(tiny_target_sources target)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    # FILE_SET_PREFIX is required (don't allow/disables the default HEADER file set)
-    if("${TINY_FILE_SET_PREFIX}" STREQUAL "")
+    if(TINY_FILE_SET AND TINY_PRIVATE)
+        message(FATAL_ERROR "The FILE_SET and PRIVATE option arguments cannot be defined
+at the same time in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    # PREFIX is required (also don't allow/disables the default HEADER file set)
+    if("${TINY_PREFIX}" STREQUAL "")
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: FILE_SET_PREFIX")
+keyword or its value is empty: PREFIX")
     endif()
 
     # Body
     # Get library header/_private and source files by the given prefix
-    set(sourcesPrefix ${TINY_FILE_SET_PREFIX}) # For better naming
     set(headersPrivate "")
     set(headers "")
     set(sources "")
 
-    cmake_language(CALL tiny${sourcesPrefix}_sources headersPrivate headers sources)
+    cmake_language(CALL tiny${TINY_PREFIX}_sources headersPrivate headers sources)
 
     # Specify/Add source files
-    target_sources(${target} PRIVATE ${sources})
+    list(LENGTH sources sourcesCount)
+
+    if(sourcesCount GREATER 0)
+        target_sources(${target} PRIVATE ${sources})
+    endif()
+
+    # Invoke the correct implementation
+    if(TINY_FILE_SET)
+        tiny_target_sources_fileset()
+    else()
+        tiny_target_sources_basic()
+    endif()
+
+endfunction()
+
+# Helper macro for the target_sources(FILE_SET) overload (for nicer/shorter code)
+macro(tiny_target_sources_fileset)
 
     # Specify/Create file set for PUBLIC header files
     target_sources(${target} PUBLIC
-        FILE_SET ${TINY_FILE_SET_PREFIX}_headers_public
+        FILE_SET ${TINY_PREFIX}_headers_public
         TYPE HEADERS
         BASE_DIRS "${TINY_BASE_DIRS}" # Quotes needed to support empty or undefined values
         FILES ${headers}
     )
 
+    list(LENGTH headersPrivate headersPrivateCount)
+
     # Nothing to do, no private headers
-    if(TINY_PUBLIC_ONLY)
-        return()
+    if(headersPrivateCount EQUAL 0)
+        return() # Applies for the caller, not here
     endif()
 
     # Specify/Create file set for PRIVATE header files
@@ -882,10 +955,29 @@ keyword or its value is empty: FILE_SET_PREFIX")
     list(TRANSFORM TINY_BASE_DIRS APPEND "_private" OUTPUT_VARIABLE baseDirsPrivate)
 
     target_sources(${target} PRIVATE
-        FILE_SET ${TINY_FILE_SET_PREFIX}_headers_private
+        FILE_SET ${TINY_PREFIX}_headers_private
         TYPE HEADERS
         BASE_DIRS "${baseDirsPrivate}"
         FILES ${headersPrivate}
     )
 
-endfunction()
+endmacro()
+
+# Helper macro for the target_sources() basic overload (for nicer/shorter code)
+macro(tiny_target_sources_basic)
+
+    # Allow to add headers as private
+    if(TINY_PRIVATE)
+        set(scope PRIVATE)
+    else()
+        set(scope PUBLIC)
+    endif()
+
+    # Absolute paths stay untouched
+    cmake_path(ABSOLUTE_PATH TINY_BASE_DIR NORMALIZE OUTPUT_VARIABLE includeDir)
+
+    target_include_directories(${target} ${scope} "$<BUILD_INTERFACE:${includeDir}>")
+
+    target_sources(${target} ${scope} ${headers})
+
+endmacro()

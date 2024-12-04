@@ -27,10 +27,7 @@ add_library(${TinyMySql_ns}::${TinyMySql_target} ALIAS ${TinyMySql_target})
 # After the FILE_SET refactor the ${CMAKE_CURRENT_SOURCE_DIR}/include is PUBLIC
 # (it was PRIVATE before) which is a good thing as it helps get rid of one
 # target_include_directories(PUBLIC) call in TinyDrivers (Shared).
-tiny_target_sources(${TinyMySql_target}
-    FILE_SET_PREFIX mysql
-    BASE_DIRS "include"
-)
+tiny_target_sources(${TinyMySql_target} FILE_SET PREFIX mysql BASE_DIRS "include")
 
 # Use Precompiled headers (PCH)
 # ---

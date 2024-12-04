@@ -21,10 +21,7 @@ add_library(${TinyDrivers_ns}::${TinyDrivers_target} ALIAS ${TinyDrivers_target}
 # ---
 
 # Create header file sets and add source files in one shot
-tiny_target_sources(${TinyDrivers_target}
-    FILE_SET_PREFIX drivers
-    BASE_DIRS "include"
-)
+tiny_target_sources(${TinyDrivers_target} FILE_SET PREFIX drivers BASE_DIRS "include")
 
 # Using source files directly to avoid unnecessary static library build and linking
 if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
@@ -32,7 +29,7 @@ if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
     # A relative path is fine here, CMake will resolve it to an absolute path anyway,
     # so I don't have to, also, it may survive a potential refactor better.
     tiny_target_sources(${TinyDrivers_target}
-        FILE_SET_PREFIX mysql
+        FILE_SET PREFIX mysql
         BASE_DIRS "../mysql/include" # Don't try get rid of .. using absolute path (revisited)
     )
 endif()

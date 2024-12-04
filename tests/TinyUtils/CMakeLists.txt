@@ -12,20 +12,17 @@ tiny_read_version(TINYUTILS_VERSION
     HEADER_FOR "${TinyUtils_ns}"
 )
 
+# TinyUtils library
+# ---
+
+add_library(${TinyUtils_target})
+add_library(${TinyOrm_ns}::${TinyUtils_target} ALIAS ${TinyUtils_target})
+
 # TinyUtils library header and source files
 # ---
 
-add_library(${TinyUtils_target}
-    src/common/collection.hpp
-    src/databases.hpp
-    src/export.hpp
-    src/fs.hpp
-    src/version.hpp
-
-    src/databases.cpp
-    src/fs.cpp
-)
-add_library(${TinyOrm_ns}::${TinyUtils_target} ALIAS ${TinyUtils_target})
+# Add header and source files in one shot
+tiny_target_sources(${TinyUtils_target} PREFIX utils BASE_DIR "src")
 
 # TinyORM library specific configuration
 # ---
@@ -46,10 +43,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         PROPERTY OUTPUT_NAME "${TinyUtils_target}${TINY_VERSION_MAJOR}"
     )
 endif()
-
-target_include_directories(${TinyUtils_target}
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
-)
 
 # TinyUtils defines
 # ---

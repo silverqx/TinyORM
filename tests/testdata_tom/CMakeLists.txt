@@ -22,10 +22,9 @@ add_executable(${TomTestData_ns}::${TomTestData_target} ALIAS ${TomTestData_targ
 # Tom testdata migrations and seeder header files
 # ---
 
-tiny_tom_testdata_database_sources(${TomTestData_target}_headers)
-
-target_sources(${TomTestData_target} PRIVATE
-    ${${TomTestData_target}_headers}
+tiny_target_sources(${TomTestData_target} PRIVATE
+    PREFIX _tom_testdata_database
+    BASE_DIR "database"
 )
 
 # Tom migrations for unit tests specific configuration
@@ -37,10 +36,6 @@ set_target_properties(${TomTestData_target}
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
         VERSION ${TINY_VERSION}
-)
-
-target_include_directories(${TomTestData_target}
-    PRIVATE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/database>"
 )
 
 # Tom migrations for unit tests defines

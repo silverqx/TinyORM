@@ -238,10 +238,7 @@ tiny_init_tom_database_dirs()
 include(TinySources)
 
 # Create header file sets and add source files in one shot
-tiny_target_sources(${TinyOrm_target} PUBLIC_ONLY
-    FILE_SET_PREFIX orm
-    BASE_DIRS "include"
-)
+tiny_target_sources(${TinyOrm_target} FILE_SET PREFIX orm BASE_DIRS "include")
 
 # Use Precompiled headers (PCH)
 # ---
@@ -328,10 +325,7 @@ endif()
 
 if(TOM)
     # Create header file sets and add source files in one shot
-    tiny_target_sources(${TinyOrm_target} PUBLIC_ONLY
-        FILE_SET_PREFIX tom
-        BASE_DIRS "tom/include"
-    )
+    tiny_target_sources(${TinyOrm_target} FILE_SET PREFIX tom BASE_DIRS "tom/include")
 endif()
 
 # Tom related defines
