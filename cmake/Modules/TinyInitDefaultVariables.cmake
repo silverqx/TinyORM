@@ -264,7 +264,7 @@ to generate find_dependency() calls for the TinyORM package configuration file."
 
     # Build Tree folders for generated content
     # For better naming and no need to be INTERNAL
-    set(TINY_BUILD_GENERATED_DIR   ".${TinyOrm_ns}")
+    set(TINY_BUILD_GENERATED_DIR   ".tiny")
     set(TINY_BUILD_BUILDTREE_DIR   "${TINY_BUILD_GENERATED_DIR}/buildtree")
     set(TINY_BUILD_INSTALLTREE_DIR "${TINY_BUILD_GENERATED_DIR}/installtree")
     set(TINY_BUILD_INCLUDE_DIR     "${TINY_BUILD_GENERATED_DIR}/include")
