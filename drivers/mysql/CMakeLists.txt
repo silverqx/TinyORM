@@ -115,7 +115,7 @@ endif()
 
 # Find icons, orm/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
+    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/${TINY_SOURCE_RESOURCES_DIR}\"")
 endif()
 
 tiny_resource_and_manifest(${TinyMySql_target})

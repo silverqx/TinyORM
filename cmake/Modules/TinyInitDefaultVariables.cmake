@@ -262,6 +262,9 @@ to generate find_dependency() calls for the TinyORM package configuration file."
     set(TINY_TESTS_ENV_PATH TINY_TESTS_ENV_PATH-NOTFOUND) # Always use if() before using the variable
     tiny_init_ctest_path_win32()
 
+    # Source Tree folders
+    set(TINY_SOURCE_RESOURCES_DIR  "resources")
+
     # Build Tree folders for generated content
     # For better naming and no need to be INTERNAL
     set(TINY_BUILD_GENERATED_DIR   ".tiny")
