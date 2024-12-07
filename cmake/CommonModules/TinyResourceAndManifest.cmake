@@ -55,7 +55,7 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
 
     # TINY_OUTPUT_DIR (absolute path)
     if(NOT DEFINED TINY_OUTPUT_DIR OR "${TINY_OUTPUT_DIR}" STREQUAL "")
-        set(TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")
+        set(TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/")
     else() # It's always relative, see check above
         string(PREPEND TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
     endif()
