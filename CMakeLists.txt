@@ -381,7 +381,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 include(TinyResourceAndManifest)
-tiny_resource_and_manifest(${TinyOrm_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
+tiny_resource_and_manifest(${TinyOrm_target})
 
 # Resolve and link dependencies
 # ---

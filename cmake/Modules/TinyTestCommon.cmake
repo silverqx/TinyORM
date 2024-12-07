@@ -106,7 +106,6 @@ sqlite_schemabuilder;mysql_tinybuilder"
     endif()
 
     tiny_resource_and_manifest(${name}
-        OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/"
         TEST RESOURCES_DIR "${PROJECT_SOURCE_DIR}/tests/resources/"
     )
 

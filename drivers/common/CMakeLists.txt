@@ -153,7 +153,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\"")
 endif()
 
-tiny_resource_and_manifest(${TinyDrivers_target} OUTPUT_DIR "${TINY_BUILD_TMP_DIR}/")
+tiny_resource_and_manifest(${TinyDrivers_target})
 
 # Resolve and link dependencies
 # ---
