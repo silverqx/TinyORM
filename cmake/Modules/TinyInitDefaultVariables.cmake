@@ -268,7 +268,8 @@ to generate find_dependency() calls for the TinyORM package configuration file."
     set(TINY_BUILD_BUILDTREE_DIR   "${TINY_BUILD_GENERATED_DIR}/buildtree")
     set(TINY_BUILD_INSTALLTREE_DIR "${TINY_BUILD_GENERATED_DIR}/installtree")
     set(TINY_BUILD_INCLUDE_DIR     "${TINY_BUILD_GENERATED_DIR}/include")
-    set(TINY_BUILD_TMP_DIR         "${TINY_BUILD_GENERATED_DIR}/tmp")
+    # Changed from .tiny/tmp/ it may not be in tmp/ subfolder
+    set(TINY_BUILD_TMP_DIR         "${TINY_BUILD_GENERATED_DIR}")
 
     # Provide the default value if not set
     if(NOT TINY_VCPKG)
