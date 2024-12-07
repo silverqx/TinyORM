@@ -129,17 +129,33 @@ endfunction()
 
 # Print clearly visible notice message about passed variable
 function(p variable)
-    message("|||-- ${variable} : ${${variable}}")
+    # To be able to track whitespaces
+    cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+    if(TINY_QUOTE)
+        message("|||-- ${variable} : '${${variable}}'")
+    else()
+        message("|||-- ${variable} : ${${variable}}")
+    endif()
 endfunction()
 
 # Print status message about a passed variable
 function(ps variable)
-    message(STATUS "${variable} : ${${variable}}")
+    cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+    if(TINY_QUOTE)
+        message(STATUS "${variable} : '${${variable}}'")
+    else()
+        message(STATUS "${variable} : ${${variable}}")
+    endif()
 endfunction()
 
 # Print notice message about a passed variable
 function(pn variable)
-    message(NOTICE "${variable} : ${${variable}}")
+    cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+    if(TINY_QUOTE)
+        message(NOTICE "${variable} : '${${variable}}'")
+    else()
+        message(NOTICE "${variable} : ${${variable}}")
+    endif()
 endfunction()
 
 # Print clearly visible notice message about passed BOOL variable
