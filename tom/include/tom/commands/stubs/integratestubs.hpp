@@ -468,7 +468,7 @@ __tom_environments()
 # Tom commands with the --database= option (used to complete connection names)
 __tom_commands_with_database_option()
 {
-    # Re-use %s for all strings, that's why the first two ends with the space
+    # Reuse %s for all strings, that's why the first two ends with the space
     printf '%s' \
         'migrate db:seed db:wipe ' \
         'migrate:fresh migrate:install migrate:refresh migrate:reset migrate:rollback ' \
