@@ -288,7 +288,7 @@ one argument.")
     endif()
 
     set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
-    set(TINY_RC_FLAGS_BACKUP "${TINY_RC_FLAGS_BACKUP}" PARENT_SCOPE)
+    set(TinyRcFlagsToRemove "${TinyRcFlagsToRemove}" PARENT_SCOPE)
 
 endfunction()
 
@@ -318,7 +318,7 @@ function(_tiny_rc_flags_append)
         return()
     endif()
 
-    # Prepend it this way so the space at beginning is also saved in TINY_RC_FLAGS_BACKUP
+    # Prepend it this way so the space at beginning is also saved in TinyRcFlagsToRemove
     # to correctly remove this space in the _tiny_rc_flags_restore().
     if(NOT "${CMAKE_RC_FLAGS}" STREQUAL "")
         string(PREPEND rcFlags " ")
@@ -330,7 +330,7 @@ function(_tiny_rc_flags_append)
 
     set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
     # Will be removed from the CMAKE_RC_FLAGS during the next invocation
-    set(TINY_RC_FLAGS_BACKUP "${rcFlags}" PARENT_SCOPE)
+    set(TinyRcFlagsToRemove "${rcFlags}" PARENT_SCOPE)
 
 endfunction()
 
@@ -340,20 +340,20 @@ endfunction()
 function(_tiny_rc_flags_restore)
 
     # Nothing to do
-    list(LENGTH TINY_RC_FLAGS_BACKUP rcFlagsBackupCount)
-    if(rcFlagsBackupCount EQUAL 0)
+    list(LENGTH TinyRcFlagsToRemove rcFlagsToRemoveCount)
+    if(rcFlagsToRemoveCount EQUAL 0)
         return()
     endif()
 
     # Remove RC flags from the previous call
-    foreach(toRemove ${TINY_RC_FLAGS_BACKUP})
+    foreach(toRemove ${TinyRcFlagsToRemove})
         string(REPLACE "${toRemove}" "" CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
     endforeach()
 
     string(STRIP "${CMAKE_RC_FLAGS}" CMAKE_RC_FLAGS)
 
     set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
-    set(TINY_RC_FLAGS_BACKUP "" PARENT_SCOPE)
+    set(TinyRcFlagsToRemove "" PARENT_SCOPE)
 
 endfunction()
 

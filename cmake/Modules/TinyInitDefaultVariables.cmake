@@ -139,7 +139,7 @@ builds
     endif()
 
     # Used to save and restore original content of the CMAKE_RC_FLAGS variable
-    set(TINY_RC_FLAGS_BACKUP "")
+    set(TinyRcFlagsToRemove "")
 
     # Add -nologo to the CMAKE_RC_FLAGS if it does not already contain it
     if(MSVC AND NOT CMAKE_RC_FLAGS MATCHES " *[-/]nologo *")

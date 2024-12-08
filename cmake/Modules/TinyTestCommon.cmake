@@ -103,7 +103,7 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
         # I will not use output variables here, I like it this way 🤘
         set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
-        set(TINY_RC_FLAGS_BACKUP "${TINY_RC_FLAGS_BACKUP}" PARENT_SCOPE)
+        set(TinyRcFlagsToRemove "${TinyRcFlagsToRemove}" PARENT_SCOPE)
     endif()
 
     tiny_resource_and_manifest(${name}
