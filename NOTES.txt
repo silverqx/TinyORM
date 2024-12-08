@@ -1532,7 +1532,7 @@ MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQU
   - ❗but if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") matches the cl.exe MSVC compiler only
 
 - set(PARENT_SCOPE) and quotes for the value
-  - see: https://crascit.com/2022/01/25/quoting-in-cmake/#h-passing-lists-as-command-arguments
+  - See https://crascit.com/2022/01/25/quoting-in-cmake/#h-passing-lists-as-command-arguments
   - there is no need to quote the value even for lists (tested)
 list(APPEND l1 "v1")
 set(l1 ${l1} PARENT_SCOPE)
@@ -1542,6 +1542,27 @@ function(f1)
     list(JOIN l1 "\;" l1)
     set(l1 "${l1}" PARENT_SCOPE)
 endfunction()
+    - it's one value "v1\;v2" as the ; character is escaped!
+      - all CMake list() functions like LENGTH, STRIP, TRANSFORM are correctly handling this
+        escape sequence
+      - ❗even passing it down to another function unquoted obey this escaped \;
+        - set(l1 "v1\;v2") f1(${l1}) ARGC == 1 and ARGV0 == "v1\;v2" 🤯
+      - ❗you break this if you pass the variable unquoted
+      - set() doesn't obey this escape
+      - ; is correct character in paths (I don't understand consequences for now)
+      - BUT to be even more confused I don't know if all but TRANSFORM STRIP and JOIN
+        removes \ from \; so it break this escaping internally? WTF
+        - it obeys escaping but removes \
+      - new findings
+        - cmake_parse_arguments() correctly handles argument values with ;, it escapes them as \;
+        - you can pass unquoted argument like this to another function and call again
+          the cmake_parse_arguments() on it and it still be correctly escaped
+        - before some list() operations like TRANSFORM STRIP, REMOVE_ITEM you must escape \; once
+          more like \\; then the result will be correctly escaped (z_vcpkg_list_escape_once_more())
+      - OK again, everything is described in docs, simply it doesn't support ; and everything
+        must be handled manually and use workarounds:
+        https://cmake.org/cmake/help/latest/manual/cmake-language.7.html#lists
+      - so this is the answer for what is described below, it should be always quoted 🤬
   - ❗so quote only if really needed and add comment in this case
   - problem here is that docs recommend to quote these list arguments but I have all these values
     uncommented in my code, for strings and also for lists
