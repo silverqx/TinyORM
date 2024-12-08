@@ -933,15 +933,15 @@ keyword or its value is empty: PREFIX")
 
     # Invoke the correct implementation
     if(TINY_FILE_SET)
-        tiny_target_sources_fileset()
+        _tiny_target_sources_fileset()
     else()
-        tiny_target_sources_basic()
+        _tiny_target_sources_basic()
     endif()
 
 endfunction()
 
 # Helper macro for the target_sources(FILE_SET) overload (for nicer/shorter code)
-macro(tiny_target_sources_fileset)
+macro(_tiny_target_sources_fileset)
 
     # Specify/Create file set for PUBLIC header files
     target_sources(${target} PUBLIC
@@ -970,7 +970,7 @@ macro(tiny_target_sources_fileset)
 endmacro()
 
 # Helper macro for the target_sources() basic overload (for nicer/shorter code)
-macro(tiny_target_sources_basic)
+macro(_tiny_target_sources_basic)
 
     # Allow to add headers as private
     if(TINY_PRIVATE)
