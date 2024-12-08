@@ -56,7 +56,7 @@ target_compile_definitions(${TomTestData_target}
 
 # Find icons, tom/version.hpp, and Windows manifest file for MinGW
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags("-I \"${PROJECT_SOURCE_DIR}/tom/${TINY_SOURCE_RESOURCES_DIR}\"")
+    tiny_rc_flags(APPEND "-I \"${PROJECT_SOURCE_DIR}/tom/${TINY_SOURCE_RESOURCES_DIR}\"")
 endif()
 
 tiny_resource_and_manifest(${TomTestData_target}

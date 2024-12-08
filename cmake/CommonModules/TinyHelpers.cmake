@@ -235,30 +235,127 @@ from ${versionHeader} in ${CMAKE_CURRENT_FUNCTION}().")
 
 endfunction()
 
-# Set CMAKE_RC_FLAGS, it saves and restores original content of the CMAKE_RC_FLAGS
-# variable, so rc/windres compile commands will not be polluted with include paths from
-# previous calls
-macro(tiny_set_rc_flags)
+# Command for manipulating CMAKE_RC_FLAGS, supports APPEND and RESTORE operations
+#
+# Append flags to the CMAKE_RC_FLAGS. It will also save and restore original content
+# of the CMAKE_RC_FLAGS variable, so that rc/windres compilation commands are not
+# polluted with include paths from previous calls.
+#
+# Synopsis:
+# tiny_rc_flags(APPEND [<flags>...])
+#
+# Restore the original value of CMAKE_RC_FLAGS.
+#
+# Synopsis:
+# tiny_rc_flags(RESTORE)
+function(tiny_rc_flags)
 
-    # Remove RC flags from the previous call
-    if(NOT TINY_RC_FLAGS_BACKUP STREQUAL "")
-        foreach(toRemove ${TINY_RC_FLAGS_BACKUP})
-            string(REGEX REPLACE "${toRemove}" "" CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
-        endforeach()
-        unset(toRemove)
+    # Arguments
+    set(options RESTORE)
+    set(multiValueArgs APPEND)
+    cmake_parse_arguments(PARSE_ARGV 0 TINY "${options}" "" "${multiValueArgs}")
+
+    # Arguments checks
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    list(APPEND CMAKE_RC_FLAGS " ${ARGN}")
-    list(JOIN CMAKE_RC_FLAGS " " CMAKE_RC_FLAGS)
+    # To evaluate only once
+    if(DEFINED TINY_APPEND OR "APPEND" IN_LIST TINY_KEYWORDS_MISSING_VALUES)
+        set(isAppendSet TRUE)
+    else()
+        set(isAppendSet FALSE)
+    endif()
 
-    # Remove redundant whitespaces
-    string(REGEX REPLACE " +" " " CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
+    if(TINY_RESTORE AND isAppendSet)
+        message(FATAL_ERROR "The RESTORE and APPEND arguments cannot be defined \
+at the same time in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    # Body
+    # APPEND
+    if(isAppendSet)
+        _tiny_rc_flags_append(${TINY_APPEND}) # Don't quote here
+
+    # RESTORE
+    elseif(TINY_RESTORE)
+        _tiny_rc_flags_restore()
+
+    else()
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION}() must be called with at least \
+one argument.")
+    endif()
+
+    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
+    set(TINY_RC_FLAGS_BACKUP "${TINY_RC_FLAGS_BACKUP}" PARENT_SCOPE)
+
+endfunction()
+
+# Append flags to the CMAKE_RC_FLAGS
+# It will also save and restore original content of the CMAKE_RC_FLAGS variable, so that
+# rc/windres compilation commands are not polluted with include paths from previous calls.
+function(_tiny_rc_flags_append)
+
+    # Restore the original value of CMAKE_RC_FLAGS (even if ARGC == 0)
+    _tiny_rc_flags_restore()
+
+    # Copy as we need to modify it
+    # It doesn't matter we are using the ARGN as it would need much more effort
+    # to implement it correctly, like adding another cmake_parse_arguments() and escaping
+    # \; once more like \\; before list() operations. I'm not gonna do this as I don't
+    # need it, it can be overcome by replacing the ; with eg. | as it's not an allowed
+    # character in paths and filenames.
+    set(rcFlags "${ARGN}")
+
+    # Strip and remove all empty values
+    list(TRANSFORM rcFlags STRIP OUTPUT_VARIABLE rcFlags)
+    list(REMOVE_ITEM rcFlags "")
+
+    # Nothing to do
+    list(LENGTH rcFlags rcFlagsCount)
+    if(rcFlagsCount EQUAL 0)
+        return()
+    endif()
+
+    # Prepend it this way so the space at beginning is also saved in TINY_RC_FLAGS_BACKUP
+    # to correctly remove this space in the _tiny_rc_flags_restore().
+    if(NOT "${CMAKE_RC_FLAGS}" STREQUAL "")
+        string(PREPEND rcFlags " ")
+    endif()
+
+    # CMAKE_RC_FLAGS is command-line string fragment (must be separated by spaces)
+    list(JOIN rcFlags " " rcFlags)
+    string(APPEND CMAKE_RC_FLAGS "${rcFlags}")
+
+    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
+    # Will be removed from the CMAKE_RC_FLAGS during the next invocation
+    set(TINY_RC_FLAGS_BACKUP "${rcFlags}" PARENT_SCOPE)
+
+endfunction()
+
+# Restore the original value of CMAKE_RC_FLAGS
+# In our code for all targets it will always remove -I PROJECT_SOURCE_DIR/resources as
+# all add_subdirectory() calls make copy of a scope from the TinyOrm target.
+function(_tiny_rc_flags_restore)
+
+    # Nothing to do
+    list(LENGTH TINY_RC_FLAGS_BACKUP rcFlagsBackupCount)
+    if(rcFlagsBackupCount EQUAL 0)
+        return()
+    endif()
+
+    # Remove RC flags from the previous call
+    foreach(toRemove ${TINY_RC_FLAGS_BACKUP})
+        string(REPLACE "${toRemove}" "" CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
+    endforeach()
+
     string(STRIP "${CMAKE_RC_FLAGS}" CMAKE_RC_FLAGS)
 
-    # Will be removed from the CMAKE_RC_FLAGS in a future call
-    set(TINY_RC_FLAGS_BACKUP "${ARGN}")
+    set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}" PARENT_SCOPE)
+    set(TINY_RC_FLAGS_BACKUP "" PARENT_SCOPE)
 
-endmacro()
+endfunction()
 
 # Print a VERBOSE message against which library is project linking
 function(tiny_print_linking_against target)

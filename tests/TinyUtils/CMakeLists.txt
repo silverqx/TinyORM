@@ -69,11 +69,12 @@ endif()
 
 # Find Windows manifest file
 if(MINGW)
-    tiny_set_rc_flags("-I \"${CMAKE_CURRENT_SOURCE_DIR}/${TINY_SOURCE_RESOURCES_DIR}\"")
+    tiny_rc_flags(
+        APPEND "-I \"${CMAKE_CURRENT_SOURCE_DIR}/${TINY_SOURCE_RESOURCES_DIR}\"")
 
 # To remove values from CMAKE_RC_FLAGS from the previous call
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    tiny_set_rc_flags()
+    tiny_rc_flags(RESTORE)
 endif()
 
 tiny_resource_and_manifest(${TinyUtils_target})

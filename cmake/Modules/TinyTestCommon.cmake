@@ -98,8 +98,8 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
     # Find Windows manifest file for MinGW
     if(MINGW)
-        tiny_set_rc_flags(
-            "-I \"${PROJECT_SOURCE_DIR}/tests/${TINY_SOURCE_RESOURCES_DIR}\"")
+        tiny_rc_flags(
+            APPEND "-I \"${PROJECT_SOURCE_DIR}/tests/${TINY_SOURCE_RESOURCES_DIR}\"")
 
         # I will not use output variables here, I like it this way 🤘
         set(CMAKE_RC_FLAGS ${CMAKE_RC_FLAGS} PARENT_SCOPE)
