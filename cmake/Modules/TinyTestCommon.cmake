@@ -144,6 +144,7 @@ function(tiny_configure_test_pch target provides_pch)
         set_target_properties(${target} PROPERTIES QT_SKIP_DEFAULT_TESTCASE_DIRS YES)
     endif()
 
+    # The <target> will provide PCH for all other auto tests
     if(provides_pch)
         # Throw an exception if CACHE{TINY_TESTS_PCH_REUSE_FROM} isn't equal to <target>
         tiny_throw_if_wrong_reuse_from(${target})
@@ -156,16 +157,16 @@ function(tiny_configure_test_pch target provides_pch)
             "The <target> name of the first test case that provides PCH for all other \
 test cases (used by REUSE_FROM).")
 
-    else()
-        # This should never happen :/
-        # Throw an exception if the CACHE{TINY_TESTS_PCH_REUSE_FROM} isn't DEFINED
-        tiny_throw_if_no_cache_reuse_from()
-
-        # TODO REUSE_FROM will fail if NOT $<COMPILE_LANGUAGE:CXX> silverqx
-        target_precompile_headers(${target} REUSE_FROM "$CACHE{TINY_TESTS_PCH_REUSE_FROM}")
-
         return()
     endif()
+
+    # Reuse PCH provided by the target stored in CACHE{TINY_TESTS_PCH_REUSE_FROM} variable
+    # This should never happen :/
+    # Throw an exception if the CACHE{TINY_TESTS_PCH_REUSE_FROM} isn't DEFINED
+    tiny_throw_if_no_cache_reuse_from()
+
+    # TODO REUSE_FROM will fail if NOT $<COMPILE_LANGUAGE:CXX> silverqx
+    target_precompile_headers(${target} REUSE_FROM "$CACHE{TINY_TESTS_PCH_REUSE_FROM}")
 
 endfunction()
 
