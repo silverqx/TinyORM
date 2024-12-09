@@ -49,7 +49,7 @@ endfunction()
 
 include(CMakeDependentOption)
 # Helper function for coupling cmake_dependent_option() and add_feature_info()
-macro(feature_option_dependent name description default depends force)
+function(feature_option_dependent name description default depends force)
 
     # Arguments checks
     if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
@@ -65,7 +65,7 @@ in feature_option_dependent().")
 
     add_feature_info(${name} ${name} "${_description}")
 
-endmacro()
+endfunction()
 
 # Macro to provide a STRING type option dependent on other options.
 # This macro works the same and as the cmake_dependent_option() but it's for the STRING
