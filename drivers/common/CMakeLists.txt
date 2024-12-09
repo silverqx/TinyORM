@@ -6,7 +6,7 @@
 
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
-    VERSION_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/include/orm/drivers/version.hpp"
+    VERSION_HEADER "include/orm/drivers/version.hpp"
     PREFIX TINYDRIVERS
     HEADER_FOR "${TinyDrivers_ns}"
 )

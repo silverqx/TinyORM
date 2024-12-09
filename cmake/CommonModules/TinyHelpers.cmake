@@ -177,7 +177,8 @@ endfunction()
 #
 # <out_version> output variable for the whole version number.
 # <out_major|minor|patch|tweak> output variables for individual version numbers.
-# VERSION_HEADER absolute filepath is directly passed to the file(STRINGS).
+# VERSION_HEADER relative or absolute filepath is directly passed to the file(STRINGS).
+# It's relative to the CMAKE_CURRENT_SOURCE_DIR.
 # PREFIX for the file(STRINGS REGEX) to find #define <prefix>_VERSION_<MAJOR|...> lines.
 # HEADER_FOR project name used in the message(DEBUG) (use TinyXyz_ns variables for this).
 #
