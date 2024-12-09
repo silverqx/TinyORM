@@ -11,7 +11,7 @@ include_guard(GLOBAL)
 #
 # <target> name to operate on.
 # DEPENDS_ON_UNITTESTS make the functional test <target> dependent on all unit tests,
-# it should only be enablved for functional tests. Primarily to make functional tests
+# it should only be enabled for functional tests. Primarily to make functional tests
 # dependent on all unit tests.
 # INCLUDE_MIGRATIONS add migrations headers on the include path and call
 # the target_sources(PRIVATE) for these headers (calls tiny_target_sources(PRIVATE)).
