@@ -932,8 +932,11 @@ keyword or its value is empty: PREFIX")
     endif()
 
     # Invoke the correct implementation
+    # FILE_SET
     if(TINY_FILE_SET)
         _tiny_target_sources_fileset()
+
+    # Basic target_sources()
     else()
         _tiny_target_sources_basic()
     endif()

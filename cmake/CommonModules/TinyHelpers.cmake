@@ -274,6 +274,7 @@ at the same time in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Body
+    # Invoke the correct implementation
     # APPEND
     if(isAppendSet)
         _tiny_rc_flags_append(${TINY_APPEND}) # Don't quote here

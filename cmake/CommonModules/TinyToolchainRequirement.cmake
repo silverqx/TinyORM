@@ -140,7 +140,7 @@ upgrade Clang compiler")
     tiny_satisfies_minimum_required_qt_version(satisfiedMinReqQtVersion)
 
     if(NOT satisfiedMinReqQtVersion)
-        # Should never happen that the TINY_QT_VERSION is undefined or empty
+        # Should never happen that the TINY_QT_VERSION is empty or undefined
         message(FATAL_ERROR "Minimum required Qt version was not satisfied, \
 required version >=${TINY_QT}, your version is ${TINY_QT_VERSION}, \
 upgrade Qt Framework.")
