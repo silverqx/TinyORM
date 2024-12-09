@@ -181,9 +181,9 @@ function(tiny_throw_if_wrong_reuse_from target)
         return()
     endif()
 
-    message(FATAL_ERROR "The '${target}' test case can't set the PROVIDES_PCH because \
-the \$CACHE{TINY_TESTS_PCH_REUSE_FROM} is already set \
-for the '$CACHE{TINY_TESTS_PCH_REUSE_FROM}' test case, in ${CMAKE_CURRENT_FUNCTION}().")
+    message(FATAL_ERROR "The '${target}' test target can't set the PROVIDES_PCH because \
+the CACHE{TINY_TESTS_PCH_REUSE_FROM} is already set \
+for the '$CACHE{TINY_TESTS_PCH_REUSE_FROM}' test target, in ${CMAKE_CURRENT_FUNCTION}().")
 
 endfunction()
 
@@ -195,7 +195,7 @@ function(tiny_throw_if_no_cache_reuse_from)
         return()
     endif()
 
-    message(FATAL_ERROR "The \$CACHE{TINY_TESTS_PCH_REUSE_FROM} is NOT DEFINED, \
-the first compiled test case must be tagged with the PROVIDES_PCH argument.")
+    message(FATAL_ERROR "The CACHE{TINY_TESTS_PCH_REUSE_FROM} is NOT DEFINED, \
+the first compiled test target must be tagged with the PROVIDES_PCH argument option.")
 
 endfunction()
