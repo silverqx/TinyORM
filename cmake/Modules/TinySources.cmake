@@ -982,11 +982,32 @@ macro(_tiny_target_sources_basic)
         set(scope PUBLIC)
     endif()
 
-    # Absolute paths stay untouched
-    cmake_path(ABSOLUTE_PATH TINY_BASE_DIR NORMALIZE OUTPUT_VARIABLE includeDir)
+    # Prepare the include folder path
+    _tiny_target_sources_basic_include_dir("${TINY_BASE_DIR}") # Quotes needed to support empty or undefined values
 
     target_include_directories(${target} ${scope} "$<BUILD_INTERFACE:${includeDir}>")
 
     target_sources(${target} ${scope} ${headers})
 
 endmacro()
+
+# Prepare the include folder path for target_include_directories($<BUILD_INTERFACE>)
+function(_tiny_target_sources_basic_include_dir include_path)
+
+    # Support an empty, missing, or undefined BASE_DIR argument value
+    if("${include_path}" STREQUAL "")
+        set(includeDir "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
+        return()
+    endif()
+
+    # Absolute paths stay untouched
+    cmake_path(ABSOLUTE_PATH include_path NORMALIZE OUTPUT_VARIABLE includeDir)
+
+    # Remove trailing slashes
+    if(includeDir MATCHES "/$")
+        cmake_path(GET includeDir PARENT_PATH includeDir)
+    endif()
+
+    set(includeDir "${includeDir}" PARENT_SCOPE)
+
+endfunction()
