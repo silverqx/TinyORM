@@ -1387,7 +1387,7 @@ All are snake-case unless otherwise specified.
    - local variables: preferred camelCase (deprecated: snake_case; use always camelCase)
    - function parameters: lowercase snake_case (deprecated: optional tiny_ prefix)
      - output parameters as first with out_ prefix
-   - cmake_parse_arguments: TINY_
+   - cmake_parse_arguments prefix: TINY_
 
  - option variables: upper case without prefix
  - cached variables: TINY_
