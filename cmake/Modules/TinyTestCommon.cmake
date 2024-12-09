@@ -3,17 +3,20 @@ include_guard(GLOBAL)
 # Configure a passed auto test
 function(tiny_configure_test target)
 
+    # Arguments
     set(options
         DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS PROVIDES_PCH RUN_SERIAL
     )
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
+    # Arguments checks
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    # Configure PCH for the given test case
+    # Body
+    # Configure PCH for the given test target
     tiny_configure_test_pch(${target} ${TINY_PROVIDES_PCH})
 
     set_target_properties(${target}
@@ -25,10 +28,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
     )
 
     # These two settings allow to run tests in parallel using eg.: ctest --parallel 10
-    # Parallel 30 saves ~12s on MSVC (from 42s to 30s)
+    # It can boost the compilation speed ~25% 😮🔥
     set_tests_properties(${target} PROPERTIES RUN_SERIAL ${TINY_RUN_SERIAL})
 
-    # Primarily to depend all functional tests on unit tests
+    # Primarily to make functional tests dependent on all unit tests
     if(TINY_DEPENDS_ON_UNITTESTS)
         set_tests_properties(${target}
             PROPERTIES
@@ -94,8 +97,6 @@ sqlite_schemabuilder;mysql_tinybuilder"
     )
 
     # Windows resource and manifest files
-    # ---
-
     # Find Windows manifest file for MinGW
     if(MINGW)
         tiny_rc_flags(
@@ -112,10 +113,10 @@ sqlite_schemabuilder;mysql_tinybuilder"
 
 endfunction()
 
-# Configure PCH for the given test case
-# The PROVIDES_PCH parameter from the tiny_configure_test() function tags a test case that
-# will provide PCH for all other test cases, only one test case can be tagged with it and
-# all other test cases will use this PCH without compilation.
+# Configure PCH for the given test target
+# The PROVIDES_PCH parameter from the tiny_configure_test() function tags a test target
+# that will provide PCH for all other test targets, only one test target can be tagged
+# with it and all other test targets will use this PCH without compilation.
 function(tiny_configure_test_pch target provides_pch)
 
     # Set at the beginning as this function can early return
@@ -144,7 +145,7 @@ function(tiny_configure_test_pch target provides_pch)
         set_target_properties(${target} PROPERTIES QT_SKIP_DEFAULT_TESTCASE_DIRS YES)
     endif()
 
-    # The <target> will provide PCH for all other auto tests
+    # The <target> will provide PCH for all other test targets
     if(provides_pch)
         # Throw an exception if CACHE{TINY_TESTS_PCH_REUSE_FROM} isn't equal to <target>
         tiny_throw_if_wrong_reuse_from(${target})
