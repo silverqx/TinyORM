@@ -6,7 +6,7 @@
 
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
-    VERSION_HEADER "${${TinyOrm_ns}_SOURCE_DIR}/tom/include/tom/version.hpp"
+    VERSION_HEADER "${PROJECT_SOURCE_DIR}/tom/include/tom/version.hpp"
     PREFIX TINYTOM
     HEADER_FOR "${TomTestData_ns}"
 )
