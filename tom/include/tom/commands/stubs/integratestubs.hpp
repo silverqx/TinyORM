@@ -24,7 +24,7 @@ uR"(
 
 Register-ArgumentCompleter -Native `
     -CommandName @('tom', 'tom_testdata'
-                   (Get-Alias | Where-Object { $_.Definition -in 'tom', 'tom_testdata' }
+                   (Get-Alias | Where-Object { $_.Definition -match '^tom(_testdata)?(\.exe)?$' }
                               | Select-Object -ExpandProperty Name)).Where{$_} `
     -ScriptBlock {
         Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)

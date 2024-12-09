@@ -130,7 +130,7 @@ For the `pwsh` paste the following code to the pwsh profile (works on Linux or W
 ```powershell title='~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
 Register-ArgumentCompleter -Native `
     -CommandName @('tom', 'tom_testdata'
-                   (Get-Alias | Where-Object { $_.Definition -in 'tom', 'tom_testdata' }
+                   (Get-Alias | Where-Object { $_.Definition -match '^tom(_testdata)?(\.exe)?$' }
                               | Select-Object -ExpandProperty Name)).Where{$_} `
     -ScriptBlock {
         Param([string] $wordToComplete, $commandAst, [int] $cursorPosition)
