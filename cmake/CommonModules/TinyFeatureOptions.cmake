@@ -145,27 +145,38 @@ depends on condition: ${depends})")
 
 endmacro()
 
-# Add a simple build option which controls compile definition(s) for a target.
+# Add the boolean build option and compile definition/s for a target in one shot.
+#
+# Call the option() command if an option <name> is not defined yet and initialize its
+# default value from the <environment-variable-name> if given, otherwise
+# from the <default-value>. Call the target_compile_definitions(<scope>)
+# with the <enabled-compile-definitions> if an option is enabled (ON), otherwise use
+# the <disabled-compile-definitions>. Call the add_feature_info() and mark_as_advanced()
+# functions if FEATURE or ADVANCED is given.
 #
 # Synopsis:
 # target_optional_compile_definitions(<target> <scope> [ADVANCED] [FEATURE]
-#   NAME <name> DESCRIPTION <description> DEFAULT <default_value>
-#   DEFAULT_FROM_ENVIRONMENT <environment_variable_name>
-#   [ENABLED [enabled_compile_definitions...]]
-#   [DISABLED [disabled_compile_definitions...]]
+#   NAME <name> DESCRIPTION <description> DEFAULT <default-value>
+#   [DEFAULT_FROM_ENVIRONMENT <environment-variable-name>]
+#   [ENABLED [<enabled-compile-definitions>...]]
+#   [DISABLED [<disabled-compile-definitions>...]]
 # )
 #
-# NAME, DESCRIPTION and DEFAULT are passed to option() command.
-# If FEATURE is given, they are also passed to add_feature_info() command.
-# ADVANCED calls the mark_as_advanced(<NAME>) command.
-# <scope> determines the scope for the following compile definitions.
-# ENABLED lists compile definitions that will be set on <target> when option is enabled.
-# DISABLED lists compile definitions that will be set on <target> when option is disabled.
+# <target> name to operate on.
+# <scope> for the target_compile_definitions() command.
+# NAME of a variable to process, it's directly passed to the option() and
+# add_feature_info() commands.
+# DESCRIPTION for the option() and add_feature_info() commands.
+# DEFAULT initial value for the option() command, used if the <environment-variable-name>
+# is not empty or undefined.
+# ADVANCED call the mark_as_advanced(<name>) command.
+# FEATURE pass the <name> and <description> values also to the add_feature_info() command.
+# ENABLED <enabled-compile-definitions> to set on the <target> when option is enabled.
+# DISABLED <disabled-compile-definitions> to set on the <target> when option is disabled.
 # ENABLED or DISABLE are passed to the target_compile_definitions() command.
 # DEFAULT_FROM_ENVIRONMENT get a default value for the option() command from the given
-# environment variable if it's defined otherwise use a value from the given <DEFAULT>
-# argument.
-# DEFAULT and DEFAULT_FROM_ENVIRONMENT can't be if they are passed and they must be
+# <environment-variable-name> if defined, otherwise use the <default-value>.
+# DEFAULT and DEFAULT_FROM_ENVIRONMENT can't be empty if they are passed and they must be
 # of the boolean type.
 function(target_optional_compile_definitions target scope)
 

@@ -1,6 +1,24 @@
 include_guard(GLOBAL)
 
 # Configure Windows resource and manifest files
+#
+# Synopsis:
+# tiny_resource_and_manifest(<target> [TEST]
+#   [OUTPUT_DIR <dir>]
+#   [RESOURCES_DIR <dir>]
+#   [RESOURCE_BASENAME <resource-basename>]
+#   [MANIFEST_BASENAME <manifest-basename>]
+# )
+#
+# <target> name to operate on.
+# TEST to configure the test <target>, all tests use the same TinyTest.rc.in file.
+# OUTPUT_DIR relative folder path for the configure_file() for generated content.
+# RESOURCES_DIR relative or absolute folder path where the TinyXyz.rc.in file is located.
+# RESOURCE_BASENAME basename for the resource file, eg. TinyOrm will use TinyOrm.rc.in.
+# The <target> name and for TEST the TinyTest will be used if is empty or undefined.
+# MANIFEST_BASENAME basename for the manifest file, eg. TinyOrm library will use
+# TinyOrm.dll.manifest, for executables it will be eg. tom.exe.manifest.
+# The <resource-basename> will be used if empty or undefined.
 function(tiny_resource_and_manifest target)
 
     # Arguments

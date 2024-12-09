@@ -849,38 +849,48 @@ endfunction()
 
 # Wrapper function for the target_sources() (for both overloads)
 #
-# Create header file sets (or add to the existing sets) or add header files and add
-# source files to the given target and call target_include_directories($<BUILD_INTERFACE>)
-# in one shot.
+# Create header file sets (or add to the existing sets) or add header and source files
+# to the given target and call target_include_directories($<BUILD_INTERFACE>) in one shot.
 #
 # Obtain public and private headers and source files, and create public/private
 # file set/s, or add files to an existing file set/s, and add source files
 # for the given target.
 #
+# Synopsis:
 # tiny_target_sources(<target>
-#   [FILE_SET] PREFIX <name> [BASE_DIRS <dirs>...]
+#   FILE_SET PREFIX <name>
+#   [BASE_DIRS [<dirs>...]]
 # )
 #
+# <target> name to operate on.
 # FILE_SET call the target_sources(FILE_SET) overload.
-# PREFIX prefix for FILE_SET argument value and for calling tinyxyz_sources()
-# function to obtain header and source files. Cannot be undefined or empty.
+# PREFIX for the FILE_SET argument value and for calling the tinyxyz_sources() function
+# to obtain header and source files. Cannot be empty or undefined.
 # BASE_DIRS these directories are directly passed to the target_sources(BASE_DIRS)
 # for public and private header files. The _private suffix is appended for every
-# directory path for private header files. It cannot end with slahes❗ Empty or undefined
-# BASE_DIRS is handled the same way as for the target_sources().
+# directory path for private header files. It cannot end with slahes❗ If it's empty or
+# undefined, an empty string will be passed to the target_sources(BASE_DIRS). It's handled
+# the same way as for the target_sources().
 #
 # Obtain header and source files (ignoring private headers) and add source files
 # for the given target.
 #
 # Synopsis:
 # tiny_target_sources(<target>
-#   [PRIVATE] PREFIX <name> BASE_DIR <dir>
+#   [PRIVATE] PREFIX <name>
+#   [BASE_DIR [<dir>]]
 # )
 #
-# PRIVATE add obtained headers from the tinyxyz_sources() function as private headers.
-# PREFIX prefix for calling tinyxyz_sources() function to obtain header and source files.
-# Cannot be undefined or empty.
-# BASE_DIR this directory is added to target_include_directories($<BUILD_INTERFACE>).
+# <target> name to operate on.
+# PRIVATE add obtained public headers from the tinyxyz_sources() function as private
+# headers using target_sources(PRIVATE) (especially needed for executables).
+# PREFIX for calling the tinyxyz_sources() function to obtain header and source files.
+# Cannot be empty or undefined.
+# BASE_DIR <dir> is added to the target_include_directories($<BUILD_INTERFACE>).
+# If <dir> is a relative path (cmake_path(IS_RELATIVE) is true), it's evaluated relative
+# to the CMAKE_CURRENT_SOURCE_DIR and normalized. The absolute path stays untouched.
+# If empty or undefined the CMAKE_CURRENT_SOURCE_DIR is used. Symbolic link and tilde
+# is not resolved.
 function(tiny_target_sources target)
 
     # Arguments

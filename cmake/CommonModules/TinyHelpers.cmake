@@ -166,8 +166,23 @@ function(tiny_create_buildtree_tagfiles filepaths)
 
 endfunction()
 
-# Find version numbers in the version header file, search following tokens
-# <PREFIX>_VERSION_<MAJOR,MINOR,BUGFIX,BUILD>
+# Find version numbers in the version header file using the given <prefix>
+#
+# Search following tokens <prefix>_VERSION_<MAJOR|MINOR|BUGFIX|BUILD> and return obtained
+# values using the <out_xyz> variables.
+#
+# Synopsis:
+# tiny_read_version(out_version out_major out_minor out_patch out_tweak
+#   VERSION_HEADER <filepath>
+#   PREFIX <prefix>
+#   HEADER_FOR <project-name>
+# )
+#
+# <out_version> output variable for the whole version number.
+# <out_major|minor|patch|tweak> output variables for individual version numbers.
+# VERSION_HEADER absolute filepath is directly passed to the file(STRINGS).
+# PREFIX for the file(STRINGS REGEX) to find #define <prefix>_VERSION_<MAJOR|...> lines.
+# HEADER_FOR project name used in the message(DEBUG) (use TinyXyz_ns variables for this).
 function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 
     # Arguments
@@ -180,9 +195,11 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    if("${TINY_VERSION_HEADER}" STREQUAL "" OR "${TINY_HEADER_FOR}" STREQUAL "")
+    if("${TINY_VERSION_HEADER}" STREQUAL "" OR "${TINY_PREFIX}" STREQUAL "" OR
+            "${TINY_HEADER_FOR}" STREQUAL ""
+    )
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: HEADER_FOR, VERSION_HEADER")
+keyword or its value is empty: HEADER_FOR, PREFIX, VERSION_HEADER")
     endif()
 
     # Body
@@ -237,17 +254,22 @@ endfunction()
 
 # Command for manipulating CMAKE_RC_FLAGS, supports APPEND and RESTORE operations
 #
-# Append flags to the CMAKE_RC_FLAGS. It will also save and restore original content
+# Append flags to the CMAKE_RC_FLAGS. It will also save and restore the original content
 # of the CMAKE_RC_FLAGS variable, so that rc/windres compilation commands are not
-# polluted with include paths from previous calls.
+# polluted with include paths from previous tiny_rc_flags(APPEND) function calls.
 #
 # Synopsis:
 # tiny_rc_flags(APPEND [<flags>...])
+#
+# APPEND the given flags, it only restores the original CMAKE_RC_FLAGS value and
+# appends nothing if the <flags> value is empty.
 #
 # Restore the original value of CMAKE_RC_FLAGS.
 #
 # Synopsis:
 # tiny_rc_flags(RESTORE)
+#
+# RESTORE the original CMAKE_RC_FLAGS value.
 function(tiny_rc_flags)
 
     # Arguments
@@ -697,8 +719,22 @@ function(tiny_fix_ccache)
 
 endfunction()
 
-# Set the Compatible Interface Requirement for the project's major version using
-# the given target
+# Set the Compatible Interface Requirement for the given property names
+#
+# They are passed to the foreach() loop, set the INTERFACE_<name> <target> property value
+# that is obtained from the <target>'s property <name>, and then the <name> is appended
+# to the COMPATIBLE_INTERFACE_STRING <target> property.
+#
+# Every TinyORM library sets the Compatible Interface Requirement for the VERSION_MAJOR
+# and SOVERSION target properties.
+#
+# Synopsis:
+# tiny_set_compatible_interface_string(<target>
+#   PROPERTIES <name>...
+# )
+#
+# <target> name to operate on.
+# PROPERTIES names list for which to add the Compatible Interface Requirements.
 function(tiny_set_compatible_interface_string target)
 
     # Arguments

@@ -1,6 +1,26 @@
 include_guard(GLOBAL)
 
-# Configure a passed auto test
+# Configure the given test target
+#
+# Synopsis:
+# tiny_configure_test(<target>
+#   [DEPENDS_ON_UNITTESTS]
+#   [INCLUDE_MIGRATIONS] [INCLUDE_MODELS]
+#   [PROVIDES_PCH] [RUN_SERIAL]
+# )
+#
+# <target> name to operate on.
+# DEPENDS_ON_UNITTESTS make the functional test <target> dependent on all unit tests,
+# it should only be enablved for functional tests. Primarily to make functional tests
+# dependent on all unit tests.
+# INCLUDE_MIGRATIONS add migrations headers on the include path and call
+# the target_sources(PRIVATE) for these headers (calls tiny_target_sources(PRIVATE)).
+# INCLUDE_MODELS add models headers on the include path and call
+# the target_sources(PRIVATE) for these headers (calls tiny_target_sources(PRIVATE)).
+# PROVIDES_PCH tag a test <target> that will provide PCH for all other test targets,
+# only one test <target> can be tagged with it and all other test targets will use
+# this PCH without compilation (reuse PCH).
+# RUN_SERIAL set the RUN_SERIAL test property for the <target>.
 function(tiny_configure_test target)
 
     # Arguments
