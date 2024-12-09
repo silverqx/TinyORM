@@ -28,7 +28,7 @@ tiny_init_tiny_variables_pre()
 include(TinyHelpers)
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
-    VERSION_HEADER "include/orm/version.hpp"
+    VERSION_HEADER "include/orm/${TINY_VERSION_HEADER}"
     PREFIX TINYORM
     HEADER_FOR "${TinyOrm_ns}"
 )

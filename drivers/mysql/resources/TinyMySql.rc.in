@@ -3,7 +3,7 @@
 //IDI_ICON1 ICON "icons/@TinyMySql_target@.ico"
 
 #include <windows.h>
-#include "orm/drivers/mysql/version.hpp"
+#include "orm/drivers/mysql/@TINY_VERSION_HEADER@"
 
 #define VER_FILEVERSION             TINYMYSQL_VERSION_MAJOR,TINYMYSQL_VERSION_MINOR,TINYMYSQL_VERSION_BUGFIX,TINYMYSQL_VERSION_BUILD
 #define VER_FILEVERSION_STR         TINYMYSQL_FILEVERSION_STR "\0"

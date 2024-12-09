@@ -3,7 +3,7 @@
 IDI_ICON1 ICON "icons/@TinyOrm_target@.ico"
 
 #include <windows.h>
-#include "orm/version.hpp"
+#include "orm/@TINY_VERSION_HEADER@"
 
 #define VER_FILEVERSION             TINYORM_VERSION_MAJOR,TINYORM_VERSION_MINOR,TINYORM_VERSION_BUGFIX,TINYORM_VERSION_BUILD
 #define VER_FILEVERSION_STR         TINYORM_FILEVERSION_STR "\0"

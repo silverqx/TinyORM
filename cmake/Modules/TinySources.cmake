@@ -60,7 +60,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources) #[[ove
         sqlrecord.hpp
         sqlresult.hpp
         utils/notnull.hpp
-        version.hpp
+        ${TINY_VERSION_HEADER}
     )
 
     # Source files section
@@ -140,7 +140,7 @@ function(tinymysql_sources out_headers_private out_headers out_sources) #[[overr
     list(APPEND headers
         mysqldriver.hpp
         mysqlresult.hpp
-        version.hpp
+        ${TINY_VERSION_HEADER}
     )
 
     # Source files section
@@ -313,7 +313,7 @@ function(tinyorm_sources unused out_headers out_sources) #[[override]]
         utils/string.hpp
         utils/thread.hpp
         utils/type.hpp
-        version.hpp
+        ${TINY_VERSION_HEADER}
     )
 
     if(ORM)
@@ -559,7 +559,7 @@ function(tinytom_sources unused out_headers out_sources) #[[override]]
         tomutils.hpp
         types/commandlineoption.hpp
         types/guessedcommandname.hpp
-        version.hpp
+        ${TINY_VERSION_HEADER}
     )
 
     # Tom source files section
@@ -823,7 +823,7 @@ function(tinyutils_sources unused out_headers out_sources) #[[override]]
         databases.hpp
         export.hpp
         fs.hpp
-        version.hpp
+        ${TINY_VERSION_HEADER}
     )
 
     # Source files section

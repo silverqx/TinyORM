@@ -3,7 +3,7 @@
 //IDI_ICON1 ICON "icons/@TinyUtils_target@.ico"
 
 #include <windows.h>
-#include "version.hpp"
+#include "@TINY_VERSION_HEADER@"
 
 #define VER_FILEVERSION             TINYUTILS_VERSION_MAJOR,TINYUTILS_VERSION_MINOR,TINYUTILS_VERSION_BUGFIX,TINYUTILS_VERSION_BUILD
 #define VER_FILEVERSION_STR         TINYUTILS_FILEVERSION_STR "\0"

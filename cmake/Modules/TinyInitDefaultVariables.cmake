@@ -198,6 +198,9 @@ macro(tiny_init_tiny_variables_pre)
     # Tom seeders folder for the make:seeder command
     set(TomSeeders_folder database/seeders)
 
+    # Version header filename
+    set(TINY_VERSION_HEADER "version.hpp")
+
     # Used in STREQUAL comparisons
     string(TOLOWER "${CMAKE_BUILD_TYPE}" TINY_BUILD_TYPE_LOWER)
     string(TOUPPER "${CMAKE_BUILD_TYPE}" TINY_BUILD_TYPE_UPPER)

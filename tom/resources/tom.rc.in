@@ -3,7 +3,7 @@
 //IDI_ICON1 ICON "icons/@Tom_target@.ico"
 
 #include <windows.h>
-#include "tom/version.hpp"
+#include "tom/@TINY_VERSION_HEADER@"
 
 #define VER_FILEVERSION             TINYTOM_VERSION_MAJOR,TINYTOM_VERSION_MINOR,TINYTOM_VERSION_BUGFIX,TINYTOM_VERSION_BUILD
 #define VER_FILEVERSION_STR         TINYTOM_FILEVERSION_STR "\0"

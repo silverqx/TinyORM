@@ -9,7 +9,7 @@
 
 tiny_read_version(TINY_VERSION
     TINY_VERSION_MAJOR TINY_VERSION_MINOR TINY_VERSION_PATCH TINY_VERSION_TWEAK
-    VERSION_HEADER "include/orm/drivers/mysql/version.hpp"
+    VERSION_HEADER "include/orm/drivers/mysql/${TINY_VERSION_HEADER}"
     PREFIX TINYMYSQL
     HEADER_FOR "${TinyMySql_ns}"
 )

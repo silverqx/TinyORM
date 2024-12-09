@@ -102,6 +102,7 @@ defineReplace(tiny_configure_cmake_rc) {
     rcFileContent ~= s/\\$<TARGET_FILE_NAME:$$TARGET>/$$basename(QMAKE_RESOLVED_TARGET)
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
     rcFileContent ~= s/@pragma_codepage@/$$pragmaCodepage
+    rcFileContent ~= s/@TINY_VERSION_HEADER@/version.hpp
 
     !write_file($$rcFilepath, rcFileContent): \
         error( "Can not write to the file $${rcFilepath}." )

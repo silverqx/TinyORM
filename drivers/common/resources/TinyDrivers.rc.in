@@ -3,7 +3,7 @@
 //IDI_ICON1 ICON "icons/@TinyDrivers_target@.ico"
 
 #include <windows.h>
-#include "orm/drivers/version.hpp"
+#include "orm/drivers/@TINY_VERSION_HEADER@"
 
 #define VER_FILEVERSION             TINYDRIVERS_VERSION_MAJOR,TINYDRIVERS_VERSION_MINOR,TINYDRIVERS_VERSION_BUGFIX,TINYDRIVERS_VERSION_BUILD
 #define VER_FILEVERSION_STR         TINYDRIVERS_FILEVERSION_STR "\0"
