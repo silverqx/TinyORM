@@ -147,13 +147,6 @@ endmacro()
 
 # Add the boolean build option and compile definition/s for a target in one shot.
 #
-# Call the option() command if an option <name> is not defined yet and initialize its
-# default value from the <environment-variable-name> if given, otherwise
-# from the <default-value>. Call the target_compile_definitions(<scope>)
-# with the <enabled-compile-definitions> if an option is enabled (ON), otherwise use
-# the <disabled-compile-definitions>. Call the add_feature_info() and mark_as_advanced()
-# functions if FEATURE or ADVANCED is given.
-#
 # Synopsis:
 # target_optional_compile_definitions(<target> <scope> [ADVANCED] [FEATURE]
 #   NAME <name> DESCRIPTION <description> DEFAULT <default-value>
@@ -178,6 +171,13 @@ endmacro()
 # <environment-variable-name> if defined, otherwise use the <default-value>.
 # DEFAULT and DEFAULT_FROM_ENVIRONMENT can't be empty if they are passed and they must be
 # of the boolean type.
+#
+# Call the option() command if an option <name> is not defined yet and initialize its
+# default value from the <environment-variable-name> if given, otherwise
+# from the <default-value>. Call the target_compile_definitions(<scope>)
+# with the <enabled-compile-definitions> if an option is enabled (ON), otherwise use
+# the <disabled-compile-definitions>. Call the add_feature_info() and mark_as_advanced()
+# functions if FEATURE or ADVANCED is given.
 function(target_optional_compile_definitions target scope)
 
     # Arguments

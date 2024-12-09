@@ -71,10 +71,6 @@ endfunction()
 
 # Verify the minimum toolchain and Qt versions
 #
-# Make the minimum toolchain and Qt versions a requirement and throw the FATAL_ERROR if
-# this requirement is not satisfied (version is less than required). It checks compilers
-# and Qt framework versions. All <xyz-version> argument values are required.
-#
 # Synopsis:
 # tiny_toolchain_requirement(
 #   MSVC <msvc-version> GCC <gcc-version>
@@ -87,6 +83,10 @@ endfunction()
 # CLANG minimum <clang-version> required.
 # CLANG_CL minimum <clangcl-version> required.
 # QT framework minimum <qt-version> required.
+#
+# Make the minimum toolchain and Qt versions a requirement and throw the FATAL_ERROR if
+# this requirement is not satisfied (version is less than required). It checks compilers
+# and Qt framework versions. All <xyz-version> argument values are required.
 function(tiny_toolchain_requirement)
 
     # Arguments

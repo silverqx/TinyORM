@@ -168,9 +168,6 @@ endfunction()
 
 # Find version numbers in the version header file using the given <prefix>
 #
-# Search following tokens <prefix>_VERSION_<MAJOR|MINOR|BUGFIX|BUILD> and return obtained
-# values using the <out_xyz> variables.
-#
 # Synopsis:
 # tiny_read_version(out_version out_major out_minor out_patch out_tweak
 #   VERSION_HEADER <filepath>
@@ -183,6 +180,9 @@ endfunction()
 # VERSION_HEADER absolute filepath is directly passed to the file(STRINGS).
 # PREFIX for the file(STRINGS REGEX) to find #define <prefix>_VERSION_<MAJOR|...> lines.
 # HEADER_FOR project name used in the message(DEBUG) (use TinyXyz_ns variables for this).
+#
+# Search following tokens <prefix>_VERSION_<MAJOR|MINOR|BUGFIX|BUILD> and return obtained
+# values using the <out_xyz> variables.
 function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 
     # Arguments
@@ -254,22 +254,22 @@ endfunction()
 
 # Command for manipulating CMAKE_RC_FLAGS, supports APPEND and RESTORE operations
 #
-# Append flags to the CMAKE_RC_FLAGS. It will also save and restore the original content
-# of the CMAKE_RC_FLAGS variable, so that rc/windres compilation commands are not
-# polluted with include paths from previous tiny_rc_flags(APPEND) function calls.
-#
 # Synopsis:
 # tiny_rc_flags(APPEND [<flags>...])
 #
 # APPEND the given flags, it only restores the original CMAKE_RC_FLAGS value and
 # appends nothing if the <flags> value is empty.
 #
-# Restore the original value of CMAKE_RC_FLAGS.
+# Append flags to the CMAKE_RC_FLAGS. It will also save and restore the original content
+# of the CMAKE_RC_FLAGS variable, so that rc/windres compilation commands are not
+# polluted with include paths from previous tiny_rc_flags(APPEND) function calls.
 #
 # Synopsis:
 # tiny_rc_flags(RESTORE)
 #
 # RESTORE the original CMAKE_RC_FLAGS value.
+#
+# Restore the original value of CMAKE_RC_FLAGS.
 function(tiny_rc_flags)
 
     # Arguments
@@ -721,10 +721,6 @@ endfunction()
 
 # Set the Compatible Interface Requirement for the given property names
 #
-# They are passed to the foreach() loop, set the INTERFACE_<name> <target> property value
-# that is obtained from the <target>'s property <name>, and then the <name> is appended
-# to the COMPATIBLE_INTERFACE_STRING <target> property.
-#
 # Every TinyORM library sets the Compatible Interface Requirement for the VERSION_MAJOR
 # and SOVERSION target properties.
 #
@@ -735,6 +731,10 @@ endfunction()
 #
 # <target> name to operate on.
 # PROPERTIES names list for which to add the Compatible Interface Requirements.
+#
+# PROPERTIES list is passed to the foreach() loop, then set the INTERFACE_<name> <target>
+# property value that is obtained from the <target>'s property <name>, and then the <name>
+# is appended to the COMPATIBLE_INTERFACE_STRING <target> property.
 function(tiny_set_compatible_interface_string target)
 
     # Arguments

@@ -852,10 +852,6 @@ endfunction()
 # Create header file sets (or add to the existing sets) or add header and source files
 # to the given target and call target_include_directories($<BUILD_INTERFACE>) in one shot.
 #
-# Obtain public and private headers and source files, and create public/private
-# file set/s, or add files to an existing file set/s, and add source files
-# for the given target.
-#
 # Synopsis:
 # tiny_target_sources(<target>
 #   FILE_SET PREFIX <name>
@@ -872,7 +868,8 @@ endfunction()
 # undefined, an empty string will be passed to the target_sources(BASE_DIRS). It's handled
 # the same way as for the target_sources().
 #
-# Obtain header and source files (ignoring private headers) and add source files
+# Obtain public and private headers and source files, and create public/private
+# file set/s, or add files to an existing file set/s, and add source files
 # for the given target.
 #
 # Synopsis:
@@ -891,6 +888,9 @@ endfunction()
 # to the CMAKE_CURRENT_SOURCE_DIR and normalized. The absolute path stays untouched.
 # If empty or undefined the CMAKE_CURRENT_SOURCE_DIR is used. Symbolic link and tilde
 # is not resolved.
+#
+# Obtain header and source files (ignoring private headers) and add source files
+# for the given target.
 function(tiny_target_sources target)
 
     # Arguments

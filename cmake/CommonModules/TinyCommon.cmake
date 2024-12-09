@@ -4,10 +4,6 @@ include(CheckCXXCompilerFlag)
 
 # Common interface library used by all TinyORM targets
 #
-# Set common variables and create interface-only library target so all other targets
-# will be able to link to, either directly or transitively, to consume common compile
-# options/definitions.
-#
 # Synopsis:
 # tiny_common(<target>
 #   NAMESPACE <namespace>
@@ -18,6 +14,10 @@ include(CheckCXXCompilerFlag)
 # NAMESPACE name used for an Alias Target.
 # EXPORT set the EXPORT_NAME target property to <name>.
 # NAME used for an Alias Target name and EXPORT_NAME target property.
+#
+# Set common variables and create interface-only library target so all other targets
+# will be able to link to, either directly or transitively, to consume common compile
+# options/definitions.
 function(tiny_common target)
 
     # Arguments
