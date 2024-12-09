@@ -310,6 +310,15 @@ endmacro()
 # Initialize the default database paths for the make:migration/model/seeder commands
 macro(tiny_init_tom_database_dirs)
 
+    # It may look weird that the cache variables and the set()-s above them have the same
+    # variable names but it's correct (revisited). These non-cache set()-s are called
+    # during the initial configuration and provide default values, they must have same
+    # variable names to also support -D command-line arguments. So it -D were passed
+    # use their values, otherwise use values from these non-cache set()-s. It works
+    # correctly. If -D arguments were passed and have relative paths, then the set
+    # command will treat these paths as relative to the PWD and convert them
+    # to absolute paths. Tom is able to handle both relative and absolute paths.
+
     if(TOM_EXAMPLE)
         # Provide the default migrations path for the make:migration command
         if(NOT DEFINED TOM_MIGRATIONS_DIR)
