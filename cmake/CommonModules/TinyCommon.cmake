@@ -150,6 +150,7 @@ keyword or its value is empty: NAME, NAMESPACE")
         )
 
         # Increase warning level and Enable Additional Security Checks (Debug builds only)
+        # Do not change the vcpkg build system (keep its default settings)
         if(NOT TINY_VCPKG)
             target_compile_options(${target} INTERFACE /W4 $<$<CONFIG:Debug>:/sdl>)
         endif()
