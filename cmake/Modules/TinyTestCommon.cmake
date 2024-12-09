@@ -155,8 +155,8 @@ function(tiny_configure_test_pch target provides_pch)
         )
 
         set(TINY_TESTS_PCH_REUSE_FROM ${target} CACHE INTERNAL
-            "The <target> name of the first test case that provides PCH for all other \
-test cases (used by REUSE_FROM).")
+            "The <target> name of the first test target that provides PCH for all other \
+test targets (used by REUSE_FROM).")
 
         return()
     endif()
