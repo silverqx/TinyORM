@@ -15,11 +15,11 @@ in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Body
-    string(CONCAT desc "${description} (default: ${default})")
+    string(CONCAT _description "${description} (default: ${default})")
 
-    option(${name} "${desc}" "${default}") # Revisited, the quoted default value is correct in all cases, even if empty
+    option(${name} "${_description}" "${default}") # Revisited, the quoted default value is correct in all cases, even if empty
 
-    add_feature_info(${name} ${name} "${desc}")
+    add_feature_info(${name} ${name} "${_description}")
 
 endfunction()
 
@@ -58,12 +58,12 @@ in feature_option_dependent().")
     endif()
 
     # Body
-    string(CONCAT desc
+    string(CONCAT _description
         "${description} (default: ${default}; depends on condition: ${depends})")
 
-    cmake_dependent_option(${name} "${desc}" "${default}" "${depends}" "${force}")
+    cmake_dependent_option(${name} "${_description}" "${default}" "${depends}" "${force}")
 
-    add_feature_info(${name} ${name} "${desc}")
+    add_feature_info(${name} ${name} "${_description}")
 
 endmacro()
 
@@ -130,17 +130,17 @@ in feature_string_option_dependent().")
     set(allowedValues "")
 
     string(JOIN ", " allowedValues ${strings})
-    string(CONCAT desc
+    string(CONCAT _description
         "${description} (allowed values: ${allowedValues}; default: ${default}; \
 depends on condition: ${depends})")
 
     tiny_dependent_string_option(
-        ${name} "${strings}" "${desc}" "${default}" "${depends}" "${force}"
+        ${name} "${strings}" "${_description}" "${default}" "${depends}" "${force}"
     )
 
-    add_feature_info(${name} ${name} "${desc}")
+    add_feature_info(${name} ${name} "${_description}")
 
-    unset(desc)
+    unset(_description)
     unset(allowedValues)
 
 endmacro()
