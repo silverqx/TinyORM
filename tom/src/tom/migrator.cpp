@@ -461,7 +461,7 @@ void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationNameOri
                 u"Migration class name '%1' has to start with the datetime prefix, "
                  "eg. _2014_10_12_000000_create_xyz_table, another accepted format "
                  "is StudlyCase eg. CreateXyzTable with the T_MIGRATION macro (it "
-                 "extracts this datetime prefix from a file name)."_s
+                 "extracts this datetime prefix from a filename)."_s
                 .arg(migrationNameOriginal));
 }
 
