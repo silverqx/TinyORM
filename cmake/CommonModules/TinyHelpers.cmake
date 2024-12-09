@@ -211,6 +211,8 @@ keyword or its value is empty: HEADER_FOR, PREFIX, VERSION_HEADER")
 
     # ---
 
+    message(DEBUG "Version header filepath - ${TINY_VERSION_HEADER}")
+
     file(STRINGS ${TINY_VERSION_HEADER} versionFileContent
         REGEX "^#define ${TINY_PREFIX}.*_VERSION_[A-Z]+ +[0-9]+"
         ENCODING UTF-8
