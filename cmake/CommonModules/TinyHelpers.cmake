@@ -172,7 +172,7 @@ endfunction()
 # tiny_read_version(out_version out_major out_minor out_patch out_tweak
 #   VERSION_HEADER <filepath>
 #   PREFIX <prefix>
-#   HEADER_FOR <project-name>
+#   HEADER_FOR <target>
 # )
 #
 # <out_version> output variable for the whole version number.
@@ -180,7 +180,7 @@ endfunction()
 # VERSION_HEADER relative or absolute filepath is directly passed to the file(STRINGS).
 # It's relative to the CMAKE_CURRENT_SOURCE_DIR.
 # PREFIX for the file(STRINGS REGEX) to find #define <prefix>_VERSION_<MAJOR|...> lines.
-# HEADER_FOR project name used in the message(DEBUG) (use TinyXyz_ns variables for this).
+# HEADER_FOR <target> name for the message(DEBUG) (use TinyXyz_target variables for this).
 #
 # Search following tokens <prefix>_VERSION_<MAJOR|MINOR|BUGFIX|BUILD> and return obtained
 # values using the <out_xyz> variables.

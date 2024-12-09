@@ -9,7 +9,7 @@ tiny_read_version(TINYUTILS_VERSION
     TINYUTILS_VERSION_TWEAK
     VERSION_HEADER "src/${TINY_VERSION_HEADER}"
     PREFIX TINYUTILS
-    HEADER_FOR "${TinyUtils_ns}"
+    HEADER_FOR "${TinyUtils_target}"
 )
 
 # TinyUtils library
