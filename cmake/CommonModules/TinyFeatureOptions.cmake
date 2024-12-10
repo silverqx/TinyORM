@@ -237,6 +237,23 @@ keyword or its value is empty: DESCRIPTION, NAME")
 
 endfunction()
 
+# Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
+# It must be a macro() because of the if(DEFINED).
+# The 'default' argument must be of the boolean type and can't be empty!
+# Looks weird because is specifically designed for target_optional_compile_definitions().
+macro(tiny_set_default_value_from_environment name default)
+
+    # If an environment variable is defined then use its value
+    if(DEFINED ${name})
+        tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
+
+    # Otherwise, use a value from the 'default' argument
+    else()
+        set(defaultValue ${TINY_DEFAULT}) # Revisited, unquoted is OK, default must be of the boolean type
+    endif()
+
+endmacro()
+
 # Get a default value from the given environment variable if defined otherwise return
 # a value from the given 'default' argument. Used by our option() helper functions
 # to set their default values ​​from an environment variable.
@@ -260,20 +277,3 @@ function(tiny_get_default_value_from_environment out_variable name default)
     set(${out_variable} ${defaultValue} PARENT_SCOPE)
 
 endfunction()
-
-# Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
-# It must be a macro() because of the if(DEFINED).
-# The 'default' argument must be of the boolean type and can't be empty!
-# Looks weird because is specifically designed for target_optional_compile_definitions().
-macro(tiny_set_default_value_from_environment name default)
-
-    # If an environment variable is defined then use its value
-    if(DEFINED ${name})
-        tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
-
-    # Otherwise, use a value from the 'default' argument
-    else()
-        set(defaultValue ${TINY_DEFAULT}) # Revisited, unquoted is OK, default must be of the boolean type
-    endif()
-
-endmacro()
