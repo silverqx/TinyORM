@@ -912,7 +912,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
 at the same time in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
-    # PREFIX is required (also don't allow/disables the default HEADER file set)
+    # Required value/s
+    # The default HEADER file set is never used because PREFIX is a required argument
     if("${TINY_PREFIX}" STREQUAL "")
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
 keyword or its value is empty: PREFIX")

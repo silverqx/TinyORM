@@ -31,6 +31,7 @@ function(tiny_common target)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Required value/s
     if("${TINY_NAMESPACE}" STREQUAL "" OR "${TINY_NAME}" STREQUAL "")
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
 keyword or its value is empty: NAME, NAMESPACE")

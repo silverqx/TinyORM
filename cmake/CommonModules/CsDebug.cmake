@@ -140,6 +140,8 @@ endfunction()
 
 # Print status message about a passed variable
 function(ps variable)
+
+    # To be able to track whitespaces
     cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
     if(TINY_QUOTE)
         message(STATUS "${variable} : '${${variable}}'")
@@ -150,6 +152,8 @@ endfunction()
 
 # Print notice message about a passed variable
 function(pn variable)
+
+    # To be able to track whitespaces
     cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
     if(TINY_QUOTE)
         message(NOTICE "${variable} : '${${variable}}'")

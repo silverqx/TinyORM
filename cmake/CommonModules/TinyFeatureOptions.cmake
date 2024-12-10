@@ -201,6 +201,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 one of the arguments: DEFAULT, DEFAULT_FROM_ENVIRONMENT")
     endif()
 
+    # Required value/s
     if("${TINY_DESCRIPTION}" STREQUAL "" OR "${TINY_NAME}" STREQUAL "")
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
 keyword or its value is empty: DESCRIPTION, NAME")
@@ -221,8 +222,8 @@ keyword or its value is empty: DESCRIPTION, NAME")
 
     # No need to check for empty TINY_ENABLED/DISABLED values
     # for target_compile_definitions() because it ignores empty values
-    if(${${TINY_NAME}}) # Quotes not needed, don't care about lists for now
-        target_compile_definitions(${target} ${scope} ${TINY_ENABLED}) # Don't quote TINY_ENABLED (it works also quoted for list values)
+    if(${${TINY_NAME}}) # Quotes not needed (OT returns FALSE for variable name with ; character)
+        target_compile_definitions(${target} ${scope} ${TINY_ENABLED}) # Don't quote TINY_ENABLED (even if it also works for quoted list values)
     else()
         target_compile_definitions(${target} ${scope} ${TINY_DISABLED})
     endif()
@@ -261,7 +262,7 @@ endmacro()
 function(tiny_get_default_value_from_environment out_variable name default)
 
     # If an environment variable is defined then use its value
-    if(DEFINED ENV{${name}})
+    if(DEFINED ENV{${name}}) # False if the name is empty (OT or even undefined)
         # Normalize the default value to ON/OFF values only
         if("$ENV{${name}}")
             set(defaultValue ON)

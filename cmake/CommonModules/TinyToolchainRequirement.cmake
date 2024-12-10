@@ -99,6 +99,7 @@ function(tiny_toolchain_requirement)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Required value/s
     if("${TINY_MSVC}" STREQUAL "" OR "${TINY_CLANG_CL}" STREQUAL "" OR
             "${TINY_GCC}" STREQUAL "" OR "${TINY_CLANG}" STREQUAL "" OR
             "${TINY_QT}" STREQUAL ""
