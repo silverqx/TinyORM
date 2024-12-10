@@ -34,7 +34,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # It must be inside the build tree and it's handled per-project below.
     # RESOURCES_DIR can theoretically be anywhere, so it doesn't have this limitation.
-    # Don't use cmake_path(IS_ABSOLUTE), the if(IS_ABSOLUTE) covers also c:xyz or /xyz.
+    # Don't use cmake_path(IS_ABSOLUTE), the if(IS_ABSOLUTE) is TRUE also for c:xyz or
+    # /xyz on Windows, which by accident is what I want. 😵‍💫
     if(IS_ABSOLUTE "${TINY_OUTPUT_DIR}")
         message(FATAL_ERROR "The 'OUTPUT_DIR' single-value keyword cannot be an absolute \
 path (must be relative to CMAKE_CURRENT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
