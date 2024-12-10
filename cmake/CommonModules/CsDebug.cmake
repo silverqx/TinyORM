@@ -13,6 +13,7 @@ endfunction()
 # Print all CMake variables (excluding all CMake variables by default)
 # cs_print_vars() == cs_print_vars(yes)
 function(cs_print_vars)
+
     set(exclude_cmake yes) # Exclude CMake by default
     if(ARGC GREATER_EQUAL 1 AND DEFINED ARGV0 AND NOT ARGV0)
         set(exclude_cmake no)
@@ -29,16 +30,20 @@ function(cs_print_vars)
 
         message("${variable}=${${variable}}")
     endforeach()
+
 endfunction()
 
 # Print all env. variables
 function(cs_print_env_vars)
+
     message(STATUS "All environment variables:")
     execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
+
 endfunction()
 
 # Get all properties that CMake supports
 if(NOT CMAKE_PROPERTY_LIST)
+
     execute_process(
         COMMAND cmake --help-property-list
         OUTPUT_VARIABLE CMAKE_PROPERTY_LIST
@@ -47,6 +52,7 @@ if(NOT CMAKE_PROPERTY_LIST)
     # Convert command output into a CMake list
     string(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
     string(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+
 endif()
 
 # Print all target properties
@@ -129,13 +135,16 @@ endfunction()
 
 # Print clearly visible notice message about passed variable
 function(p variable)
+
     # To be able to track whitespaces
     cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+
     if(TINY_QUOTE)
         message("|||-- ${variable} : '${${variable}}'")
     else()
         message("|||-- ${variable} : ${${variable}}")
     endif()
+
 endfunction()
 
 # Print status message about a passed variable
@@ -143,11 +152,13 @@ function(ps variable)
 
     # To be able to track whitespaces
     cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+
     if(TINY_QUOTE)
         message(STATUS "${variable} : '${${variable}}'")
     else()
         message(STATUS "${variable} : ${${variable}}")
     endif()
+
 endfunction()
 
 # Print notice message about a passed variable
@@ -155,15 +166,18 @@ function(pn variable)
 
     # To be able to track whitespaces
     cmake_parse_arguments(PARSE_ARGV 1 TINY "QUOTE" "" "")
+
     if(TINY_QUOTE)
         message(NOTICE "${variable} : '${${variable}}'")
     else()
         message(NOTICE "${variable} : ${${variable}}")
     endif()
+
 endfunction()
 
 # Print clearly visible notice message about passed BOOL variable
 function(pb variable)
+
     if(NOT DEFINED ${variable}) # Quotes not needed
         message("|||-- ${variable} : ${variable}-NOTFOUND")
     elseif(${variable}) # Quotes not needed because of the DEFINED check above and don't care about lists and strings
@@ -171,9 +185,12 @@ function(pb variable)
     else()
         message("|||-- ${variable} : OFF")
     endif()
+
 endfunction()
 
 # Print clearly visible notice message with the given text
 function(m text)
+
     message("|||-- ${text}")
+
 endfunction()
