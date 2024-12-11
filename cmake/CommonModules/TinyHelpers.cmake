@@ -196,6 +196,7 @@ function(tiny_read_version out_version out_major out_minor out_patch out_tweak)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Required value/s
     if("${TINY_VERSION_HEADER}" STREQUAL "" OR "${TINY_PREFIX}" STREQUAL "" OR
             "${TINY_HEADER_FOR}" STREQUAL ""
     )
