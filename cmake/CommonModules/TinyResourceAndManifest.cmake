@@ -55,13 +55,13 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
 
     # Body
     # Include Windows RC and manifest file for a shared library or executable
-    get_target_property(target_type ${target} TYPE)
+    get_target_property(targetType ${target} TYPE)
 
     # The static archive doesn't need an RC or manifest file
     if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" OR
-            NOT (target_type STREQUAL "EXECUTABLE" OR
-                 target_type STREQUAL "SHARED_LIBRARY" OR
-                 target_type STREQUAL "MODULE_LIBRARY")
+            NOT (targetType STREQUAL "EXECUTABLE" OR
+                 targetType STREQUAL "SHARED_LIBRARY" OR
+                 targetType STREQUAL "MODULE_LIBRARY")
     )
         return()
     endif()
@@ -159,9 +159,9 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
         # Obtain extension by target type - .exe or .dll
         set(originalExtension "")
 
-        if(target_type STREQUAL "SHARED_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY")
+        if(targetType STREQUAL "SHARED_LIBRARY" OR targetType STREQUAL "MODULE_LIBRARY")
             set(originalExtension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-        elseif(target_type STREQUAL "EXECUTABLE")
+        elseif(targetType STREQUAL "EXECUTABLE")
             set(originalExtension "${CMAKE_EXECUTABLE_SUFFIX}")
         endif()
 
