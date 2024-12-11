@@ -39,7 +39,7 @@ in ${CMAKE_CURRENT_FUNCTION}().")
     set(defaultValue "")
 
     # This function sets the defaultValue value
-    tiny_get_default_value_from_environment(
+    tiny_get_boolean_value_from_environment(
         defaultValue ${environment_variable_name} ${default} # Revisited, unquoted is OK, default must be of the boolean type
     )
 
@@ -246,7 +246,7 @@ macro(tiny_set_default_value_from_environment name default)
 
     # If an environment variable is defined then use its value
     if(DEFINED ${name})
-        tiny_get_default_value_from_environment(defaultValue ${${name}} ${default})
+        tiny_get_boolean_value_from_environment(defaultValue ${${name}} ${default})
 
     # Otherwise, use a value from the 'default' argument
     else()
@@ -259,7 +259,7 @@ endmacro()
 # a value from the given 'default' argument. Used by our option() helper functions
 # to set their default values ​​from an environment variable.
 # The 'default' argument must be of the boolean type and can't be empty!
-function(tiny_get_default_value_from_environment out_variable name default)
+function(tiny_get_boolean_value_from_environment out_variable name default)
 
     # If an environment variable is defined then use its value
     if(DEFINED ENV{${name}}) # False if the name is empty (OT or even undefined)
