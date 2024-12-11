@@ -11,7 +11,7 @@ function(feature_option name description default)
     # Arguments checks
     # Required value/s
     if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
-        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
+        message(FATAL_ERROR "The 'description' and 'default' arguments cannot be empty \
 in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
@@ -33,7 +33,7 @@ function(feature_option_environment name description environment_variable_name d
     # Arguments checks
     # Required value/s
     if("${default}" STREQUAL "")
-        message(FATAL_ERROR "The 'default' parameters cannot be empty \
+        message(FATAL_ERROR "The 'default' argument cannot be empty \
 in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
@@ -56,8 +56,8 @@ function(feature_option_dependent name description default depends force)
     # Arguments checks
     # Required value/s
     if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
-        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
-in feature_option_dependent().")
+        message(FATAL_ERROR "The 'description' and 'default' arguments cannot be empty \
+in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Body
@@ -126,8 +126,8 @@ macro(feature_string_option_dependent name strings description default depends f
     # Arguments checks
     # Required value/s
     if("${description}" STREQUAL "" OR "${default}" STREQUAL "")
-        message(FATAL_ERROR "The 'description' and 'default' parameters cannot be empty \
-in feature_string_option_dependent().")
+        message(FATAL_ERROR "The 'description' and 'default' arguments cannot be empty \
+in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Body
