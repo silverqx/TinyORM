@@ -21,7 +21,7 @@ function(tiny_to_bool out_variable value)
 endfunction()
 
 # Convert to the boolean value and invert this boolean value (TRUE/FALSE)
-function(tiny_invert_bool out_variable value) # (currently unused)
+function(tiny_to_inverted_bool out_variable value) # (currently unused)
 
     # This function may look useless, but I'm using it because I want to have unified
     # boolean values, so it's TRUE or FALSE and not ON/OFF.
