@@ -38,9 +38,11 @@ in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Body
-    set(defaultValue "")
+    # Don't early exit here if the ${name} is already defined, obey the default option()
+    # command behavior.
 
-    # This function sets the defaultValue value
+    # If an environment variable is defined then use its value otherwise use
+    # the <default>. This function sets the defaultValue value.
     tiny_get_boolean_value_from_environment(
         defaultValue ${environment_variable_name} ${default} # Revisited, unquoted is OK, default must be of the boolean type
     )
@@ -198,26 +200,32 @@ function(target_optional_compile_definitions target scope)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
-    if("DEFAULT" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
-            "DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES
+    # Cannot be empty if defined
+    if("DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
+            # May be it only correctly works if CMake >=3.31 (CMP0174)?
+            # Doesn't matter, not a big deal (DEFAULT_FROM_ENVIRONMENT "").
+            (DEFINED TINY_DEFAULT_FROM_ENVIRONMENT AND
+                "${TINY_DEFAULT_FROM_ENVIRONMENT}" STREQUAL "")
     )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing values for \
-one of the arguments: DEFAULT, DEFAULT_FROM_ENVIRONMENT")
+        message(FATAL_ERROR "The DEFAULT_FROM_ENVIRONMENT keyword argument is missing \
+value or its value is empty in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Required value/s
-    if("${TINY_DESCRIPTION}" STREQUAL "" OR "${TINY_NAME}" STREQUAL "")
+    if("${TINY_DEFAULT}" STREQUAL "" OR "${TINY_DESCRIPTION}" STREQUAL "" OR
+            "${TINY_NAME}" STREQUAL ""
+    )
         message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: DESCRIPTION, NAME")
+keyword or its value is empty: DEFAULT, DESCRIPTION, NAME")
     endif()
 
     # Body
-    # If an environment variable is defined then use its value otherwise
-    # use a value from the 'TINY_DEFAULT' argument.
-    set(defaultValue OFF)
-    # This macro sets the defaultValue value
-    tiny_set_default_value_from_environment(
-        TINY_DEFAULT_FROM_ENVIRONMENT ${TINY_DEFAULT} # Revisited, unquoted is OK, default must be of the boolean type
+    # Convert to the boolean value (ON/OFF)
+    tiny_to_bool_option(TINY_DEFAULT ${TINY_DEFAULT}) # Don't quote, must fail if undefined
+    # If an environment variable is defined then use its value otherwise use
+    # the <default-value>. This function sets the defaultValue value.
+    tiny_get_boolean_value_from_environment(defaultValue
+        "${TINY_DEFAULT_FROM_ENVIRONMENT}" ${TINY_DEFAULT} # Revisited, quotes needed for TINY_DEFAULT_FROM_ENVIRONMENT, unquoted TINY_DEFAULT is OK
     )
 
     string(CONCAT description "${TINY_DESCRIPTION} (default: ${defaultValue})")
@@ -239,46 +247,5 @@ keyword or its value is empty: DESCRIPTION, NAME")
     if(TINY_ADVANCED)
         mark_as_advanced(${TINY_NAME})
     endif()
-
-endfunction()
-
-# Helper macro() for the target_optional_compile_definitions() for nicer and terser code.
-# It must be a macro() because of the if(DEFINED).
-# The 'default' argument must be of the boolean type and can't be empty!
-# Looks weird because is specifically designed for target_optional_compile_definitions().
-macro(tiny_set_default_value_from_environment name default)
-
-    # If an environment variable is defined then use its value
-    if(DEFINED ${name})
-        tiny_get_boolean_value_from_environment(defaultValue ${${name}} ${default})
-
-    # Otherwise, use a value from the 'default' argument
-    else()
-        set(defaultValue ${TINY_DEFAULT}) # Revisited, unquoted is OK, default must be of the boolean type
-    endif()
-
-endmacro()
-
-# Get a default value from the given environment variable if defined otherwise return
-# a value from the given 'default' argument. Used by our option() helper functions
-# to set their default values ​​from an environment variable.
-# The 'default' argument must be of the boolean type and can't be empty!
-function(tiny_get_boolean_value_from_environment out_variable name default)
-
-    # If an environment variable is defined then use its value
-    if(DEFINED ENV{${name}}) # False if the name is empty (OT or even undefined)
-        # Normalize the default value to ON/OFF values only
-        if("$ENV{${name}}")
-            set(defaultValue ON)
-        else()
-            set(defaultValue OFF)
-        endif()
-
-    # Otherwise, use a value from the 'default' argument
-    else()
-        set(defaultValue ${default}) # Revisited, unquoted is OK, default must be of the boolean type
-    endif()
-
-    set(${out_variable} ${defaultValue} PARENT_SCOPE)
 
 endfunction()

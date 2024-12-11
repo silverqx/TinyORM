@@ -40,6 +40,26 @@ function(tiny_invert_bool out_variable value) # (currently unused)
 
 endfunction()
 
+# Convert to the boolean value (ON/OFF)
+function(tiny_to_bool_option out_variable value)
+
+    # This function may look useless, but I'm using it because I want to have unified
+    # boolean values for option() values, so it's ON or OFF and not TRUE/FALSE.
+
+    # Don't use the Variable Reference here for ${value}, an undefined value can be
+    # controlled while passing the value to this function using an unquoted
+    # Variable Reference like:
+    # tiny_to_bool_option(xyz ${some_bool})
+    # This means if the value is undefined (empty) and will be unquoted, then it fails;
+    # if it is undefined and quoted, it returns FALSE
+    if(value)
+        set(${out_variable} ON PARENT_SCOPE)
+    else()
+        set(${out_variable} OFF PARENT_SCOPE)
+    endif()
+
+endfunction()
+
 # Get a default value from the given environment variable and set the cache variable
 # Do nothing if the given CMake variable is already defined or the environment variable
 # is not defined. It's intended for CMake cache boolean variables.
@@ -51,13 +71,31 @@ function(tiny_set_cache_bool_from_environment name description environment_varia
     endif()
 
     # Normalize the default value to ON/OFF values only
-    if("$ENV{${environment_variable_name}}")
-        set(defaultValue ON)
-    else()
-        set(defaultValue OFF)
-    endif()
+    tiny_to_bool_option(defaultValue "$ENV{${environment_variable_name}}") # Quotes needed otherwise $ENV{} fails
 
     set(${name} ${defaultValue} CACHE BOOL "${description}")
+
+endfunction()
+
+# Get a boolean value from the given environment variable if defined, otherwise return
+# a value from the given 'default' argument. Used by our option() helper functions
+# to set their default values ​​from an environment variable (it returns ON/OFF only).
+# The 'default' argument must be of the boolean type and can't be empty!
+function(tiny_get_boolean_value_from_environment out_variable name default)
+
+    # If an environment variable is defined then use its value
+    if(DEFINED ENV{${name}}) # False if the name is empty (OT or even undefined)
+        set(result "$ENV{${name}}") # Quotes needed otherwise $ENV{} fails
+
+    # Otherwise, use a value from the 'default' argument
+    else()
+        set(result ${default})
+    endif()
+
+    # Normalize the default value to ON/OFF values only
+    tiny_to_bool_option(result "${result}")
+
+    set(${out_variable} ${result} PARENT_SCOPE)
 
 endfunction()
 
@@ -731,7 +769,7 @@ endfunction()
 #
 # Synopsis:
 # tiny_set_compatible_interface_string(<target>
-#   PROPERTIES <name>...
+#   [PROPERTIES [<name>...]]
 # )
 #
 # <target> name to operate on.
@@ -753,7 +791,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Body
-    foreach(property ${TINY_PROPERTIES})
+    foreach(property ${TINY_PROPERTIES}) # foreach() does nothing if TINY_PROPERTIES is empty, undefined, or missing value
         # TinyXyz_VERSION_MAJOR or TinyXyz_SOVERSION
         # Don't remove the TinyXyz_ or replace it with eg. TINY_ because these names
         # are exposed to COMPATIBLE_INTERFACE_STRING so it's clearly visible for which

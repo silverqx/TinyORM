@@ -4,16 +4,18 @@ include_guard(GLOBAL)
 #
 # Synopsis:
 # tiny_resource_and_manifest(<target> [TEST]
-#   [OUTPUT_DIR <dir>]
-#   [RESOURCES_DIR <dir>]
-#   [RESOURCE_BASENAME <resource-basename>]
-#   [MANIFEST_BASENAME <manifest-basename>]
+#   [OUTPUT_DIR [<dir>]]
+#   [RESOURCES_DIR [<dir>]]
+#   [RESOURCE_BASENAME [<resource-basename>]]
+#   [MANIFEST_BASENAME [<manifest-basename>]]
 # )
 #
 # <target> name to operate on.
 # TEST to configure the test <target>, all tests use the same TinyTest.rc.in file.
 # OUTPUT_DIR relative folder path for the configure_file() for generated content.
+# The CMAKE_CURRENT_BINARY_DIR/.tiny will be used if is empty or undefined.
 # RESOURCES_DIR relative or absolute folder path where the TinyXyz.rc.in file is located.
+# The CMAKE_CURRENT_SOURCE_DIR/resources will be used if is empty or undefined.
 # RESOURCE_BASENAME basename for the resource file, eg. TinyOrm will use TinyOrm.rc.in.
 # The <target> name and for TEST the TinyTest will be used if is empty or undefined.
 # MANIFEST_BASENAME basename for the manifest file, eg. TinyOrm library will use
@@ -41,18 +43,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
 path (must be relative to CMAKE_CURRENT_BINARY_DIR) in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
-    if(("RESOURCE_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
-            "MANIFEST_BASENAME" IN_LIST TINY_KEYWORDS_MISSING_VALUES) OR
-        # This doesn't work with the CMP0174 set to OLD, there is no simple way to handle
-        # this case with OLD other than parsing arguments manually and it's not worth
-        # the effort (I shouldn't even write these checks as it's an internal thing 😵‍💫).
-        ((DEFINED RESOURCE_BASENAME AND "${RESOURCE_BASENAME}" STREQUAL "") OR
-            (DEFINED MANIFEST_BASENAME AND "${MANIFEST_BASENAME}" STREQUAL ""))
-    )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing a value or \
-the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
-    endif()
-
     # Body
     # Include Windows RC and manifest file for a shared library or executable
     get_target_property(targetType ${target} TYPE)
@@ -73,14 +63,14 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     # locations, and that's undesirable with QtCreator's build tree junctions feature.
 
     # TINY_OUTPUT_DIR (to absolute path)
-    if(NOT DEFINED TINY_OUTPUT_DIR OR "${TINY_OUTPUT_DIR}" STREQUAL "")
+    if("${TINY_OUTPUT_DIR}" STREQUAL "")
         set(TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/")
     else() # It's always relative, see the check above
         string(PREPEND TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
     endif()
 
     # TINY_RESOURCES_DIR (to absolute path)
-    if(NOT DEFINED TINY_RESOURCES_DIR OR "${TINY_RESOURCES_DIR}" STREQUAL "")
+    if("${TINY_RESOURCES_DIR}" STREQUAL "")
         set(TINY_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${TINY_SOURCE_RESOURCES_DIR}")
     elseif(NOT IS_ABSOLUTE "${TINY_RESOURCES_DIR}")
         string(PREPEND TINY_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
@@ -95,7 +85,7 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     set(Tom_target ${target})
 
     # Allow passing custom RC basename
-    if(DEFINED TINY_RESOURCE_BASENAME)
+    if(NOT "${TINY_RESOURCE_BASENAME}" STREQUAL "")
         set(rcBasename ${TINY_RESOURCE_BASENAME})
 
     # All tests use the same TinyTest.rc.in file
@@ -111,7 +101,7 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     endif()
 
     # Allow passing custom manifest basename
-    if(DEFINED TINY_MANIFEST_BASENAME)
+    if(NOT "${TINY_MANIFEST_BASENAME}" STREQUAL "")
         set(manifestBasename ${TINY_MANIFEST_BASENAME})
         # For MinGW (used only in the tom.rc.in)
         set(Tom_manifest ${TINY_MANIFEST_BASENAME})
