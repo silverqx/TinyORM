@@ -907,6 +907,7 @@ function(tiny_target_sources target)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Incompatible arguments
     if(TINY_FILE_SET AND TINY_PRIVATE)
         message(FATAL_ERROR "The FILE_SET and PRIVATE option arguments cannot be defined
 at the same time in ${CMAKE_CURRENT_FUNCTION}().")
