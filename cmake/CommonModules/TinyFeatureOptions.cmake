@@ -165,12 +165,12 @@ endmacro()
 # add_feature_info() commands.
 # DESCRIPTION for the option() and add_feature_info() commands.
 # DEFAULT initial value for the option() command, used if the <environment-variable-name>
-# is not empty or undefined.
+# is empty or undefined.
 # ADVANCED call the mark_as_advanced(<name>) command.
 # FEATURE pass the <name> and <description> values also to the add_feature_info() command.
 # ENABLED <enabled-compile-definitions> to set on the <target> when option is enabled.
 # DISABLED <disabled-compile-definitions> to set on the <target> when option is disabled.
-# ENABLED or DISABLE are passed to the target_compile_definitions() command.
+# ENABLED and DISABLE are passed directly to target_compile_definitions(<scope>) command.
 # DEFAULT_FROM_ENVIRONMENT get a default value for the option() command from the given
 # <environment-variable-name> if defined, otherwise use the <default-value>.
 # DEFAULT and DEFAULT_FROM_ENVIRONMENT can't be empty if they are passed and they must be

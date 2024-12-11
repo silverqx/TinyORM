@@ -72,14 +72,14 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     # if a folder doesn't exist. Another problem is that it resolves symlinks to actual
     # locations, and that's undesirable with QtCreator's build tree junctions feature.
 
-    # TINY_OUTPUT_DIR (absolute path)
+    # TINY_OUTPUT_DIR (to absolute path)
     if(NOT DEFINED TINY_OUTPUT_DIR OR "${TINY_OUTPUT_DIR}" STREQUAL "")
         set(TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TINY_BUILD_TMP_DIR}/")
-    else() # It's always relative, see check above
+    else() # It's always relative, see the check above
         string(PREPEND TINY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/")
     endif()
 
-    # TINY_RESOURCES_DIR (absolute path)
+    # TINY_RESOURCES_DIR (to absolute path)
     if(NOT DEFINED TINY_RESOURCES_DIR OR "${TINY_RESOURCES_DIR}" STREQUAL "")
         set(TINY_RESOURCES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${TINY_SOURCE_RESOURCES_DIR}")
     elseif(NOT IS_ABSOLUTE "${TINY_RESOURCES_DIR}")
@@ -94,7 +94,7 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
     # Used only in the tom.rc.in, I'm not going to wrap it in the if()
     set(Tom_target ${target})
 
-    # Allow to pass a custom RC basename
+    # Allow passing custom RC basename
     if(DEFINED TINY_RESOURCE_BASENAME)
         set(rcBasename ${TINY_RESOURCE_BASENAME})
 
@@ -110,7 +110,7 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
         set(rcBasename ${target})
     endif()
 
-    # Allow to pass a custom manifest basename
+    # Allow passing custom manifest basename
     if(DEFINED TINY_MANIFEST_BASENAME)
         set(manifestBasename ${TINY_MANIFEST_BASENAME})
         # For MinGW (used only in the tom.rc.in)
