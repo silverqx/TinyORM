@@ -71,13 +71,13 @@ function(tiny_printable_configurations out_configurations configurations)
 
 endfunction()
 
-# Convert to the boolean value
+# Convert to the boolean value (TRUE/FALSE)
 function(tiny_to_bool out_variable value)
 
     # This function may look useless, but I'm using it because I want to have unified
-    # boolean values, so it's TRUE or FALSE and not ON/OFF, ...
+    # boolean values, so it's TRUE or FALSE and not ON/OFF.
 
-    # Don't use the Variable Reference here ${value}, an undefined value can be
+    # Don't use the Variable Reference here for ${value}, an undefined value can be
     # controlled while passing the value to this function using an unquoted
     # Variable Reference like:
     # tiny_to_bool(xyz ${some_bool})
