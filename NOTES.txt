@@ -1428,6 +1428,24 @@ All are snake-case unless otherwise specified.
    - ❗so quote only if really needed and add comment in this case
    - see also CMake confusions below
 
+ - cmake_parse_arguments()
+   - Arguments checks:
+     - for Required value/s use:
+if("${TINY_XYZ}" STREQUAL "")
+       - it covers all cases for the argument value, empty, undefined, and also TINY_KEYWORDS_MISSING_VALUES
+     - for Cannot be empty if defined use:
+if("DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
+        # May be it only correctly works if CMake >=3.31 (CMP0174)?
+        # Doesn't matter, not a big deal (DEFAULT_FROM_ENVIRONMENT "").
+        (DEFINED TINY_DEFAULT_FROM_ENVIRONMENT AND "${TINY_DEFAULT_FROM_ENVIRONMENT}" STREQUAL "")
+)
+     - to check if the keyword argument was set use:
+if(DEFINED TINY_APPEND OR "APPEND" IN_LIST TINY_KEYWORDS_MISSING_VALUES)
+       - this is only true for one/multi value keyword arguments as option arguments are always
+         set, even when they were not passed/given
+       - can be used eg. to check whether two incompatible keywords were set at the same time
+         - so only one of them can be set
+
 
 CMake confusions:
 -----------------
