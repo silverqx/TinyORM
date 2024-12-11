@@ -156,14 +156,8 @@ the value is empty for some keywords: MANIFEST_BASENAME, RESOURCE_BASENAME")
 
     # Manifest file (injected through the RC file on MinGW)
     if(NOT MINGW)
-        # Obtain extension by target type - .exe or .dll
-        set(originalExtension "")
-
-        if(targetType STREQUAL "SHARED_LIBRARY" OR targetType STREQUAL "MODULE_LIBRARY")
-            set(originalExtension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
-        elseif(targetType STREQUAL "EXECUTABLE")
-            set(originalExtension "${CMAKE_EXECUTABLE_SUFFIX}")
-        endif()
+        # Obtain an executable extension by the target type (.exe or .dll)
+        tiny_get_target_extension(originalExtension ${target})
 
         set(manifestFilename "${manifestBasename}${originalExtension}.manifest")
 

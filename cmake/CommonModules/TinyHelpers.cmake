@@ -807,6 +807,20 @@ function(tiny_generate_target_includes out_variable)
 
 endfunction()
 
+# Obtain an executable extension by the target type (eg. .exe or .dll on Windows)
+function(tiny_get_target_extension out_variable target)
+
+    if(targetType STREQUAL "SHARED_LIBRARY" OR targetType STREQUAL "MODULE_LIBRARY")
+        set(result ${CMAKE_SHARED_LIBRARY_SUFFIX})
+
+    elseif(targetType STREQUAL "EXECUTABLE")
+        set(result ${CMAKE_EXECUTABLE_SUFFIX})
+    endif()
+
+    set(${out_variable} ${result} PARENT_SCOPE)
+
+endfunction()
+
 # Set up package properties using the set_package_properties()
 macro(set_packages_properties) # Exception no tiny_ prefix, that's OK
 
