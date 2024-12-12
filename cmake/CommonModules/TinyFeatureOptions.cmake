@@ -200,6 +200,14 @@ function(target_optional_compile_definitions target scope)
 ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
+    # Required value/s
+    if("${TINY_DEFAULT}" STREQUAL "" OR "${TINY_DESCRIPTION}" STREQUAL "" OR
+            "${TINY_NAME}" STREQUAL ""
+    )
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: DEFAULT, DESCRIPTION, NAME")
+    endif()
+
     # Cannot be empty if defined
     if("DEFAULT_FROM_ENVIRONMENT" IN_LIST TINY_KEYWORDS_MISSING_VALUES OR
             # May be it only correctly works if CMake >=3.31 (CMP0174)?
@@ -209,14 +217,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
     )
         message(FATAL_ERROR "The DEFAULT_FROM_ENVIRONMENT keyword argument is missing \
 value or its value is empty or undefined in ${CMAKE_CURRENT_FUNCTION}().")
-    endif()
-
-    # Required value/s
-    if("${TINY_DEFAULT}" STREQUAL "" OR "${TINY_DESCRIPTION}" STREQUAL "" OR
-            "${TINY_NAME}" STREQUAL ""
-    )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
-keyword or its value is empty or undefined: DEFAULT, DESCRIPTION, NAME")
     endif()
 
     # Body
