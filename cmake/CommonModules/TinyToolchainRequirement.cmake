@@ -14,18 +14,8 @@ include_guard(GLOBAL)
 function(tiny_satisfies_minimum_required_qt_version out_variable)
 
     # Nothing to do, Qt version was already populated (cache hit)
-    if(DEFINED TINY_QT_VERSION AND NOT TINY_QT_VERSION STREQUAL "")
-        if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion) # Automatic Variable Expansion
-            set(${out_variable} TRUE PARENT_SCOPE)
-
-        # There is a very low chance that this code branch will be invoked, but I can't
-        # remove it 😎
-        else()
-            set(${out_variable} FALSE PARENT_SCOPE)
-        endif()
-
-        return()
-    endif()
+    # Return the cached result
+    _tiny_satisfies_qt_version_return_cached()
 
     execute_process(
         COMMAND "${QT_QMAKE_EXECUTABLE}" -query QT_VERSION
@@ -52,7 +42,7 @@ function, in ${CMAKE_CURRENT_FUNCTION}().")
     set(regexpVersion "^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$")
 
     # This should never happen :/
-    if(NOT qtVersion MATCHES "${regexpVersion}")
+    if(NOT "${qtVersion}" MATCHES "${regexpVersion}")
         message(FATAL_ERROR "Parsing of the 'qmake -query QT_VERSION' failed \
 in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
@@ -68,6 +58,25 @@ satisfied (also used by tiny_configure_test_pch()).")
     endif()
 
 endfunction()
+
+# Return the cached result
+macro(_tiny_satisfies_qt_version_return_cached)
+
+    # Nothing to do, Qt version was already populated (cache hit)
+    if(NOT "${TINY_QT_VERSION}" STREQUAL "")
+        if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion) # Automatic Variable Expansion
+            set(${out_variable} TRUE PARENT_SCOPE)
+
+        # There is a very low chance that this code branch will be invoked, but I can't
+        # remove it 😎
+        else()
+            set(${out_variable} FALSE PARENT_SCOPE)
+        endif()
+
+        return() # Applies for the caller, not here
+    endif()
+
+endmacro()
 
 # Verify the minimum toolchain and Qt versions
 #

@@ -475,7 +475,7 @@ endfunction()
 function(tiny_print_linking_against target)
 
     # TINY_BUILD_TYPE_UPPER STREQUAL "" means that the CMAKE_BUILD_TYPE was not defined or is empty
-    if(TINY_IS_MULTI_CONFIG OR TINY_BUILD_TYPE_UPPER STREQUAL "")
+    if("${TINY_IS_MULTI_CONFIG}" OR "${TINY_BUILD_TYPE_UPPER}" STREQUAL "")
         return()
     endif()
 
@@ -540,17 +540,8 @@ endfunction()
 function(tiny_should_disable_precompile_headers out_variable)
 
     # Nothing to do, ccache version was already populated (cache hit)
-    if(DEFINED TINY_CCACHE_VERSION AND NOT TINY_CCACHE_VERSION STREQUAL "")
-        if(TINY_CCACHE_VERSION VERSION_GREATER_EQUAL "4.10" OR
-            TINY_CCACHE_VERSION STREQUAL "git-ref"
-        )
-            set(${out_variable} FALSE PARENT_SCOPE)
-        else()
-            set(${out_variable} TRUE PARENT_SCOPE)
-        endif()
-
-        return()
-    endif()
+    # Return the cached result
+    _tiny_disable_precompile_headers_return_cached()
 
     set(helpString "Ccache version used to determine whether to disable PCH (MSVC only).")
 
@@ -610,6 +601,24 @@ in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
 endfunction()
+
+# Return the cached result
+macro(_tiny_disable_precompile_headers_return_cached)
+
+    # Nothing to do, ccache version was already populated (cache hit)
+    if(NOT "${TINY_CCACHE_VERSION}" STREQUAL "")
+        if(TINY_CCACHE_VERSION VERSION_GREATER_EQUAL "4.10" OR
+            TINY_CCACHE_VERSION STREQUAL "git-ref"
+        )
+            set(${out_variable} FALSE PARENT_SCOPE)
+        else()
+            set(${out_variable} TRUE PARENT_SCOPE)
+        endif()
+
+        return() # Applies for the caller, not here
+    endif()
+
+endmacro()
 
 # Disable the precompilation of header files
 function(tiny_disable_precompile_headers)
