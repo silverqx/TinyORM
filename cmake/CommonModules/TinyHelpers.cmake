@@ -470,6 +470,8 @@ function(_tiny_rc_flags_restore)
 endfunction()
 
 # Print a VERBOSE message against which library is project linking
+# Can be used in a project linking against the TinyORM but is not used in the TinyORM
+# project itself.
 function(tiny_print_linking_against target)
 
     # TINY_BUILD_TYPE_UPPER STREQUAL "" means that the CMAKE_BUILD_TYPE was not defined or is empty
