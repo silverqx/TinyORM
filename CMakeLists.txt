@@ -141,9 +141,9 @@ the ${TinyOrm_ns}::${CommonConfig_target} interface library to the user code \
     TINYORM_STRICT_MODE OFF
 )
 
-feature_option(VERBOSE_CONFIGURE
-    "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
-output" OFF
+feature_option_environment(VERBOSE_CONFIGURE
+    "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure output"
+    TINYORM_VERBOSE_CONFIGURE OFF
 )
 
 # Initialize INLINE_CONSTANTS CMake feature dependent option
