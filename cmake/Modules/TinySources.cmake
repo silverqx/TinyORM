@@ -1016,9 +1016,7 @@ function(_tiny_target_sources_basic_include_dir include_path)
     cmake_path(ABSOLUTE_PATH include_path NORMALIZE OUTPUT_VARIABLE includeDir)
 
     # Remove trailing slashes
-    if(includeDir MATCHES "/$")
-        cmake_path(GET includeDir PARENT_PATH includeDir)
-    endif()
+    tiny_path_remove_slashes(includeDir)
 
     set(includeDir "${includeDir}" PARENT_SCOPE)
 

@@ -917,6 +917,20 @@ function(tiny_get_target_extension out_variable target)
 
 endfunction()
 
+# Remove trailing slashes from the given path (handles both / or \)
+function(tiny_path_remove_slashes path_variable)
+
+    # Nothing to do, doesn't end with slashes, or the variable is empty or undefined
+    if(NOT ${path_variable} MATCHES "[/\\]$")
+        return()
+    endif()
+
+    cmake_path(GET "${path_variable}" PARENT_PATH result)
+
+    set(${path_variable} "${result}" PARENT_SCOPE)
+
+endfunction()
+
 # Set up package properties using the set_package_properties()
 macro(set_packages_properties) # Exception no tiny_ prefix, that's OK
 
