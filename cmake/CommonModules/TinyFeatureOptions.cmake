@@ -221,7 +221,7 @@ keyword or its value is empty: DEFAULT, DESCRIPTION, NAME")
 
     # Body
     # Convert to the boolean value (ON/OFF)
-    tiny_to_bool_option(TINY_DEFAULT ${TINY_DEFAULT}) # Don't quote, must fail if undefined
+    tiny_to_bool(TINY_DEFAULT ${TINY_DEFAULT} FORMAT "OO") # Don't quote, must fail if undefined
     # If an environment variable is defined then use its value otherwise use
     # the <default-value>. This function sets the defaultValue value.
     tiny_get_boolean_value_from_environment(defaultValue

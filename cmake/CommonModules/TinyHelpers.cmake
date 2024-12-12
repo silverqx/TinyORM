@@ -1,10 +1,39 @@
 include_guard(GLOBAL)
 
-# Convert to the boolean value (TRUE/FALSE)
+# Convert to the boolean value (TRUE/FALSE or ON/OFF)
+#
+# This function may look useless, but I'm using it because I want to have unified
+# boolean values, so the <out_variable> will be TRUE/FALSE or ON/OFF.
+#
+# Synopsis:
+# tiny_to_bool(<out_variable> <value>
+#   [FORMAT [<format>]]
+# )
+#
+# <out_variable> for the normalized boolean value.
+# <value> to normalize.
+# FORMAT specifies the format for the <out_variable>, OO for ON/OFF or TF for TRUE/FALSE.
+# The default format is TF if empty or undefined.
 function(tiny_to_bool out_variable value)
 
-    # This function may look useless, but I'm using it because I want to have unified
-    # boolean values, so it's TRUE or FALSE and not ON/OFF.
+    # Arguments
+    set(oneValueArgs FORMAT)
+    cmake_parse_arguments(PARSE_ARGV 2 TINY "" "${oneValueArgs}" "")
+
+    # Arguments checks
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
+    # Initialize default values
+    if("${TINY_FORMAT}" STREQUAL "")
+        set(TINY_FORMAT "TF")
+    endif()
+
+    # Body
+    # Get the TRUE/FALSE or ON/OFF boolean value by the given format
+    _tiny_get_true_false_values()
 
     # Don't use the Variable Reference here for ${value}, an undefined value can be
     # controlled while passing the value to this function using an unquoted
@@ -13,52 +42,69 @@ function(tiny_to_bool out_variable value)
     # This means if the value is undefined (empty) and will be unquoted, then it fails;
     # if it is undefined and quoted, it returns FALSE
     if(value)
-        set(${out_variable} TRUE PARENT_SCOPE)
+        set(${out_variable} ${tinyTrue} PARENT_SCOPE)
     else()
-        set(${out_variable} FALSE PARENT_SCOPE)
+        set(${out_variable} ${tinyFalse} PARENT_SCOPE)
     endif()
 
 endfunction()
 
-# Convert to the boolean value and invert this boolean value (TRUE/FALSE)
+# Convert to the boolean value and invert this boolean value (TRUE/FALSE or ON/OFF)
+#
+# This function may look useless, but I'm using it because I want to have unified
+# boolean values, so the <out_variable> will be TRUE/FALSE or ON/OFF.
+#
+# Synopsis:
+# tiny_to_inverted_bool(<out_variable> <value>
+#   [FORMAT [<format>]]
+# )
+#
+# <out_variable> for inverted and normalized boolean value.
+# <value> to invert and normalize.
+# FORMAT specifies the format for the <out_variable>, OO for ON/OFF or TF for TRUE/FALSE.
+# The default format is OO if empty or undefined.
 function(tiny_to_inverted_bool out_variable value) # (currently unused)
 
     # This function may look useless, but I'm using it because I want to have unified
     # boolean values, so it's TRUE or FALSE and not ON/OFF.
 
+    # Body
+    # Get the TRUE/FALSE or ON/OFF boolean value by the given format
+    _tiny_get_true_false_values()
+
     # Don't use the Variable Reference here for ${value}, an undefined value can be
     # controlled while passing the value to this function using an unquoted
     # Variable Reference like:
-    # tiny_invert_bool(xyz ${some_bool})
+    # tiny_to_inverted_bool(xyz ${some_bool})
     # This means if the value is undefined (empty) and will be unquoted, then it fails;
     # if it is undefined and quoted, it returns TRUE (as it's inverted)
     if(value)
-        set(${out_variable} FALSE PARENT_SCOPE)
+        set(${out_variable} ${tinyFalse} PARENT_SCOPE)
     else()
-        set(${out_variable} TRUE PARENT_SCOPE)
+        set(${out_variable} ${tinyTrue} PARENT_SCOPE)
     endif()
 
 endfunction()
 
-# Convert to the boolean value (ON/OFF)
-function(tiny_to_bool_option out_variable value)
+# Get the TRUE/FALSE or ON/OFF boolean value by the given format
+macro(_tiny_get_true_false_values)
 
-    # This function may look useless, but I'm using it because I want to have unified
-    # boolean values for option() values, so it's ON or OFF and not TRUE/FALSE.
+    # TRUE/FALSE
+    if(TINY_FORMAT STREQUAL "TF")
+        set(tinyTrue TRUE)
+        set(tinyFalse FALSE)
 
-    # Don't use the Variable Reference here for ${value}, an undefined value can be
-    # controlled while passing the value to this function using an unquoted
-    # Variable Reference like:
-    # tiny_to_bool_option(xyz ${some_bool})
-    # This means if the value is undefined (empty) and will be unquoted, then it fails;
-    # if it is undefined and quoted, it returns FALSE
-    if(value)
-        set(${out_variable} ON PARENT_SCOPE)
+    # ON/OFF
+    elseif(TINY_FORMAT STREQUAL "OO")
+        set(tinyTrue ON)
+        set(tinyFalse OFF)
+
     else()
-        set(${out_variable} OFF PARENT_SCOPE)
+        message(FATAL_ERROR "Unexpected value for the FORMAT keyword argument \
+in ${CMAKE_CURRENT_FUNCTION}(). Supported values are: TF (TRUE/FALSE) or OO (ON/OFF)")
     endif()
 
-endfunction()
+endmacro()
 
 # Get a default value from the given environment variable and set the cache variable
 # Do nothing if the given CMake variable is already defined or the environment variable
@@ -71,7 +117,7 @@ function(tiny_set_cache_bool_from_environment name description environment_varia
     endif()
 
     # Normalize the default value to ON/OFF values only
-    tiny_to_bool_option(defaultValue "$ENV{${environment_variable_name}}") # Quotes needed otherwise $ENV{} fails
+    tiny_to_bool(defaultValue "$ENV{${environment_variable_name}}" FORMAT "OO") # Quotes needed otherwise $ENV{} fails
 
     set(${name} ${defaultValue} CACHE BOOL "${description}")
 
@@ -93,7 +139,7 @@ function(tiny_get_boolean_value_from_environment out_variable name default)
     endif()
 
     # Normalize the default value to ON/OFF values only
-    tiny_to_bool_option(result "${result}")
+    tiny_to_bool(result "${result}" FORMAT "OO")
 
     set(${out_variable} ${result} PARENT_SCOPE)
 
