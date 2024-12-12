@@ -208,15 +208,15 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 "${TINY_DEFAULT_FROM_ENVIRONMENT}" STREQUAL "")
     )
         message(FATAL_ERROR "The DEFAULT_FROM_ENVIRONMENT keyword argument is missing \
-value or its value is empty in ${CMAKE_CURRENT_FUNCTION}().")
+value or its value is empty or undefined in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     # Required value/s
     if("${TINY_DEFAULT}" STREQUAL "" OR "${TINY_DESCRIPTION}" STREQUAL "" OR
             "${TINY_NAME}" STREQUAL ""
     )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: DEFAULT, DESCRIPTION, NAME")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: DEFAULT, DESCRIPTION, NAME")
     endif()
 
     # Body

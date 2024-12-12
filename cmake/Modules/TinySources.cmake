@@ -916,8 +916,8 @@ at the same time in ${CMAKE_CURRENT_FUNCTION}().")
     # Required value/s
     # The default HEADER file set is never used because PREFIX is a required argument
     if("${TINY_PREFIX}" STREQUAL "")
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: PREFIX")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: PREFIX")
     endif()
 
     # Body

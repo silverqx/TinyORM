@@ -284,8 +284,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
     if("${TINY_VERSION_HEADER}" STREQUAL "" OR "${TINY_PREFIX}" STREQUAL "" OR
             "${TINY_HEADER_FOR}" STREQUAL ""
     )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: HEADER_FOR, PREFIX, VERSION_HEADER")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: HEADER_FOR, PREFIX, VERSION_HEADER")
     endif()
 
     # Body

@@ -33,8 +33,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # Required value/s
     if("${TINY_NAMESPACE}" STREQUAL "" OR "${TINY_NAME}" STREQUAL "")
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: NAME, NAMESPACE")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: NAME, NAMESPACE")
     endif()
 
     # Body

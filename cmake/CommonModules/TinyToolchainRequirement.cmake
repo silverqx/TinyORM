@@ -113,8 +113,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             "${TINY_GCC}" STREQUAL "" OR "${TINY_CLANG}" STREQUAL "" OR
             "${TINY_QT}" STREQUAL ""
     )
-        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is missing single-valued \
-keyword or its value is empty: MSVC, CLANG_CL, GCC, CLANG, QT")
+        message(FATAL_ERROR "The ${CMAKE_CURRENT_FUNCTION}() is a missing single-valued \
+keyword or its value is empty or undefined: MSVC, CLANG_CL, GCC, CLANG, QT")
     endif()
 
     # Body
