@@ -5,6 +5,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
+/* public */
+
 JoinClause::JoinClause(const Builder &query, const QString &type, const QString &table) // NOLINT(modernize-pass-by-value)
     : Builder(query.getConnectionShared(), query.getGrammarShared())
     , m_type(type)
@@ -58,6 +60,8 @@ std::shared_ptr<Builder> JoinClause::newQuery() const
 {
     return std::make_shared<JoinClause>(*this, m_type, m_table);
 }
+
+/* protected */
 
 std::shared_ptr<Builder> JoinClause::forSubQuery() const
 {

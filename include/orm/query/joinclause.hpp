@@ -68,6 +68,8 @@ namespace Orm::Query
         /*const*/ JoinTable m_table;
     };
 
+    /* public */
+
     const QString &
     JoinClause::getType() const
     {
