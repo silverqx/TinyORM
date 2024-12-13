@@ -99,8 +99,7 @@ namespace Orm::Query::Grammars
         /*! Determine whether the 'columns' component should be compiled. */
         static bool shouldCompileColumns(const QueryBuilder &query);
         /*! Determine whether the 'from' component should be compiled. */
-        static bool shouldCompileFrom(const std::variant<std::monostate, QString,
-                                      Query::Expression> &from);
+        static bool shouldCompileFrom(const FromClause &from);
 
         /*! Compile the components necessary for a select clause. */
         QStringList compileComponents(const QueryBuilder &query) const;

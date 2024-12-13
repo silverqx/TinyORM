@@ -51,8 +51,7 @@ namespace Orm::Query
         /*! Get the type of join being performed. */
         inline const QString &getType() const;
         /*! Get the table the join clause is joining to. */
-        inline const std::variant<std::monostate, QString, Expression> &
-        getTable() const;
+        inline const JoinTable &getTable() const;
 
         /*! Get a new instance of the join clause builder. */
         std::shared_ptr<Builder> newQuery() const final;
@@ -76,7 +75,7 @@ namespace Orm::Query
         return m_type;
     }
 
-    const std::variant<std::monostate, QString, Expression> &
+    const JoinClause::JoinTable &
     JoinClause::getTable() const
     {
         return m_table;
