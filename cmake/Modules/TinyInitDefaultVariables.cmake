@@ -363,25 +363,25 @@ function(tiny_init_ctest_path_win32)
         return()
     endif()
 
-    set(tinyEnvPath "")
+    set(testsEnvPath "")
 
     # Prepend TinyOrm, TinyUtils, TinyDrivers, TinyMySql library folders
     # Handles both Single/Multi-config generators (thanks to $<TARGET_FILE_DIR>)
     # The order of these paths is correct (revisited)
     # Testing for target eg. if(TARGET ${${TinyMySql_target}) would be redundant here
     if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-        list(PREPEND tinyEnvPath
+        list(PREPEND testsEnvPath
             "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyMySql_target}>>"
         )
     endif()
 
     if(BUILD_DRIVERS)
-        list(PREPEND tinyEnvPath
+        list(PREPEND testsEnvPath
             "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyDrivers_target}>>"
         )
     endif()
 
-    list(PREPEND tinyEnvPath
+    list(PREPEND testsEnvPath
         "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyOrm_target}>>"
         "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyUtils_target}>>"
     )
@@ -389,7 +389,7 @@ function(tiny_init_ctest_path_win32)
     # For ENVIRONMENT_MODIFICATION test property
     # It cannot be used as eg. Visual Studio Test Explorer doesn't know how to handle it
     # Escaping is needed for the ENVIRONMENT_MODIFICATION path_list_prepend
-    # list(JOIN tinyEnvPath "\;" tinyEnvPath)
+    # list(JOIN testsEnvPath "\;" testsEnvPath)
 
     # For ENVIRONMENT test property
     set(envPath "$ENV{PATH}")
@@ -399,10 +399,10 @@ function(tiny_init_ctest_path_win32)
     # Calling NORMALIZE doesn't break anything.
     cmake_path(CONVERT "$ENV{PATH}" TO_NATIVE_PATH_LIST envPath NORMALIZE)
 
-    list(APPEND tinyEnvPath "${envPath}")
+    list(APPEND testsEnvPath "${envPath}")
     # Escaping is needed for the ENVIRONMENT test property
-    list(JOIN tinyEnvPath "\;" tinyEnvPath)
+    list(JOIN testsEnvPath "\;" testsEnvPath)
 
-    set(TINY_TESTS_ENV_PATH "${tinyEnvPath}" PARENT_SCOPE) # Quotes for tinyEnvPath are needed because of escaping
+    set(TINY_TESTS_ENV_PATH "${testsEnvPath}" PARENT_SCOPE) # Quotes for testsEnvPath are needed because of escaping
 
 endfunction()
