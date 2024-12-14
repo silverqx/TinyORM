@@ -1373,7 +1373,7 @@ namespace Orm::Query
         return where(column, EQ, std::forward<T>(value), OR);
     }
 
-    /* Genral where not */
+    /* General where not */
 
     template<WhereValue T>
     Builder &

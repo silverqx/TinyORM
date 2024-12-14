@@ -29,7 +29,7 @@ namespace Query
 }
     using QueryBuilder = Query::Builder;
 
-    /* Don't test for eg. QString and also const QString & in the std::converible_to<>,
+    /* Don't test for eg. QString and also const QString & in the std::convertible_to<>,
        test only for the QString, it doesn't make sense to test for both.
        The std::convertible_to<T, Orm::QueryBuilder &> is correct. */
 
