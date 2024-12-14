@@ -20,7 +20,7 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     /* If the query does not have any columns set, we'll set the columns to the *
        character to just get all of the columns from the database. Then we
        can build the query and concatenate all the pieces together as one. */
-    auto original = query.getColumns();
+    const auto &original = query.getColumns();
 
     if (original.isEmpty())
         query.setColumns({ASTERISK});
@@ -32,7 +32,7 @@ QString Grammar::compileSelect(QueryBuilder &query) const
     auto sql = concatenate(compileComponents(query));
 
     // Restore original columns value
-    query.setColumns(std::move(original));
+    query.setColumns(original);
 
     return sql;
 }
