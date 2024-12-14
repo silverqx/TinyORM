@@ -17,8 +17,8 @@ namespace Orm::Query::Grammars
 
 QString Grammar::compileSelect(QueryBuilder &query) const
 {
-    /* If the query does not have any columns set, we'll set the columns to the
-       * character to just get all of the columns from the database. Then we
+    /* If the query does not have any columns set, we'll set the columns to the *
+       character to just get all of the columns from the database. Then we
        can build the query and concatenate all the pieces together as one. */
     auto original = query.getColumns();
 
