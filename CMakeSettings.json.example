@@ -1,0 +1,144 @@
+/*
+  Visual Studio 2022 CMake Project configuration
+
+  See https://learn.microsoft.com/en-us/cpp/build/cmakesettings-reference?view=msvc-170
+      https://learn.microsoft.com/en-us/cpp/build/cmake-predefined-configuration-reference?view=msvc-170
+
+  Necessary environment variables:
+  TINY_QT_ROOT     - Qt Framework installation folder path
+  TINY_QT_VERSION  - Qt Framework version (format x.y.z)
+  TINYORM_MAIN_DIR - PARENT folder path of TinyORM source folder
+*/
+{
+  "environments": [
+    { "BuildTrees": "${env.TINYORM_MAIN_DIR}/TinyORM-builds-cmake/build-vs" },
+    {
+      "namespace": "Qt",
+      "version": "${env.TINY_QT_VERSION}",
+      "spec": "msvc2022_64"
+    },
+    {
+      "namespace": "env",
+      "environment": "msvc_x64-qt6",
+      "inheritEnvironments": [ "msvc_x64_x64" ], // Don't use msvc_x64 (it targets x64 with the x86 version of MSVC)
+      "PATH": "${env.TINY_QT_ROOT}/${Qt.version}/${Qt.spec}/bin;${env.TINY_QT_ROOT}/${Qt.version}/${Qt.spec}/lib;${env.PATH}"
+    },
+    {
+      "namespace": "env",
+      "environment": "run-msvc_x64-qt6",
+      "inheritEnvironments": [ "msvc_x64-qt6" ],
+      "PATH": "${cmake.buildRoot}/drivers/common;${cmake.buildRoot}/drivers/mysql;${cmake.buildRoot};${cmake.buildRoot}/tests/TinyUtils;${env.PATH}"
+    },
+    // Currently unused
+    {
+      "namespace": "env",
+      "environment": "run-test-msvc_x64-qt6",
+      "inheritEnvironments": [ "run-msvc_x64-qt6" ],
+      "TOM_TESTS_ENV": "local"
+    }
+  ],
+  "configurations": [
+    {
+      "buildCommandArgs": "",
+      "buildRoot": "${env.BuildTrees}/${name}",
+      "cmakeCommandArgs": "--log-level=DEBUG --log-context",
+      "cmakeToolchain": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "configurationType": "Debug",
+      "ctestCommandArgs": "--output-on-failure --parallel ${env.NUMBER_OF_PROCESSORS}",
+      "description": "Debug x64 (Ninja)",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "installRoot": "${env.TINYORM_MAIN_DIR}/../_tmp/vs/${projectDirName}/${name}",
+      "intelliSenseMode": "windows-msvc-x64",
+      "name": "x64-Debug",
+      "variables": [
+        {
+          "name": "BUILD_DRIVERS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SHARED_LIBS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TREE_DEPLOY",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "CMAKE_CXX_COMPILER_LAUNCHER",
+          "value": "ccache.exe",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "CMAKE_CXX_SCAN_FOR_MODULES",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "CMAKE_EXPORT_PACKAGE_REGISTRY",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "CMAKE_VERBOSE_MAKEFILE",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "DRIVERS_TYPE",
+          "value": "Shared",
+          "type": "STRING"
+        },
+        {
+          "name": "INLINE_CONSTANTS",
+          "value": "False",
+          "type": "BOOL"
+        },
+        {
+          "name": "MSVC_RUNTIME_DYNAMIC",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "MYSQL_PING",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "ORM",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "STRICT_MODE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "TOM",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "TOM_EXAMPLE",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "VERBOSE_CONFIGURE",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ],
+      "cmakeExecutable": "${env.ProgramFiles}/CMake/bin/cmake.exe"
+    }
+  ]
+}
