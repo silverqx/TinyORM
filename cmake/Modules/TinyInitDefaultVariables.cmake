@@ -386,7 +386,21 @@ function(tiny_init_ctest_path_win32)
         "$<SHELL_PATH:$<TARGET_FILE_DIR:${TinyUtils_target}>>"
     )
 
+    # For ENVIRONMENT_MODIFICATION test property
+    # It cannot be used as eg. Visual Studio Test Explorer doesn't know how to handle it
     # Escaping is needed for the ENVIRONMENT_MODIFICATION path_list_prepend
+    # list(JOIN tinyEnvPath "\;" tinyEnvPath)
+
+    # For ENVIRONMENT test property
+    set(envPath "$ENV{PATH}")
+
+    # No need to remove all empty paths as cmake_path(CONVERT) is doing this internally,
+    # the reason is the normalization takes an empty path as .
+    # Calling NORMALIZE doesn't break anything.
+    cmake_path(CONVERT "$ENV{PATH}" TO_NATIVE_PATH_LIST envPath NORMALIZE)
+
+    list(APPEND tinyEnvPath "${envPath}")
+    # Escaping is needed for the ENVIRONMENT test property
     list(JOIN tinyEnvPath "\;" tinyEnvPath)
 
     set(TINY_TESTS_ENV_PATH "${tinyEnvPath}" PARENT_SCOPE) # Quotes for tinyEnvPath are needed because of escaping

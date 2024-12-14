@@ -65,7 +65,9 @@ sqlite_schemabuilder;mysql_tinybuilder"
     # Needed to find TinyOrm, TinyUtils, TinyDrivers, TinyMySql libraries in build tree
     if(TINY_TESTS_ENV_PATH)
         set_property(TEST ${target} APPEND PROPERTY
-            ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${TINY_TESTS_ENV_PATH}" # Quotes are needed because of \;
+            ENVIRONMENT "PATH=${TINY_TESTS_ENV_PATH}" # Quotes are needed because of \;
+            # Visual Studio Test Explorer doesn't know how to handle this
+            # ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${TINY_TESTS_ENV_PATH}" # Quotes are needed because of \;
         )
     endif()
 
