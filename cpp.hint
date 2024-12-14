@@ -1,0 +1,8 @@
+// See https://go.microsoft.com/fwlink/?linkid=865984
+#define TINYORM_BEGIN_COMMON_NAMESPACE namespace TINYORM_COMMON_NAMESPACE {
+#define TINYORM_BEGIN_COMMON_NAMESPACE
+#define TINY_SYSTEM_HEADER _Pragma("clang system_header")
+#define TINY_SYSTEM_HEADER _Pragma("GCC system_header")
+#define TINY_SYSTEM_HEADER _Pragma("system_header")
+#define TINY_SYSTEM_HEADER
+#define Q_DISABLE_COPY_MOVE(Class) Q_DISABLE_COPY(Class) Class(Class &&) = delete; Class &operator=(Class &&) = delete;
