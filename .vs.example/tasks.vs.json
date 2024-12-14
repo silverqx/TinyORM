@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-TinyORM-vs_qt6",
+      "appliesTo": "/",
+      "type": "launch"
+    }
+  ]
+}

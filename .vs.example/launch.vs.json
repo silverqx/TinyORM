@@ -1,0 +1,21 @@
+{
+  "version": "0.2.1",
+  "defaults": {
+  },
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "tom.exe (examples\\tom\\tom.exe)",
+      "name": "tom.exe (examples\\tom\\tom.exe)",
+      "inheritEnvironments": [ "run-msvc_x64-qt6" ],
+      "environment": [
+        {
+          "name": "TOM_EXAMPLE_ENV",
+          "value": "local"
+        }
+      ],
+      "args": []
+    }
+  ]
+}
