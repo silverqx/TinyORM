@@ -13,6 +13,12 @@ registry."
         TINYORM_EXPORT_PACKAGE_REGISTRY
     )
 
+    # QtCreator auto-setup.cmake CACHE these variables, right after vcpkg toolchain.cmake
+    # calls list(APPEND) which causes duplicate entries in these lists, it can negatively
+    # affect performance for commands which search these paths.
+    list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
+    list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
+
 endmacro()
 
 # Initialize the default CMake variables
