@@ -35,6 +35,22 @@ macro(tiny_init_qt_variables)
         set(QT_CREATOR_SKIP_PACKAGE_MANAGER_SETUP ON CACHE BOOL ${help_string} FORCE)
     endif()
 
+    # Remove QML debugging, TinyORM doesn't use it and can be considered as security hole
+    # See QTCREATORBUG-28705
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT) # For initial configure only
+        get_property(help_string CACHE CMAKE_CXX_FLAGS PROPERTY HELPSTRING)
+        if(NOT help_string)
+            set(help_string "Flags used by the CXX compiler during all build types.")
+        endif()
+
+        string(REGEX REPLACE "((( )?-DQT_QML_DEBUG)|(-DQT_QML_DEBUG( )?))" ""
+            cmakeCxxFlags "${CMAKE_CXX_FLAGS}")
+        string(STRIP "${cmakeCxxFlags}" cmakeCxxFlags)
+
+        set(CMAKE_CXX_FLAGS "${cmakeCxxFlags}" CACHE STRING ${help_string} FORCE)
+        unset(cmakeCxxFlags)
+    endif()
+
 endmacro()
 
 # Initialize the default CMake variables
