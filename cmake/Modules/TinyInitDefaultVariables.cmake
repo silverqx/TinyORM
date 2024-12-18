@@ -104,7 +104,7 @@ DESTINATION is encountered.")
 
     # Fix install prefix for the MinGW and x64 toolchain
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND
-            CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
+            CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT # For initial configure only
     )
         get_property(help_string CACHE CMAKE_INSTALL_PREFIX PROPERTY HELPSTRING)
         if(NOT help_string)
