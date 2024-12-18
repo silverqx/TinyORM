@@ -21,6 +21,22 @@ registry."
 
 endmacro()
 
+# Initialize the default Qt variables
+macro(tiny_init_qt_variables)
+
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT) # For initial configure only
+        get_property(help_string CACHE QT_CREATOR_SKIP_PACKAGE_MANAGER_SETUP
+            PROPERTY HELPSTRING
+        )
+        if(NOT help_string)
+            set(help_string "Skip Qt Creator's package manager auto-setup.")
+        endif()
+
+        set(QT_CREATOR_SKIP_PACKAGE_MANAGER_SETUP ON CACHE BOOL ${help_string} FORCE)
+    endif()
+
+endmacro()
+
 # Initialize the default CMake variables
 macro(tiny_init_cmake_variables)
 
