@@ -26,6 +26,7 @@ function(tiny_configure_test target)
     # Arguments
     set(options
         DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS PROVIDES_PCH RUN_SERIAL
+        SKIP_REUSE_PCH
     )
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
@@ -151,9 +152,9 @@ function(tiny_configure_test_pch target provides_pch)
     # Also, I have patched the Qt6TestTargets.cmake so the REUSE_FROM work for me because
     # of this I need to skip this if() using the TINY_QT6_TEST_TARGET_PATCHED environment
     # variable, it also affects CI pipelines on GitHub self-hosted runners
-    if(TINY_QT_VERSION VERSION_LESS "6.9.0" AND
-            NOT (DEFINED ENV{TINY_QT6_TEST_TARGET_PATCHED} AND
-                "$ENV{TINY_QT6_TEST_TARGET_PATCHED}") # Quotes needed to avoid fail if undefined as conditions don't short-circuit!
+    if(TINY_SKIP_REUSE_PCH OR (TINY_QT_VERSION VERSION_LESS "6.9.0" AND
+                                  NOT (DEFINED ENV{TINY_QT6_TEST_TARGET_PATCHED} AND
+                                      "$ENV{TINY_QT6_TEST_TARGET_PATCHED}")) # Quotes needed to avoid fail if undefined as conditions don't short-circuit!
     )
         target_precompile_headers(${target} PRIVATE
             $<$<COMPILE_LANGUAGE:CXX>:"${${TinyOrm_ns}_SOURCE_DIR}/include/pch.h">

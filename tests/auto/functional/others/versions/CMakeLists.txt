@@ -7,7 +7,7 @@ target_sources(versions PRIVATE
 
 add_test(NAME versions COMMAND versions)
 
-tiny_configure_test(versions)
+tiny_configure_test(versions SKIP_REUSE_PCH)
 
 # For checkFileVersion_*() tests
 # ---
