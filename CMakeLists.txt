@@ -13,9 +13,9 @@
 # TODO the if(LINUX) can be used from CMake v3.25 instead of CMAKE_SYSTEM_NAME STREQUAL "Linux" silverqx
 cmake_minimum_required(VERSION 3.23...3.31 FATAL_ERROR)
 
-list(APPEND CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
+list(PREPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
 )
 
 # Initialize Tiny variables (early initialization)
