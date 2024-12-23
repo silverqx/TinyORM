@@ -300,8 +300,7 @@ to generate find_dependency() calls for the TinyORM package configuration file."
     tiny_init_driver_types()
 
     # Setup the correct PATH environment variable for the ctest command
-    set(TINY_TESTS_ENV_PATH TINY_TESTS_ENV_PATH-NOTFOUND) # Always use if() before using the variable
-    tiny_init_ctest_path_win32()
+    tiny_init_ctest_path_win32() # Sets TINY_TESTS_ENV_PATH
 
     # Source Tree folders
     set(TINY_SOURCE_RESOURCES_DIR  "resources")
@@ -398,6 +397,7 @@ function(tiny_init_ctest_path_win32)
 
     # Nothing to do
     if(NOT WIN32 OR NOT BUILD_TESTS)
+        set(TINY_TESTS_ENV_PATH TINY_TESTS_ENV_PATH-NOTFOUND) # Always use if() check before using this variable
         return()
     endif()
 
