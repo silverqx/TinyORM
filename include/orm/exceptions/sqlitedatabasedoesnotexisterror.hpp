@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM SQLite database doesn't exist exception. */
-    class SQLiteDatabaseDoesNotExistError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT SQLiteDatabaseDoesNotExistError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Path constructor (QString). */
