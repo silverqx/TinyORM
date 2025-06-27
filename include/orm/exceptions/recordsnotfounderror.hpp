@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Found zero records (used by Builder::sole()). */
-    class RecordsNotFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT RecordsNotFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using RuntimeError::RuntimeError;

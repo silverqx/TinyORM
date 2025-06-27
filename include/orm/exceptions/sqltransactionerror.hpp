@@ -14,7 +14,7 @@ namespace Orm::Exceptions
 
     /*! TinyORM Sql transaction exception. TinyOrm library compiled against
         the TinyDrivers doesn't use this exception class. */
-    class SqlTransactionError : public SqlError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT SqlTransactionError : public SqlError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using SqlError::SqlError; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)

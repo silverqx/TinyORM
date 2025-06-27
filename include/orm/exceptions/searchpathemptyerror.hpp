@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! The PostgreSQL 'search_path' is empty exception (TinyORM). */
-    class SearchPathEmptyError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT SearchPathEmptyError : public InvalidArgumentError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using InvalidArgumentError::InvalidArgumentError;

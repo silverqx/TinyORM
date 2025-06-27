@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/export.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -13,7 +14,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM exceptions tag, all TinyORM exceptions are derived from this class. */
-    class OrmError // NOLINT(cppcoreguidelines-special-member-functions) clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT OrmError // NOLINT(cppcoreguidelines-special-member-functions) clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Pure virtual destructor. */

@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyORM lost connection exception. */
-    class LostConnectionError : public LogicError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT LostConnectionError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;
