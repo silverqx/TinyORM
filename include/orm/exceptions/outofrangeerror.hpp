@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! TinyDrivers out of range exception. */
-    class OutOfRangeError : public LogicError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT OutOfRangeError : public LogicError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
         using LogicError::LogicError;

@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Found more that one record (used by Builder::sole()). */
-    class MultipleRecordsFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT MultipleRecordsFoundError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Constructor. */

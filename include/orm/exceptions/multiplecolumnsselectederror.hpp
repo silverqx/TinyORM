@@ -13,7 +13,7 @@ namespace Orm::Exceptions
 {
 
     /*! Found more that one column (used by DatabaseConnection::scalar()). */
-    class MultipleColumnsSelectedError : public RuntimeError // clazy:exclude=copyable-polymorphic
+    class TINYORM_EXPORT MultipleColumnsSelectedError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Constructor. */
