@@ -91,3 +91,12 @@ if(NOT STRICT_MODE)
 endif()
 
 target_link_libraries(${TomTestData_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_target})
+
+
+# All unit tests are functional only if the test databases are migrated prior to test execution.
+#
+# These targets are provided in order to simplify test setup
+# ---
+add_custom_target(tom_testdata_migrate_mysql    COMMAND tom_testdata migrate:fresh --database=tinyorm_testdata_tom_mysql    --seed --no-ansi DEPENDS ${TomTestData_target})
+add_custom_target(tom_testdata_migrate_postgres COMMAND tom_testdata migrate:fresh --database=tinyorm_testdata_tom_postgres --seed --no-ansi DEPENDS ${TomTestData_target})
+add_custom_target(tom_testdata_migrate_sqlite   COMMAND tom_testdata migrate:fresh --database=tinyorm_testdata_tom_sqlite   --seed --no-ansi DEPENDS ${TomTestData_target})

@@ -467,6 +467,8 @@ if(BUILD_TESTS)
     find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} REQUIRED COMPONENTS Test)
 
     add_subdirectory(tests)
+
+    configure_file(CTestCustom.cmake.in CTestCustom.cmake @ONLY)
 endif()
 
 # Build examples
